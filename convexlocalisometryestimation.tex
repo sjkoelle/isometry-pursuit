@@ -1,0 +1,194 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{natbib}
+
+\begin{document}
+
+This note specifically targets the problem of local isometry estimation using a convex Tangent Space Lasso-type method.  It does not directly reproduce the argument that tangent space basis pursuit selects for a "most isometric embedding" from my thesis, nor would I expect this to go in the same paper as tangent space lasso. Other interesting open questions about basis pursuit that are not covered here include can we equate the intrinsic curvature of the data manifold to the basis pursuit loss, or what happens when dictionary = feature space, or what happens if we estimate in the coordinates of the ambient space, or what are the convergence rates.  I chose to focus on local isometry estimation because it seemed distinct enough from what everyone else was working on that it could be published as a workshop paper on its own, and because the mathematical components are a little novel, but not disorientingly so, and because it solves an open problem noticed by another research group.
+
+\begin{abstract}
+
+The selection of a set of coordinate functions producing an isometry embedding from within a dictionary is an important topic in geometric data analysis \citep{Gal Mishne paper}, since isometry embeddings preserve important properties like distances between points.
+We describe a convex optimization approach for selection such functions based on the Tangent Space Lasso.
+Compared with previous greedy approaches \citep{https://openreview.net/pdf?id=GugzbdAoHG, chen and meila, ldle}, this approach is more computationally expedient.
+
+\end{abstract}
+
+\section{Background}
+
+\subsection{Notation}
+
+Given $X \in \mathbb R^{p \times d}$ with $p > d$, define the transform
+
+\being{align}
+\exp_1 X : = \exp (- | \log \|X_{j.}\|_2)|) \frac{X_{j.}}{\|X_{j.}\|}.
+\end{align}
+
+Define the group basis pursuit penalty function 
+\being{align}
+\|X\|_{1,2} := \sum_{j=1}^p  \|X_{j.}\|
+
+Define the loss function
+\being{align}
+l (X, \beta) := \|I_d - X\beta\|^2 + \|\beta\|_{2,1}
+\end{align}
+
+We can also define the basis pursuit loss
+\being{align}
+m (X, \beta) := \|\beta\|_{2,1} :  I_d = X\beta
+\end{align}
+
+Our main interest is in analyzing the properties of $l(\exp_1 X,  \beta)$ and $m(\exp_1 X,  \beta)$ 
+
+This is the main loss function whose properties we analyze.
+
+
+%One immediate question is - why $\beta$?  Can we just minimize some function of $X$ directly like $\|\exp_1 X\|_{1,2}$?  Well, then we wouldn't need orthogonality - just constant length!
+
+\subsection{Tangent Space Lasso}
+
+The intuition is that vectors which are closer to 1 in length and more orthogonal will be smaller in loss.
+
+\begin{proposition}{Unitary subset selection}
+Given a $X$ that contains a unique subset $X^* \in \mathbb R^{d \times d} $ such that $X^*$ is unitary and full rank, then $X^* = \arg \min_\beta l(\exp_1(X),\beta)$.
+\end{proposition}
+
+
+Before proceeding, we require the following piece of Lemma \ref{lemma:rotinv1}. 
+ \begin{lemma}
+ \label{prop:unitarybasis}
+Consider two sets of vector fields $X$ and $X^i$ where $X_{i..}^i = U X_{i..} $, where $U$ is unitary and $X_{i'..} = X_{i'..}^i$ for other values $i' \neq i$.
+Then $l^*(X) = l^*(X^i)$
+\end{lemma}
+
+\begin{proof}
+Without loss of generality, let $i = 1$.
+We can write 
+\begin{eqnarray}
+l^*(X^i) = l(\beta^i) = \sum_{j = 1}^p (\sum_{i'=2}^n \| \beta_{i'j.} \|_2^2 +  \|  \beta_{1j.}^i \|_2^2 )^{1/2}=  \sum_{j = 1}^p (\sum_{i'=1}^n \| \beta_{i'j.} U \|_2^2)^{1/2} = l^*(X)
+\end{eqnarray}
+where the second to last equality is because the norm $\|v\|_2^2 $ is unitary invariant.
+\end{proof}
+
+
+
+We first show that vectors which are more orthogonal will be smaller in loss.
+
+\begin{lemma}
+\label{lemma:orthogonal}
+Let $X_{.S} \in \mathbb R^{d \times p}$ be defined as above and let $X_{..S}'$ be an array such that $\|X_{.S_j}'\|_2 = \|X_{.S_j}\|_2$ for all $j \in [d]$ and $X_{.S}'$ is column-orthogonal.
+Then $\tilde l^* (X_{..S}) > \tilde l^* (X_{..S}')$.
+\end{lemma}
+\begin{proof}
+
+By Lemma \ref{prop:unitarybasis}, without loss of generality
+\begin{eqnarray}
+\beta_{ijk}^i = \begin{cases} \|\tilde X_{.S_j}'\|_2^{-1} & j = k \in \{ 1 \dots d\}  \\
+0 & \text{otherwise}
+\end{cases}.
+\end{eqnarray}
+Therefore,
+\begin{eqnarray}
+\tilde l^*(X') = \sum_{j = 1}^d \sqrt{\sum_{i = 1}^n \|\tilde X_{i.S_j}' \|_2^{-2}}.
+\end{eqnarray}
+
+On the other hand, the invertible matrices $\tilde X_{.S}$ admit QR decompositions $\tilde X_{.S} = QR$ where $Q$ and $R$ are square unitary and upper-triangular matrices, respectively \citep{Anderson1992-fb}.
+Since $l^*$ is invariant to unitary transformations, we can without loss of generality, consider $Q= I_d$.
+Denoting $I_d$ to be composed of basis vectors $[e^1 \dots e^d]$, the matrix $R$ has form
+\begin{eqnarray}
+R = \begin{bmatrix}
+\langle e^1, \tilde X_{i.{S_1}} \rangle & \langle e^1, \tilde X_{i.{S_2}} \rangle  &\dots &  \langle e^1, \tilde X_{i.{S_d}} \rangle \\
+0 & \langle e^2, \tilde X_{i.{S_2}} \rangle & \dots  &  \langle e^2, \tilde X_{i.{S_d}} \rangle\\
+0 & 0 & \dots & \dots  \\
+0 & 0 & 0& \langle e^d, \tilde X_{i.{S_d}} \rangle 
+\end{bmatrix}.
+\end{eqnarray}
+The diagonal entries $R_{jj} = \langle q^j, \tilde X_{.{S_j}} \rangle$ of this matrix have form $\| \tilde X_{.{S_j}} -  \sum_{j' \in \{1 \dots j-1\}} \langle \tilde X_{.{S_{j}}}, e^{j'} \rangle e^{j'} \|$.
+Thus, $R_{j} \in (0, \| \tilde X_{i.{S_j}}\|]$.
+On the other hand $\beta_{iS.} =R^{-1}$, which has diagonal elements $\beta_{j} = R_{j}^{-1}$, since $R$ is upper triangular.
+Thus, $\beta_{jj} \geq \| \tilde X_{.{S_j}}\|^{-1}$, and therefore $\|\beta_{iS_j.}\| \geq \|\beta_{S_j.}'\|.$
+Since $\|\beta_{S_j.}\| \geq \|\beta_{S_j.}'\|$ for all $i$, then $\|\beta_{.S_j.}\| \geq \|\beta_{.S_j.}' \|$.
+%Finally, that this is true for all $j$.
+%That is, if we 
+\end{proof}
+
+The above proposition formalizes our intuition that orthogonality of $X$ lowers $l^*(X)$ over non-orthogonality.
+We now show a similar result for the somewhat less intuitive heuristic that dictionary functions whose gradient fields are length $1$ will be favored over those which are non-constant.
+Since the result on orthogonality holds regardless of length, we need only consider the case where the component vectors in our sets of vector fields are mutually orthogonal at each data point, but not necessarily of norm $1$.
+Note that were they not orthogonal, making them so would also reduce $l^*$.
+We then show that vectors which are closer to length $1$ are lower in loss.
+Since vectors which are closer to length $1$ are shrunk in length less by $\exp_1$, their corresponding loadings are smaller.
+This is formalized in the following proposition
+
+
+\begin{lemma}
+\label{lemma:orthogonal}
+Let $X_{.S}^{''}$ be a set of vector fields $X_{.S_j}^{''}$ mutually orthogonal at every data point $i$, and $\|X_{.S_j}^{''}\| = 1$.
+Then $\tilde l^* (X_{.S}' ) \geq \tilde l^*(X_{.S}^{''})$.
+\end{lemma}
+\begin{proof}
+Let $\|X_{i.S_j}^{''}\| = c_j$.  By Proposition \ref{prop:unitarybasis}, we can assume without loss of generality (i.e without changing the loss) that
+\begin{eqnarray}
+\tilde X_{.S_j} = \begin{bmatrix}
+c_1 & 0 & 0 \\
+0 & \dots & 0  \\
+0 & 0 & c_d  \rangle\\
+\end{bmatrix}.
+\end{eqnarray}
+Thus
+\begin{eqnarray}
+\tilde \exp_1 X_{.S_j} = \begin{bmatrix}
+ \exp (- | \log \|c_1 \|_2)|)  & 0 & 0 \\
+0 & \dots & 0  \\
+0 & 0 &  \exp (- | \log \|c_d \|_2)|)   \rangle\\
+\end{bmatrix}.
+\end{eqnarray}
+and therefore
+\begin{eqnarray}
+\tilde \beta_{.S_j} = \begin{bmatrix}
+ \exp (- | \log \|c_1 \|_2)|)^{-1}  & 0 & 0 \\
+0 & \dots & 0  \\
+0 & 0 &  \exp (- | \log \|c_d \|_2)|)^{-1}   \rangle\\
+\end{bmatrix}.
+\end{eqnarray}
+The question is therefore what values of $c_j$ minimize $\exp (- | \log \ |c_1 \|_2)|)^{-1} $.  $| \log \ |c_1 \|_2)|$ is minimized (evaluates to $0$) when $c_j = 1$, so $- | \log \ |c_1 \|_2)|$ is maximized (evaluates to $0$, so $\exp (- | \log \ |c_1 \|_2)|)$ is maximized (evaluates to $1$), so $\exp (- | \log \ |c_1 \|_2)|)^{-1}$ is minimized (evaluates to $1$).
+\end{proof}
+
+\begin{proposition}{Local Isometry}
+Given a set of functions $G$ that contains a subset that defines a locally isometric embedding at a point $\xi$, then these will be selected as $\arg \min_\beta$.
+\end{proposition}
+
+Algorithm (Local tangent Space basis pursuit)
+
+Algorithm (Local two stage tangent space basis pursuit)
+
+This provides an approach for the problem put forward in (cite) LDLE paper.
+
+Experiments (Loss)
+
+Compare with isometry loss (2 norm of singular values).
+
+\section{Experiments}
+
+Comparison with isometry loss.
+
+The full gradient approach.
+In this case normalization prior to projection is subsumbmed by the larger coefficients needed to get the tangent space.
+Good news is tangent space estimation need not be performed.
+The Hoeffding bound
+Dimension estimation, the failure of duality
+The presence of curvature
+
+Supplement
+
+Proof of isometry (Copy from thesis)
+
+Proof of local isometry (simpler proof since no oscillation game)
+
+\section{Discussion}
+
+We leave aside the question of patch alignment \cite{https://arxiv.org/pdf/2303.11620.pdf, LDLE paper}.
+
+\section{Comparison with most other snootgooses}
+
+
+\end{document}
