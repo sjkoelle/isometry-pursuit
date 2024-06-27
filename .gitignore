@@ -1,0 +1,7 @@
+*.out
+*.xml
+.ipynb_checkpoints
+*.gz
+*.bcf
+*.aux
+*.log
