@@ -19,6 +19,8 @@ def run_experiment(matrix, target_dimension, lambdas=np.logspace(1e-6, 1e-3)):
         matrix=matrix,
         target_dimension=target_dimension,
         loss=basis_pursuit_loss,
+        # We can't do a greedy selection in the same way since we need to invert first.
+        # Thus, we need to first invert at d=1, then select the best candidate w.r.t. the inversion, then select at d=2, invert, select, etc.
     )
 
     #

@@ -14,8 +14,19 @@ def subspace_loss(matrix_1: np.ndarray, matrix_2: np.ndarray) -> float:
     return output
 
 
-def group_basis_pursuit_loss(beta):  # beta_bp
+def group_lasso_norm(beta):  # beta_bp
     """Computes the group basis pursuit loss of the matrix beta"""
+    output = np.linalg.norm(beta, axis=1).sum()
+
+    return output
+
+
+def basis_pursuit_loss(X):  # beta_bp
+    """Computes the basis pursuit loss of the matrix beta"""
+
+    # beta = np.linalg.pinv(X) # do all pinv have the same norm?  No
+
+    beta = np.linalg.pinv(X)
     output = np.linalg.norm(beta, axis=1).sum()
 
     return output
