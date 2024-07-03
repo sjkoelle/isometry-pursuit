@@ -1,0 +1,96 @@
+
+@ARTICLE{Kohli2021-lr,
+  title    = "{LDLE}: Low Distortion Local Eigenmaps",
+  author   = "Kohli, Dhruv and Cloninger, Alexander and Mishne, Gal",
+  abstract = "We present Low Distortion Local Eigenmaps (LDLE), a manifold
+              learning technique which constructs a set of low distortion local
+              views of a data set in lower dimension and registers them to
+              obtain a global embedding. The local views are constructed using
+              the global eigenvectors of the graph Laplacian and are registered
+              using Procrustes analysis. The choice of these eigenvectors may
+              vary across the regions. In contrast to existing techniques, LDLE
+              can embed closed and non-orientable manifolds into their
+              intrinsic dimension by tearing them apart. It also provides
+              gluing instruction on the boundary of the torn embedding to help
+              identify the topology of the original manifold. Our experimental
+              results will show that LDLE largely preserved distances up to a
+              constant scale while other techniques produced higher distortion.
+              We also demonstrate that LDLE produces high quality embeddings
+              even when the data is noisy or sparse.",
+  journal  = "J. Mach. Learn. Res.",
+  volume   =  22,
+  year     =  2021,
+  keywords = "closed manifold; graph laplacian; local parameterization;
+              manifold learning; non-orientable manifold; procrustes analysis",
+  language = "en"
+}
+
+@inproceedings{NEURIPS2019_6a10bbd4,
+ author = {Chen, Yu-Chia and Meila, Marina},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {H. Wallach and H. Larochelle and A. Beygelzimer and F. d\textquotesingle Alch\'{e}-Buc and E. Fox and R. Garnett},
+ pages = {},
+ publisher = {Curran Associates, Inc.},
+ title = {Selecting the independent coordinates of manifolds with large aspect ratios},
+ url = {https://proceedings.neurips.cc/paper_files/paper/2019/file/6a10bbd480e4c5573d8f3af73ae0454b-Paper.pdf},
+ volume = {32},
+ year = {2019}
+}
+
+@inproceedings{He2023-ch,
+  title     = "Product Manifold Learning with Independent Coordinate Selection",
+  author    = "He, Jesse and Brug{\`e}re, Tristan and Mishne, Gal",
+  booktitle = "Proceedings of the 2nd Annual Workshop on Topology, Algebra, and Geometry in Machine Learning (TAG-ML) at ICML",
+  abstract  = "In many dimensionality reduction tasks, we wish to identify the
+               constituent components that explain our observations. For
+               manifold learning, this can be formalized as factoring a
+               Riemannian product manifold. Recovering this factorization,
+               however, may suffer from certain difficulties in practice,
+               especially when data is sparse or noisy, or when one factor is
+               distorted by the other. To address these limitations, we propose
+               identifying non-redundant coordinates on the product manifold
+               before applying product manifold learning to identify which
+               coordinates correspond to different factor manifolds. We
+               demonstrate our approach on both synthetic and real-world data.",
+  month     = jun,
+  year      = 2023
+}
+
+
+@INPROCEEDINGS{Koelle2024-no,
+  title     = "Consistency of dictionary-based manifold learning",
+  booktitle = "Proceedings of The 27th International Conference on Artificial
+               Intelligence and Statistics",
+  author    = "Koelle, Samson J and Zhang, Hanyu and Murad, Octavian-Vlad and
+               Meila, Marina",
+  editor    = "Dasgupta, Sanjoy and Mandt, Stephan and Li, Yingzhen",
+  abstract  = "We analyze a paradigm for interpretable Manifold Learning for
+               scientific data analysis, whereby one parametrizes a manifold
+               with d smooth functions from a scientist-provided dictionary of
+               meaningful, domain-related functions. When such a
+               parametrization exists, we provide an algorithm for finding it
+               based on sparse regression in the manifold tangent bundle,
+               bypassing more standard, agnostic manifold learning algorithms.
+               We prove conditions for the existence of such parameterizations
+               in function space and the first end to end recovery results from
+               finite samples. The method is demonstrated on both synthetic
+               problems and with data from a real scientific domain.",
+  publisher = "PMLR",
+  volume    =  238,
+  pages     = "4348--4356",
+  series    = "Proceedings of Machine Learning Research",
+  year      =  2024
+}
+
+
+
+@ARTICLE{Koelle2022-ju,
+  title    = "Manifold Coordinates with Physical Meaning",
+  author   = "Koelle, Samson J and Zhang, Hanyu and Meila, Marina and Chen,
+              Yu-Chia",
+  journal  = "J. Mach. Learn. Res.",
+  volume   =  23,
+  number   =  133,
+  pages    = "1--57",
+  year     =  2022
+}

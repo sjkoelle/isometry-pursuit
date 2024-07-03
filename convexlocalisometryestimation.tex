@@ -3,34 +3,70 @@
 
 \begin{document}
 
-This note specifically targets the problem of local isometry estimation using a convex Tangent Space Lasso-type method.  It does not directly reproduce the argument that tangent space basis pursuit selects for a "most isometric embedding" from my thesis, nor would I expect this to go in the same paper as tangent space lasso. Other interesting open questions about basis pursuit that are not covered here include can we equate the intrinsic curvature of the data manifold to the basis pursuit loss, or what happens when dictionary = feature space, or what happens if we estimate in the coordinates of the ambient space, or what are the convergence rates.  I chose to focus on local isometry estimation because it seemed distinct enough from what everyone else was working on that it could be published as a workshop paper on its own, and because the mathematical components are a little novel, but not disorientingly so, and because it solves an open problem noticed by another research group.
+%This note specifically targets the problem of local isometry estimation using a convex Tangent Space Lasso-type method.
+%It does not directly reproduce the argument that tangent space basis pursuit selects for a "most isometric embedding" from my thesis, nor would I expect this to go in the same paper as tangent space lasso.
+%Other interesting open questions about basis pursuit that are not covered here include can we equate the intrinsic curvature of the data manifold to the basis pursuit loss, or what happens when dictionary = feature space, or what happens if we estimate in the coordinates of the ambient space, or what are the convergence rates.
+%I chose to focus on local isometry estimation because it seemed distinct enough from what everyone else was working on that it could be published as a workshop paper on its own, and because the mathematical components are a little novel, but not disorientingly so, and because it solves an open problem noticed by another research group.
 
 \begin{abstract}
 
-The selection of a set of coordinate functions producing an isometry embedding from within a dictionary is an important topic in geometric data analysis \cite{Gal Mishne paper}, since isometry embeddings preserve important properties like distances between points.
+Selection of coordinate functions of an embedding space from within a dictionary is a core problem in geometric data analysis .
+In order of specificity, these methods may seek to optimize independent coordinates \cite{NEURIPS2019_6a10bbd4, He2023-ch}, low distortion embeddings, or isometric embeddings.
+% low distortion is conformal
+Dictionaries can be either given \cite{Koelle2022-ju, Koelle2024-no} or learned \cite{Kohli2021-lr}.
+Optimization can be global or local.
+
+These coordinate selection algorithms can be greedy \cite{NEURIPS2019_6a10bbd4, Kohli2021-lr} or convex \cite{Koelle2022-ju, Koelle2024-no}.
+In this paper we show that an adapted version of the group lasso type algorithm in \cite{Koelle2024-no} leads to a convex procedure competitive with previous greedy approaches with respect to isometry.
+This approach relies on a to-our-knowledge novel matrix inversion algorithm that is sparse in the column space of the matrix.
+This method displays the favorable characteristics of group lasso type problems, including duality of a regularized form with a basis pursuit problem.
+These problems are solvable with off-the-shelf multitask lasso and interior point solvers, respectively.
+% cite some classic manifold learning papers
+
+since isometry embeddings preserve important properties like distances between points.
 We describe a convex optimization approach for selection such functions based on the Tangent Space Lasso.
-Compared with previous greedy approaches \cite{https://openreview.net/pdf?id=GugzbdAoHG, chen and meila, ldle}, this approach is more computationally expedient.
+This approach combines a strict theoretical criterion and computationally expediency.
+
+% In could be used in the stiching step of an algorithm like the kohli one
+
+%Compared with losses such as operator norm, this loss is symmetric accross the entire spectrum
 
 \end{abstract}
 
 \section{Background}
 
-\subsection{Notation}
+We are given a rank $D$ matrix $\mathcal X \in \mathbb R^{D \times P}$ with $P > D$.
+$X$ could be, for example, the Jacobian matrix of a set of candidate coordinate functions.
+We assume that we are given a target dimension $T \leq D$
+% BIG QUESTION: RUN IN D = B?  What is rank of $X$?    It's D if not running D = B
 
-Given $X \in \mathbb R^{p \times d}$ with $p > d$, define the transform
+\section{Problem}
 
+Our goal is to select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is unitary.
+
+\section{Method}
+
+Define the group basis pursuit penalty norm % is this really a norm?
 \begin{align}
-\exp_1 X : = \exp (- | \log \|X_{j.}\|_2)|) \frac{X_{j.}}{\|X_{j.}\|}.
+\ref{eq:bp}
+\|\|_{1,2} \mathbb R^{P \times D} \to \mathbb R^+
+\beta \mapsto  \sum_{p=1}^P  \|\beta_{p.}\|_2.
 \end{align}
 
-Define the group basis pursuit penalty function 
+% Direct minimization of this norm has nothing to do with correlation.
+
+Direct minimization of Equation \ref{eq:bp} will not select for isometry due to the preference for columns with larger norm.
+Define the transform
 \begin{align}
-\|X\|_{1,2} := \sum_{j=1}^p  \|X_{j.}\|
+\exp_1: \mathbb R^{D \times P} \to \mathbb R^{D \times P} \\ 
+\mathcal X \mapsto \exp (- | \log \|{\mathcal X }_{j.}\|_2)|) \frac{{\mathcal X }_{j.}}{\|{\mathcal X }_{j.}\|}.
 \end{align}
-Define the loss function
-\begin{align}
-l (X, \beta) := \|I_d - X\beta\|^2 + \|\beta\|_{2,1}
-\end{align}
+
+
+%Define the loss function
+%\begin{align}
+%l (X, \beta) := \|I_d - X\beta\|^2 + \|\beta\|_{2,1}
+%\end{align}
 
 We can also define the basis pursuit loss
 \begin{align}
