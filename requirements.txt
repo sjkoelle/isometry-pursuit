@@ -1,0 +1,13 @@
+seaborn
+scs
+hyperspy
+umap-learn
+matplotlib
+pillow
+pandas
+multiprocess
+scikit-learn
+scipy
+numpy<=1.23.0
+ipykernel
+pyLDLE2

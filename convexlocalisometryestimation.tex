@@ -1,7 +1,6 @@
 \documentclass[a4paper,11pt]{article}
 \input{config.tex}
 
-
 \begin{document}
 
 This note specifically targets the problem of local isometry estimation using a convex Tangent Space Lasso-type method.  It does not directly reproduce the argument that tangent space basis pursuit selects for a "most isometric embedding" from my thesis, nor would I expect this to go in the same paper as tangent space lasso. Other interesting open questions about basis pursuit that are not covered here include can we equate the intrinsic curvature of the data manifold to the basis pursuit loss, or what happens when dictionary = feature space, or what happens if we estimate in the coordinates of the ambient space, or what are the convergence rates.  I chose to focus on local isometry estimation because it seemed distinct enough from what everyone else was working on that it could be published as a workshop paper on its own, and because the mathematical components are a little novel, but not disorientingly so, and because it solves an open problem noticed by another research group.
@@ -202,5 +201,7 @@ We can perform regression in the high dimensional space instead of projecting on
 x_M = (y^T y) x \\ 
 ({x_M}^T {x_M})^{-1} {x_M} I = ({(y^T y x)}^T {(y^T y x)})^{-1} {(y^T y x)} I = (x^T y^T y x)^{-1} (y^T y x)
 \end{align}
+
+%low distortion just means conformal
 
 \end{document}
