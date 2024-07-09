@@ -1,3 +1,5 @@
+cvxpy
+einops
 seaborn
 scs
 hyperspy
@@ -10,4 +12,4 @@ scikit-learn
 scipy
 numpy<=1.23.0
 ipykernel
-pyLDLE2
+# pyLDLE2

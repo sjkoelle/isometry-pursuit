@@ -2,7 +2,7 @@ import numpy as np
 
 
 # NOTE (Sam): why not use the exponential transformation after fitting the coefficients?
-def exponential_transformation(X):
+def exponential_transformation(X, power=1):
     """
     Applies the transformation to each row of the input matrix X.
 
@@ -14,7 +14,7 @@ def exponential_transformation(X):
     """
     # Compute the L2 norm of each column
     norms = np.linalg.norm(X, axis=0)
-
+    norms = norms**power
     # # Compute the logarithm of the norms
     # log_norms = np.log(norms)
 

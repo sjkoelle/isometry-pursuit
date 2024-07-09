@@ -1,11 +1,12 @@
 import numpy as np
 
 
-def isometry_loss(matrix: np.ndarray) -> float:
+def isometry_loss(matrix: np.ndarray, power=1) -> float:
     """is it a norm?"""
     singular_values = np.linalg.svd(
         matrix, compute_uv=False
     )  # no 0s since we are in full rankistan
+    singular_values = singular_values**power
     # print(singular_values)
     # output = np.linalg.norm(np.log(singular_values)) ** 2
     # (np.exp(t) + np.exp(1/t) )/ (2 * math.e)
