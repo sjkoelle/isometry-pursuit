@@ -14,7 +14,10 @@ def exponential_transformation(X, power=1):
     """
     # Compute the L2 norm of each column
     norms = np.linalg.norm(X, axis=0)
+    normalized_X = X / norms[np.newaxis, :]
+
     norms = norms**power
+    # print(norms)
     # # Compute the logarithm of the norms
     # log_norms = np.log(norms)
 
@@ -24,7 +27,6 @@ def exponential_transformation(X, power=1):
     exp_values = ((np.exp(norms) + np.exp(norms ** (-1))) ** (-1)) * 2 * np.e
     # (np.exp(t) + np.exp(t**(-1)))**(-1) * (2*math.e)
     # Normalize columns of X
-    normalized_X = X / norms[np.newaxis, :]
 
     # Apply the transformation using einsum
     transformed_X = np.einsum("j,ij->ij", exp_values, normalized_X)
