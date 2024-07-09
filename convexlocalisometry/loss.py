@@ -2,10 +2,11 @@ import numpy as np
 
 
 def isometry_loss(matrix: np.ndarray) -> float:
-
+    """is it a norm?"""
     singular_values = np.linalg.svd(matrix, compute_uv=False)
-    squared_loss = np.linalg.norm(np.log(singular_values)) ** 2
-    return squared_loss
+    # output = np.linalg.norm(np.log(singular_values)) ** 2
+    output = np.sum(np.exp(singular_values) + np.exp(singular_values ** (-1)))
+    return output
 
 
 def subspace_loss(matrix_1: np.ndarray, matrix_2: np.ndarray) -> float:
@@ -21,12 +22,12 @@ def group_lasso_norm(beta):  # beta_bp
     return output
 
 
-def basis_pursuit_loss(X):  # beta_bp
+def pseudoinverse_basis_pursuit_loss(X):  # beta_bp
     """Computes the basis pursuit loss of the matrix beta"""
 
-    # beta = np.linalg.pinv(X) # do all pinv have the same norm?  No
-
-    beta = np.linalg.pinv(X)
+    beta = np.linalg.pinv(
+        X
+    )  # do all inv have the same norm?  No... pinv is well defined tho
     output = np.linalg.norm(beta, axis=1).sum()
 
     return output
