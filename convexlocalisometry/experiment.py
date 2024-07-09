@@ -1,8 +1,8 @@
 import numpy as np
 
-from .simulations import simulate_unitary_matrix
+from .simulation import simulate_unitary_matrix
 from .loss import isometry_loss
-from .algorithms import greedy, brute
+from .algorithm import greedy, brute
 
 
 def run_experiment(matrix, target_dimension, lambdas=np.logspace(1e-6, 1e-3)):

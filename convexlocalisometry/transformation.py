@@ -21,7 +21,8 @@ def exponential_transformation(X):
     # # Compute the exponential of the negative absolute value of the log norms
     # exp_values = np.exp(-np.abs(log_norms))
 
-    exp_values = (np.exp(norms) + np.exp(norms**(-1)))**(-1)
+    exp_values = ((np.exp(norms) + np.exp(norms ** (-1))) ** (-1)) * 2 * np.e
+    # (np.exp(t) + np.exp(t**(-1)))**(-1) * (2*math.e)
     # Normalize columns of X
     normalized_X = X / norms[np.newaxis, :]
 
