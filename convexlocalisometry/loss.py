@@ -3,9 +3,15 @@ import numpy as np
 
 def isometry_loss(matrix: np.ndarray) -> float:
     """is it a norm?"""
-    singular_values = np.linalg.svd(matrix, compute_uv=False)
+    singular_values = np.linalg.svd(
+        matrix, compute_uv=False
+    )  # no 0s since we are in full rankistan
+    # print(singular_values)
     # output = np.linalg.norm(np.log(singular_values)) ** 2
-    output = np.sum(np.exp(singular_values) + np.exp(singular_values ** (-1)))
+    # (np.exp(t) + np.exp(1/t) )/ (2 * math.e)
+    output = np.sum(
+        (np.exp(singular_values) + np.exp(singular_values ** (-1))) / (2 * np.e)
+    )
     return output
 
 
