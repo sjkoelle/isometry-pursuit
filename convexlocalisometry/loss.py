@@ -28,12 +28,14 @@ def group_lasso_norm(beta):  # beta_bp
     return output
 
 
-def pseudoinverse_basis_pursuit_loss(X):  # beta_bp
-    """Computes the basis pursuit loss of the matrix beta"""
+# def pseudoinverse_basis_pursuit_loss(beta):  # beta_bp
+#     """Computes the basis pursuit loss of the matrix beta"""
 
-    beta = np.linalg.pinv(
-        X
-    )  # do all inv have the same norm?  No... pinv is well defined tho
-    output = np.linalg.norm(beta, axis=1).sum()
+#     # beta = np.linalg.pinv(
+#     #     X
+#     # )  # do all inv have the same norm?  No... pinv is well defined (maybe min w.r.t. a norm, not necessarily 2,1))
+#     # so this should be found by the algorithm
+#     # in fact this is the whole point of the algorithm
+#     output = np.linalg.norm(beta, axis=1).sum()
 
-    return output
+#     return output
