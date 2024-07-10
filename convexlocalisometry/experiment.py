@@ -1,10 +1,12 @@
 import numpy as np
 
 from .simulation import simulate_unitary_matrix
-from .loss import isometry_loss
-from .algorithm import greedy, brute
+from .loss import isometry_loss, group_lasso_norm
+from .algorithm import greedy, brute, group_basis_pursuit
+from .transformation import exponential_transformation
 
 
+# NOTE (Sam): probably also need iterables of matrices for subsets of the functions here.
 def run_experiment(matrix, target_dimension, lambdas=np.logspace(1e-6, 1e-3)):
     # NOTE (Sam): target dimension is assumed known
     greedy_selection = greedy(
@@ -14,16 +16,17 @@ def run_experiment(matrix, target_dimension, lambdas=np.logspace(1e-6, 1e-3)):
         matrix=matrix, target_dimension=target_dimension, loss=isometry_loss
     )
 
-    #
+    # NOTE (Sam): for this we determine the minimizer of the greedy selection one additional function at a time.
     greedy_basis_pursuit_selection = greedy(
         matrix=matrix,
         target_dimension=target_dimension,
-        loss=basis_pursuit_loss,
-        # We can't do a greedy selection in the same way since we need to invert first.
-        # Thus, we need to first invert at d=1, then select the best candidate w.r.t. the inversion, then select at d=2, invert, select, etc.
+        loss=lambda matrix: group_lasso_norm(
+            group_basis_pursuit(exponential_transformation(matrix))
+        ),
     )
 
-    #
+    # the idea is that this this will give us a sparse (target_dimension) function solution.
+    # how much worse will this be than the overall best solution?
     brute_basis_pursuit_selection = brute(
         matrix=matrix,
         target_dimension=target_dimension,
