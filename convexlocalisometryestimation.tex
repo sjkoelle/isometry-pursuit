@@ -41,21 +41,21 @@ Supervised learning, in which a response variable is predicted by
 In contrast, unsupervised variable selection as a type of dimension reduction has received comparably less attention.
 Unsupervised learning methods like PCA, UMAP, and autoencoders are often concerned with minimizing reconstruction error without regard for the sparsity of the learned respresentation, and among those that sparsify, variable selection methods contrast with sparsification with respect to reconstruction from a learned latent space.
 
-The core literature for variable selection comes from sparse PCA.
+The core literature for variable selection comes from sparse PCA. % prob should compare with this
 
 In the context of non-linear dimension reduction, dictionary-based methods, sparse reconstruction exists.
 Not to be confused with dictionary-learning methods.
 % Although methods like sparse autoencoders, sparse PCA exist 
 
-The problem of computing a sparse inverse matrix. % Something about finding balance.august 
+Multitask learning \cite{Hastie2015-qa}
 
 Within the context of non-linear dimension reduction, selection of coordinate functions of an embedding space from within a dictionary is a core problem in geometric data analysis.  % more on interpretability
-In order of specificity, these methods may seek to optimize independent coordinates \cite{NEURIPS2019_6a10bbd4, He2023-ch}, low distortion embeddings, or isometric embeddings.
+In order of specificity, these methods may seek to optimize independent coordinates \cite{Chen2019-km, He2023-ch}, low distortion embeddings, or isometric embeddings.
 % low distortion is conformal
 Dictionaries can be either given \cite{Koelle2022-ju, Koelle2024-no} or learned \cite{Kohli2021-lr}.
 Optimization can be global or local.
 
-These coordinate selection algorithms can be greedy \cite{NEURIPS2019_6a10bbd4, Kohli2021-lr} or convex \cite{Koelle2022-ju, Koelle2024-no}.
+These coordinate selection algorithms can be greedy \cite{NEURIPS2019_6a10bbd4, Kohli2021-lr, Jones2007-uc} or convex \cite{Koelle2022-ju, Koelle2024-no}.
 In this paper we show that an adapted version of the group lasso type algorithm in \cite{Koelle2024-no} leads to a convex procedure competitive with previous greedy approaches with respect to isometry.
 This approach relies on a to-our-knowledge novel matrix inversion algorithm that is sparse in the column space of the matrix.
 This method displays the favorable characteristics of group lasso type problems, including duality of a regularized form with a basis pursuit problem.
@@ -66,9 +66,11 @@ since isometry embeddings preserve important properties like distances between p
 We describe a convex optimization approach for selection such functions based on the Tangent Space Lasso.
 This approach combines a strict theoretical criterion and computationally expediency.
 
+Basis pursuit \cite{Chen2001-hh} 
 % Recommendation, RAG
 
-%Compared with losses such as operator norm, this loss is symmetric accross the entire spectrum
+Compared with losses such as operator norm, this loss is symmetric across the entire spectrum.  Compared with the nuclear norm, it is symmetric around 1 \cite{Fazel2001ARM}. % is our loss self-dual?
+% compared with sparse pca loadings are constrained to be 1.  is it convex?
 
 \section{Background}
 
@@ -240,6 +242,10 @@ Experiments (Loss)
 
 Compare with isometry loss (2 norm of singular values).
 
+\subsection{Implementation}
+
+We use the multitask lasso from sklearn and the cvxpy package for basis pursuit.  We use the SCS solver from CVXPY, which is able to push sparse values arbitrarily close to 0. Data is IRIS and Wine, as well as flat torus from ldle.
+\subsection{Computational complexity}
 \section{Experiments}
 
 Comparison with isometry loss.
@@ -258,13 +264,22 @@ Good news is tangent space estimation need not be performed.
 Let's compare the coefficients involved in projecting versus not projecting.
 We can perform regression in the high dimensional space instead of projecting on span of target variable.
 
+With respect to pseudoinverse estimation, sparse methods have been applied in \cite{Sun2012-vp}
 
+A common misconception %check
+about the lasso is that all coefficients enter the regularization path.
+As we see by the correspondence between $\lambda$ approaching $0$ and the basis pursuit problem, some coefficients in fact do not go to $0$. 
 \section{Supplement}
 
 % Proof of isometry (Copy from thesis)
 
 Proof of local isometry (simpler proof since no oscillation game)
 
+While the sparse PCA problem is non-convex, our approach can be taken as a simpler version in the sense that the loadings are constrained to be the identify matrix.
+\cite{Bertsimas2022-qo} gives a method for solving the sparse-PCA method more efficiently than the original greedy approach.
+Compared with the FISTA method used in  \cite{Koelle2022-ju, Koelle2024-no}, coordinate descent \cite{Meier2008-ts, Qin2013-tx} is faster \cite{Zhao2023-xn}.
+
+It is likely that the transformed singular value loss could be reframed as a semdefinite programming problem, since the composition of two convex functions is convex \cite{Boyd2004-ql}.
 %\section{Comparison with other approach}
 
 
