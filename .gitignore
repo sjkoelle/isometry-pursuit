@@ -1,3 +1,4 @@
+*.bbl
 *.DS_Store
 *.pyc
 *.out
