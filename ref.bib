@@ -25,6 +25,19 @@
   language = "en"
 }
 
+
+@ARTICLE{Bertsimas2022-dv,
+  title    = "Solving {Large-Scale} Sparse {PCA} to Certifiable (Near)
+              Optimality",
+  author   = "Bertsimas, Dimitris and Cory-Wright, Ryan and Pauphilet, Jean",
+  journal  = "J. Mach. Learn. Res.",
+  volume   =  23,
+  number   =  13,
+  pages    = "1--35",
+  year     =  2022
+}
+
+
 @inproceedings{NEURIPS2019_6a10bbd4,
  author = {Chen, Yu-Chia and Meila, Marina},
  booktitle = {Advances in Neural Information Processing Systems},
@@ -145,6 +158,59 @@
 }
 
 
+@ARTICLE{Candes2005-dd,
+  title         = "Decoding by Linear Programming",
+  author        = "Candes, Emmanuel and Tao, Terence",
+  abstract      = "This paper considers the classical error correcting problem
+                   which is frequently discussed in coding theory. We wish to
+                   recover an input vector $f \in \R^n$ from corrupted
+                   measurements $y = A f + e$. Here, $A$ is an $m$ by $n$
+                   (coding) matrix and $e$ is an arbitrary and unknown vector
+                   of errors. Is it possible to recover $f$ exactly from the
+                   data $y$? We prove that under suitable conditions on the
+                   coding matrix $A$, the input $f$ is the unique solution to
+                   the $\ell_1$-minimization problem ($\|x\|_\{\ell_1\} :=
+                   \sum_i |x_i|$) $$ \textbackslashmin_\{g \textbackslashin
+                   \textbackslashR^n\} \textbackslash| y - Ag
+                   \textbackslash|_\{\textbackslashell_1\} $$ provided that the
+                   support of the vector of errors is not too large,
+                   $\|e\|_\{\ell_0\} := |\{i : e_i \neq 0\}| \le \rho \cdot m$
+                   for some $\rho > 0$. In short, $f$ can be recovered exactly
+                   by solving a simple convex optimization problem (which one
+                   can recast as a linear program). In addition, numerical
+                   experiments suggest that this recovery procedure works
+                   unreasonably well; $f$ is recovered exactly even in
+                   situations where a significant fraction of the output is
+                   corrupted.",
+  month         =  feb,
+  year          =  2005,
+  archivePrefix = "arXiv",
+  primaryClass  = "math.MG",
+  eprint        = "math/0502327"
+}
+
+@ARTICLE{Dey2017-mx,
+  title    = "Sparse principal component analysis and its $l_1$-relaxation",
+  author   = "Dey, Santanu S and Mazumder, R and Molinaro, M and Wang, Guanyi",
+  abstract = "Principal component analysis (PCA) is one of the most widely used
+              dimensionality reduction methods in scientific data analysis. In
+              many applications, for additional interpretability, it is
+              desirable for the factor loadings to be sparse, that is, we solve
+              PCA with an additional cardinality (l0) constraint. The resulting
+              optimization problem is called the sparse principal component
+              analysis (SPCA). One popular approach to achieve sparsity is to
+              replace the l0 constraint by an l1 constraint. In this paper, we
+              prove that, independent of the data, the optimal objective
+              function value of the problem with l0 constraint is within a
+              constant factor of the the optimal objective function value of
+              the problem with l1 constraint. To the best of our knowledge,
+              this is the first formal relationship established between the l0
+              and the l1 constraint version of the problem.",
+  journal  = "arXiv: Optimization and Control",
+  month    =  dec,
+  year     =  2017
+}
+
 @ARTICLE{Bertsimas2022-qo,
   title    = "Sparse {PCA}: A geometric approach",
   author   = "Bertsimas, D and Kitane, Driss Lahlou",
@@ -244,6 +310,358 @@
   pages    = "129",
   month    =  feb,
   year     =  2001
+}
+
+
+@ARTICLE{Yuan2006-bt,
+  title     = "Model selection and estimation in regression with grouped
+               variables",
+  author    = "Yuan, Ming and Lin, Yi",
+  abstract  = "SummaryWe consider the problem of selecting grouped variables
+               (factors) for accurate prediction in regression. Such a problem
+               arises naturally in many practical situations with the
+               multifactor analysis-of-variance problem as the most important
+               and well-known example. Instead of selecting factors by stepwise
+               backward elimination, we focus on the accuracy of estimation and
+               consider extensions of the lasso, the LARS algorithm and the
+               non-negative garrotte for factor selection. The lasso, the LARS
+               algorithm and the non-negative garrotte are recently proposed
+               regression methods that can be used to select individual
+               variables. We study and propose efficient algorithms for the
+               extensions of these methods for factor selection and show that
+               these extensions give superior performance to the traditional
+               stepwise backward elimination method in factor selection
+               problems. We study the similarities and the differences between
+               these methods. Simulations and real examples are used to
+               illustrate the methods.",
+  journal   = "J. R. Stat. Soc. Series B Stat. Methodol.",
+  publisher = "Oxford University Press (OUP)",
+  volume    =  68,
+  number    =  1,
+  pages     = "49--67",
+  month     =  feb,
+  year      =  2006,
+  copyright = "https://academic.oup.com/journals/pages/open\_access/funder\_policies/chorus/standard\_publication\_model",
+  language  = "en"
+}
+
+@ARTICLE{Mallat93-wi,
+  author={Mallat, S.G. and Zhifeng Zhang},
+  journal={IEEE Transactions on Signal Processing}, 
+  title={Matching pursuits with time-frequency dictionaries}, 
+  year={1993},
+  volume={41},
+  number={12},
+  pages={3397-3415},
+  keywords={Matching pursuit algorithms;Time frequency analysis;Dictionaries;Pursuit algorithms;Fourier transforms;Signal representations;Vocabulary;Signal processing algorithms;Interference;Natural languages},
+  doi={10.1109/78.258082}}
+  
+  
+@ARTICLE{Wu2019-uk,
+  title         = "Recent Advances in Diversified Recommendation",
+  author        = "Wu, Qiong and Liu, Yong and Miao, Chunyan and Zhao, Yin and
+                   Guan, Lu and Tang, Haihong",
+  abstract      = "With the rapid development of recommender systems, accuracy
+                   is no longer the only golden criterion for evaluating
+                   whether the recommendation results are satisfying or not. In
+                   recent years, diversity has gained tremendous attention in
+                   recommender systems research, which has been recognized to
+                   be an important factor for improving user satisfaction. On
+                   the one hand, diversified recommendation helps increase the
+                   chance of answering ephemeral user needs. On the other hand,
+                   diversifying recommendation results can help the business
+                   improve product visibility and explore potential user
+                   interests. In this paper, we are going to review the recent
+                   advances in diversified recommendation. Specifically, we
+                   first review the various definitions of diversity and
+                   generate a taxonomy to shed light on how diversity have been
+                   modeled or measured in recommender systems. After that, we
+                   summarize the major optimization approaches to diversified
+                   recommendation from a taxonomic view. Last but not the
+                   least, we project into the future and point out trending
+                   research directions on this topic.",
+  month         =  may,
+  year          =  2019,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.IR",
+  eprint        = "1905.06589"
+}
+
+
+@ARTICLE{Wu2019-uk,
+  title         = "Recent Advances in Diversified Recommendation",
+  author        = "Wu, Qiong and Liu, Yong and Miao, Chunyan and Zhao, Yin and
+                   Guan, Lu and Tang, Haihong",
+  abstract      = "With the rapid development of recommender systems, accuracy
+                   is no longer the only golden criterion for evaluating
+                   whether the recommendation results are satisfying or not. In
+                   recent years, diversity has gained tremendous attention in
+                   recommender systems research, which has been recognized to
+                   be an important factor for improving user satisfaction. On
+                   the one hand, diversified recommendation helps increase the
+                   chance of answering ephemeral user needs. On the other hand,
+                   diversifying recommendation results can help the business
+                   improve product visibility and explore potential user
+                   interests. In this paper, we are going to review the recent
+                   advances in diversified recommendation. Specifically, we
+                   first review the various definitions of diversity and
+                   generate a taxonomy to shed light on how diversity have been
+                   modeled or measured in recommender systems. After that, we
+                   summarize the major optimization approaches to diversified
+                   recommendation from a taxonomic view. Last but not the
+                   least, we project into the future and point out trending
+                   research directions on this topic.",
+  month         =  may,
+  year          =  2019,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.IR",
+  eprint        = "1905.06589"
+}
+
+
+
+@ARTICLE{Carbonell2017-gi,
+  title     = "The use of {MMR}, diversity-based reranking for reordering
+               documents and producing summaries",
+  author    = "Carbonell, Jaime and Goldstein, Jade",
+  abstract  = "This paper presents a method for combining query-relevance with
+               information-novelty in the context of text retrieval and
+               summarization. The Maximal Marginal Relevance (MMR) criterion
+               strives to reduce redundancy while maintaining query relevance
+               in re-ranking retrieved documents and in selecting apprw priate
+               passages for text summarization. Preliminary results indicate
+               some benefits for MMR diversity ranking in document retrieval
+               and in single document summarization. The latter are borne out
+               by the recent results of the SUMMAC conference in the evaluation
+               of summarization systems. However, the clearest advantage is
+               demonstrated in constructing non-redundant multi-document
+               summaries, where MMR results are clearly superior to non-MMR
+               passage selection.",
+  journal   = "SIGIR Forum",
+  publisher = "Association for Computing Machinery (ACM)",
+  volume    =  51,
+  number    =  2,
+  pages     = "209--210",
+  month     =  aug,
+  year      =  1998,
+  copyright = "http://www.acm.org/publications/policies/copyright\_policy\#Background",
+  language  = "en"
+}
+
+
+@techreport{Tropp04-ju,
+  title = {JUST RELAX: Convex Programming Methods for Subset Selection and Sparse Approximation},
+  author = {Joel A. Tropp},
+  year = {2004},
+  institution = {Institute for Computational Engineering and Sciences, The University of Texas at Austin},
+  type = {Technical Report},
+  number = {04-04},
+  url = {https://www.oden.utexas.edu/media/reports/2004/0404.pdf}
+}
+
+@misc{cvxpy_sparse_solution,
+  title = {Sparse Solution with CVXPY},
+  author = {{CVXPY Developers}},
+  howpublished = {\url{https://www.cvxpy.org/examples/applications/sparse_solution.html}},
+  note = {Accessed: 2024-07-11}
+}
+
+
+  
+  @article{Tropp06-sg,
+title = {Algorithms for simultaneous sparse approximation. Part II: Convex relaxation},
+journal = {Signal Processing},
+volume = {86},
+number = {3},
+pages = {589-602},
+year = {2006},
+note = {Sparse Approximations in Signal and Image Processing},
+issn = {0165-1684},
+doi = {https://doi.org/10.1016/j.sigpro.2005.05.031},
+url = {https://www.sciencedirect.com/science/article/pii/S0165168405002239},
+author = {Joel A. Tropp},
+keywords = {Combinatorial optimization, Convex relaxation, Multiple measurement vectors, Simultaneous sparse approximation},
+abstract = {A simultaneous sparse approximation problem requests a good approximation of several input signals at once using different linear combinations of the same elementary signals. At the same time, the problem balances the error in approximation against the total number of elementary signals that participate. These elementary signals typically model coherent structures in the input signals, and they are chosen from a large, linearly dependent collection. The first part of this paper presents theoretical and numerical results for a greedy pursuit algorithm, called simultaneous orthogonal matching pursuit. The second part of the paper develops another algorithmic approach called convex relaxation. This method replaces the combinatorial simultaneous sparse approximation problem with a closely related convex program that can be solved efficiently with standard mathematical programming software. The paper develops conditions under which convex relaxation computes good solutions to simultaneous sparse approximation problems.}
+}
+
+@INPROCEEDINGS{Tropp05-ml,
+  author={Tropp, J.A. and Gilbert, A.C. and Strauss, M.J.},
+  booktitle={Proceedings. (ICASSP '05). IEEE International Conference on Acoustics, Speech, and Signal Processing, 2005.}, 
+  title={Simultaneous sparse approximation via greedy pursuit}, 
+  year={2005},
+  volume={5},
+  number={},
+  pages={v/721-v/724 Vol. 5},
+  keywords={Dictionaries;Sparse matrices;Matching pursuit algorithms;Optimized production technology;Mathematics;Vectors;Signal analysis;Pursuit algorithms;Approximation algorithms;Approximation error},
+  doi={10.1109/ICASSP.2005.1416405}}
+  
+@BOOK{James2014-eg,
+  title     = "An Introduction to Statistical Learning: with Applications in
+               {R}",
+  author    = "James, Gareth and Witten, Daniela and Hastie, Trevor and
+               Tibshirani, Robert",
+  abstract  = "An Introduction to Statistical Learning provides an accessible
+               overview of the field of statistical learning, an essential
+               toolset for making sense of the vast and complex data sets that
+               have emerged in fields ranging from biology to finance to
+               marketing to astrophysics in the past twenty years. This book
+               presents some of the most important modeling and prediction
+               techniques, along with relevant applications. Topics include
+               linear regression, classification, resampling methods, shrinkage
+               approaches, tree-based methods, support vector machines,
+               clustering, and more. Color graphics and real-world examples are
+               used to illustrate the methods presented. Since the goal of this
+               textbook is to facilitate the use of these statistical learning
+               techniques by practitioners in science, industry, and other
+               fields, each chapter contains a tutorial on implementing the
+               analyses and methods presented in R, an extremely popular open
+               source statistical software platform.Two of the authors co-wrote
+               The Elements of Statistical Learning (Hastie, Tibshirani and
+               Friedman, 2nd edition 2009), a popular reference book for
+               statistics and machine learning researchers. An Introduction to
+               Statistical Learning covers many of the same topics, but at a
+               level accessible to a much broader audience. This book is
+               targeted at statisticians and non-statisticians alike who wish
+               to use cutting-edge statistical learning techniques to analyze
+               their data. The text assumes only a previous course in linear
+               regression and no knowledge of matrix algebra.",
+  publisher = "Springer New York",
+  month     =  jul,
+  year      =  2014,
+  language  = "en"
+}
+
+
+@ARTICLE{Obozinski2006-kq,
+  title    = "Multi-task feature selection",
+  author   = "Obozinski, G and Taskar, B and Jordan, Michael I",
+  abstract = "We address the problem of joint feature selection across a group
+              of related classification or regression tasks. We propose a novel
+              type of joint regularization of the model parameters in order to
+              couple feature selection across tasks. Intuitively, we extend the
+              `1 regularization for single-task estimation to the multi-task
+              setting. By penalizing the sum of `2-norms of the blocks of
+              coefficients associated with each feature across different tasks,
+              we encourage multiple predictors to have similar parameter
+              sparsity patterns. To fit parameters under this regularization,
+              we propose a blockwise boosting scheme that follows the
+              regularization path. The algorithm introduces and updates
+              simultaneously the coefficients associated with one feature in
+              all tasks. We show empirically that this approach outperforms
+              independent `1-based feature selection on several datasets.",
+  year     =  2006
+}
+
+
+@ARTICLE{Yeung2011-fg,
+  title    = "A probabilistic framework for learning task relationships in
+              multi-task learning",
+  author   = "Yeung, Dit-Yan and Zhang, Yu",
+  abstract = "For many real-world machine learning applications, labeled data
+              is costly because the data labeling process is laborious and time
+              consuming. As a consequence, only limited labeled data is
+              available for model training, leading to the so-called labeled
+              data deficiency problem. In the machine learning research
+              community, several directions have been pursued to address this
+              problem. Among these efforts, a promising direction is multi-task
+              learning which is a learning paradigm that seeks to boost the
+              generalization performance of a model on a learning task with the
+              help of some other related tasks. This learning paradigm has been
+              inspired by human learning activities in that people often apply
+              the knowledge gained from previous learning tasks to help learn a
+              new task more efficiently and effectively. Of the several
+              approaches proposed in previous research for multi-task learning,
+              a relatively less studied yet very promising approach is based on
+              automatically learning the relationships among tasks from data.
+              In this thesis, we first propose a powerful probabilistic
+              framework for multi-task learning based on the task relationship
+              learning approach. The main novelty of our framework lies in the
+              use of a matrix variate prior with parameters that model task
+              relationships. Based on this general multi-task learning
+              framework, we then propose four specific methods, namely,
+              multi-task relationship learning (MTRL), multi-task generalized t
+              process (MTGTP), multi-task high-order task relationship learning
+              (MTHOL), and probabilistic multi-task feature selection (PMTFS).
+              By utilizing a matrix variate normal distribution as a prior on
+              the model parameters of all tasks, MTRL can be formulated
+              efficiently as a convex optimization problem. On the other hand,
+              MTGTP is a Bayesian method that models the task covariance matrix
+              as a random matrix with an inverse-Wishart prior and integrates
+              it out to achieve Bayesian model averaging to improve the
+              generalization performance. With MTRL as a base, MTHOL provides a
+              generalization that learns high-order task relationships and
+              model parameters. Unlike MTRL, MTGTP and MTHOL which are for
+              standard multi-task classification or regression problems, PMTFS
+              addresses the feature selection problem under the multi-task
+              setting by incorporating the learning of task relationships.
+              Besides conducting experimental validation of the proposed
+              methods on several data sets for multi-task learning, we also
+              investigate in detail a collaborative filtering application under
+              the multi-task setting. Through both theoretical and empirical
+              studies on the several methods proposed, we show that task
+              relationship learning is a very promising approach for multi-task
+              learning and related learning problems.",
+  year     =  2011
+}
+
+
+@article{Friedman-2007-yb,
+author = {Jerome Friedman and Trevor Hastie and Holger H{\"o}fling and Robert Tibshirani},
+title = {{Pathwise coordinate optimization}},
+volume = {1},
+journal = {The Annals of Applied Statistics},
+number = {2},
+publisher = {Institute of Mathematical Statistics},
+pages = {302 -- 332},
+keywords = {Convex optimization, Coordinate descent, Lasso},
+year = {2007},
+doi = {10.1214/07-AOAS131},
+URL = {https://doi.org/10.1214/07-AOAS131}
+}
+
+
+@ARTICLE{Liu2009-yo,
+  title    = "Blockwise coordinate descent procedures for the multi-task lasso,
+              with applications to neural semantic basis discovery",
+  author   = "Liu, Han and Palatucci, Mark and Zhang, Jian",
+  abstract = "We develop a cyclical blockwise coordinate descent algorithm for
+              the multi-task Lasso that efficiently solves problems with
+              thousands of features and tasks. The main result shows that a
+              closed-form Winsorization operator can be obtained for the
+              sup-norm penalized least squares regression. This allows the
+              algorithm to find solutions to very large-scale problems far more
+              efficiently than existing methods. This result complements the
+              pioneering work of Friedman, et al. (2007) for the single-task
+              Lasso. As a case study, we use the multi-task Lasso as a variable
+              selector to discover a semantic basis for predicting human neural
+              activation. The learned solution outperforms the standard basis
+              for this task on the majority of test participants, while
+              requiring far fewer assumptions about cognitive neuroscience. We
+              demonstrate how this learned basis can yield insights into how
+              the brain represents the meanings of words.",
+  journal  = "ICML",
+  pages    = "649--656",
+  month    =  jun,
+  year     =  2009
+}
+
+
+
+% The entry below contains non-ASCII chars that could not be converted
+% to a LaTeX equivalent.
+@ARTICLE{Catalina2018-ek,
+  title    = "Revisiting {FISTA} for Lasso: Acceleration strategies over the
+              regularization path",
+  author   = "Catalina, Alejandro and Ala{\'\i}z, Carlos M and Dorronsoro,
+              Jos{\'e} R",
+  abstract = ". In this work we revisit FISTA algorithm for Lasso showing that
+              recent acceleration techniques may greatly improve its basic
+              version, resulting in a much more competitive procedure. We study
+              the contribution of the diﬀerent improvement strategies, showing
+              experimentally that the ﬁnal version becomes much faster than the
+              standard one.",
+  journal  = "Eur Symp Artif Neural Netw",
+  year     =  2018
 }
 
 
