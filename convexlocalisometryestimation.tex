@@ -41,13 +41,13 @@ Supervised learning, in which a response variable is predicted by
 In contrast, unsupervised variable selection as a type of dimension reduction has received comparably less attention.
 Unsupervised learning methods like PCA, UMAP, and autoencoders are often concerned with minimizing reconstruction error without regard for the sparsity of the learned respresentation, and among those that sparsify, variable selection methods contrast with sparsification with respect to reconstruction from a learned latent space.
 
-The core literature for variable selection comes from sparse PCA. % prob should compare with this
+. % prob should compare with this
 
 In the context of non-linear dimension reduction, dictionary-based methods, sparse reconstruction exists.
 Not to be confused with dictionary-learning methods.
 % Although methods like sparse autoencoders, sparse PCA exist 
 
-Multitask learning \cite{Hastie2015-qa}
+Multitask learning and lasso \cite{Hastie2015-qa}
 
 Within the context of non-linear dimension reduction, selection of coordinate functions of an embedding space from within a dictionary is a core problem in geometric data analysis.  % more on interpretability
 In order of specificity, these methods may seek to optimize independent coordinates \cite{Chen2019-km, He2023-ch}, low distortion embeddings, or isometric embeddings.
@@ -62,6 +62,15 @@ This method displays the favorable characteristics of group lasso type problems,
 These problems are solvable with off-the-shelf multitask lasso and interior point solvers, respectively.
 % cite some classic manifold learning papers
 
+The comparison of greedy (e.g. Orthogonal Matching Pursuit) \cite{Mallat93-wi, Tropp05-ml} and convex \cite{Tropp06-sg} basis pursuit formulations.
+
+
+Compared with sparse pca \cite{Bertsimas2022-qo, Bertsimas2022-dv}, we are not concerned with variability in the dataset, and select.
+The core literature for variable selection comes from sparse PCA \cite{Dey2017-mx}
+While the sparse PCA problem is non-convex, our approach can be taken as a simpler version in the sense that the loadings are constrained to be the identify matrix.
+
+
+\cite{Tropp06-sg} and \cite{Liu2009-yo} use a $1,\infty$ norm to induce sparsity that misses the utility of our normalization for finding unitary matrices.
 since isometry embeddings preserve important properties like distances between points.
 We describe a convex optimization approach for selection such functions based on the Tangent Space Lasso.
 This approach combines a strict theoretical criterion and computationally expediency.
@@ -244,7 +253,7 @@ Compare with isometry loss (2 norm of singular values).
 
 \subsection{Implementation}
 
-We use the multitask lasso from sklearn and the cvxpy package for basis pursuit.  We use the SCS solver from CVXPY, which is able to push sparse values arbitrarily close to 0. Data is IRIS and Wine, as well as flat torus from ldle.
+We use the multitask lasso from sklearn and the cvxpy package for basis pursuit.  We use the SCS interior point solver from CVXPY, which is able to push sparse values arbitrarily close to 0 \cite{cvxpy_sparse_solution}. Data is IRIS and Wine, as well as flat torus from ldle.
 \subsection{Computational complexity}
 \section{Experiments}
 
@@ -266,7 +275,7 @@ We can perform regression in the high dimensional space instead of projecting on
 
 With respect to pseudoinverse estimation, sparse methods have been applied in \cite{Sun2012-vp}
 
-A common misconception %check
+Even though by Lagrangian duality, the basis pursuit solution corresponds to $\lambda approaching $0$, the solution is sparse \cite{Tropp04-ju}.
 about the lasso is that all coefficients enter the regularization path.
 As we see by the correspondence between $\lambda$ approaching $0$ and the basis pursuit problem, some coefficients in fact do not go to $0$. 
 \section{Supplement}
@@ -275,16 +284,24 @@ As we see by the correspondence between $\lambda$ approaching $0$ and the basis 
 
 Proof of local isometry (simpler proof since no oscillation game)
 
-While the sparse PCA problem is non-convex, our approach can be taken as a simpler version in the sense that the loadings are constrained to be the identify matrix.
-\cite{Bertsimas2022-qo} gives a method for solving the sparse-PCA method more efficiently than the original greedy approach.
-Compared with the FISTA method used in  \cite{Koelle2022-ju, Koelle2024-no}, coordinate descent \cite{Meier2008-ts, Qin2013-tx} is faster \cite{Zhao2023-xn}.
+% failure of duality
 
+\cite{Bertsimas2022-qo} gives a method for solving the sparse-PCA method more efficiently than the original greedy approach.
+Compared with the FISTA method used in  \cite{Koelle2022-ju, Koelle2024-no}, coordinate descent \cite{Friedman-2007-yb, Meier2008-ts, Qin2013-tx} is faster \cite{Catalina2018-ek, Zhao2023-xn}.
+Compared with \cite{Liu2009-yo}, the sklearn multitask lasso is $2,1$ rather than $\infty,1$ regularized.
+
+Compared with Gram-Schmidt
 It is likely that the transformed singular value loss could be reframed as a semdefinite programming problem, since the composition of two convex functions is convex \cite{Boyd2004-ql}.
 %\section{Comparison with other approach}
 
+Multitask lasso \cite{Obozinski2006-kq, Yeung2011-fg} is a form of group lasso \cite{Yuan2006-bt} where coefficients are group by response variable.
 
+See \cite{Obozinski2006-kq} for a comparison of forward and backward selection with lasso.
 %\subsection{Projection approach}
 
+Our notion of isometric recovery is distinct from the restricted isometry property \cite{Candes2005-dd, Hastie2015-qa}, which is used to show guaranteed recovery at fast convergence rates in supervised learning.
+In particular, our approach does not consider statistical error or the presence of a true underlying model.
+However, we note that disintigration of performance at high $\lambda$ values in the lasso formulation may have some relation to these properties, as discussed in \cite{Koelle2022-ju, Koelle2024-no}.
 %\begin{align}
 %x_M = (y^T y) x \\ 
 %({x_M}^T {x_M})^{-1} {x_M} I = ({(y^T y x)}^T {(y^T y x)})^{-1} {(y^T y x)} I = (x^T y^T y x)^{-1} (y^T y x)
@@ -292,5 +309,6 @@ It is likely that the transformed singular value loss could be reframed as a sem
 
 %low distortion just means conformal
 
+A major area of comparison is in diversification in recommendation systems.  Greedy algorithms are used \cite{Carbonell2017-gi, Wu2019-uk}
 
 \end{document}
