@@ -14,8 +14,8 @@
 
 \begin{abstract}
 
-Sparse isometry pursuit is an algorithm for identifying unitary column-submatrices in polynomial time.
-It achieves sparsity via use of the group lasso norm, and therefore has constrained basis pursuit and penalized group lasso formulations.
+Isometry pursuit is an algorithm for identifying unitary column-submatrices in polynomial time.
+It achieves sparsity via use of the group lasso norm, and therefore has constrained and penalized formulations.
 Applied to tabular data, it selects a subset of columns that maximize diversity.
 Applied to Jacobians of putative coordinate functions, it identifies isometric embeddings from within dictionaries.
 It therefore has relevance to interpretability of learned representations.
@@ -117,7 +117,7 @@ This normalization scales lengths down that are far away from $1$ is a logarithm
 Any rescaling which is maximized at $1$ and logarithmically symmetric satisfies Proposition \ref{prop:main}, but $n$ is particularly suitable.
 First, $q$ is convex.
 Second, it grows asymptotically log-linearly.
-Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp replacement $\max (t, 1/t)$ is $\exp( - \log (\exp (t ) + \exp(1/t)))$ simplifies to \ref{eq:normalization}.
+Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon the exponentiation.
 Finally, the parameter $c$ grants control over the width of the basin, which is important in avoiding numerical issues arising close to $0$ and $\infty$.
 
 Using this, define the matrix-wide normalization vector
@@ -142,7 +142,7 @@ l_{iso}: \mathbb R^{D \times P} \to \mathbb R^{+} \\
 \mathcal (X) \mapsto \sum_{d = 1}^D g(\sigma^d(\mathcal X))
 \end{align}
 where $\sigma^d (\mathcal (X))$ is the $d$-th singular value of $\mathcal X$.
-Note that since $g$ is convex, we could compute a full realization of the convex isometry pursuit algorithm by minimizing over WHAT.
+%Note that since $g$ is convex, we could compute a full realization of the convex isometry pursuit algorithm by minimizing over WHAT.
 However, this would not result in a sparse solution.
 
 This loss is an appropriate choice for comparison because it is equal to the basis pursuit loss for orthogonal matrices
@@ -171,32 +171,9 @@ The isometry pursuit program is then
 \end{align}
 The intuition is that vectors which are closer to 1 in length and more orthogonal will be smaller in loss.
 
-% Direct minimization of this norm has nothing to do with correlation.
-
 %Direct minimization of Equation \ref{eq:bp} will not select for isometry due to the preference for columns with larger norm.
-%Define the transform
-%\begin{align}
-%\exp_1: \mathbb R^{D \times P} \to \mathbb R^{D \times P} \\ 
-%\mathcal X \mapsto \exp (- | \log \|{\mathcal X }_{j.}\|_2)|) \frac{{\mathcal X }_{j.}}{\|{\mathcal X }_{j.}\|}.
-%\end{align}
 
-
-%Define the loss function
-%\begin{align}
-%l (X, \beta) := \|I_d - X\beta\|^2 + \|\beta\|_{2,1}
-%\end{align}
-
-%We can also define the basis pursuit loss
-%\begin{align}
-%m (X, \beta) := \|\beta\|_{2,1} :  I_d = X\beta
-%\end{align}
-
-%Our main interest is in analyzing the properties of $l(\exp_1 X,  \beta)$ and $m(\exp_1 X,  \beta)$ 
-
-%This is the main loss function whose properties we analyze.
-
-
-%One immediate question is - why $\beta$?  Can we just minimize some function of $X$ directly like $\|\exp_1 X\|_{1,2}$?  Well, then we wouldn't need orthogonality - just constant length!
+%One immediate question is - why $\beta$?  Can we just minimize some function of $X$ directly like $\|\exp_1 X\|_{1,2}$?  Direct minimization of this norm has nothing to do with correlation. We wouldn't need orthogonality - just constant length!
 
 \subsection{Isometric lasso}
 
@@ -231,8 +208,6 @@ l^*(X^i) = l(\beta^i) = \sum_{j = 1}^p (\sum_{i'=2}^n \| \beta_{i'j.} \|_2^2 +  
 \end{eqnarray}
 where the second to last equality is because the norm $\|v\|_2^2 $ is unitary invariant.
 \end{proof}
-
-
 
 We first show that vectors which are more orthogonal will be smaller in loss.
 
@@ -338,11 +313,11 @@ We use the multitask lasso from sklearn and the cvxpy package for basis pursuit.
 
 Comparison with isometry loss.
 
+\section{Discussion}
+
 %The Hoeffding bound
 %Dimension estimation, the failure of duality
 %The presence of curvature
-
-\section{Discussion}
 
 Tangent space basis pursuit satisfies a similar property \cite{Koelle2022-lp} but the normalization process differs.
 
@@ -388,7 +363,7 @@ However, we note that disintigration of performance at high $\lambda$ values in 
 %({x_M}^T {x_M})^{-1} {x_M} I = ({(y^T y x)}^T {(y^T y x)})^{-1} {(y^T y x)} I = (x^T y^T y x)^{-1} (y^T y x)
 %\end{align}
 
-%low distortion just means conformal
+%low distortion just means conformal?
 
 A major area of comparison is in diversification in recommendation systems.  Greedy algorithms are used \cite{Carbonell2017-gi, Wu2019-uk}
 
