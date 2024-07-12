@@ -116,6 +116,30 @@ Second, it grows asymptotically log-linearly.
 Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon the exponentiation.
 Finally, the parameter $c$ grants control over the width of the basin, which is important in avoiding numerical issues arising close to $0$ and $\infty$.
 
+
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/Figure_1a.png}
+        \caption{Length as a function of $t$}
+        \label{fig:length}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/Figure_1b.png}
+        \caption{Loss as a function of $t$}
+        \label{fig:loss}
+    \end{minipage}
+    \caption{Plots of Length and Loss for different values of $c$}
+    \label{fig:results}
+\end{figure}
+
+
+
+
 Using this, define the matrix-wide normalization vector
 \begin{align}
 \mathcal D: \mathbb R^{D \times P} \times \mathbb R^+ &\to \mathbb R^P \\
