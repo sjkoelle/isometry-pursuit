@@ -7,7 +7,7 @@
 %It does not directly reproduce the argument that tangent space basis pursuit selects for a "most isometric embedding" from my thesis, nor would I expect this to go in the same paper as tangent space lasso.
 %Other interesting open questions about basis pursuit that are not covered here include can we equate the intrinsic curvature of the data manifold to the basis pursuit loss, or what happens when dictionary = feature space, or what happens if we estimate in the coordinates of the ambient space, or what are the convergence rates.
 %I chose to focus on local isometry estimation because it seemed distinct enough from what everyone else was working on that it could be published as a workshop paper on its own, and because the mathematical components are a little novel, but not disorientingly so, and because it solves an open problem noticed by another research group.
-\title{Sparse isometry pursuit}
+\title{Isometry pursuit}
 \author{Samson Koelle, Marina Meila}
 
 \maketitle
@@ -17,7 +17,8 @@
 Sparse isometry pursuit is an algorithm for identifying unitary column-submatrices in polynomial time.
 It achieves sparsity via use of the group lasso norm, and therefore has constrained basis pursuit and penalized group lasso formulations.
 Applied to tabular data, it selects a subset of columns that maximize diversity.
-Applied to Jacobians of putative coordinate functions, it is a useful subroutine for identifying isometric embeddings from within dictionaries and therefore has relevance to interpretability of learned representations.
+Applied to Jacobians of putative coordinate functions, it identifies isometric embeddings from within dictionaries.
+It therefore has relevance to interpretability of learned representations.
 
 % singular value criteria could be directly optimized.  singular value criteria would not be sparse
 % recommendation systems.  
@@ -78,37 +79,106 @@ This approach combines a strict theoretical criterion and computationally expedi
 Basis pursuit \cite{Chen2001-hh} 
 % Recommendation, RAG
 
-Compared with losses such as operator norm, this loss is symmetric across the entire spectrum.  Compared with the nuclear norm, it is symmetric around 1 \cite{Fazel2001ARM}. % is our loss self-dual?
+
 % compared with sparse pca loadings are constrained to be 1.  is it convex?
 
 \section{Background}
 
-We are given a rank $D$ matrix $\mathcal X \in \mathbb R^{D \times P}$ with $P > D$.
-$X$ could be, for example, the Jacobian matrix $d \mathcal G$ of a set of candidate coordinate functions.
-We assume that we are given a target dimension $T \leq D$
+Let $\mathcal X \in \mathbb R^{D \times P}$ with $P > D$ be a rank $D$ matrix.
+$X$ could be, for example, the Jacobian matrix $d g$ of a set of candidate coordinate functions $g = [g^1, \dotsc g^P]$.
+% We assume that we are given a target dimension $T \leq D$
 % BIG QUESTION: RUN IN D = B?  What is rank of $X$?    It's D if not running D = B
 
 \section{Problem}
 
 Our goal is to select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is unitary.
+In the gradient context, this means that $d g^S$ is an isometry.
 
 \section{Method}
 
-Define the group basis pursuit penalty norm % is this really a norm?
+% balance goes out the window with great flowers - no normalization.
+
+\subsection{Normalization}
+
+Since basis pursuit methods tend to select longer vectors, selection of unitary submatrices requires normalization such that long and short candidate basis vectors are penalized equivalently.
+Thus, let
 \begin{align}
-\ref{eq:bp}
-\|\|_{1,2} \mathbb R^{P \times D} \to \mathbb R^+
-\beta \mapsto  \sum_{p=1}^P  \|\beta_{p.}\|_2.
+\label{eq:normalization}
+q: \mathbb R^+ \times \mathbb R^+  &\to \mathbb R^+ \\
+t , c &\mapsto \frac{\exp(t^c) + \exp(t^{-c})}{2e},
 \end{align}
+and use this to define the normalization 
+\begin{align}
+n: \mathbb R^D \times \mathbb R^+ &\to \mathbb R^D \\
+n^d , c &\mapsto \frac{n^d}{q(\|n\|_{2},c) } \forall d \in [D].
+\end{align}
+
+This normalization scales lengths down that are far away from $1$ is a logarithmically symmetric way.
+Any rescaling which is maximized at $1$ and logarithmically symmetric satisfies Proposition \ref{prop:main}, but $n$ is particularly suitable.
+First, $q$ is convex.
+Second, it grows asymptotically log-linearly.
+Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp replacement $\max (t, 1/t)$ is $\exp( - \log (\exp (t ) + \exp(1/t)))$ simplifies to \ref{eq:normalization}.
+Finally, the parameter $c$ grants control over the width of the basin, which is important in avoiding numerical issues arising close to $0$ and $\infty$.
+
+Using this, define the matrix-wide normalization vector
+\begin{align}
+\mathcal D: \mathbb R^{D \times P} \times \mathbb R^+ &\to \mathbb R^P \\
+\mathcal X_{.p}, c &\mapsto n(\mathcal X_{.p}, c)
+\end{align}
+and the normalized matrix $\tilde {\mathcal X}_c = \mathcal X \mathcal D(\mathcal X, c).$
+This completes the data preprocessing.
+
+\subsection{Ground truth}
+
+The main goal of sparse isometry pursuit is to expediate the selection of unitary submatrices.
+Typically, unitaryness is measured using the singular values of the matrix.
+However, measures like the operator norm and deformation compare only the largest an smallest singular values.
+Compared with the nuclear norm, it is symmetric around 1 \cite{Fazel2001ARM}. % is our loss self-dual?
+That is, they do not account for the whole spectrum.
+
+Define the loss
+\begin{align}
+l_{iso}: \mathbb R^{D \times P} \to \mathbb R^{+} \\
+\mathcal (X) \mapsto \sum_{d = 1}^D g(\sigma^d(\mathcal X))
+\end{align}
+where $\sigma^d (\mathcal (X))$ is the $d$-th singular value of $\mathcal X$.
+Note that since $g$ is convex, we could compute a full realization of the convex isometry pursuit algorithm by minimizing over WHAT.
+However, this would not result in a sparse solution.
+
+This loss is an appropriate choice for comparison because it is equal to the basis pursuit loss for orthogonal matrices
+\begin{proposition}
+\label{prop:main}
+\end{proposition}
+\begin{proof}
+\begin{align}
+\end{align}
+Then, singular values and regressands are analytically determined.  cont.
+\end{proof}
+
+\subsection{Isometry pursuit}
+
+Define the multitask group basis pursuit penalty % is this really a norm?
+\begin{align}
+\label{eq:bp}
+\| \cdot \|_{1,2}: \mathbb R^{P \times D} &\to \mathbb R^+ \\ 
+\beta &\mapsto  \sum_{p=1}^P  \|\beta_{p.}\|_2.
+\end{align}
+
+The isometry pursuit program is then
+\begin{align}
+\label{prog:ip}
+\arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; s.t. \; I_D = \tilde{ \mathcal X}_c \beta.
+\end{align}
+The intuition is that vectors which are closer to 1 in length and more orthogonal will be smaller in loss.
 
 % Direct minimization of this norm has nothing to do with correlation.
 
-Direct minimization of Equation \ref{eq:bp} will not select for isometry due to the preference for columns with larger norm.
-Define the transform
-\begin{align}
-\exp_1: \mathbb R^{D \times P} \to \mathbb R^{D \times P} \\ 
-\mathcal X \mapsto \exp (- | \log \|{\mathcal X }_{j.}\|_2)|) \frac{{\mathcal X }_{j.}}{\|{\mathcal X }_{j.}\|}.
-\end{align}
+%Direct minimization of Equation \ref{eq:bp} will not select for isometry due to the preference for columns with larger norm.
+%Define the transform
+%\begin{align}
+%\exp_1: \mathbb R^{D \times P} \to \mathbb R^{D \times P} \\ 
+%\mathcal X \mapsto \exp (- | \log \|{\mathcal X }_{j.}\|_2)|) \frac{{\mathcal X }_{j.}}{\|{\mathcal X }_{j.}\|}.
+%\end{align}
 
 
 %Define the loss function
@@ -116,21 +186,34 @@ Define the transform
 %l (X, \beta) := \|I_d - X\beta\|^2 + \|\beta\|_{2,1}
 %\end{align}
 
-We can also define the basis pursuit loss
-\begin{align}
-m (X, \beta) := \|\beta\|_{2,1} :  I_d = X\beta
-\end{align}
+%We can also define the basis pursuit loss
+%\begin{align}
+%m (X, \beta) := \|\beta\|_{2,1} :  I_d = X\beta
+%\end{align}
 
-Our main interest is in analyzing the properties of $l(\exp_1 X,  \beta)$ and $m(\exp_1 X,  \beta)$ 
+%Our main interest is in analyzing the properties of $l(\exp_1 X,  \beta)$ and $m(\exp_1 X,  \beta)$ 
 
-This is the main loss function whose properties we analyze.
+%This is the main loss function whose properties we analyze.
 
 
 %One immediate question is - why $\beta$?  Can we just minimize some function of $X$ directly like $\|\exp_1 X\|_{1,2}$?  Well, then we wouldn't need orthogonality - just constant length!
 
-\subsection{Tangent Space Lasso}
+\subsection{Isometric lasso}
 
-The intuition is that vectors which are closer to 1 in length and more orthogonal will be smaller in loss.
+By Lagrangian duality, define an extension of \ref{prog:ip} called Isometric Lasso.
+Isometric Lasso is
+\begin{align}
+\arg \min_{\beta \in \mathbb R^{P \times D}} \|I_D -  \tilde{ \mathcal X}_c \beta\|_2^2 +  \lambda \| \beta \|_{1,2}
+\end{align}
+This extension is a local version of Tangent Space Lasso.
+
+\section{Theory}
+
+ \begin{proposition}
+ \label{prop:unitarybasis}
+Consider two sets of vector fields $X$ and $X^i$ where $X_{i..}^i = U X_{i..} $, where $U$ is unitary and $X_{i'..} = X_{i'..}^i$ for other values $i' \neq i$.
+Then $l^*(X) = l^*(X^i)$
+\end{proposition}
 
 \begin{proposition}{Unitary subset selection}
 Given a $X$ that contains a unique subset $X^* \in \mathbb R^{d \times d} $ such that $X^*$ is unitary and full rank, then $X^* = \arg \min_\beta l(\exp_1(X),\beta)$.
@@ -138,11 +221,7 @@ Given a $X$ that contains a unique subset $X^* \in \mathbb R^{d \times d} $ such
 
 
 Before proceeding, we require the following piece of Lemma \ref{lemma:rotinv1}. 
- \begin{proposition}
- \label{prop:unitarybasis}
-Consider two sets of vector fields $X$ and $X^i$ where $X_{i..}^i = U X_{i..} $, where $U$ is unitary and $X_{i'..} = X_{i'..}^i$ for other values $i' \neq i$.
-Then $l^*(X) = l^*(X^i)$
-\end{proposition}
+
 
 \begin{proof}
 Without loss of generality, let $i = 1$.
@@ -264,6 +343,8 @@ Comparison with isometry loss.
 %The presence of curvature
 
 \section{Discussion}
+
+Tangent space basis pursuit satisfies a similar property \cite{Koelle2022-lp} but the normalization process differs.
 
 It could be used in the stiching step of an algorithm like the kohli one
 We leave aside the question of patch alignment \cite{https://arxiv.org/pdf/2303.11620.pdf, LDLE paper}.
