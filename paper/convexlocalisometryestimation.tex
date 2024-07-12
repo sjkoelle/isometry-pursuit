@@ -3,10 +3,6 @@
 
 \begin{document}
 
-%This note specifically targets the problem of local isometry estimation using a convex Tangent Space Lasso-type method.
-%It does not directly reproduce the argument that tangent space basis pursuit selects for a "most isometric embedding" from my thesis, nor would I expect this to go in the same paper as tangent space lasso.
-%Other interesting open questions about basis pursuit that are not covered here include can we equate the intrinsic curvature of the data manifold to the basis pursuit loss, or what happens when dictionary = feature space, or what happens if we estimate in the coordinates of the ambient space, or what are the convergence rates.
-%I chose to focus on local isometry estimation because it seemed distinct enough from what everyone else was working on that it could be published as a workshop paper on its own, and because the mathematical components are a little novel, but not disorientingly so, and because it solves an open problem noticed by another research group.
 \title{Isometry pursuit}
 \author{Samson Koelle, Marina Meila}
 
@@ -14,85 +10,85 @@
 
 \begin{abstract}
 
-Isometry pursuit is an algorithm for identifying unitary column-submatrices in polynomial time.
+Isometry pursuit is an algorithm for identifying unitary column-submatrices of wide matrices in polynomial time. % find citation for convexity implying polynomial time.  Tropp?
 It achieves sparsity via use of the group lasso norm, and therefore has constrained and penalized formulations.
 Applied to tabular data, it selects a subset of columns that maximize diversity.
 Applied to Jacobians of putative coordinate functions, it identifies isometric embeddings from within dictionaries.
 It therefore has relevance to interpretability of learned representations.
 
-% singular value criteria could be directly optimized.  singular value criteria would not be sparse
-% recommendation systems.  
-% RAG
-
 \end{abstract}
 
 \section{Introduction}
+\label{sec:introduction}
 
-%Although computing the domain of a wide rectangular matrix is among the most classic problems in optimization and machine learning, the related problem of selection of the column-subset that forms the best basis for this domain is relatively unstudied.
-%However, 
+Many real-life problems may be abstracted as selecting a subset of the columns of a matrix representing stochastic observations or analytically exact data.
+This paper focuses on a simple such problem that appears in unsupervised learning.
+Given a rank $D$ matrix $\mathcal X \in \mathbb R^{D \times P}$ with $P > D$, select a square submatrix $\mathcal X_{.\mathcal S}$ where subset $\mathcal S \subset P$ satisfies $|\mathcal S| = D$ that is as unitary as possible.
 
-Many real-life problems may be abstracted as selecting a subset of the columns of a matrix.
-Matrices representing statistical observations or analytically exact data like gradients arise in many applications.
-Column-selection then corresponds to the problem of which variables or functions of the data to retain. %(RAG, recommendations, training neural networks (infrequent meta), wind).
-The efficient and principled selection of variables is therefore a critical and popular area of research.
-
-This paper focuses on unsupervised variable selection.
-%Depending on the problem, the method of selection may differ.
-Supervised learning, in which a response variable is predicted by
-In contrast, unsupervised variable selection as a type of dimension reduction has received comparably less attention.
-Unsupervised learning methods like PCA, UMAP, and autoencoders are often concerned with minimizing reconstruction error without regard for the sparsity of the learned respresentation, and among those that sparsify, variable selection methods contrast with sparsification with respect to reconstruction from a learned latent space.
-
-. % prob should compare with this
-
-In the context of non-linear dimension reduction, dictionary-based methods, sparse reconstruction exists.
-Not to be confused with dictionary-learning methods.
-% Although methods like sparse autoencoders, sparse PCA exist 
-
-Multitask learning and lasso \cite{Hastie2015-qa}
-
-Within the context of non-linear dimension reduction, selection of coordinate functions of an embedding space from within a dictionary is a core problem in geometric data analysis.  % more on interpretability
+This problem is motivated by applications in diversification and non-linear dimension reduction.
+In particular, the name of the method comes from the fact that isometric embeddings have unitary differentials.
+While variable selection in unsupervised learning is comparably less studied than in supervised learning, substantial literature exists.
+One method that exemplifies this area is Sparse PCA \cite{Dey2017-mx}, in which a subset of variables are used to generate low-dimensional projections.
+% compared with sparse pca loadings are constrained to be 1.  is it convex?
+Within non-linear dimension reduction dictionaries can be either given \cite{Koelle2022-ju, Koelle2024-no} or learned \cite{Kohli2021-lr}. 
 In order of specificity, these methods may seek to optimize independent coordinates \cite{Chen2019-km, He2023-ch}, low distortion embeddings, or isometric embeddings.
-% low distortion is conformal
-Dictionaries can be either given \cite{Koelle2022-ju, Koelle2024-no} or learned \cite{Kohli2021-lr}.
 Optimization can be global or local.
-
 These coordinate selection algorithms can be greedy \cite{NEURIPS2019_6a10bbd4, Kohli2021-lr, Jones2007-uc} or convex \cite{Koelle2022-ju, Koelle2024-no}.
-In this paper we show that an adapted version of the group lasso type algorithm in \cite{Koelle2024-no} leads to a convex procedure competitive with previous greedy approaches with respect to isometry.
-This approach relies on a to-our-knowledge novel matrix inversion algorithm that is sparse in the column space of the matrix.
-This method displays the favorable characteristics of group lasso type problems, including duality of a regularized form with a basis pursuit problem.
-These problems are solvable with off-the-shelf multitask lasso and interior point solvers, respectively.
+%% cite sparse 
+%Many of these operate locally.
+
+%(RAG, recommendations, training neural networks (infrequent meta), wind).
+
+The insight that leads to isometry pursuit is that $D$ function solutions multitask basis pursuit applied to an appropriately normalized $\mathcal X$ selects unitary submatrices.
+%This approach relies on a to-our-knowledge novel matrix inversion algorithm that is sparse in the column space of the matrix.
+This normalization is log-symmetric length in the column-space of $\mathcal X$ and favors vectors closer to unit length.
+This property is the focus of Section \ref{sec:theory}
+
+The basis pursuit formulation is desirable for several reasons.
+First, it is convex and therefore computationally expedient.
+Second, while not $D$-sparse, it is relatively sparse, and so can be used for pruning. % we need more theory on the D subset within the retained subset, need to compare brute force and trimmed solutions.
+Third, it admits a lasso dual problem which is particularly useful in high dimensions.
+
+%These problems are solvable with off-the-shelf multitask lasso and interior point solvers, respectively.
+% Square selection could be relaxed somewhat.
+
+%Unsupervised learning methods like PCA, UMAP, and autoencoders are often concerned with minimizing reconstruction error without regard for the sparsity of the learned respresentation, and among those that sparsify, variable selection methods contrast with sparsification with respect to reconstruction from a learned latent space.
+
+% Multitask learning and lasso \cite{Hastie2015-qa}
+
+%Within the context of non-linear dimension reduction, selection of coordinate functions of an embedding space from within a dictionary is a core problem in geometric data analysis.  % more on interpretability
+
+%In this paper we show that an adapted version of the group lasso type algorithm in \cite{Koelle2024-no} leads to a convex procedure competitive with previous greedy approaches with respect to isometry.
+
 % cite some classic manifold learning papers
 
-The comparison of greedy (e.g. Orthogonal Matching Pursuit) \cite{Mallat93-wi, Tropp05-ml} and convex \cite{Tropp06-sg} basis pursuit formulations.
+%The comparison of greedy (e.g. Orthogonal Matching Pursuit) \cite{Mallat93-wi, Tropp05-ml} and convex \cite{Tropp06-sg} basis pursuit formulations.
 
-
-Compared with sparse pca \cite{Bertsimas2022-qo, Bertsimas2022-dv}, we are not concerned with variability in the dataset, and select.
-The core literature for variable selection comes from sparse PCA \cite{Dey2017-mx}
-While the sparse PCA problem is non-convex, our approach can be taken as a simpler version in the sense that the loadings are constrained to be the identify matrix.
-
-
-\cite{Tropp06-sg} and \cite{Liu2009-yo} use a $1,\infty$ norm to induce sparsity that misses the utility of our normalization for finding unitary matrices.
-since isometry embeddings preserve important properties like distances between points.
-We describe a convex optimization approach for selection such functions based on the Tangent Space Lasso.
-This approach combines a strict theoretical criterion and computationally expediency.
-
-Basis pursuit \cite{Chen2001-hh} 
+%Basis pursuit \cite{Chen2001-hh} 
 % Recommendation, RAG
-
-
-% compared with sparse pca loadings are constrained to be 1.  is it convex?
 
 \section{Background}
 
-Let $\mathcal X \in \mathbb R^{D \times P}$ with $P > D$ be a rank $D$ matrix.
+\subsection{Problem}
+
+As mentioned in Section \ref{sec:introduction}, our goal is to select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is as unitary as possible.
+To that end, we must define what this means.
+
+\subsection{Isometries}
+
+\begin{definition}{Isometric at a point}
+Two $D$ dimensional manifolds $\mathcal M$ and $\mathcal N$ are \textbf{isometric at a point} $p \in \mathcal M$ if
+\begin{align}
+u^T v = (D \phi (p) u)^T v \forall u,v \in \mathcal T_p \mathcal M
+\end{align}
+where $T_p \mathcal M$ is the tangent space of $\mathcal M$ at $p$.
+\end{definition}
+
+%Note that in the case of tabular data, where $\mathcal M = \mathbb R^P$, and $\mathcal N = \mathbb R^D$, and $\phi \in \mathbb R^{D \times P}$ is a linear map, this is equivalent to saying that $\phi$ is unitary.
 $X$ could be, for example, the Jacobian matrix $d g$ of a set of candidate coordinate functions $g = [g^1, \dotsc g^P]$.
-% We assume that we are given a target dimension $T \leq D$
+
+% We assume that we are given a target dimension $T \leq D$ - do we?
 % BIG QUESTION: RUN IN D = B?  What is rank of $X$?    It's D if not running D = B
-
-\section{Problem}
-
-Our goal is to select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is unitary.
-In the gradient context, this means that $d g^S$ is an isometry.
 
 \section{Method}
 
@@ -185,7 +181,7 @@ Isometric Lasso is
 This extension is a local version of Tangent Space Lasso.
 
 \section{Theory}
-
+\label{sec:theory}
  \begin{proposition}
  \label{prop:unitarybasis}
 Consider two sets of vector fields $X$ and $X^i$ where $X_{i..}^i = U X_{i..} $, where $U$ is unitary and $X_{i'..} = X_{i'..}^i$ for other values $i' \neq i$.
@@ -365,6 +361,17 @@ However, we note that disintigration of performance at high $\lambda$ values in 
 
 %low distortion just means conformal?
 
+%Other interesting open questions about basis pursuit that are not covered here include can we equate the intrinsic curvature of the data manifold to the basis pursuit loss, or what happens when dictionary = feature space, or what happens if we estimate in the coordinates of the ambient space, or what are the convergence rates.  Convergence rate related to tangent space estimation.
+
+% singular value criteria could be directly optimized.  singular value criteria would not be sparse
+% recommendation systems.  
+% RAG
+
 A major area of comparison is in diversification in recommendation systems.  Greedy algorithms are used \cite{Carbonell2017-gi, Wu2019-uk}
+
+Compared with sparse pca \cite{Bertsimas2022-qo, Bertsimas2022-dv}, we are not concerned with variability in the dataset, and select.
+While the sparse PCA problem is non-convex, our approach can be taken as a simpler version in the sense that the loadings are constrained to be the identify matrix.
+\cite{Tropp06-sg} and \cite{Liu2009-yo} use a $1,\infty$ norm to induce sparsity that misses the utility of our normalization for finding unitary matrices.
+since isometry embeddings preserve important properties like distances between points.
 
 \end{document}
