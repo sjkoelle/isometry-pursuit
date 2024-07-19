@@ -99,11 +99,12 @@ $U \in \mathbb{R}^{D_\alpha \times D_\beta}$ is unitary if and only if $v^T  U^T
 To avoid abstractness, we give the following definition in coordinates.
 
 \begin{definition}{Isometric at a point}
-A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq R^F$ and $\mathcal N  \subseteq R^E$ is an \textbf{isometry at a point} $p \in \mathcal M$ if
+A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq R^{B_\alpha}$ and $\mathcal N  \subseteq R^{B_\beta}$ is an \textbf{isometry at a point} $p \in \mathcal M$ if
 \begin{align}
-u^T v = u^T {D \phi (p)}^T D \phi (p) \forall u,v \in \mathcal T_p \mathcal M
+u^T v = u^T {D \phi (p)}^T D \phi (p) \forall u,v \in \mathbb R^D
 \end{align}
-where $T_p \mathcal M$ is any basis for the tangent space of $\mathcal M$ at $p$ and $D \phi$ is the differential $[\frac{\partial}{\partial}]$ in those coordinates.
+$D \phi$ is the differential implicitly given by $D_{F}^E \phi = U D \phi V^T$ where $U$ and $V$ are bases for $(T_p \mathcal M)$ and $T_{\phi(p)} \mathcal N$, the tangent spaces of $\mathbb R$ and $\mathcal N$ at $p$ and $\phi(p)$, respectively.
+% .  A Grassmannian.  (what is a Stiefel manifold?).
 \end{definition}
 
 In cite thesis, it is claimed that Theorem from tangent space lasso, the recovered explanation is a local isometry
