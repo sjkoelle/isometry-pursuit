@@ -74,15 +74,39 @@ Third, it admits a lasso dual problem which is particularly useful in high dimen
 As mentioned in Section \ref{sec:introduction}, our goal is to select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is as unitary as possible.
 To that end, we must define what this means.
 
+\begin{definition}[Unitary]
+A rank $D$ matrix $U \in \mathbb R^{D_\alpha \times D_\beta}$ is said to be \textbf{unitary} if $U^TU = I_D$.
+\end{definition}
+
+While this definition immediately implies $D_\alpha, D_\beta \geq D$, this paper typically works with equality.
+Even so, we generally use the term singular values rather than eigenvalues, since Section \ref{sec:discussion} contains speculation that a similar set of techniques hold for rank-d unitary rectangular matrices, and the same geometric intuition applies.
+
+\begin{proposition}{Singular values of a unitary matrix}
+\label{prop:unitary_spectrum}
+The singular values $\sigma_1 \dots \sigma_D$ are equal to $1$ if and only if $U \in \mathbb{R}^{D_\alpha \times D_\beta}$ is unitary.
+\end{proposition}
+
+\begin{proposition}{Length deformation of unitary matrix}
+\label{prop:unitary_spectrum}
+$U \in \mathbb{R}^{D_\alpha \times D_\beta}$ is unitary if and only if $v^T  U^T U v = v^T v$ for all $v \in \mathbb R^{D_\beta}$
+% is this true for all matrices or just square ones.  All!  Cite dominique and marina.
+\end{proposition}
+
+% if and only if is an equality in the logical statement (assertion, theorem) monoid.
+
 \subsection{Isometries}
 
+To avoid abstractness, we give the following definition in coordinates.
+
 \begin{definition}{Isometric at a point}
-Two $D$ dimensional manifolds $\mathcal M$ and $\mathcal N$ are \textbf{isometric at a point} $p \in \mathcal M$ if
+A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq R^F$ and $\mathcal N  \subseteq R^E$ is an \textbf{isometry at a point} $p \in \mathcal M$ if
 \begin{align}
-u^T v = (D \phi (p) u)^T v \forall u,v \in \mathcal T_p \mathcal M
+u^T v = u^T {D \phi (p)}^T D \phi (p) \forall u,v \in \mathcal T_p \mathcal M
 \end{align}
-where $T_p \mathcal M$ is the tangent space of $\mathcal M$ at $p$.
+where $T_p \mathcal M$ is any basis for the tangent space of $\mathcal M$ at $p$ and $D \phi$ is the differential $[\frac{\partial}{\partial}]$ in those coordinates.
 \end{definition}
+
+In cite thesis, it is claimed that Theorem from tangent space lasso, the recovered explanation is a local isometry
 
 %Note that in the case of tabular data, where $\mathcal M = \mathbb R^P$, and $\mathcal N = \mathbb R^D$, and $\phi \in \mathbb R^{D \times P}$ is a linear map, this is equivalent to saying that $\phi$ is unitary.
 $X$ could be, for example, the Jacobian matrix $d g$ of a set of candidate coordinate functions $g = [g^1, \dotsc g^P]$.
@@ -206,45 +230,28 @@ which can be optimized as
 \label{prog:isometric_lasso}
 \hat {\beta_{\lambda}} (\mathcal X) = \arg \min_{\beta \in \mathbb R^{P \times D}} l_\lambda (\mathcal X, \beta)
 \end{align}
-This extension is a local version of Tangent Space Lasso.
+The recovered supports are then given by $S(\hat {\beta_{\lambda}} (\mathcal X))$ where 
+\begin{align}
+S: \mathbb{R}^{p \times d} &\to \binom{\{1, 2, \ldots, P\}}{d} \\
+\beta &\mapsto \left\{ p \in \{1, 2, \ldots, P\} :  \|\beta_{p.}\| > 0 \right\}
+\end{align}
+and $\binom{\{1, 2, \ldots, P\}}{d} = \left\{ A \subseteq \{1, 2, \ldots, P\} : \left|A\right| = d \right\}$ are the indices of the dictionary elements with non-zero coefficients.
 
 \section{Theory}
 \label{sec:theory}
 
-The first theoretical assertion we claim is that our selection methods are invariant to choice of basis for $\mathcal X$.
+A key theoretical assertion is that selection methods $S(\widehat {\beta}_{\lambda} (\mathcal X))$ and $S(\widehat {\beta} (\mathcal X))$ are invariant to choice of basis for $\mathcal X$.
 
-For lasso:
-
- \begin{proposition}{Loss equivalence}
- \label{prop:lasso_loss_equivalence}
- Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $l_\lambda (\mathcal X, \beta) = l_\lambda (U \mathcal X, \beta U)$.
-\end{proposition}
-
-\begin{proposition}{Programmatic equivalence}
-\label{prop:lasso_program_equivalence}
- Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $\hat \beta_{\lambda}  (U \mathcal X) = U\hat \beta_{\lambda} (\mathcal X)$.
-\end{proposition}
-
-\begin{proposition}{Selection equivalence}
-\label{prop:lasso_subset_equivalence}
+\begin{proposition}[Lasso selection equivalence]
+\label{prop:lasso_selection_equivalence}
 Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $S(\hat \beta_{\lambda}  (U \mathcal X)) = S(\hat \beta_{\lambda} (\mathcal X))$.
+ Then $S(\widehat \beta_{\lambda}  (U \mathcal X)) = S(\widehat \beta_{\lambda} (\mathcal X))$.
 \end{proposition}
 
-For basis pursuit, the situation is similar.
-
- \begin{proposition}{Loss equivalence}
- \label{prop:basis_pursuit_loss_equivalence}
- Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $\|\beta\|_{1,2} = \|\beta U \|$.
-\end{proposition}
-
- \begin{proposition}{Programmatic equivalence}
- \label{prop:basis_pursuit_loss_equivalence}
- Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $\hat \beta_{\lambda}  (U \mathcal X) = \hat \beta_{\lambda}  (U \mathcal X)$.
+\begin{proposition}[Basis pursuit selection equivalence]
+\label{prop:basis_pursuit_selection_equivalence}
+Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $S(\widehat \beta  (U \mathcal X)) = S(\widehat \beta (\mathcal X))$.
 \end{proposition}
 
 It also may be possible to argue the basis pursuit invariances from the lasso ones plus Lagranian duality.
@@ -365,7 +372,9 @@ We use the multitask lasso from sklearn and the cvxpy package for basis pursuit.
 Comparison with isometry loss.
 
 \section{Discussion}
+\label{sec:discussion}
 
+This extension is a local version of Tangent Space Lasso.
 %The Hoeffding bound
 %Dimension estimation, the failure of duality
 %The presence of curvature
@@ -386,6 +395,50 @@ Even though by Lagrangian duality, the basis pursuit solution corresponds to $\l
 about the lasso is that all coefficients enter the regularization path.
 As we see by the correspondence between $\lambda$ approaching $0$ and the basis pursuit problem, some coefficients in fact do not go to $0$. 
 \section{Supplement}
+
+\subsection{Theory}
+
+\paragraph{Proof of Propositions \ref{prop:lasso_selection_equivalence} and \ref{prop:basis_pursuit_selection_equivalence}}
+
+These proofs rely on some elementary applications of linear algebra.
+Proposition \ref{prop:lasso_selection_equivalence} relies on the fact that its loss is invariant under any unitary transformation.
+As a corollary, this fact gives that the identify matrix which is the "dependent variable" in the regression equation may be replaced by any $d \times d$ unitary matrix.
+For Proposition \ref{prop:basis_pursuit_selection_equivalence}, the loss is also invariant under unitary, transformation, but we also check that this transformation.
+Once again, this also implies that any unitary matrix may replace the identity in the constraint.
+%Minimizer?
+
+
+ \begin{proposition}{Loss equivalence}
+ \label{prop:lasso_loss_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $l_\lambda (\mathcal X, \beta) = l_\lambda (U \mathcal X, \beta U)$.
+\end{proposition}
+
+\begin{proof}
+
+\end{proof}
+
+\begin{proposition}{Programmatic equivalence}
+\label{prop:lasso_program_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $\hat \beta_{\lambda}  (U \mathcal X) = U\hat \beta_{\lambda} (\mathcal X)$.
+\end{proposition}
+
+
+
+For basis pursuit, the situation is similar.
+
+ \begin{proposition}{Loss equivalence}
+ \label{prop:basis_pursuit_loss_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $\|\beta\|_{1,2} = \|\beta U \|$.
+\end{proposition}
+
+ \begin{proposition}{Programmatic equivalence}
+ \label{prop:basis_pursuit_loss_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $\hat \beta_{\lambda}  (U \mathcal X) = \hat \beta_{\lambda}  (U \mathcal X)$.
+\end{proposition}
 
 % Proof of isometry (Copy from thesis)
 
