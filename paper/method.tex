@@ -176,27 +176,3 @@ We use the multitask lasso from sklearn and the cvxpy package for basis pursuit.
 \section{Experiments}
 
 Comparison with isometry loss.
-
-\section{Discussion}
-\label{sec:discussion}
-
-This extension is a local version of Tangent Space Lasso.
-%The Hoeffding bound
-%Dimension estimation, the failure of duality
-%The presence of curvature
-
-Tangent space basis pursuit satisfies a similar property \cite{Koelle2022-lp} but the normalization process differs.
-
-It could be used in the stiching step of an algorithm like the kohli one
-We leave aside the question of patch alignment \cite{https://arxiv.org/pdf/2303.11620.pdf, LDLE paper}.
-The full gradient approach.
-In this case normalization prior to projection is subsumbmed by the larger coefficients needed to get the tangent space.
-Good news is tangent space estimation need not be performed.
-Let's compare the coefficients involved in projecting versus not projecting.
-We can perform regression in the high dimensional space instead of projecting on span of target variable.
-
-With respect to pseudoinverse estimation, sparse methods have been applied in \cite{Sun2012-vp}
-
-Even though by Lagrangian duality, the basis pursuit solution corresponds to $\lambda$ approaching $0$, the solution is sparse \cite{Tropp04-ju}.
-about the lasso is that all coefficients enter the regularization path.
-As we see by the correspondence between $\lambda$ approaching $0$ and the basis pursuit problem, some coefficients in fact do not go to $0$. 
