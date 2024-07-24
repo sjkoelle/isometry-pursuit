@@ -1,0 +1,27 @@
+\documentclass[a4paper,11pt]{article}
+\input{config.tex}
+
+\begin{document}
+
+\title{Isometry pursuit}
+\author{Samson Koelle, Marina Meila}
+
+\maketitle
+
+\begin{abstract}
+
+Isometry pursuit is an algorithm for identifying unitary column-submatrices of wide matrices in polynomial time. % find citation for convexity implying polynomial time.  Tropp?
+It achieves sparsity via use of the group lasso norm, and therefore has constrained and penalized formulations.
+Applied to tabular data, it selects a subset of columns that maximize diversity.
+Applied to Jacobians of putative coordinate functions, it identifies isometric embeddings from within dictionaries.
+It therefore has relevance to interpretability of learned representations.
+
+\end{abstract}
+
+\include{introduction.tex}
+\include{background.tex}
+\include{method.tex}
+\include{discussion.tex}
+\include{supplement.tex}
+
+\end{document}
