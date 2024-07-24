@@ -1,0 +1,183 @@
+\section{Supplement}
+
+\subsection{Theory}
+
+\subsubsection{Proof of Propositions \ref{prop:lasso_selection_equivalence} and \ref{prop:basis_pursuit_selection_equivalence} }
+
+These proofs rely on some elementary applications of linear algebra.
+Proposition \ref{prop:lasso_selection_equivalence} relies on the fact that its loss is invariant under any unitary transformation.
+As a corollary, this fact gives that the identify matrix which is the "dependent variable" in the regression equation may be replaced by any $d \times d$ unitary matrix.
+For Proposition \ref{prop:basis_pursuit_selection_equivalence}, the loss is also invariant under unitary, transformation, but we also check that this transformation.
+Once again, this also implies that any unitary matrix may replace the identity in the constraint.
+%Minimizer?
+
+
+ \begin{proposition}{Loss equivalence}
+ \label{prop:lasso_loss_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $l_\lambda (\mathcal X, \beta) = l_\lambda (U \mathcal X, \beta U)$.
+\end{proposition}
+
+\begin{proof}
+
+
+Without loss of generality, let $i = 1$.
+We can write 
+\begin{eqnarray}
+l^*(X^i) = l(\beta^i) = \sum_{j = 1}^p (\sum_{i'=2}^n \| \beta_{i'j.} \|_2^2 +  \|  \beta_{1j.}^i \|_2^2 )^{1/2}=  \sum_{j = 1}^p (\sum_{i'=1}^n \| \beta_{i'j.} U \|_2^2)^{1/2} = l^*(X)
+\end{eqnarray}
+where the second to last equality is because the norm $\|v\|_2^2 $ is unitary invariant.
+
+\end{proof}
+
+\begin{proposition}{Programmatic equivalence}
+\label{prop:lasso_program_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $\hat \beta_{\lambda}  (U \mathcal X) = U\hat \beta_{\lambda} (\mathcal X)$.
+\end{proposition}
+
+
+\subsubsection{Proof of Proposition \ref{prop:local_isometry}}
+\label{sec:local_isometry_proof}
+
+The two main components of this proof are that vectors which are more orthogonal will be smaller in loss.
+%can loss be smaller for non-orthogonal matrices with |\mathcal S| > D or is it always non-unitariness that gives higher rank solutions the opportunity.
+
+\begin{proposition}
+\label{lemma:orthogonal}
+Let $X_{.S} \in \mathbb R^{d \times p}$ be defined as above and let $X_{..S}'$ be an array such that $\|X_{.S_j}'\|_2 = \|X_{.S_j}\|_2$ for all $j \in [d]$ and $X_{.S}'$ is column-orthogonal.
+Then $\tilde l^* (X_{..S}) > \tilde l^* (X_{..S}')$.
+\end{proposition}
+\begin{proof}
+
+By Lemma \ref{prop:unitarybasis}, without loss of generality
+\begin{eqnarray}
+\beta_{ijk}^i = \begin{cases} \|\tilde X_{.S_j}'\|_2^{-1} & j = k \in \{ 1 \dots d\}  \\
+0 & \text{otherwise}
+\end{cases}.
+\end{eqnarray}
+Therefore,
+\begin{eqnarray}
+\tilde l^*(X') = \sum_{j = 1}^d \sqrt{\sum_{i = 1}^n \|\tilde X_{i.S_j}' \|_2^{-2}}.
+\end{eqnarray}
+
+On the other hand, the invertible matrices $\tilde X_{.S}$ admit QR decompositions $\tilde X_{.S} = QR$ where $Q$ and $R$ are square unitary and upper-triangular matrices, respectively \cite{Anderson1992-fb}.
+Since $l^*$ is invariant to unitary transformations, we can without loss of generality, consider $Q= I_d$.
+Denoting $I_d$ to be composed of basis vectors $[e^1 \dots e^d]$, the matrix $R$ has form
+\begin{eqnarray}
+R = \begin{bmatrix}
+\langle e^1, \tilde X_{i.{S_1}} \rangle & \langle e^1, \tilde X_{i.{S_2}} \rangle  &\dots &  \langle e^1, \tilde X_{i.{S_d}} \rangle \\
+0 & \langle e^2, \tilde X_{i.{S_2}} \rangle & \dots  &  \langle e^2, \tilde X_{i.{S_d}} \rangle\\
+0 & 0 & \dots & \dots  \\
+0 & 0 & 0& \langle e^d, \tilde X_{i.{S_d}} \rangle 
+\end{bmatrix}.
+\end{eqnarray}
+The diagonal entries $R_{jj} = \langle q^j, \tilde X_{.{S_j}} \rangle$ of this matrix have form $\| \tilde X_{.{S_j}} -  \sum_{j' \in \{1 \dots j-1\}} \langle \tilde X_{.{S_{j}}}, e^{j'} \rangle e^{j'} \|$.
+Thus, $R_{j} \in (0, \| \tilde X_{i.{S_j}}\|]$.
+On the other hand $\beta_{iS.} =R^{-1}$, which has diagonal elements $\beta_{j} = R_{j}^{-1}$, since $R$ is upper triangular.
+Thus, $\beta_{jj} \geq \| \tilde X_{.{S_j}}\|^{-1}$, and therefore $\|\beta_{iS_j.}\| \geq \|\beta_{S_j.}'\|.$
+Since $\|\beta_{S_j.}\| \geq \|\beta_{S_j.}'\|$ for all $i$, then $\|\beta_{.S_j.}\| \geq \|\beta_{.S_j.}' \|$.
+%Finally, that this is true for all $j$.
+%That is, if we 
+\end{proof}
+
+The above proposition formalizes our intuition that orthogonality of $X$ lowers $l^*(X)$ over non-orthogonality.
+We now show a similar result for the somewhat less intuitive heuristic that dictionary functions whose gradient fields are length $1$ will be favored over those which are non-constant.
+Since the result on orthogonality holds regardless of length, we need only consider the case where the component vectors in our sets of vector fields are mutually orthogonal at each data point, but not necessarily of norm $1$.
+Note that were they not orthogonal, making them so would also reduce $l^*$.
+We then show that vectors which are closer to length $1$ are lower in loss.
+Since vectors which are closer to length $1$ are shrunk in length less by $\exp_1$, their corresponding loadings are smaller.
+This is formalized in the following proposition
+
+
+\begin{proposition}
+\label{lemma:orthogonal}
+Let $X_{.S}^{''}$ be a set of vector fields $X_{.S_j}^{''}$ mutually orthogonal at every data point $i$, and $\|X_{.S_j}^{''}\| = 1$.
+Then $\tilde l^* (X_{.S}' ) \geq \tilde l^*(X_{.S}^{''})$.
+\end{proposition}
+\begin{proof}
+Let $\|X_{i.S_j}^{''}\| = c_j$.  By Proposition \ref{prop:unitarybasis}, we can assume without loss of generality (i.e without changing the loss) that
+\begin{eqnarray}
+\tilde X_{.S_j} = \begin{bmatrix}
+c_1 & 0 & 0 \\
+0 & \dots & 0  \\
+0 & 0 & c_d  \rangle\\
+\end{bmatrix}.
+\end{eqnarray}
+Thus
+\begin{eqnarray}
+\tilde \exp_1 X_{.S_j} = \begin{bmatrix}
+ \exp (- | \log \|c_1 \|_2)|)  & 0 & 0 \\
+0 & \dots & 0  \\
+0 & 0 &  \exp (- | \log \|c_d \|_2)|)   \rangle\\
+\end{bmatrix}.
+\end{eqnarray}
+and therefore
+\begin{eqnarray}
+\tilde \beta_{.S_j} = \begin{bmatrix}
+ \exp (- | \log \|c_1 \|_2)|)^{-1}  & 0 & 0 \\
+0 & \dots & 0  \\
+0 & 0 &  \exp (- | \log \|c_d \|_2)|)^{-1}   \rangle\\
+\end{bmatrix}.
+\end{eqnarray}
+The question is therefore what values of $c_j$ minimize $\exp (- | \log \ |c_1 \|_2)|)^{-1} $.  $| \log \ |c_1 \|_2)|$ is minimized (evaluates to $0$) when $c_j = 1$, so $- | \log \ |c_1 \|_2)|$ is maximized (evaluates to $0$, so $\exp (- | \log \ |c_1 \|_2)|)$ is maximized (evaluates to $1$), so $\exp (- | \log \ |c_1 \|_2)|)^{-1}$ is minimized (evaluates to $1$).
+\end{proof}
+
+
+
+For basis pursuit, the situation is similar.
+
+ \begin{proposition}{Loss equivalence}
+ \label{prop:basis_pursuit_loss_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $\|\beta\|_{1,2} = \|\beta U \|$.
+\end{proposition}
+
+ \begin{proposition}{Programmatic equivalence}
+ \label{prop:basis_pursuit_loss_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $\hat \beta_{\lambda}  (U \mathcal X) = \hat \beta_{\lambda}  (U \mathcal X)$.
+\end{proposition}
+
+% Proof of isometry (Copy from thesis)
+
+Proof of local isometry (simpler proof since no oscillation game)
+
+% failure of duality
+
+\cite{Bertsimas2022-qo} gives a method for solving the sparse-PCA method more efficiently than the original greedy approach.
+Compared with the FISTA method used in  \cite{Koelle2022-ju, Koelle2024-no}, coordinate descent \cite{Friedman-2007-yb, Meier2008-ts, Qin2013-tx} is faster \cite{Catalina2018-ek, Zhao2023-xn}.
+Compared with \cite{Liu2009-yo}, the sklearn multitask lasso is $2,1$ rather than $\infty,1$ regularized.
+
+Compared with Gram-Schmidt
+It is likely that the transformed singular value loss could be reframed as a semdefinite programming problem, since the composition of two convex functions is convex \cite{Boyd2004-ql}.
+%\section{Comparison with other approach}
+
+Multitask lasso \cite{Obozinski2006-kq, Yeung2011-fg} is a form of group lasso \cite{Yuan2006-bt} where coefficients are group by response variable.
+
+See \cite{Obozinski2006-kq} for a comparison of forward and backward selection with lasso.
+%\subsection{Projection approach}
+
+Our notion of isometric recovery is distinct from the restricted isometry property \cite{Candes2005-dd, Hastie2015-qa}, which is used to show guaranteed recovery at fast convergence rates in supervised learning.
+In particular, our approach does not consider statistical error or the presence of a true underlying model.
+However, we note that disintigration of performance at high $\lambda$ values in the lasso formulation may have some relation to these properties, as discussed in \cite{Koelle2022-ju, Koelle2024-no}.
+%\begin{align}
+%x_M = (y^T y) x \\ 
+%({x_M}^T {x_M})^{-1} {x_M} I = ({(y^T y x)}^T {(y^T y x)})^{-1} {(y^T y x)} I = (x^T y^T y x)^{-1} (y^T y x)
+%\end{align}
+
+%low distortion just means conformal?
+
+%Other interesting open questions about basis pursuit that are not covered here include can we equate the intrinsic curvature of the data manifold to the basis pursuit loss, or what happens when dictionary = feature space, or what happens if we estimate in the coordinates of the ambient space, or what are the convergence rates.  Convergence rate related to tangent space estimation.
+
+% singular value criteria could be directly optimized.  singular value criteria would not be sparse
+% recommendation systems.  
+% RAG
+
+A major area of comparison is in diversification in recommendation systems.  Greedy algorithms are used \cite{Carbonell2017-gi, Wu2019-uk}
+
+Compared with sparse pca \cite{Bertsimas2022-qo, Bertsimas2022-dv}, we are not concerned with variability in the dataset, and select.
+While the sparse PCA problem is non-convex, our approach can be taken as a simpler version in the sense that the loadings are constrained to be the identify matrix.
+\cite{Tropp06-sg} and \cite{Liu2009-yo} use a $1,\infty$ norm to induce sparsity that misses the utility of our normalization for finding unitary matrices.
+since isometry embeddings preserve important properties like distances between points.
+
