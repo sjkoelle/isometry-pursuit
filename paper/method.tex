@@ -5,10 +5,23 @@
 \subsection{Motivation}
 
 We seek a function that is uniquely minimized by unitary matrices.
-While operator norm, also known as deformation, is the fraction of the 
+While operator norm, also known as deformation, is the fraction of the largest and smallest singular values, it does not take into account variability along different axes.
+This could be an issue in high dimensional situations.
+
 \subsection{Normalization}
 
-Since basis pursuit methods tend to select longer vectors, selection of unitary submatrices requires normalization such that long and short candidate basis vectors are penalized equivalently.
+Since basis pursuit methods tend to select longer vectors, selection of unitary submatrices requires normalization such that long and short candidate basis vectors are penalized.
+We establish some basic conditions for vector normalization.
+\begin{definition}[Symmetric normalization]
+A function $q: \mathbb R^D \to \mathbb R^+ $ is a symmetric normalization if 
+\begin{align}
+\arg \max_{v \in \mathbb R^D} \ q (v) = v \; \|v\| = 1 \\
+q(v) = q(\frac{v}{\|v\|^2}) \\
+%q convex?
+\end{align}
+\label{cond:normalization}
+\end{definition}
+
 Thus, let
 \begin{align}
 \label{eq:normalization}
@@ -149,16 +162,25 @@ Let $U \in \mathbb R^{D \times D}$ be unitary.
 With these preliminaries, we may state our main result.
 
 \begin{proposition}[Unitary selection]
-
+\label{prop:unitary_selection}
 Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is unitary, $\mathcal S = S(\widehat{\beta} (\mathcal X)))$
 %Program \ref{prog:isometry_pursuit} selects $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$
  \end{proposition}
+ 
+ A proof is given in Section 
+ 
+This proof admits two immediate generalizations.
+First, any normalization function that satisfies the normalization conditions will do.
+Second, the ground truth and convex losses are equivalent for diagonalizable matrices.
+ %Convex functions form metric? Cite Koelle neuroscience? Is metric important?
  
 \begin{proposition}[Local isometry selection]
 \label{prop:local_isometry}
 Given a set of functions $G$ that contains a subset that defines a locally isometric embedding at a point $\xi$, then these will be selected as $\arg \min_\beta$.
 \end{proposition}
 A proof is given in Section \ref{sec:local_isometry_proof}.
+
+
 Algorithm (Local tangent Space basis pursuit)
 
 Algorithm (Local two stage tangent space basis pursuit)
