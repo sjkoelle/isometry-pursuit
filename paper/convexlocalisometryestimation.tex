@@ -71,28 +71,47 @@ Third, it admits a lasso dual problem which is particularly useful in high dimen
 
 \subsection{Problem}
 
-As mentioned in Section \ref{sec:introduction}, our goal is to select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is as unitary as possible.
-To that end, we must define what this means.
+Our goal is, given a matrix $\mathcal X \in \mathbb R^{D \times P}$, select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is as unitary as possible in a computationally efficient way.
+To that end, define a ground truth loss function that measures unitariness, and then introduce a surrogate loss function that convexifies the problem so that it may be efficiently solved.
 
 \begin{definition}[Unitary]
 A rank $D$ matrix $U \in \mathbb R^{D_\alpha \times D_\beta}$ is said to be \textbf{unitary} if $U^TU = I_D$.
 \end{definition}
 
-While this definition immediately implies $D_\alpha, D_\beta \geq D$, this paper typically works with equality.
-Even so, we generally use the term singular values rather than eigenvalues, since Section \ref{sec:discussion} contains speculation that a similar set of techniques hold for rank-d unitary rectangular matrices, and the same geometric intuition applies.
+While this definition implies $D_\alpha, D_\beta \geq D$, this paper typically works with equality.
+Even so, this paper uses the term singular values rather than eigenvalues, and Section \ref{sec:discussion} contains speculation that a similar set of techniques hold for rank-d unitary rectangular matrices.
 
-\begin{proposition}{Singular values of a unitary matrix}
+The property of unitary matrices that motivates our ground truth loss function comes from spectral analysis.
+\begin{proposition}[Singular values of a unitary matrix]
 \label{prop:unitary_spectrum}
 The singular values $\sigma_1 \dots \sigma_D$ are equal to $1$ if and only if $U \in \mathbb{R}^{D_\alpha \times D_\beta}$ is unitary.
 \end{proposition}
 
-\begin{proposition}{Length deformation of unitary matrix}
-\label{prop:unitary_spectrum}
-$U \in \mathbb{R}^{D_\alpha \times D_\beta}$ is unitary if and only if $v^T  U^T U v = v^T v$ for all $v \in \mathbb R^{D_\beta}$
-% is this true for all matrices or just square ones.  All!  Cite dominique and marina.
+As a ground truth loss function, we'd like the loss to be minimized uniquely by unitary matrices, invariant under rotation, and depend on all changes in the matrix.
+The first desired property precludes, for example, the log determinant, while the last precludes the operator norm, also known as the deformation. %check
+Finally, to simplify our overall exposition and exemplify the key features of the method, we'd like this ground truth loss to be as similar as possible to the convex loss we introduce.
+In fact, these losses will behave equivalently over diagonal matrices.
+That is, in a sense, the ground truth loss will be as convex as possible.
+%Thus, in Section \ref{sec:ground_truth}, we introduce a new loss based on the LogSumExp function.
+
+The equivalent property of unitary matrices that we use to define our alternative convex loss is slightly different from Proposition \ref{prop:unitary_spectrum}.
+%cite 
+\begin{proposition}[Basis vectors of a unitary matrix]
+\label{prop:unitary_basis}
+The component vectors $u^1 \dots u^D \in \mathbb R^B$ form a unitary matrix if and only if, for all $d_1, d_2 \in [D], u_{d_1} u^{d_2} = \begin{cases}
+1 \; d_1 = d_2\\ 
+0 \; d_1 \neq d_2 
+\end{cases}$.
 \end{proposition}
 
+We will show that the conditions of the antecedent of Proposition \ref{prop:unitary_basis} are satisfied by the solutions to the multitask basis pursuit problem applied to matrices consisting of suitably normalized vectors.
+The vectors are in particular length normalized so that the post-normalization vectors with the longest length have length $1$.
+As we show in Proposition , our main theoretical result,  the tendency of the multitask basis pursuit problem to select orthogonal features then ensures that a unitary matrix is deterministically selected, given that one is present.
+%explain that multitask and group are almost equivalent
 % if and only if is an equality in the logical statement (assertion, theorem) monoid.
+
+%While other properties like the operator norm
+%The nuclear norm is not 
 
 \subsection{Isometries}
 
@@ -107,6 +126,12 @@ $D \phi$ is the differential implicitly given by $D_{F}^E \phi = U D \phi V^T$ w
 % .  A Grassmannian.  (what is a Stiefel manifold?).
 \end{definition}
 
+\begin{proposition}[Metric properties of a unitary matrix]
+\label{prop:unitary_spectrum}
+$U \in \mathbb{R}^{D_\alpha \times D_\beta}$ is unitary if and only if $v^T  U^T U v = v^T v$ for all $v \in \mathbb R^{D_\beta}$.
+% is this true for all matrices or just square ones.  All!  Cite dominique and marina.
+\end{proposition}
+
 In cite thesis, it is claimed that Theorem from tangent space lasso, the recovered explanation is a local isometry
 
 %Note that in the case of tabular data, where $\mathcal M = \mathbb R^P$, and $\mathcal N = \mathbb R^D$, and $\phi \in \mathbb R^{D \times P}$ is a linear map, this is equivalent to saying that $\phi$ is unitary.
@@ -119,6 +144,10 @@ $X$ could be, for example, the Jacobian matrix $d g$ of a set of candidate coord
 
 % balance goes out the window with great flowers - no normalization.
 
+\subsection{Motivation}
+
+We seek a function that is uniquely minimized by unitary matrices.
+While operator norm, also known as deformation, is the fraction of the 
 \subsection{Normalization}
 
 Since basis pursuit methods tend to select longer vectors, selection of unitary submatrices requires normalization such that long and short candidate basis vectors are penalized equivalently.
@@ -139,6 +168,7 @@ Any rescaling which is maximized at $1$ and logarithmically symmetric satisfies 
 First, $q$ is convex.
 Second, it grows asymptotically log-linearly.
 Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon the exponentiation.
+% Introduce the exponent here.
 Finally, the parameter $c$ grants control over the width of the basin, which is important in avoiding numerical issues arising close to $0$ and $\infty$.
 
 \begin{figure}[htbp]
