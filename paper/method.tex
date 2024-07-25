@@ -125,7 +125,11 @@ This completes the deterministic data preprocessing.
 
 \subsection{Isometry pursuit}
 
-Define the multitask group basis pursuit penalty % is this really a norm?
+We will show how to use an appropriate normalized matrix $w(\mathcal X)$ in multitask basis pursuit to identify submatrices of $\mathcal X$ that are as unitary as possible.
+Multitask basis pursuit is a method for identifying sparse signals from overcomplete dictionaries, and the intuition behind its application in our setting is that submatrices consisting of vectors which are closer to 1 in length and more orthogonal will have smaller loss.
+In contrast to the typical statistical setting, these features correspond to individual observations in our diversification example, and basis vectors of data manifold tangent spaces in our non-linear dimension reduction example.
+
+The multitask basis pursuit penalty is % is this really a norm?
 \begin{align}
 \label{eq:bp}
 \| \cdot \|_{1,2}: \mathbb R^{P \times D} &\to \mathbb R^+ \\ 
@@ -135,9 +139,24 @@ Define the multitask group basis pursuit penalty % is this really a norm?
 The isometry pursuit program is then
 \begin{align}
 \label{prog:isometry_pursuit}
-\hat {\beta_{P}} (\mathcal X)  = \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; s.t. \; I_D = \tilde{ \mathcal X}_c \beta.
+\widehat \beta^{P}_c (\mathcal X)  = \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; s.t. \; I_D = w ({ \mathcal X}, c) \beta.
 \end{align}
-The intuition is that vectors which are closer to 1 in length and more orthogonal will be smaller in loss.
+
+The recovered supports are then given by $S(\beta)$ where 
+\begin{align}
+S: \mathbb{R}^{p \times d} &\to \binom{\{1, 2, \ldots, P\}}{d} \\
+\beta &\mapsto \left\{ p \in \{1, 2, \ldots, P\} :  \|\beta_{p.}\| > 0 \right\}
+\end{align}
+and $\binom{\{1, 2, \ldots, P\}}{d} = \left\{ A \subseteq \{1, 2, \ldots, P\} : \left|A\right| = d \right\}$ are the indices of the dictionary elements with non-zero coefficients.
+
+\begin{algorithm}[H]
+\caption{\isometrypursuit(Matrix $\mathcal X \in \mathbb R^{D\times P}$, scaling constant $c$)}
+\begin{algorithmic}[1]
+\STATE {\bf Output} $\widehat S= S (\widehat \beta_P(w_c(\mathcal X))$ 
+\end{algorithmic}
+\end{algorithm}
+
+
 
 %Direct minimization of Equation \ref{eq:bp} will not select for isometry due to the preference for columns with larger norm.
 
@@ -155,12 +174,14 @@ which can be optimized as
 \label{prog:isometric_lasso}
 \hat {\beta_{\lambda}} (\mathcal X) = \arg \min_{\beta \in \mathbb R^{P \times D}} l_\lambda (\mathcal X, \beta)
 \end{align}
-The recovered supports are then given by $S(\hat {\beta_{\lambda}} (\mathcal X))$ where 
-\begin{align}
-S: \mathbb{R}^{p \times d} &\to \binom{\{1, 2, \ldots, P\}}{d} \\
-\beta &\mapsto \left\{ p \in \{1, 2, \ldots, P\} :  \|\beta_{p.}\| > 0 \right\}
-\end{align}
-and $\binom{\{1, 2, \ldots, P\}}{d} = \left\{ A \subseteq \{1, 2, \ldots, P\} : \left|A\right| = d \right\}$ are the indices of the dictionary elements with non-zero coefficients.
+
+
+\subsection{Extension to non-linear spaces}
+
+% NOTE (Sam): just use projected jacobian as argument to isometry pursuit.
+
+\subsection{Two-stage isometry pursuit}
+
 
 \subsection{Theory}
 \label{sec:theory}
@@ -214,14 +235,6 @@ Then, singular values and regressands are analytically determined.  cont.
 Given a set of functions $G$ that contains a subset that defines a locally isometric embedding at a point $\xi$, then these will be selected as $\arg \min_\beta$.
 \end{proposition}
 A proof is given in Section \ref{sec:local_isometry_proof}.
-
-
-Algorithm (Local tangent Space basis pursuit)
-
-Algorithm (Local two stage tangent space basis pursuit)
-
-This provides an approach for the problem put forward in (cite) LDLE paper.
-
 
 \subsection{Implementation}
 
