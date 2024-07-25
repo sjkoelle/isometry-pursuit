@@ -157,6 +157,25 @@ and $\binom{\{1, 2, \ldots, P\}}{d} = \left\{ A \subseteq \{1, 2, \ldots, P\} : 
 \end{algorithm}
 
 
+A key theoretical assertion is that selection methods $S(\widehat {\beta} (\mathcal X))$ are invariant to choice of basis for $\mathcal X$.
+
+\begin{proposition}[Basis pursuit selection equivalence]
+\label{prop:basis_pursuit_selection_equivalence}
+Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $S(\widehat \beta  (U \mathcal X)) = S(\widehat \beta (\mathcal X))$.
+\end{proposition}
+
+With these preliminaries, we may state our main result.
+
+\begin{proposition}[Unitary selection]
+\label{prop:unitary_selection}
+Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is unitary, $\mathcal S = S(\widehat{\beta} (\mathcal X)))$
+%Program \ref{prog:isometry_pursuit} selects $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$
+ \end{proposition}
+ 
+ This proof admits two immediate generalizations.
+First, any normalization function that satisfies the normalization conditions will do.
+Second, the ground truth and convex losses are equivalent for diagonalizable matrices.
 
 %Direct minimization of Equation \ref{eq:bp} will not select for isometry due to the preference for columns with larger norm.
 
@@ -175,24 +194,7 @@ which can be optimized as
 \hat {\beta_{\lambda}} (\mathcal X) = \arg \min_{\beta \in \mathbb R^{P \times D}} l_\lambda (\mathcal X, \beta)
 \end{align}
 
-
-\subsection{Extension to non-linear spaces}
-
-% NOTE (Sam): just use projected jacobian as argument to isometry pursuit.
-
-\subsection{Two-stage isometry pursuit}
-
-
-\subsection{Theory}
-\label{sec:theory}
-
-A key theoretical assertion is that selection methods $S(\widehat {\beta}_{\lambda} (\mathcal X))$ and $S(\widehat {\beta} (\mathcal X))$ are invariant to choice of basis for $\mathcal X$.
-
-\begin{proposition}[Basis pursuit selection equivalence]
-\label{prop:basis_pursuit_selection_equivalence}
-Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $S(\widehat \beta  (U \mathcal X)) = S(\widehat \beta (\mathcal X))$.
-\end{proposition}
+Similarly to Section \ref{sec:isometry_pursuit}, we assert that $S(\widehat {\beta}_{\lambda} (\mathcal X))$.
 
 \begin{proposition}[Lasso selection equivalence]
 \label{prop:lasso_selection_equivalence}
@@ -200,41 +202,27 @@ Let $U \in \mathbb R^{D \times D}$ be unitary.
  Then $S(\widehat \beta_{\lambda}  (U \mathcal X)) = S(\widehat \beta_{\lambda} (\mathcal X))$.
 \end{proposition}
 
-%It also may be possible to argue the basis pursuit invariance from the lasso ones plus Lagranian duality, but to avoid taking the limit we prove both propositions  independently.
-%This also covers changing the target variable.
+\subsection{Extension to non-linear spaces}
 
-With these preliminaries, we may state our main result.
+% NOTE (Sam): just use projected jacobian as argument to isometry pursuit.
 
-\begin{proposition}[Unitary selection]
-\label{prop:unitary_selection}
-Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is unitary, $\mathcal S = S(\widehat{\beta} (\mathcal X)))$
-%Program \ref{prog:isometry_pursuit} selects $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$
- \end{proposition}
- 
- A proof is given in Section 
- 
-This proof admits two immediate generalizations.
-First, any normalization function that satisfies the normalization conditions will do.
-Second, the ground truth and convex losses are equivalent for diagonalizable matrices.
-
-
-\begin{proposition}
-\label{prop:main}
-\end{proposition}
-\begin{proof}
-\begin{align}
-\end{align}
-Then, singular values and regressands are analytically determined.  cont.
-\end{proof}
-
-
- %Convex functions form metric? Cite Koelle neuroscience? Is metric important?
- 
 \begin{proposition}[Local isometry selection]
 \label{prop:local_isometry}
 Given a set of functions $G$ that contains a subset that defines a locally isometric embedding at a point $\xi$, then these will be selected as $\arg \min_\beta$.
 \end{proposition}
 A proof is given in Section \ref{sec:local_isometry_proof}.
+
+
+\subsection{Two-stage isometry pursuit}
+
+
+
+
+%It also may be possible to argue the basis pursuit invariance from the lasso ones plus Lagranian duality, but to avoid taking the limit we prove both propositions  independently.
+%This also covers changing the target variable.
+
+ %Convex functions form metric? Cite Koelle neuroscience? Is metric important?
+ 
 
 \subsection{Implementation}
 
