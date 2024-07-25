@@ -1,30 +1,58 @@
 \section{Method}
 
-% balance goes out the window with great flowers - no normalization.
 
-\subsection{Motivation}
+First, we will define an function that is uniquely minimized by unitary matrices and some favorable properties for optimization.
+This will be the ground truth we evaluate the success of our method against.
+We then define the multitask lasso method that approximates the ground truth loss function in the sense that loss values are the same for all diagonalizable matrices.
+We show that this program recovers to optimum in a deterministic manner should it exist, but that the solution is not necessarily $D-sparse$.
+Therefore, we will demonstrate the ways in which sparse 
+% NOTE (Sam): we have not yet shown that the optimum is always D sparse if it exists...
 
-We seek a function that is uniquely minimized by unitary matrices.
-While operator norm, also known as deformation, is the fraction of the largest and smallest singular values, it does not take into account variability along different axes.
-This could be an issue in high dimensional situations.
+\subsection{Ground truth}
+
+The main goal of sparse isometry pursuit is to expediate the selection of unitary submatrices.
+Typical measures of unitariness which use the singular values of a matrix like the operator norm (i.e. deformation) and nuclear norm are poorly suited for  optimization since they use a subset of the matrix's information and are not uniquely minimized at unitarity, respectively.
+
+% NOTE (Sam): %is our the convex dual of itself?
+
+Define the loss
+\begin{align}
+l_{iso}: \mathbb R^{D \times P} \to \mathbb R^{+} \\
+\mathcal (X) \mapsto \sum_{d = 1}^D g(\sigma^d(\mathcal X))
+\end{align}
+where $\sigma^d (\mathcal (X))$ is the $d$-th singular value of $\mathcal X$.
+%Note that since $g$ is convex, we could compute a full realization of the convex isometry pursuit algorithm by minimizing over WHAT.
+However, this would not result in a sparse solution.
+
+This loss is an appropriate choice for comparison because it is equal to the basis pursuit loss for suitably normalized orthogonal matrices.
+This will be discussed
+
 
 \subsection{Normalization}
+% NOTE (Sam): balance goes out the window with great flowers since there is no normalization.
 
-Since basis pursuit methods tend to select longer vectors, selection of unitary submatrices requires normalization such that long and short candidate basis vectors are penalized.
-We establish some basic conditions for vector normalization.
+% NOTE (Sam): it might be nice to borrow the normalization, optimization, and postprocessing step lexicon from the neuroscience paper.
+Since basis pursuit methods tend to select longer vectors, selection of unitary submatrices requires normalization such that long and short candidate basis vectors are penalized in the subsequent regression.
+This calls for a "normalization" method that differs from other forms in its requirements, and we can't yet prove that these conditions relate it to any sort of norm on an appropriately chosen space.
+However, this transformation of individual features should be familiar to statisticians as a form of feature engineering, and whether the transformed vectors are related to a norm or not, the concept is similar.
+
+We may now establish some basic conditions for normalization of vectors $v \in \mathbb R^D$.
+
 \begin{definition}[Symmetric normalization]
 A function $q: \mathbb R^D \to \mathbb R^+ $ is a symmetric normalization if 
 \begin{align}
-\arg \max_{v \in \mathbb R^D} \ q (v) = v \; \|v\| = 1 \\
-q(v) = q(\frac{v}{\|v\|^2}) \\
-%q convex?
+\arg \max_{v \in \mathbb R^D} \ q (v) &=\{ v \; \|v\| = 1 \} \\
+q(v) &= q(\frac{v}{\|v\|^2}) \\
+q(v^1) &= q(v^2) \; \forall v^1, v^2 : \|v^1\| = \|v^2\|
 \end{align}
 \label{cond:normalization}
 \end{definition}
 
-Thus, let
+Note that requiring the full structure of a multiplicative norm here is unnecessary for basic success of the algorithm, but certain characteristics such as $q(v^{-1}) = q(v)$ seem desirable, provided one can give a reasonable way to compute $v^{-1}$, such as by considering each vector as a scaled rotation subgroup of the general linear group.
+Mindful of this opportunity, and also of the desire to compare with the ground truth and provide computational expediency, consider the normalization by
 \begin{align}
 \label{eq:normalization}
+% Note (Sam): fix this... get and more ... q_c?
 q: \mathbb R^+ \times \mathbb R^+  &\to \mathbb R^+ \\
 t , c &\mapsto \frac{\exp(t^c) + \exp(t^{-c})}{2e},
 \end{align}
@@ -34,11 +62,10 @@ n: \mathbb R^D \times \mathbb R^+ &\to \mathbb R^D \\
 n^d , c &\mapsto \frac{n^d}{q(\|n\|_{2},c) } \forall d \in [D].
 \end{align}
 
-This normalization scales lengths down that are far away from $1$ is a logarithmically symmetric way.
-Any rescaling which is maximized at $1$ and logarithmically symmetric satisfies Proposition \ref{prop:main}, but $n$ is particularly suitable.
-First, $q$ is convex.
+While this normalization satisfies \ref{cond:normalization}, it also has some additional nice properties.
+First, $q$ is convex and smooth.
 Second, it grows asymptotically log-linearly.
-Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon the exponentiation.
+Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon exponentiation.
 % Introduce the exponent here.
 Finally, the parameter $c$ grants control over the width of the basin, which is important in avoiding numerical issues arising close to $0$ and $\infty$.
 
@@ -57,7 +84,8 @@ Finally, the parameter $c$ grants control over the width of the basin, which is 
         \caption{Loss as a function of $t$}
         \label{fig:loss}
     \end{minipage}
-    \caption{Plots of Length and Loss for different values of $c$}
+    \caption{Plots of Length and Loss for different values of $c$.
+    Since $t$ is one dimensional and therefore diagonalizable, basis pursuit and ground truth give identical loss values.}
     \label{fig:results}
 \end{figure}
 
@@ -70,32 +98,7 @@ Using this, define the matrix-wide normalization vector
 and the normalized matrix $\tilde {\mathcal X}_c = \mathcal X \mathcal D(\mathcal X, c).$
 This completes the data preprocessing.
 
-\subsection{Ground truth}
 
-The main goal of sparse isometry pursuit is to expediate the selection of unitary submatrices.
-Typically, unitaryness is measured using the singular values of the matrix.
-However, measures like the operator norm and deformation compare only the largest an smallest singular values.
-Compared with the nuclear norm, it is symmetric around 1 \cite{Fazel2001ARM}. % is our loss self-dual?
-That is, they do not account for the whole spectrum.
-
-Define the loss
-\begin{align}
-l_{iso}: \mathbb R^{D \times P} \to \mathbb R^{+} \\
-\mathcal (X) \mapsto \sum_{d = 1}^D g(\sigma^d(\mathcal X))
-\end{align}
-where $\sigma^d (\mathcal (X))$ is the $d$-th singular value of $\mathcal X$.
-%Note that since $g$ is convex, we could compute a full realization of the convex isometry pursuit algorithm by minimizing over WHAT.
-However, this would not result in a sparse solution.
-
-This loss is an appropriate choice for comparison because it is equal to the basis pursuit loss for orthogonal matrices
-\begin{proposition}
-\label{prop:main}
-\end{proposition}
-\begin{proof}
-\begin{align}
-\end{align}
-Then, singular values and regressands are analytically determined.  cont.
-\end{proof}
 
 \subsection{Isometry pursuit}
 
@@ -119,11 +122,8 @@ The intuition is that vectors which are closer to 1 in length and more orthogona
 
 \subsection{Isometric lasso}
 
-By Lagrangian duality, define an extension of \ref{prog:ip} called Isometric Lasso.
+The convex loss function \ref{eq:bp} and linear constraint in \ref{prog:isometry_pursuit} admit a Lagrangian dual which we shall call Isometric Lasso.
 The Isometric Lasso loss is
-\begin{align}
-\end{align}
-Isometric Lasso is
 \begin{align}
 l_\lambda (\mathcal X, \beta) =  \|I_D -  \tilde{ \mathcal X}_c \beta\|_2^2 +  \lambda \| \beta \|_{1,2}
 \end{align}
@@ -172,6 +172,18 @@ Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix
 This proof admits two immediate generalizations.
 First, any normalization function that satisfies the normalization conditions will do.
 Second, the ground truth and convex losses are equivalent for diagonalizable matrices.
+
+
+\begin{proposition}
+\label{prop:main}
+\end{proposition}
+\begin{proof}
+\begin{align}
+\end{align}
+Then, singular values and regressands are analytically determined.  cont.
+\end{proof}
+
+
  %Convex functions form metric? Cite Koelle neuroscience? Is metric important?
  
 \begin{proposition}[Local isometry selection]
