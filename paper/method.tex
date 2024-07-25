@@ -129,26 +129,24 @@ We will show how to use an appropriate normalized matrix $w(\mathcal X)$ in mult
 Multitask basis pursuit is a method for identifying sparse signals from overcomplete dictionaries, and the intuition behind its application in our setting is that submatrices consisting of vectors which are closer to 1 in length and more orthogonal will have smaller loss.
 In contrast to the typical statistical setting, these features correspond to individual observations in our diversification example, and basis vectors of data manifold tangent spaces in our non-linear dimension reduction example.
 
-The multitask basis pursuit penalty is % is this really a norm?
+Define the multitask basis pursuit penalty  % is this really a norm?
 \begin{align}
 \label{eq:bp}
 \| \cdot \|_{1,2}: \mathbb R^{P \times D} &\to \mathbb R^+ \\ 
 \beta &\mapsto  \sum_{p=1}^P  \|\beta_{p.}\|_2.
 \end{align}
-
 The isometry pursuit program is then
 \begin{align}
 \label{prog:isometry_pursuit}
-\widehat \beta^{P}_c (\mathcal X)  = \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; s.t. \; I_D = w ({ \mathcal X}, c) \beta.
+\widehat \beta^{P}_c (\mathcal X)  := \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \; I_D = w ({ \mathcal X}, c) \beta.
 \end{align}
-
-The recovered supports are then given by $S(\beta)$ where 
+The recovered functions are the indices of the dictionary elements with non-zero coefficients.
+That is, they are given by $S(\beta)$ where 
 \begin{align}
-S: \mathbb{R}^{p \times d} &\to \binom{\{1, 2, \ldots, P\}}{d} \\
-\beta &\mapsto \left\{ p \in \{1, 2, \ldots, P\} :  \|\beta_{p.}\| > 0 \right\}
+S: \mathbb{R}^{p \times d} &\to \binom{[P]}{d} \\
+\beta &\mapsto \left\{ p \in [P] :  \|\beta_{p.}\| > 0 \right\}
 \end{align}
-and $\binom{\{1, 2, \ldots, P\}}{d} = \left\{ A \subseteq \{1, 2, \ldots, P\} : \left|A\right| = d \right\}$ are the indices of the dictionary elements with non-zero coefficients.
-
+and $\binom{[P]}{d} = \left\{ A \subseteq [P] : \left|A\right| = d \right\}$. 
 \begin{algorithm}[H]
 \caption{\isometrypursuit(Matrix $\mathcal X \in \mathbb R^{D\times P}$, scaling constant $c$)}
 \begin{algorithmic}[1]
@@ -156,32 +154,30 @@ and $\binom{\{1, 2, \ldots, P\}}{d} = \left\{ A \subseteq \{1, 2, \ldots, P\} : 
 \end{algorithmic}
 \end{algorithm}
 
-
-A key theoretical assertion is that selection methods $S(\widehat {\beta} (\mathcal X))$ are invariant to choice of basis for $\mathcal X$.
-
-\begin{proposition}[Basis pursuit selection equivalence]
-\label{prop:basis_pursuit_selection_equivalence}
+A key theoretical assertion for the feasibility of \isometrypursuit~ is that it is invariant to choice of basis for $\mathcal X$.
+\begin{proposition}[Basis pursuit selection invariance]
+\label{prop:basis_pursuit_selection_invariance}
 Let $U \in \mathbb R^{D \times D}$ be unitary.
  Then $S(\widehat \beta  (U \mathcal X)) = S(\widehat \beta (\mathcal X))$.
 \end{proposition}
-
+A proof is given in Section \ref{proof:basis_pursuit_program_invariance}
+This fact has as an immediate corollary that we may replace $I_D$ in the constraint by any unitary $D \times D$ matrix.
 With these preliminaries, we may state our main result.
-
 \begin{proposition}[Unitary selection]
 \label{prop:unitary_selection}
 Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is unitary, $\mathcal S = S(\widehat{\beta} (\mathcal X)))$
-%Program \ref{prog:isometry_pursuit} selects $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$
  \end{proposition}
  
- This proof admits two immediate generalizations.
+This proof admits two immediate generalizations.
 First, any normalization function that satisfies the normalization conditions will do.
-Second, the ground truth and convex losses are equivalent for diagonalizable matrices.
-
-%Direct minimization of Equation \ref{eq:bp} will not select for isometry due to the preference for columns with larger norm.
-
-%One immediate question is - why $\beta$?  Can we just minimize some function of $X$ directly like $\|\exp_1 X\|_{1,2}$?  Direct minimization of this norm has nothing to do with correlation. We wouldn't need orthogonality - just constant length!
-
+% NOTE (Sam) is it just q(v) = g^{-1} (\|v\|) v/\|v\| basically?
+Second, assuming that we do in fact use $w$ for normalization, the ground truth and convex losses are equivalent for diagonalizable matrices.
+This is summarized in the following proposition, which is slightly stronger than Proposition \label{prop:unitary_selection}
+ 
 \subsection{Isometric lasso}
+
+We defer discussion of computational complexity to Section \ref{sec:computational_complexity}.
+
 
 The convex loss function \ref{eq:bp} and linear constraint in \ref{prog:isometry_pursuit} admit a Lagrangian dual which we shall call Isometric Lasso.
 The Isometric Lasso loss is
@@ -215,19 +211,14 @@ A proof is given in Section \ref{sec:local_isometry_proof}.
 
 \subsection{Two-stage isometry pursuit}
 
-
-
-
 %It also may be possible to argue the basis pursuit invariance from the lasso ones plus Lagranian duality, but to avoid taking the limit we prove both propositions  independently.
 %This also covers changing the target variable.
 
  %Convex functions form metric? Cite Koelle neuroscience? Is metric important?
- 
 
 \subsection{Implementation}
 
 We use the multitask lasso from sklearn and the cvxpy package for basis pursuit.  We use the SCS interior point solver from CVXPY, which is able to push sparse values arbitrarily close to 0 \cite{cvxpy_sparse_solution}. Data is IRIS and Wine, as well as flat torus from ldle.
-\subsection{Computational complexity}
-\section{Experiments}
 
-Comparison with isometry loss.
+\subsection{Computational complexity}
+\label{sec:computation_complexity}
