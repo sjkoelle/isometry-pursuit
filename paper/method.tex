@@ -32,7 +32,7 @@ Most importantly, this loss enables comparison with produced after normalization
 
 % NOTE (Sam): this could be improved.  Do we need proofs of maximized by unitary matrices and convex?
 % Something like the justification for logarithmic symmetry would be useful here.
-% Why do we need convex here?
+% Why do we need convex here? Convex functions form metric? Cite Koelle neuroscience? Is metric important?
 % Can we prove this is a norm?
 
 The overall algorithm we seek to improve upon is 
@@ -170,16 +170,21 @@ Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix
  
 This proof admits two immediate generalizations.
 First, any normalization function that satisfies the normalization conditions will do.
-% NOTE (Sam) is it just q(v) = g^{-1} (\|v\|) v/\|v\| basically?
 Second, assuming that we do in fact use $w$ for normalization, the ground truth and convex losses are equivalent for diagonalizable matrices.
-This is summarized in the following proposition, which is slightly stronger than Proposition \label{prop:unitary_selection}
- 
+This is summarized in the following proposition, which is slightly stronger than Proposition \ref{prop:unitary_selection}
+ \begin{proposition}[Loss equivalence]
+ Given a diagonalizable matrix $\mathcal X \in \mathbb R^{D \times D}$, $\|\widehat \beta_c^P(\mathcal X)\|_{1,2} = l_c (\mathcal X)$.
+ \end{proposition}
+This proposition should be thought of as applying to $D$ column matrices after selection.
+We know that unitary submatrices minimize loss, and should they be present, they will be selected by either method. % Note (Sam): still need to prove!
+This proposition shows that should diagonalizable matrices be selected, they will also have equivalent loss, but not necessarily that they will be selected.
+% NOTE (Sam) is it just generally required that q(v) = g^{-1} (\|v\|) v/\|v\| basically?  Might need to make normalization notation more clear to state general proposition.
+
 \subsection{Isometric lasso}
 
-We defer discussion of computational complexity to Section \ref{sec:computational_complexity}.
-
-
 The convex loss function \ref{eq:bp} and linear constraint in \ref{prog:isometry_pursuit} admit a Lagrangian dual which we shall call Isometric Lasso.
+While we defer full discussion of computational complexity to Section \ref{sec:computational_complexity}, the general principal which motivates the use of this formulation in our setting is the increased computational expediency in high-dimensions.
+
 The Isometric Lasso loss is
 \begin{align}
 l_\lambda (\mathcal X, \beta) =  \|I_D -  \tilde{ \mathcal X}_c \beta\|_2^2 +  \lambda \| \beta \|_{1,2}
@@ -198,27 +203,31 @@ Let $U \in \mathbb R^{D \times D}$ be unitary.
  Then $S(\widehat \beta_{\lambda}  (U \mathcal X)) = S(\widehat \beta_{\lambda} (\mathcal X))$.
 \end{proposition}
 
+This also covers changing the target variable.
+
+Note that it also may be possible to argue the basis pursuit invariance from the lasso ones plus Lagranian duality, but to avoid taking the limit we prove both propositions  independently.
+
 \subsection{Extension to non-linear spaces}
 
 % NOTE (Sam): just use projected jacobian as argument to isometry pursuit.
 
-\begin{proposition}[Local isometry selection]
+\begin{proposition}[Isometry at a point selection]
 \label{prop:local_isometry}
 Given a set of functions $G$ that contains a subset that defines a locally isometric embedding at a point $\xi$, then these will be selected as $\arg \min_\beta$.
 \end{proposition}
 A proof is given in Section \ref{sec:local_isometry_proof}.
 
-
 \subsection{Two-stage isometry pursuit}
 
-%It also may be possible to argue the basis pursuit invariance from the lasso ones plus Lagranian duality, but to avoid taking the limit we prove both propositions  independently.
-%This also covers changing the target variable.
-
- %Convex functions form metric? Cite Koelle neuroscience? Is metric important?
+A standard approach in the lasso literature is to first use the lasso to prune, prior to a final feature selection step.
+This avoids issues from shrinkage caused by the lasso estimator at high values of $\lambda$.
+For example, we cannot as of yet prove analogs of Proposition \ref{prop:unitary_selection} for the Lasso formulation, and similar lasso-specific conditions such as those found in \cite{Koelle2024-no} are not satisfied by overcomplete dictionaries.
 
 \subsection{Implementation}
 
-We use the multitask lasso from sklearn and the cvxpy package for basis pursuit.  We use the SCS interior point solver from CVXPY, which is able to push sparse values arbitrarily close to 0 \cite{cvxpy_sparse_solution}. Data is IRIS and Wine, as well as flat torus from ldle.
+We use the multitask lasso from sklearn and the cvxpy package for basis pursuit.
+We use the SCS interior point solver from CVXPY, which is able to push sparse values arbitrarily close to 0 \cite{cvxpy_sparse_solution}.
+Data is IRIS and Wine, as well as flat torus from ldle.
 
 \subsection{Computational complexity}
 \label{sec:computation_complexity}
