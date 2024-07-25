@@ -1,42 +1,60 @@
 \section{Method}
 
-
-First, we will define an function that is uniquely minimized by unitary matrices and some favorable properties for optimization.
-This will be the ground truth we evaluate the success of our method against.
-We then define the multitask lasso method that approximates the ground truth loss function in the sense that loss values are the same for all diagonalizable matrices.
-We show that this program recovers to optimum in a deterministic manner should it exist, but that the solution is not necessarily $D-sparse$.
-Therefore, we will demonstrate the ways in which sparse 
-% NOTE (Sam): we have not yet shown that the optimum is always D sparse if it exists...
+Recall that our objective is to, given a rank $D$ matrix $\mathcal X \in \mathbb R^{D \times P}$ with $P > D$, select a square submatrix $\mathcal X_{.\mathcal S}$ where subset $\mathcal S \subset P$ satisfies $|\mathcal S| = D$ that is as unitary as possible.
+Thus, we first will define a function that is uniquely minimized by unitary matrices and some favorable properties for optimization that will be the ground truth we evaluate the success of our method against.
+We then define the combination of normalization and multitask basis pursuit that approximates this ground truth loss function.
+We include claims that ground truth and convex loss values are the same for all diagonalizable matrices, and that the convex basis pursuit program recovers to optimum in a deterministic manner should it exist; proofs are given in Section \ref{sec:proofs}.
+% NOTE (Sam): we have not yet shown that the optimum is always D sparse if it exists... but this should be doable.
+We finally define the lasso dual to the basis pursuit program and a post processing method for ensuring that the solution is $D$ sparse.
+Experimental results using these methods will then be given in Section \ref{sec:experiments}
 
 \subsection{Ground truth}
+\label{sec:ground_truth}
 
-The main goal of sparse isometry pursuit is to expediate the selection of unitary submatrices.
+The main goal of isometry pursuit is to expediate the selection of unitary submatrices.
 Typical measures of unitariness which use the singular values of a matrix like the operator norm (i.e. deformation) and nuclear norm are poorly suited for  optimization since they use a subset of the matrix's information and are not uniquely minimized at unitarity, respectively.
-
 % NOTE (Sam): %is our the convex dual of itself?
-
 Define the loss
 \begin{align}
-l_{iso}: \mathbb R^{D \times P} \to \mathbb R^{+} \\
-\mathcal (X) \mapsto \sum_{d = 1}^D g(\sigma^d(\mathcal X))
+l_{c}: \mathbb R^{D \times P} \to \mathbb R^{+} \\
+\mathcal X \mapsto \sum_{d = 1}^D g(\sigma^d(\mathcal X), c)
 \end{align}
-where $\sigma^d (\mathcal (X))$ is the $d$-th singular value of $\mathcal X$.
-%Note that since $g$ is convex, we could compute a full realization of the convex isometry pursuit algorithm by minimizing over WHAT.
-However, this would not result in a sparse solution.
+where $\sigma^d (\mathcal (X))$ is the $d$-th singular value of $\mathcal X$ and
+\begin{align}
+g: \mathbb R^+ \times \mathbb R^+ &\to \mathbb R^+ \\
+t,c &\mapsto e^{t^c} + e^{t^{-c}}.
+\end{align}
+Plainly, $g$ is maximized by unitary matrices.
+A graph of $g$ is given in Figure \ref{fig:gt_loss}.
+More justification for this scaling will be given in Section \ref{sec:normalization}
+% NOTE (Sam): this could be improved.  Do we need proofs of maximized by unitary matrices and convex?
+% Something like the justification for logarithmic symmetry would be useful here.
+% Why do we need convex here?
+% Can we prove this is a norm?
 
-This loss is an appropriate choice for comparison because it is equal to the basis pursuit loss for suitably normalized orthogonal matrices.
-This will be discussed
+The overall algorithm we seek to improve upon is then
+\begin{align}
+\label{prog:ground_truth}
+\widehat {\mathcal S}_{GT}  &= \arg \min_{\mathcal S \subseteq [P] : |\mathcal S| = D} l_c (\mathcal X_{.\mathcal S})
+\end{align}
 
+In practice, non-convexity occurs in two places, but only one is essential.
+The inessential non-convexity is in the computation of $l_c$.
+This function is in fact convex, but computation of the individual singular values prior to summation is not, and our experiments rely on such piecemeal computation rather than implementing an end-to-end method.
+% NOTE (Sam): add a citation and check this is convex
+However, the combinatorial search over $[P]$ is non-convex.
+% NOTE (Sam): check what this type of optimization problem is called.  Integer programming
+
+%This loss is an appropriate choice for comparison because it is equal to the basis pursuit loss for suitably normalized orthogonal matrices.
 
 \subsection{Normalization}
+\label{sec:normalization}
 % NOTE (Sam): balance goes out the window with great flowers since there is no normalization.
 
 % NOTE (Sam): it might be nice to borrow the normalization, optimization, and postprocessing step lexicon from the neuroscience paper.
 Since basis pursuit methods tend to select longer vectors, selection of unitary submatrices requires normalization such that long and short candidate basis vectors are penalized in the subsequent regression.
-This calls for a "normalization" method that differs from other forms in its requirements, and we can't yet prove that these conditions relate it to any sort of norm on an appropriately chosen space.
-However, this transformation of individual features should be familiar to statisticians as a form of feature engineering, and whether the transformed vectors are related to a norm or not, the concept is similar.
-
-We may now establish some basic conditions for normalization of vectors $v \in \mathbb R^D$.
+This calls for a "normalization" method that differs from other forms in its requirements, and we can't yet prove that these conditions relate it to any sort of norm, even on an appropriately chosen space.
+Now establish some basic conditions for normalization of vectors $v \in \mathbb R^D$.
 
 \begin{definition}[Symmetric normalization]
 A function $q: \mathbb R^D \to \mathbb R^+ $ is a symmetric normalization if 
@@ -70,18 +88,24 @@ Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural cho
 Finally, the parameter $c$ grants control over the width of the basin, which is important in avoiding numerical issues arising close to $0$ and $\infty$.
 
 \begin{figure}[htbp]
+% NOTE (Sam): need to figure out how to make these subfigures
     \centering
-    \begin{minipage}{0.49\textwidth}
+       \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/Figure_1b.png}
+        \caption{Ground truth loss scaling function $g$ as a function of $t$}
+        \label{fig:gt_loss}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/Figure_1a.png}
         \caption{Length as a function of $t$}
         \label{fig:length}
     \end{minipage}
-    \hfill
-    \begin{minipage}{0.49\textwidth}
+    \begin{minipage}{0.32\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/Figure_1b.png}
-        \caption{Loss as a function of $t$}
+        \caption{Basis pursuit losses as a function of $t$}
         \label{fig:loss}
     \end{minipage}
     \caption{Plots of Length and Loss for different values of $c$.
