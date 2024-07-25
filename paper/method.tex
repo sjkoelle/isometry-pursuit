@@ -12,9 +12,9 @@ Experimental results using these methods will then be given in Section \ref{sec:
 \label{sec:ground_truth}
 
 The main goal of isometry pursuit is to expediate the selection of unitary submatrices.
-Typical measures of unitariness which use the singular values of a matrix like the operator norm (i.e. deformation) and nuclear norm are poorly suited for  optimization since they use a subset of the matrix's information and are not uniquely minimized at unitarity, respectively.
+More traditional measures of unitariness which use the singular values of a matrix like the log operator norm (i.e. log deformation) and nuclear norm are poorly suited for  optimization since they use a subset of the matrix's information and are not uniquely minimized at unitarity, respectively.
 % NOTE (Sam): %is our the convex dual of itself?
-Define the loss
+Thus, we define the loss
 \begin{align}
 l_{c}: \mathbb R^{D \times P} \to \mathbb R^{+} \\
 \mathcal X \mapsto \sum_{d = 1}^D g(\sigma^d(\mathcal X), c)
@@ -24,15 +24,18 @@ where $\sigma^d (\mathcal (X))$ is the $d$-th singular value of $\mathcal X$ and
 g: \mathbb R^+ \times \mathbb R^+ &\to \mathbb R^+ \\
 t,c &\mapsto e^{t^c} + e^{t^{-c}}.
 \end{align}
-Plainly, $g$ is maximized by unitary matrices.
+Plainly, $g$ is uniquely maximized by unitary matrices, and $g(\mathcal X^{\dagger}) = g(\mathcal X)^{-1}$.
+The former condition is necessary for success of the method, while the latter, as well as the convexity of $g$, are somewhat aesthetic choices.
 A graph of $g$ is given in Figure \ref{fig:gt_loss}.
-More justification for this scaling will be given in Section \ref{sec:normalization}
+Most importantly, this loss enables comparison with produced after normalization as in Section \ref{sec:normalization}.
+%This loss is an appropriate choice for comparison because it is equal to the basis pursuit loss for suitably normalized orthogonal matrices.
+
 % NOTE (Sam): this could be improved.  Do we need proofs of maximized by unitary matrices and convex?
 % Something like the justification for logarithmic symmetry would be useful here.
 % Why do we need convex here?
 % Can we prove this is a norm?
 
-The overall algorithm we seek to improve upon is then
+The overall algorithm we seek to improve upon is 
 \begin{align}
 \label{prog:ground_truth}
 \widehat {\mathcal S}_{GT}  &= \arg \min_{\mathcal S \subseteq [P] : |\mathcal S| = D} l_c (\mathcal X_{.\mathcal S})
@@ -40,28 +43,29 @@ The overall algorithm we seek to improve upon is then
 
 In practice, non-convexity occurs in two places, but only one is essential.
 The inessential non-convexity is in the computation of $l_c$.
-This function is in fact convex, but computation of the individual singular values prior to summation is not, and our experiments rely on such piecemeal computation rather than implementing an end-to-end method.
+While this function is in fact convex, computation of the individual singular values prior to summation is not, and our experiments rely on such piecemeal computation rather than implementing an end-to-end method.
 % NOTE (Sam): add a citation and check this is convex
-However, the combinatorial search over $[P]$ is non-convex.
-% NOTE (Sam): check what this type of optimization problem is called.  Integer programming
-
-%This loss is an appropriate choice for comparison because it is equal to the basis pursuit loss for suitably normalized orthogonal matrices.
+However, the combinatorial search over $[P]$ is inherently non-convex, and requires combinatorial search over all combinations.
+% NOTE (Sam): check what this type of optimization problem is called.  Integer programming?  Is there a dynamic programming solution?
 
 \subsection{Normalization}
 \label{sec:normalization}
 % NOTE (Sam): balance goes out the window with great flowers since there is no normalization.
 
 % NOTE (Sam): it might be nice to borrow the normalization, optimization, and postprocessing step lexicon from the neuroscience paper.
+We will propose a basis pursuit method which approximates the results of Program \ref{prog:ground_truth}.
 Since basis pursuit methods tend to select longer vectors, selection of unitary submatrices requires normalization such that long and short candidate basis vectors are penalized in the subsequent regression.
 This calls for a "normalization" method that differs from other forms in its requirements, and we can't yet prove that these conditions relate it to any sort of norm, even on an appropriately chosen space.
+This normalization is 
 Now establish some basic conditions for normalization of vectors $v \in \mathbb R^D$.
 
 \begin{definition}[Symmetric normalization]
+% NOTE (Sam): need a better name for this type of function.  Can I reuse parts in ground truth section?  Keep in mind max/min is switched).
 A function $q: \mathbb R^D \to \mathbb R^+ $ is a symmetric normalization if 
 \begin{align}
-\arg \max_{v \in \mathbb R^D} \ q (v) &=\{ v \; \|v\| = 1 \} \\
+\arg \max_{v \in \mathbb R^D} \ q (v) &=\{ v : \|v\| = 1 \} \\
 q(v) &= q(\frac{v}{\|v\|^2}) \\
-q(v^1) &= q(v^2) \; \forall v^1, v^2 : \|v^1\| = \|v^2\|
+q(v^1) &= q(v^2) \; \forall \; v^1, v^2 : \|v^1\| = \|v^2\|
 \end{align}
 \label{cond:normalization}
 \end{definition}
@@ -72,20 +76,26 @@ Mindful of this opportunity, and also of the desire to compare with the ground t
 \label{eq:normalization}
 % Note (Sam): fix this... get and more ... q_c?
 q: \mathbb R^+ \times \mathbb R^+  &\to \mathbb R^+ \\
-t , c &\mapsto \frac{\exp(t^c) + \exp(t^{-c})}{2e},
+t , c &\mapsto \frac{e^{t^c} + e^{t^{-c}}}{2e},
 \end{align}
-and use this to define the normalization 
+and use this to define the vector normalization 
 \begin{align}
 n: \mathbb R^D \times \mathbb R^+ &\to \mathbb R^D \\
-n^d , c &\mapsto \frac{n^d}{q(\|n\|_{2},c) } \forall d \in [D].
+n , c &\mapsto \frac{n}{q(\|n\|_{2},c) }
+\end{align}
+and matrix normalization
+\begin{align}
+w: \mathbb R^{D \times P} \times \mathbb R^+ &\to \mathbb R^D \\
+\mathcal X_{.p} , c &\mapsto n(\mathcal X_{.p}, c) \; \forall \; p \in [P].
 \end{align}
 
 While this normalization satisfies \ref{cond:normalization}, it also has some additional nice properties.
-First, $q$ is convex and smooth.
+First, $q$ is convex.
 Second, it grows asymptotically log-linearly.
 Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon exponentiation.
 % Introduce the exponent here.
 Finally, the parameter $c$ grants control over the width of the basin, which is important in avoiding numerical issues arising close to $0$ and $\infty$.
+This completes the deterministic data preprocessing.
 
 \begin{figure}[htbp]
 % NOTE (Sam): need to figure out how to make these subfigures
@@ -112,17 +122,6 @@ Finally, the parameter $c$ grants control over the width of the basin, which is 
     Since $t$ is one dimensional and therefore diagonalizable, basis pursuit and ground truth give identical loss values.}
     \label{fig:results}
 \end{figure}
-
-
-Using this, define the matrix-wide normalization vector
-\begin{align}
-\mathcal D: \mathbb R^{D \times P} \times \mathbb R^+ &\to \mathbb R^P \\
-\mathcal X_{.p}, c &\mapsto n(\mathcal X_{.p}, c)
-\end{align}
-and the normalized matrix $\tilde {\mathcal X}_c = \mathcal X \mathcal D(\mathcal X, c).$
-This completes the data preprocessing.
-
-
 
 \subsection{Isometry pursuit}
 
@@ -223,9 +222,6 @@ Algorithm (Local two stage tangent space basis pursuit)
 
 This provides an approach for the problem put forward in (cite) LDLE paper.
 
-Experiments (Loss)
-
-Compare with isometry loss (2 norm of singular values).
 
 \subsection{Implementation}
 
