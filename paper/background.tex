@@ -5,6 +5,10 @@
 Our goal is, given a matrix $\mathcal X \in \mathbb R^{D \times P}$, select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is as unitary as possible in a computationally efficient way.
 To that end, define a ground truth loss function that measures unitariness, and then introduce a surrogate loss function that convexifies the problem so that it may be efficiently solved.
 
+\subsection{Techniques}
+
+\subsubsection{Unitary matrices}
+
 \begin{definition}[Unitary]
 A rank $D$ matrix $U \in \mathbb R^{D_\alpha \times D_\beta}$ is said to be \textbf{unitary} if $U^TU = I_D$.
 \end{definition}
@@ -44,9 +48,24 @@ As we show in Proposition , our main theoretical result,  the tendency of the mu
 %While other properties like the operator norm
 %The nuclear norm is not 
 
-\subsection{Isometries}
+\subsubsection{Basis pursuit and lasso}
 
-A motivating example of this paper is the embedding of non-linear data manifolds by selecting functions from within a dictionary that preserve distances and angles.
+% NOTE (Sam): find a citation for multitask basis pursuit.  Surely, this has been done before.
+
+We use "multitask" instead of "group" to refer to this algorithm, as grouping is entirely determined by the dependent variable.
+
+Basis pursuit programs are of the form 
+\begin{align}
+\min c(\beta) : d(y, x\beta) \leq o
+\end{align}
+
+Basis pursuit programs are convex, and solvable via standard interior point methods.
+
+On the other hand, the basis pursuit program admits 
+
+\subsubsection{Isometries}
+
+Another motivating example of this paper is the embedding of non-linear data manifolds by selecting functions from within a dictionary that preserve distances and angles.
 These sets of functions are called isometries if they do so globally and local isometries if they do so almost everywhere.
 If more pointwise specificity is required, they are known at isometric at a point.
 To avoid abstractness, we give the following definition in coordinates.
@@ -80,8 +99,19 @@ $X$ could be, for example, the Jacobian matrix $d g$ of a set of candidate coord
 % We assume that we are given a target dimension $T \leq D$ - do we?
 % BIG QUESTION: RUN IN D = B?  What is rank of $X$?    It's D if not running D = B
 
-\subsection{Basis pursuit and lasso}
 
-% NOTE (Sam): find a citation for multitask basis pursuit.  Surely, this has been done before.
 
-We use "multitask" instead of "group" to refer to this algorithm, as grouping is entirely determined by the dependent variable. 
+\subsection{Applications}
+
+\subsubsection{Diversification}
+
+Say you are hosting an elegant dinner party.
+
+\subsubsection{Embedding}
+
+\subsubsection{Interpretability}
+
+
+
+
+

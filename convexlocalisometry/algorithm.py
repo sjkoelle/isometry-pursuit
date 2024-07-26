@@ -3,7 +3,7 @@ from itertools import combinations
 import numpy as np
 import cvxpy as cp
 from sklearn.linear_model import MultiTaskLasso
-
+from tqdm import tqdm
 
 def greedy(matrix, loss, target_dimension=None, selected_indices=[]):
 
@@ -30,12 +30,17 @@ def greedy(matrix, loss, target_dimension=None, selected_indices=[]):
 
 def brute(matrix, target_dimension, loss):
 
-    dictionary_dimension = matrix.shape[0]
-    parametrizations = combinations(dictionary_dimension, target_dimension)
-    losses = np.asarray([])
-    for parametrization in parametrizations:
-        losses.append(loss(matrix[parametrization]))
-    return parametrization[losses.argmin()]
+
+    dictionary_dimension = matrix.shape[1]
+    print(f'Computing brute force solution for dictionary dimension {dictionary_dimension} and target_dimension {target_dimension}')
+    parametrizations = combinations(range(dictionary_dimension), target_dimension)
+
+    losses = []
+    for parametrization in tqdm(parametrizations):
+    	putative_X_S = matrix[:,parametrization]
+    	losses.append(loss(putative_X_S))
+
+    return list(parametrizations)[np.asarray(losses).argmin()]
 
 
 def group_basis_pursuit(
