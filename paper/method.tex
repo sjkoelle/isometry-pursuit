@@ -164,7 +164,7 @@ A proof is given in Section \ref{proof:basis_pursuit_program_invariance}
 This fact has as an immediate corollary that we may replace $I_D$ in the constraint by any unitary $D \times D$ matrix.
 
 With these preliminaries, we may state our main result.
-From an intuitive perspective, this is akin to saying selected columns are not only complementary in that they are orthogonal, but also well-balanced in that their columns are of a standard length.
+From an intuitive perspective, this is akin to saying selected columns are not only complementary in that they are orthogonal, but also well-balanced in that their columns are of a length $1$ rather than length $0$.
 \begin{proposition}[Unitary selection]
 \label{prop:unitary_selection}
 Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is unitary, $\mathcal S = S(\widehat{\beta} (\mathcal X)))$
@@ -221,6 +221,8 @@ Note that it also may be possible to argue the basis pursuit invariance from the
 Given a set of functions $G$ that contains a subset that defines a locally isometric embedding at a point $\xi$, then these will be selected as $\arg \min_\beta$.
 \end{proposition}
 A proof is given in Section \ref{sec:local_isometry_proof}.
+
+% Theory on projection on tangent space
 
 \subsection{Two-stage isometry pursuit}
 
