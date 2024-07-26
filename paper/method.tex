@@ -162,7 +162,9 @@ Let $U \in \mathbb R^{D \times D}$ be unitary.
 \end{proposition}
 A proof is given in Section \ref{proof:basis_pursuit_program_invariance}
 This fact has as an immediate corollary that we may replace $I_D$ in the constraint by any unitary $D \times D$ matrix.
+
 With these preliminaries, we may state our main result.
+From an intuitive perspective, this is akin to saying selected columns are not only complementary in that they are orthogonal, but also well-balanced in that their columns are of a standard length.
 \begin{proposition}[Unitary selection]
 \label{prop:unitary_selection}
 Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is unitary, $\mathcal S = S(\widehat{\beta} (\mathcal X)))$
@@ -179,6 +181,8 @@ This proposition should be thought of as applying to $D$ column matrices after s
 We know that unitary submatrices minimize loss, and should they be present, they will be selected by either method. % Note (Sam): still need to prove!
 This proposition shows that should diagonalizable matrices be selected, they will also have equivalent loss, but not necessarily that they will be selected.
 % NOTE (Sam) is it just generally required that q(v) = g^{-1} (\|v\|) v/\|v\| basically?  Might need to make normalization notation more clear to state general proposition.
+
+
 
 \subsection{Isometric lasso}
 
@@ -209,6 +213,7 @@ Note that it also may be possible to argue the basis pursuit invariance from the
 
 \subsection{Extension to non-linear spaces}
 
+ 
 % NOTE (Sam): just use projected jacobian as argument to isometry pursuit.
 
 \begin{proposition}[Isometry at a point selection]
@@ -219,7 +224,7 @@ A proof is given in Section \ref{sec:local_isometry_proof}.
 
 \subsection{Two-stage isometry pursuit}
 
-A standard approach in the lasso literature is to first use the lasso to prune, prior to a final feature selection step.
+A standard approach in the lasso literature is to first use the lasso to prune, prior to a final feature selection step \cite{Hesterberg2008-iy}
 This avoids issues from shrinkage caused by the lasso estimator at high values of $\lambda$.
 For example, we cannot as of yet prove analogs of Proposition \ref{prop:unitary_selection} for the Lasso formulation, and similar lasso-specific conditions such as those found in \cite{Koelle2024-no} are not satisfied by overcomplete dictionaries.
 
