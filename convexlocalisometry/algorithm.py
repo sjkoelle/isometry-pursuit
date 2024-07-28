@@ -7,7 +7,6 @@ from tqdm import tqdm
 
 def greedy(matrix, loss, target_dimension=None, selected_indices=[]):
     '''Matrix is d \times p dimensional'''
-    print('target_dimension', target_dimension)
     if target_dimension is None:
         target_dimension, dictionary_dimension = (
             matrix.shape
@@ -24,7 +23,6 @@ def greedy(matrix, loss, target_dimension=None, selected_indices=[]):
 	                candidate_losses[p] = loss(matrix[:,candidate_parametrization])
 	        most_isometric_index = np.nanargmin(candidate_losses)
 	        selected_indices.append(most_isometric_index)
-	        print(selected_indices)
 	        selected_indices = greedy(
 	            matrix, loss, target_dimension, selected_indices=selected_indices
 	        )
@@ -36,7 +34,6 @@ def greedy(matrix, loss, target_dimension=None, selected_indices=[]):
 
 def brute(matrix, loss, target_dimension):
 
-
     dictionary_dimension = matrix.shape[1]
     print(f'Computing brute force solution for dictionary dimension {dictionary_dimension} and target_dimension {target_dimension}')
     parametrizations = combinations(range(dictionary_dimension), target_dimension)
@@ -46,7 +43,9 @@ def brute(matrix, loss, target_dimension):
         putative_X_S = matrix[:,parametrization]
         losses.append(loss(putative_X_S))
 
-    return list(parametrizations)[np.asarray(losses).argmin()]
+    selected_indices = np.asarray(losses).argmin()
+    parametrizations = combinations(range(dictionary_dimension), target_dimension)
+    return list(parametrizations)[selected_indices]
 
 
 def group_basis_pursuit(
@@ -54,10 +53,10 @@ def group_basis_pursuit(
     eps=1e-12,
     threshold=1e-6,
 ):
-    p, d = matrix.shape
-    beta = cp.Variable((p, d))  # could initialize with lasso?
+    D,P = matrix.shape
+    beta = cp.Variable((P,D))  # could initialize with lasso?
     objective = cp.Minimize(cp.sum(cp.norm(beta, axis=1)))
-    constraints = [matrix @ beta == np.identity(d)]
+    constraints = [matrix @ beta == np.identity(D)]
     problem = cp.Problem(objective, constraints)
     scs_opts = {"eps": eps}
     output = problem.solve(solver=cp.SCS, **scs_opts)
