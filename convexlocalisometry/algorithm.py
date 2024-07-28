@@ -6,29 +6,35 @@ from sklearn.linear_model import MultiTaskLasso
 from tqdm import tqdm
 
 def greedy(matrix, loss, target_dimension=None, selected_indices=[]):
-
+    '''Matrix is d \times p dimensional'''
+    print('target_dimension', target_dimension)
     if target_dimension is None:
-        dictionary_dimension, target_dimension = (
+        target_dimension, dictionary_dimension = (
             matrix.shape
         )  # NOTE (Sam): this won't hold necessarily for regression in ambient space instead of tangent space.
     else:
-        dictionary_dimension = matrix.shape[0]
+        dictionary_dimension = matrix.shape[1]
 
-    if target_dimension > 0:
-        for d in range(dictionary_dimension):
-            if d not in selected_indices:
-                loss_ = loss(matrix[[selected_indices, d]])
-        most_isometric_index = np.nanargmin(loss_)
-        selected_indices.append(most_isometric_index)
-        selected_indices = greedy(
-            matrix, loss, target_dimension - d, ignore_elements=selected_indices
-        )
-        return selected_indices
-    else:
-        return None
+    while len(selected_indices) < target_dimension:
+	    # if target_dimension > 0:
+	        candidate_losses = np.repeat(np.nan,dictionary_dimension)
+	        for p in range(dictionary_dimension):
+	            if p not in selected_indices:
+	                candidate_parametrization = np.concatenate([selected_indices, [p]]).astype(int)
+	                candidate_losses[p] = loss(matrix[:,candidate_parametrization])
+	        most_isometric_index = np.nanargmin(candidate_losses)
+	        selected_indices.append(most_isometric_index)
+	        print(selected_indices)
+	        selected_indices = greedy(
+	            matrix, loss, target_dimension, selected_indices=selected_indices
+	        )
+
+    return selected_indices
+# else:
+#     return None
 
 
-def brute(matrix, target_dimension, loss):
+def brute(matrix, loss, target_dimension):
 
 
     dictionary_dimension = matrix.shape[1]
@@ -37,8 +43,8 @@ def brute(matrix, target_dimension, loss):
 
     losses = []
     for parametrization in tqdm(parametrizations):
-    	putative_X_S = matrix[:,parametrization]
-    	losses.append(loss(putative_X_S))
+        putative_X_S = matrix[:,parametrization]
+        losses.append(loss(putative_X_S))
 
     return list(parametrizations)[np.asarray(losses).argmin()]
 
