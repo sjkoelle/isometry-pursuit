@@ -17,11 +17,13 @@ def greedy(matrix, loss, target_dimension=None, selected_indices=[]):
     while len(selected_indices) < target_dimension:
 	    # if target_dimension > 0:
 	        candidate_losses = np.repeat(np.nan,dictionary_dimension)
+
 	        for p in range(dictionary_dimension):
 	            if p not in selected_indices:
 	                candidate_parametrization = np.concatenate([selected_indices, [p]]).astype(int)
 	                candidate_losses[p] = loss(matrix[:,candidate_parametrization])
 	        most_isometric_index = np.nanargmin(candidate_losses)
+	        print(most_isometric_index)
 	        selected_indices.append(most_isometric_index)
 	        selected_indices = greedy(
 	            matrix, loss, target_dimension, selected_indices=selected_indices
@@ -71,8 +73,8 @@ def group_basis_pursuit(
 
 def group_lasso(matrix, lambda_):
 
-    p, d = matrix.shape
-    y = np.identity(d)
+    D, P = matrix.shape
+    y = np.identity(D)
     mtl = MultiTaskLasso(
         alpha=lambda_, tol=1e-16, max_iter=1000000, fit_intercept=False
     )

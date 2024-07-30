@@ -1,8 +1,10 @@
 \section{Background}
 
+In this section we give background on both the techniques used in our method, and also the motivating applications on which it is applied.
+
 \subsection{Problem}
 
-Our goal is, given a matrix $\mathcal X \in \mathbb R^{D \times P}$, select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is as unitary as possible in a computationally efficient way.
+Our goal is, given a matrix $\mathcal X \in \mathbb R^{D \times P}$, select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D_{-}$ and $D_{-} \leq D$ such that $X_{. \mathcal S}$ is as unitary as possible in a computationally efficient way.
 To that end, define a ground truth loss function that measures unitariness, and then introduce a surrogate loss function that convexifies the problem so that it may be efficiently solved.
 
 \subsection{Techniques}
@@ -14,6 +16,7 @@ A rank $D$ matrix $U \in \mathbb R^{D_\alpha \times D_\beta}$ is said to be \tex
 \end{definition}
 
 While this definition implies $D_\alpha, D_\beta \geq D$, this paper typically works with equality.
+% NOTE (Sam): Actually just do it both ways.  Focus on long term impact.
 Even so, this paper uses the term singular values rather than eigenvalues, and Section \ref{sec:discussion} contains speculation that a similar set of techniques hold for rank-d unitary rectangular matrices.
 
 The property of unitary matrices that motivates our ground truth loss function comes from spectral analysis.
@@ -29,7 +32,7 @@ In fact, these losses will behave equivalently over diagonalizable matrices.
 That is, in a sense, the ground truth loss will be as convex as possible.
 %Thus, in Section \ref{sec:ground_truth}, we introduce a new loss based on the LogSumExp function.
 
-The equivalent property of unitary matrices that we use to define our alternative convex loss is slightly different from Proposition \ref{prop:unitary_spectrum}.
+The property of unitary matrices that we use to define our alternative convex loss is slightly different from Proposition \ref{prop:unitary_spectrum}.
 %cite 
 \begin{proposition}[Basis vectors of a unitary matrix]
 \label{prop:unitary_basis}
@@ -99,17 +102,18 @@ $X$ could be, for example, the Jacobian matrix $d g$ of a set of candidate coord
 % We assume that we are given a target dimension $T \leq D$ - do we?
 % BIG QUESTION: RUN IN D = B?  What is rank of $X$?    It's D if not running D = B
 
-
-
 \subsection{Applications}
+
+The motivating example for this research is the computation of embeddings by selection from within sets of embedding coordinates.
+However, as the general approach has usefulness outside of non-linear dimension reduction, we first give examples in the relatively simpler setting of diversification.
 
 \subsubsection{Diversification}
 
-Say you are hosting an elegant dinner party.
+Say you would like to select wine and flowers for an elegant dinner party.
 
 \subsubsection{Embedding}
 
-\subsubsection{Interpretability}
+Selection of functions from within a dictionary is a standard way to impose interpretability.
 
 
 
