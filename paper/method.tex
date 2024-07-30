@@ -138,7 +138,8 @@ Define the multitask basis pursuit penalty  % is this really a norm?
 The isometry pursuit program is then
 \begin{align}
 \label{prog:isometry_pursuit}
-\widehat \beta^{P}_c (\mathcal X)  := \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \; I_D = w ({ \mathcal X}, c) \beta.
+% NOTE (Sam): this almost obviously applies to when the two Ds are not the same but lets not worry about it for now
+\widehat \beta^{D}_c (\mathcal X)  := \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \; I_D = w ({ \mathcal X}, c) \beta.
 \end{align}
 The recovered functions are the indices of the dictionary elements with non-zero coefficients.
 That is, they are given by $S(\beta)$ where 
@@ -167,7 +168,8 @@ With these preliminaries, we may state our main result.
 From an intuitive perspective, this is akin to saying selected columns are not only complementary in that they are orthogonal, but also well-balanced in that their columns are of a length $1$ rather than length $0$.
 \begin{proposition}[Unitary selection]
 \label{prop:unitary_selection}
-Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is unitary, $\mathcal S = S(\widehat{\beta} (\mathcal X)))$
+Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is the unique $D$-unitary submatrix, $\mathcal S = S(\widehat{\beta}_c^P (\mathcal X))) \forall c \in \mathbb R^+$.
+% NOTE (Sam): unique D unitary means that there is no larger unitary matrix, since otherwise we could remove columns to get ones.
  \end{proposition}
  
 This proof admits two immediate generalizations.
@@ -181,8 +183,6 @@ This proposition should be thought of as applying to $D$ column matrices after s
 We know that unitary submatrices minimize loss, and should they be present, they will be selected by either method. % Note (Sam): still need to prove!
 This proposition shows that should diagonalizable matrices be selected, they will also have equivalent loss, but not necessarily that they will be selected.
 % NOTE (Sam) is it just generally required that q(v) = g^{-1} (\|v\|) v/\|v\| basically?  Might need to make normalization notation more clear to state general proposition.
-
-
 
 \subsection{Isometric lasso}
 
@@ -213,7 +213,6 @@ Note that it also may be possible to argue the basis pursuit invariance from the
 
 \subsection{Extension to non-linear spaces}
 
- 
 % NOTE (Sam): just use projected jacobian as argument to isometry pursuit.
 
 \begin{proposition}[Isometry at a point selection]

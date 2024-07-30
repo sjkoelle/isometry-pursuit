@@ -1,19 +1,14 @@
 \section{Supplement}
-
+% NOTE (Sam): make sure to add basis pursuit equivalence
 We give proofs in support of the propositions in the main text and supplemental experimental information to better contextualize the results. 
 
 \subsection{Proofs}
 \label{sec:proofs}
 
-\subsubsection{Proof of Proposition \ref{basis_pursuit_selection_invariance}}
+\subsubsection{Proof of Proposition \ref{prop:basis_pursuit_selection_invariance}}
 \label{proof:basis_pursuit_program_invariance}
 
-\begin{proposition}
- \label{prop:basis_pursuit_loss_equivalence}
- Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $\hat \beta_{\lambda}  (U \mathcal X) = \hat \beta_{\lambda}  (U \mathcal X)$.
-\end{proposition}
-
+In this proof we first show that the penalty $\|\beta\|_{1,2}$ is unchanged by unitary transformation of $\beta$.
 
  \begin{proposition}{Loss equivalence}
  \label{prop:basis_pursuit_loss_equivalence}
@@ -21,58 +16,67 @@ We give proofs in support of the propositions in the main text and supplemental 
  Then $\|\beta\|_{1,2} = \|\beta U \|$.
 \end{proposition}
 
-\subsubsection{Proof of Propositions \ref{prop:lasso_selection_equivalence} and \ref{prop:basis_pursuit_selection_equivalence} }
-
-These proofs rely on some elementary applications of linear algebra.
-Proposition \ref{prop:lasso_selection_equivalence} relies on the fact that its loss is invariant under any unitary transformation.
-As a corollary, this fact gives that the identify matrix which is the "dependent variable" in the regression equation may be replaced by any $d \times d$ unitary matrix.
-For Proposition \ref{prop:basis_pursuit_selection_equivalence}, the loss is also invariant under unitary, transformation, but we also check that this transformation.
-Once again, this also implies that any unitary matrix may replace the identity in the constraint.
-%Minimizer?
-
-
- \begin{proposition}{Loss equivalence}
- \label{prop:lasso_loss_equivalence}
- Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $l_\lambda (\mathcal X, \beta) = l_\lambda (U \mathcal X, \beta U)$.
-\end{proposition}
-
 \begin{proof}
-Without loss of generality, let $i = 1$.
-We can write 
-\begin{eqnarray}
-l^*(X^i) = l(\beta^i) = \sum_{j = 1}^p (\sum_{i'=2}^n \| \beta_{i'j.} \|_2^2 +  \|  \beta_{1j.}^i \|_2^2 )^{1/2}=  \sum_{j = 1}^p (\sum_{i'=1}^n \| \beta_{i'j.} U \|_2^2)^{1/2} = l^*(X)
-\end{eqnarray}
-where the second to last equality is because the norm $\|v\|_2^2 $ is unitary invariant.
-
+\begin{align}
+\|\beta U \|_{1,2} &= \sum_{p = 1}^P \| \beta_{p.} U \| \\
+&= \sum_{p = 1}^P \| \beta_{p.} \| \\
+&= \|\beta \|_{1,2}
+\end{align}
 \end{proof}
 
-\begin{proposition}{Programmatic equivalence}
-\label{prop:lasso_program_equivalence}
- Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $\hat \beta_{\lambda}  (U \mathcal X) = U\hat \beta_{\lambda} (\mathcal X)$.
-\end{proposition}
-
-
-\subsubsection{Proof of Proposition \ref{prop:local_isometry}}
-\label{sec:local_isometry_proof}
-
-The two main components of this proof are that vectors which are more orthogonal will be smaller in loss.
-%can loss be smaller for non-orthogonal matrices with |\mathcal S| > D or is it always non-unitariness that gives higher rank solutions the opportunity.
+We then show that this implies that the resultant loss is unchanged by unitary transformation of $\mathcal X$.
 
 \begin{proposition}
+ \label{prop:basis_pursuit_loss_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $\widehat \beta  (U \mathcal X) = \widehat \beta  ( \mathcal X) U$.
+\end{proposition}
+
+\begin{proof}
+\begin{align}
+\widehat \beta  (U \mathcal X)  &= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta\|_{1,2}  \; : \; I_{D} = U X \beta \\
+&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta\|_{1,2}  \; : \; U^{-1} U = U^{-1} U X \beta U \\
+&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta\|_{1,2}  \; : \;  I_D = X \beta U \\
+&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta U \|_{1,2}  \; : \;  I_D = X \beta U \\
+&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta \|_{1,2}  \; : \;  I_D = X \beta.
+\end{align}
+\end{proof}
+
+\subsubsection{Proof of Proposition \ref{prop:unitary_selection}}
+\label{sec:local_isometry_proof}
+
+In support of the proposition in the main text, we give a more general theorem which illustrates the key features of the method.
+From there, it is a straightforward step to specify to the chosen normalization.
+The main components of this proof are that vectors which are more orthogonal will be smaller in loss, that the normalization is helpful, and that a unitary solution with $D_{-}$ vectors is always preferable, provided it exists.
+% NOTE (Sam) - can loss be smaller for non-orthogonal matrices with |\mathcal S| > D or is it always non-unitariness that gives higher rank solutions the opportunity?  No!,  we prove this isn't the case.
+
+First, we recall Proposition \ref{unitary_selection}.
+%\begin{proposition}[Unitary selection]
+%\label{prop:unitary_selection}
+%Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is the unique $D$-unitary submatrix, $\mathcal S = S(\widehat{\beta}_c^P (\mathcal X))) \forall c \in \mathbb R^+$.
+% NOTE (Sam): unique D unitary means that there is no larger unitary matrix, since otherwise we could remove columns to get ones.
+% \end{proposition}
+ 
+ 
+\begin{proposition}
 \label{lemma:orthogonal}
-Let $X_{.S} \in \mathbb R^{d \times p}$ be defined as above and let $X_{..S}'$ be an array such that $\|X_{.S_j}'\|_2 = \|X_{.S_j}\|_2$ for all $j \in [d]$ and $X_{.S}'$ is column-orthogonal.
-Then $\tilde l^* (X_{..S}) > \tilde l^* (X_{..S}')$.
+Let $X \in \mathbb R^{D \times P}$.
+Also, let $X$ have a submatrix $\tilde X_{.S} \in \mathbb R^{D \times D}$ such that $\|{\tilde X}^{.S_p}\|_2 = \|X^{.S_p}\|_2$ for all $j \in [d]$ and $X_{S_{p}} X^{S_{p}} =
+\begin{cases}
+1 \; : \: p_1 = p_2 \\
+0 \: : \; p_1 \neq p_2
+\end{cases}.$
+Let this be the only such $D$ submatrix of $X$.
+Then $l(X_{S.}) < l(X_{s'})$.
 \end{proposition}
 \begin{proof}
 
-By Lemma \ref{prop:unitarybasis}, without loss of generality
-\begin{eqnarray}
-\beta_{ijk}^i = \begin{cases} \|\tilde X_{.S_j}'\|_2^{-1} & j = k \in \{ 1 \dots d\}  \\
+By Lemma \ref{prop:basis_pursuit_loss_equivalence}, without loss of generality
+\begin{align}
+\beta_{jk}^i = \begin{cases} \|\tilde X_{.S_j}'\|_2^{-1} & j = k \in \{ 1 \dots d\}  \\
 0 & \text{otherwise}
 \end{cases}.
-\end{eqnarray}
+\end{align}
 Therefore,
 \begin{eqnarray}
 \tilde l^*(X') = \sum_{j = 1}^d \sqrt{\sum_{i = 1}^n \|\tilde X_{i.S_j}' \|_2^{-2}}.
@@ -140,9 +144,43 @@ and therefore
 The question is therefore what values of $c_j$ minimize $\exp (- | \log \ |c_1 \|_2)|)^{-1} $.  $| \log \ |c_1 \|_2)|$ is minimized (evaluates to $0$) when $c_j = 1$, so $- | \log \ |c_1 \|_2)|$ is maximized (evaluates to $0$, so $\exp (- | \log \ |c_1 \|_2)|)$ is maximized (evaluates to $1$), so $\exp (- | \log \ |c_1 \|_2)|)^{-1}$ is minimized (evaluates to $1$).
 \end{proof}
 
-
+% NOTE (Sam): Need a prop for having more than D vectors.
 
 For basis pursuit, the situation is similar.
+
+
+\subsubsection{Proof of Propositions \ref{prop:lasso_selection_equivalence} and \ref{prop:basis_pursuit_selection_equivalence} }
+
+These proofs rely on some elementary applications of linear algebra.
+Proposition \ref{prop:lasso_selection_equivalence} relies on the fact that its loss is invariant under any unitary transformation.
+As a corollary, this fact gives that the identify matrix which is the "dependent variable" in the regression equation may be replaced by any $d \times d$ unitary matrix.
+For Proposition \ref{prop:basis_pursuit_selection_equivalence}, the loss is also invariant under unitary, transformation, but we also check that this transformation.
+Once again, this also implies that any unitary matrix may replace the identity in the constraint.
+%Minimizer?
+
+ \begin{proposition}{Loss equivalence}
+ \label{prop:lasso_loss_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $l_\lambda (\mathcal X, \beta) = l_\lambda (U \mathcal X, \beta U)$.
+\end{proposition}
+
+\begin{proof}
+Without loss of generality, let $i = 1$.
+We can write 
+\begin{eqnarray}
+l^*(X^i) = l(\beta^i) = \sum_{j = 1}^p (\sum_{i'=2}^n \| \beta_{i'j.} \|_2^2 +  \|  \beta_{1j.}^i \|_2^2 )^{1/2}=  \sum_{j = 1}^p (\sum_{i'=1}^n \| \beta_{i'j.} U \|_2^2)^{1/2} = l^*(X)
+\end{eqnarray}
+where the second to last equality is because the norm $\|v\|_2^2 $ is unitary invariant.
+
+\end{proof}
+
+\begin{proposition}{Programmatic equivalence}
+\label{prop:lasso_program_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $\hat \beta_{\lambda}  (U \mathcal X) = U\hat \beta_{\lambda} (\mathcal X)$.
+\end{proposition}
+
+
 
 \subsection{Experiments}
 
