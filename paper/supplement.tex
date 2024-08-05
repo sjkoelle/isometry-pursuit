@@ -47,17 +47,23 @@ We then show that this implies that the resultant loss is unchanged by unitary t
 
 In support of the proposition in the main text, we give a more general theorem which illustrates the key features of the method.
 From there, it is a straightforward step to specify to the chosen normalization.
-The main components of this proof are that vectors which are more orthogonal will be smaller in loss, that the normalization is helpful, and that a unitary solution with $D_{-}$ vectors is always preferable, provided it exists.
+
 % NOTE (Sam) - can loss be smaller for non-orthogonal matrices with |\mathcal S| > D or is it always non-unitariness that gives higher rank solutions the opportunity?  No!,  we prove this isn't the case.
 
-First, we recall Proposition \ref{unitary_selection}.
-%\begin{proposition}[Unitary selection]
-%\label{prop:unitary_selection}
-%Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is the unique $D$-unitary submatrix, $\mathcal S = S(\widehat{\beta}_c^P (\mathcal X))) \forall c \in \mathbb R^+$.
-% NOTE (Sam): unique D unitary means that there is no larger unitary matrix, since otherwise we could remove columns to get ones.
-% \end{proposition}
+First, we state the more general version of Proposition \ref{unitary_selection}.
+ \begin{proposition}[Generalized unitary selection]
+\label{prop:generalized_unitary_selection}
+Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is the unique $D \times D$ rank $D$-unitary submatrix, and let $n_q$ be a normalization composed of normalizing functions $q$ that satisfy the conditions of Definition \ref{def:symmetric_normalization}, then conditions $\mathcal S = S(\widehat{\beta}_{q}^P (\mathcal X)))$.
+ \end{proposition}
  
- 
+ \begin{proof}
+The first component of this proof deals with $D$-sparse solutions only.  
+In this section, there are two main claims: that, given that a matrix consists of column-vectors of a certain set of lengths, loss will be minimized if these vectors are orthogonal, and that, given that a matrix consists of orthogonal columns, loss will be minimized if these vectors are of length one.
+These propositions suffice to show that, of all $D$-sparse solutions, the minimizer will be the unique unitary submatrix.
+The second step of the proof consists of the claim that $D$-sparse solutions are preferable to those consisting of more components.
+We proceed similarly, showing that loss is reduced by making any $D$-column submatrix of the putative solution orthonormal, and that loss is minimized further by removal of the non orthonormal components.
+
+ \end{proof}
 \begin{proposition}
 \label{lemma:orthogonal}
 Let $X \in \mathbb R^{D \times P}$.
@@ -103,10 +109,7 @@ Since $\|\beta_{S_j.}\| \geq \|\beta_{S_j.}'\|$ for all $i$, then $\|\beta_{.S_j
 \end{proof}
 
 The above proposition formalizes our intuition that orthogonality of $X$ lowers $l^*(X)$ over non-orthogonality.
-We now show a similar result for the somewhat less intuitive heuristic that dictionary functions whose gradient fields are length $1$ will be favored over those which are non-constant.
-Since the result on orthogonality holds regardless of length, we need only consider the case where the component vectors in our sets of vector fields are mutually orthogonal at each data point, but not necessarily of norm $1$.
-Note that were they not orthogonal, making them so would also reduce $l^*$.
-We then show that vectors which are closer to length $1$ are lower in loss.
+
 Since vectors which are closer to length $1$ are shrunk in length less by $\exp_1$, their corresponding loadings are smaller.
 This is formalized in the following proposition
 
@@ -145,13 +148,21 @@ The question is therefore what values of $c_j$ minimize $\exp (- | \log \ |c_1 \
 \end{proof}
 
 % NOTE (Sam): Need a prop for having more than D vectors.
+\begin{proposition}[Support contraction]
+Let $X$ and $S'$ be solutions such that in $X'$ a submatrix $X_{.S}$ orthonormalized.
+That is, $X_{.S}^T X_{.S} = I_D$ while $X_{p} = X_{.p}' \forall p \not \in S$.
+Then $l(X') \leq l(X).$
+\end{proposition}
 
-For basis pursuit, the situation is similar.
+\begin{proof}
+Since $X'$ is full rank, there exists $\gamma_{Sc} : X_{.S}' \gamma_{Sc} = X_c$ for $c \not \in S$.
+Then $X_c \beta$
+Then $I_D - X_S \beta_S = $
+\end{proof}
 
+\subsubsection{Proof of Proposition  \ref{prop:lasso_selection_equivalence} }
 
-\subsubsection{Proof of Propositions \ref{prop:lasso_selection_equivalence} and \ref{prop:basis_pursuit_selection_equivalence} }
-
-These proofs rely on some elementary applications of linear algebra.
+This proof proceeds similarly to the proof of Proposition  \ref{prop:basis_pursuit_selection_equivalence} .
 Proposition \ref{prop:lasso_selection_equivalence} relies on the fact that its loss is invariant under any unitary transformation.
 As a corollary, this fact gives that the identify matrix which is the "dependent variable" in the regression equation may be replaced by any $d \times d$ unitary matrix.
 For Proposition \ref{prop:basis_pursuit_selection_equivalence}, the loss is also invariant under unitary, transformation, but we also check that this transformation.

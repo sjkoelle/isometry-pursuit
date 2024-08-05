@@ -168,8 +168,9 @@ With these preliminaries, we may state our main result.
 From an intuitive perspective, this is akin to saying selected columns are not only complementary in that they are orthogonal, but also well-balanced in that their columns are of a length $1$ rather than length $0$.
 \begin{proposition}[Unitary selection]
 \label{prop:unitary_selection}
-Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is the unique $D$-unitary submatrix, $\mathcal S = S(\widehat{\beta}_c^P (\mathcal X))) \forall c \in \mathbb R^+$.
+Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is the unique $D \times D$ rank $D$-unitary submatrix, $\mathcal S = S(\widehat{\beta}_c^P (\mathcal X))) \forall c \in \mathbb R^+$.
 % NOTE (Sam): unique D unitary means that there is no larger unitary matrix, since otherwise we could remove columns to get ones.
+% What if we have a D-unitary matrix that isn't D-sparse?  This shouldn't work I think since its not sparse.
  \end{proposition}
  
 This proof admits two immediate generalizations.
