@@ -48,119 +48,125 @@ We then show that this implies that the resultant loss is unchanged by unitary t
 In support of the proposition in the main text, we give a more general theorem which illustrates the key features of the method.
 From there, it is a straightforward step to specify to the chosen normalization.
 
-% NOTE (Sam) - can loss be smaller for non-orthogonal matrices with |\mathcal S| > D or is it always non-unitariness that gives higher rank solutions the opportunity?  No!,  we prove this isn't the case.
-
-First, we state the more general version of Proposition \ref{unitary_selection}.
  \begin{proposition}[Generalized unitary selection]
 \label{prop:generalized_unitary_selection}
-Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is the unique $D \times D$ rank $D$-unitary submatrix, and let $n_q$ be a normalization composed of normalizing functions $q$ that satisfy the conditions of Definition \ref{def:symmetric_normalization}, then conditions $\mathcal S = S(\widehat{\beta}_{q}^P (\mathcal X)))$.
+Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is the unique $D \times D$ rank $D$-unitary submatrix, and let $n_q$ be a normalization composed of normalizing functions $q$ that satisfy the conditions of Definition \ref{def:symmetric_normalization}, then  $\mathcal S = S(\widehat{\beta}_{q}^P (\mathcal X)))$.
  \end{proposition}
  
  \begin{proof}
-The first component of this proof deals with $D$-sparse solutions only.  
-In this section, there are two main claims: that, given that a matrix consists of column-vectors of a certain set of lengths, loss will be minimized if these vectors are orthogonal, and that, given that a matrix consists of orthogonal columns, loss will be minimized if these vectors are of length one.
-These propositions suffice to show that, of all $D$-sparse solutions, the minimizer will be the unique unitary submatrix.
-The second step of the proof consists of the claim that $D$-sparse solutions are preferable to those consisting of more components.
-We proceed similarly, showing that loss is reduced by making any $D$-column submatrix of the putative solution orthonormal, and that loss is minimized further by removal of the non orthonormal components.
+ 
+%The first component of this proof deals with $D$-sparse solutions only.  
+%In this section, there are two main claims: that, given that a matrix consists of column-vectors of a certain set of lengths, loss will be minimized if these vectors are orthogonal, and that, given that a matrix consists of orthogonal columns, loss will be minimized if these vectors are of length one.
+%These propositions suffice to show that, of all $D$-sparse solutions, the minimizer will be the unique unitary submatrix.
+%The second step of the proof consists of the claim that $D$-sparse solutions are preferable to those consisting of more components.
+%We proceed similarly, showing that loss is reduced by making any $D$-column submatrix of the putative solution orthonormal, and that loss is minimized further by removal of the non orthonormal components.
 
- \end{proof}
-\begin{proposition}
-\label{lemma:orthogonal}
-Let $X \in \mathbb R^{D \times P}$.
-Also, let $X$ have a submatrix $\tilde X_{.S} \in \mathbb R^{D \times D}$ such that $\|{\tilde X}^{.S_p}\|_2 = \|X^{.S_p}\|_2$ for all $j \in [d]$ and $X_{S_{p}} X^{S_{p}} =
-\begin{cases}
-1 \; : \: p_1 = p_2 \\
-0 \: : \; p_1 \neq p_2
-\end{cases}.$
-Let this be the only such $D$ submatrix of $X$.
-Then $l(X_{S.}) < l(X_{s'})$.
+This proof consists of showing that replacing an arbitrary $D$ subset $\mathcal S$ with a unitary $D \times D$ matrix leads to existence of a solution which reduces loss, and that if such a subset already exists, loss may not be reduced any further.
+
+\begin{proposition}[Unitary Preference]
+Given a rank $D$ matrix $X \in \mathbb{R}^{D \times P}$, let $\beta$ be the solution to Program \ref{prog:isometry_pursuit}.
+Select an arbitrary subset $\mathcal{S} \subseteq [P]$ with $|\mathcal{S}| = D$.
+Define a new matrix $X' \in \mathbb{R}^{D \times P}$ as follows:
+\[
+X_{.p}' = \begin{cases} 
+X_{.p} & \text{if } p \notin \mathcal{S}, \\
+U_{.p} & \text{if } p \in \mathcal{S},
+\end{cases}
+\]
+where $U \in \mathbb{R}^{D \times D}$ is any unitary matrix.
 \end{proposition}
-\begin{proof}
 
-By Lemma \ref{prop:basis_pursuit_loss_equivalence}, without loss of generality
+\begin{proof}
+By the conditions in Definition  \ref{def:symmetric_normalization}, the maximum length for vectors $\mathcal X^q_{.p}$ is attained when $\|\mathcal X_{.p}\|_2 = 1$.
+By Proposition \ref{prop:unitary_basis}, this is the case for unitary matrices, but it is also true for matrices for which $\mathcal X^q_{.p}$ are not orthogonal.
+%To handle such matrices, we recall the following proposition.
+%\begin{proposition}[Non-orthogonality]
+%Given a rank $D$ unitary matrix $U \in \mathbb R^{D\times D}$ and a vector $v \in \mathbb R^D$, let $\gamma \in \mathbb R^D$ such that $v = U \gamma$.
+%Then $\|\gamma\|_2 = \|v\|_2$.
+% also need a prop about invariance of \gamma to choice of basis?
+%\end{proposition}
+
+\begin{proposition}
+Let $\beta_S'$ be the solution to
 \begin{align}
-\beta_{jk}^i = \begin{cases} \|\tilde X_{.S_j}'\|_2^{-1} & j = k \in \{ 1 \dots d\}  \\
-0 & \text{otherwise}
-\end{cases}.
+X_S \beta_S = X_S' \beta_S'.
 \end{align}
-Therefore,
-\begin{eqnarray}
-\tilde l^*(X') = \sum_{j = 1}^d \sqrt{\sum_{i = 1}^n \|\tilde X_{i.S_j}' \|_2^{-2}}.
-\end{eqnarray}
+Note that this is guaranteed to exist since $X_S'$ is full rank.  
+Then $\|\beta_S\|_{1,2} \geq \|\beta_S'\|_{1,2}$
+\end{proposition}
+\begin{proof}
+Since $X_S'$ is full rank we can define $\gamma_{SS} \in \mathbb R^{D \times D}$ such that 
+\begin{align}
+\label{eq:gamma_ss}
+X_S  = X_S' \gamma_{SS}.
+\end{align}
+Then 
+\begin{align}
+X_S \beta_S &= X_S' \gamma_{SS} \beta_S
+\end{align}
+and so
+\begin{align}
+\gamma_{SS} \beta_S = \beta_S'.
+\end{align}
+Thus, we want to show that 
+\begin{align}
+\| \gamma_{SS} \beta_S  \|_{1,2} \leq \|\beta_S\|_{1,2}.
+\end{align}
 
-On the other hand, the invertible matrices $\tilde X_{.S}$ admit QR decompositions $\tilde X_{.S} = QR$ where $Q$ and $R$ are square unitary and upper-triangular matrices, respectively \cite{Anderson1992-fb}.
-Since $l^*$ is invariant to unitary transformations, we can without loss of generality, consider $Q= I_d$.
-Denoting $I_d$ to be composed of basis vectors $[e^1 \dots e^d]$, the matrix $R$ has form
-\begin{eqnarray}
-R = \begin{bmatrix}
-\langle e^1, \tilde X_{i.{S_1}} \rangle & \langle e^1, \tilde X_{i.{S_2}} \rangle  &\dots &  \langle e^1, \tilde X_{i.{S_d}} \rangle \\
-0 & \langle e^2, \tilde X_{i.{S_2}} \rangle & \dots  &  \langle e^2, \tilde X_{i.{S_d}} \rangle\\
-0 & 0 & \dots & \dots  \\
-0 & 0 & 0& \langle e^d, \tilde X_{i.{S_d}} \rangle 
-\end{bmatrix}.
-\end{eqnarray}
-The diagonal entries $R_{jj} = \langle q^j, \tilde X_{.{S_j}} \rangle$ of this matrix have form $\| \tilde X_{.{S_j}} -  \sum_{j' \in \{1 \dots j-1\}} \langle \tilde X_{.{S_{j}}}, e^{j'} \rangle e^{j'} \|$.
-Thus, $R_{j} \in (0, \| \tilde X_{i.{S_j}}\|]$.
-On the other hand $\beta_{iS.} =R^{-1}$, which has diagonal elements $\beta_{j} = R_{j}^{-1}$, since $R$ is upper triangular.
-Thus, $\beta_{jj} \geq \| \tilde X_{.{S_j}}\|^{-1}$, and therefore $\|\beta_{iS_j.}\| \geq \|\beta_{S_j.}'\|.$
-Since $\|\beta_{S_j.}\| \geq \|\beta_{S_j.}'\|$ for all $i$, then $\|\beta_{.S_j.}\| \geq \|\beta_{.S_j.}' \|$.
-%Finally, that this is true for all $j$.
-%That is, if we 
+Since $\|X_S'\|$ is unitary, $\|X_S' \gamma_{Sp}\|_2 = \| \gamma_{Sp}\|_2$, so by Equation \ref{eq:gamma_ss} $\|X_{.p}\|_2 \leq 1$ implies that $\|\gamma_{Sp}\|_2 \leq 1 \; \forall  p \in S$.
+Thus, showing the proposition amounts to showing that the $\|\|_{1,2}$ norm is submultiplicative.
+
+In lieu of showing directly, we show that $\|\|_{1,2}$ is subadditive and therefore, since it is unitary invariant by Proposition \ref{prop:basis_pursuit_loss_equivalence} and $\|\text{diag}(1, 0, \dotsc, 0)\|_{1,2} =1$ satisfies the conditions in \cite{HIAI2004155}, and thus is submultiplicative.
+
+\begin{proposition}[Subadditivity of group lasso norm]
+\label{prop:subadditivity}
+Let $A, B \in \mathbb R^{D \times D}$.  Then $\|A + B \|_{1,2} \leq \|A  \|_{1,2}  +  \|B \|_{1,2} $
+\end{proposition}
+\begin{proof}
+\begin{align}
+\|A + B \|_{1,2} &= \sum_{d = 1}^D \|A_{d.} + B_{d.}\|_2 \\
+&\leq \sum_{d = 1}^D \|A_{d.}\|_2 + \|B_{d.}\|_2 \\
+&= \|A  \|_{1,2}  +  \|B \|_{1,2} 
+\end{align}
 \end{proof}
 
-The above proposition formalizes our intuition that orthogonality of $X$ lowers $l^*(X)$ over non-orthogonality.
+Thus, $\|\beta_S\|_{1,2} \geq \|\beta_S'\|_{1,2}$.
 
-Since vectors which are closer to length $1$ are shrunk in length less by $\exp_1$, their corresponding loadings are smaller.
-This is formalized in the following proposition
+\end{proof}
 
+The next component of the argument deals with elements of $[P]$ which are not contained within $\mathcal S$.
+We show that zeroing components of $\beta_{p.}'$ where $p \not \in S$ and compensating for the removal by altering the loadings within $\mathcal S$ results in lower loss.
 
 \begin{proposition}
-\label{lemma:orthogonal}
-Let $X_{.S}^{''}$ be a set of vector fields $X_{.S_j}^{''}$ mutually orthogonal at every data point $i$, and $\|X_{.S_j}^{''}\| = 1$.
-Then $\tilde l^* (X_{.S}' ) \geq \tilde l^*(X_{.S}^{''})$.
-\end{proposition}
-\begin{proof}
-Let $\|X_{i.S_j}^{''}\| = c_j$.  By Proposition \ref{prop:unitarybasis}, we can assume without loss of generality (i.e without changing the loss) that
-\begin{eqnarray}
-\tilde X_{.S_j} = \begin{bmatrix}
-c_1 & 0 & 0 \\
-0 & \dots & 0  \\
-0 & 0 & c_d  \rangle\\
-\end{bmatrix}.
-\end{eqnarray}
-Thus
-\begin{eqnarray}
-\tilde \exp_1 X_{.S_j} = \begin{bmatrix}
- \exp (- | \log \|c_1 \|_2)|)  & 0 & 0 \\
-0 & \dots & 0  \\
-0 & 0 &  \exp (- | \log \|c_d \|_2)|)   \rangle\\
-\end{bmatrix}.
-\end{eqnarray}
-and therefore
-\begin{eqnarray}
-\tilde \beta_{.S_j} = \begin{bmatrix}
- \exp (- | \log \|c_1 \|_2)|)^{-1}  & 0 & 0 \\
-0 & \dots & 0  \\
-0 & 0 &  \exp (- | \log \|c_d \|_2)|)^{-1}   \rangle\\
-\end{bmatrix}.
-\end{eqnarray}
-The question is therefore what values of $c_j$ minimize $\exp (- | \log \ |c_1 \|_2)|)^{-1} $.  $| \log \ |c_1 \|_2)|$ is minimized (evaluates to $0$) when $c_j = 1$, so $- | \log \ |c_1 \|_2)|$ is maximized (evaluates to $0$, so $\exp (- | \log \ |c_1 \|_2)|)$ is maximized (evaluates to $1$), so $\exp (- | \log \ |c_1 \|_2)|)^{-1}$ is minimized (evaluates to $1$).
-\end{proof}
-
-% NOTE (Sam): Need a prop for having more than D vectors.
-\begin{proposition}[Support contraction]
-Let $X$ and $S'$ be solutions such that in $X'$ a submatrix $X_{.S}$ orthonormalized.
-That is, $X_{.S}^T X_{.S} = I_D$ while $X_{p} = X_{.p}' \forall p \not \in S$.
-Then $l(X') \leq l(X).$
+Let $\beta_S"$ be the solution to
+\begin{align}
+X_S' \beta_S ' + X_c \beta_c = X_S' \beta_S".
+\end{align}
+Note that this is guaranteed to exist since $X_S'$ is full rank.  
+Then $\|\beta_{S}'\|_{1,2} + \|\beta_c\| \geq \|\beta_S"\|_{1,2}$
 \end{proposition}
 
 \begin{proof}
-Since $X'$ is full rank, there exists $\gamma_{Sc} : X_{.S}' \gamma_{Sc} = X_c$ for $c \not \in S$.
-Then $X_c \beta$
-Then $I_D - X_S \beta_S = $
+Since $X_S'$ is full rank we can define $\gamma_{Sc} \in \mathbb R^D$ such that $X_c = X_S' \gamma_{Sc}$.
+Then 
+\begin{align}
+X_S' \beta_S" &= X_S' \beta_S ' + X_c \beta_c \\
+&= X_S' \beta_S ' + X_S' \gamma_{Sc} \beta_c \\
+&= X_S'( \beta_S ' + \gamma_{Sc} \beta_c )
+\end{align}
+Thus, $\beta_S" = \beta_S' + \gamma_{Sc}\beta_c$, and so we now want to show that $\|\beta_S'\|_{1,2} + \|\beta_c\| \geq \| \beta_S' + \gamma_{Sc}\beta_c\|_{1,2}$.
+
+Since $\|X_p'\| \geq \|X_c\| \forall p \in S$ and these are orthogonal, $\|\gamma_{Sc}\| \leq 1$. % NOTE (Sam): this needs to be proved.
+By Proposition \ref{prop:subadditivity},  $\| \beta_p' + \gamma_{pc}\beta_c\| \leq \|\beta_p'\| + \|\gamma_{pc}\beta_c\|$ for $p \in S$ and therefore $ \| \beta_S' + \gamma_{Sc}\beta_c\|_{1,2} \leq \| \beta_S' \|_{1,2}+ \| \gamma_{Sc}\beta_c\|_{1,2}$.
+Thus, we now want to show that $\| \gamma_{Sc}\beta_c\|_{1,2} \leq \|\beta_c\|$.
+
+Expanding the norm, we have $\| \gamma_{Sc}\beta_c\|_{1,2}  = \sum_{p\in S} \gamma_{pc} \|\beta_c\|$
+%Since $\|\gamma_{Sc}\| \leq 1$, $\sum_{p \in S} \gamma_{pc} \|\beta_p\| \leq \|$
+\end{proof}
 \end{proof}
 
-\subsubsection{Proof of Proposition  \ref{prop:lasso_selection_equivalence} }
+\end{proof}
+\subsubsection{Proof of Proposition \ref{prop:lasso_selection_equivalence} }
 
 This proof proceeds similarly to the proof of Proposition  \ref{prop:basis_pursuit_selection_equivalence} .
 Proposition \ref{prop:lasso_selection_equivalence} relies on the fact that its loss is invariant under any unitary transformation.
@@ -176,7 +182,6 @@ Once again, this also implies that any unitary matrix may replace the identity i
 \end{proposition}
 
 \begin{proof}
-Without loss of generality, let $i = 1$.
 We can write 
 \begin{eqnarray}
 l^*(X^i) = l(\beta^i) = \sum_{j = 1}^p (\sum_{i'=2}^n \| \beta_{i'j.} \|_2^2 +  \|  \beta_{1j.}^i \|_2^2 )^{1/2}=  \sum_{j = 1}^p (\sum_{i'=1}^n \| \beta_{i'j.} U \|_2^2)^{1/2} = l^*(X)
