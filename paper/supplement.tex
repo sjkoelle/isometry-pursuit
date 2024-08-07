@@ -79,131 +79,34 @@ where $U \in \mathbb{R}^{D \times D}$ is any unitary matrix.
 \begin{proof}
 By the conditions in Definition  \ref{def:symmetric_normalization}, the maximum length for vectors $\mathcal X^q_{.p}$ is attained when $\|\mathcal X_{.p}\|_2 = 1$.
 By Proposition \ref{prop:unitary_basis}, this is the case for unitary matrices, but it is also true for matrices for which $\mathcal X^q_{.p}$ are not orthogonal.
-%To handle such matrices, we recall the following proposition.
-%\begin{proposition}[Non-orthogonality]
-%Given a rank $D$ unitary matrix $U \in \mathbb R^{D\times D}$ and a vector $v \in \mathbb R^D$, let $\gamma \in \mathbb R^D$ such that $v = U \gamma$.
-%Then $\|\gamma\|_2 = \|v\|_2$.
-% also need a prop about invariance of \gamma to choice of basis?
-%\end{proposition}
+
 
 \begin{proposition}[Support orthogonalization]
 \label{prop:support_orthogonalization}
-Let $\beta_S'$ be the solution to
-\begin{align}
-X_S \beta_S = X_S' \beta_S'.
-\end{align}
-Note that this is guaranteed to exist since $X_S'$ is full rank.  
-Then $\|\beta_S\|_{1,2} \geq \|\beta_S'\|_{1,2}$
+Let $\beta_{S.}' = X_{.S} \beta_{S.}$.
+Then $\|\beta_{S.}\|_{1,2} \geq \|\beta_{S.}'\|_{1,2}$
 \end{proposition}
 \begin{proof}
-Since $X_S'$ is full rank we can define $\gamma_{SS} \in \mathbb R^{D \times D}$ such that 
+We want to show that 
 \begin{align}
-\label{eq:gamma_ss}
-X_S  = X_S' \gamma_{SS}.
+\| X_{.S} \beta_{S.}  \|_{1,2} \leq \|\beta_{S.}\|_{1,2}.
 \end{align}
-Then 
-\begin{align}
-X_S \beta_S &= X_S' \gamma_{SS} \beta_S
-\end{align}
-and so
-\begin{align}
-\gamma_{SS} \beta_S = \beta_S'.
-\end{align}
-Thus, we want to show that 
-\begin{align}
-\| \gamma_{SS} \beta_S  \|_{1,2} \leq \|\beta_S\|_{1,2}.
-\end{align}
-
-Since $\|X_S'\|$ is unitary, $\|X_S' \gamma_{Sp}\|_2 = \| \gamma_{Sp}\|_2$.
-Therefore, Equation \ref{eq:gamma_ss} and $\|X_{.p}\|_2 \leq 1$ imply that $\|\gamma_{Sp}\|_2 \leq 1 \; \forall  p \in S$.
-Thus, showing the proposition amounts to showing that the $\|\|_{1,2}$ norm is submultiplicative.
-
-In lieu of showing directly, we show that $\|\|_{1,2}$ is subadditive and therefore, since it is unitary invariant by Proposition \ref{prop:basis_pursuit_loss_equivalence} and $\|\text{diag}(1, 0, \dotsc, 0)\|_{1,2} =1$ satisfies the conditions in \cite{HIAI2004155}, and thus is submultiplicative.
-
-\begin{proposition}[Subadditivity of group lasso norm]
-\label{prop:subadditivity}
-Let $A, B \in \mathbb R^{D \times D}$.  Then $\|A + B \|_{1,2} \leq \|A  \|_{1,2}  +  \|B \|_{1,2} $
-\end{proposition}
-\begin{proof}
-\begin{align}
-\|A + B \|_{1,2} &= \sum_{d = 1}^D \|A_{d.} + B_{d.}\|_2 \\
-&\leq \sum_{d = 1}^D \|A_{d.}\|_2 + \|B_{d.}\|_2 \\
-&= \|A  \|_{1,2}  +  \|B \|_{1,2} 
-\end{align}
-\end{proof}
-
-Thus, $\|\beta_S\|_{1,2} \geq \|\beta_S'\|_{1,2}$.
+We know that $\| X_{.p} \|_2 \leq 1.$
+We rewrite $\| X_{.S} \beta_{S.}  \|_{1,2} $
 
 \end{proof}
 
 The next component of the argument deals with elements of $[P]$ which are not contained within $\mathcal S$.
 We show that zeroing components of $\beta_{p.}'$ where $p \not \in S$ and compensating for the removal by altering the loadings within $\mathcal S$ results in lower loss.
 
-\begin{proposition}[Support replacement]
-Let $\beta_S"$ be the solution to
-\begin{align}
-X_S' \beta_S ' + X_{S^C} \beta_{S^C} = X_S' \beta_S". % NOTE (Sam): need to clarify that \beta_{c.} is a vector
-\end{align}
-Note that this is guaranteed to exist since $X_S'$ is full rank.  
-Then $\|\beta_{S}'\|_{1,2} + \|\beta_{S^C}'\|_2 \geq \|\beta_S"\|_{1,2}$
+% NOTE (Sam): need to clarify that \beta_{c.} is a vector
 % NOTE (Sam): beta_c is not ' since its only operated on by the change from the earlier theorem.  Refitting would lead to a changed value.
-\end{proposition}
 
-\begin{proof}
-Since $X_S'$ is full rank we can define $\gamma_{SS^C} \in \mathbb R^{D \times (P-D)}$ such that $X_{S^C} = X_S' \gamma_{SS^C}$.
-Then 
+\begin{proposition}[Support replacement]
 \begin{align}
-X_S' \beta_S" &= X_S' \beta_S ' + X_{S^C} \beta_{S^C} \\
-&= X_S' \beta_S ' + X_S' \gamma_{SS^C} \beta_{S^C} \\
-&= X_S'( \beta_S ' + \gamma_{SS^C} \beta_{S^C} )
+\|\beta_{S}'\|_{1,2} + \|\beta_{S^C}\|_{1,2} \geq D
 \end{align}
-Thus, $\beta_S" = \beta_S' + \gamma_{SS^C}\beta_{S^C}$.
-
-We therefore want to show that $\|\beta_S'\|_{1,2} + \|\beta_{S^C}\|_{1,2} \geq \| \beta_{S.}' + \gamma_{SS^C}\beta_{S^C}\|_{1,2}$  % this seems
-or possibly (applying subadditivity)
-$\| \gamma_{SS^C}\beta_{S^C}\|_{1,2} \leq \|\beta_{S^C}\|_{1,2}$ % NOTE (Sam): this doesn't seem true in cases where the previous inequality holds
-We know that $\| \gamma_{Sp}\|\leq 1$.
-
-%Expand 
-%\begin{align}
-%\| \gamma_{SS^C}\beta_{S^C}\|_{1,2} &= \sum_{p \in S} \| \gamma_{pS^C} \beta_{S^C}\|_2 \\
-%&= \sum_{p \in S} \| \sum_{p' \in S^C} \gamma_{pp'} \beta_{p'}\|_2 \\
-%&= \sum_{p \in S} (\sum_{d = 1}^D (\sum_{p' \in S^C} \gamma_{pp'} \beta_{p'd})^2)^{1/2} \\
-%&= \sum_{p \in S} (\sum_{d = 1}^D (\sum_{p' \in S^C} (\sum_{p" \in S^C} \gamma_{pp'} \beta_{p'd}\gamma_{pp"} \beta_{p"d} )))^{1/2} \\
-%&= \sum_{p \in S} (\sum_{p' \in S^C} ( \sum_{p" \in S^C}( \sum_{d = 1}^D \gamma_{pp'} \beta_{p'd}\gamma_{pp"} \beta_{p"d}) ))^{1/2} \\
-%&= \sum_{p \in S} (\sum_{d = 1}^D (\gamma_{p.} \odot \beta_{.d} ) \otimes (\gamma_{p.} \odot \beta_{.d} ))^{1/2} 
-%\end{align}
-
-%Meanwhile,
-%\begin{align}
-%\|\beta_{S^C}\|_{1,2} &= \sum_{p \in S^C} \|\beta_{p}\|_2 \\
-%&= \sum_{p \in S^C} (\sum_{d = 1}^D \beta_{pd}^2 )^{1/2}
-%\end{align}
-%Note that $\beta_{S^C} \in \mathbb R^{(P-D) \times D}$.
-% NOTE (Sam): is GL norm submultiplicative for rectangular matrices?  I don't thinkthis would help but interesting question.
-
-
-%Another way to say this is $ \sum ( \|\beta_p' + \gamma_{pc} \beta_c \|_2  -  \|\beta_p'\|_2) \leq \|\beta_{c.}\| $
-% NOTE (Sam): this isn't a tight enough bound since 1 norm is greater than 2 norm expect on axes.
-%As in the proof of Proposition \ref{prop:support_orthogonalization}, $X_{.S'}$ unitary and $\|X_{.c}\|_2 \leq 1$ together imply that $\|\gamma_{Sc}\|_2 \leq 1$. 
-%Moreover, Proposition \ref{prop:subadditivity} implies that $ \| \beta_{S'.} + \gamma_{Sc}\beta_{c.}^T\|_{1,2} \leq \| \beta_{S'.} \|_{1,2}+ \| \gamma_{Sc}\beta_{c.}^T\|_{1,2}$.
-%Thus, we now want to show that $\| \gamma_{Sc} \beta_{c.}^T\|_{1,2} \leq \|\beta_{c.}\|_2$.
-%Examining each row, we have that $\| \gamma_{Sc} \beta_{c.}^T\|_{1,2} = \sum_{p \in S} \| \gamma_{pc} \beta_c \|_2 =  \sum_{p \in S} | \gamma_{pc}| \| \beta_c \|_2$
-
-
-% NOTE (Sam): in my hands its not clear that submultiplicativity gives a tight enough bound.
-% In particular, we show that $\| \gamma_{Sc} \beta_{c.}^T\|_{1,2} \leq \| \gamma_{Sc} \|_{2} \|\beta_{c.}\|_{2} $.
-%We rewrite $\gamma_{Sc} \beta_{c.}^T = [\gamma_{Sc}] \text{diag}(\beta_{c.})$.
-%By submultiplicativity of $\|\|_{1,2}$ we have 
-
-%Then
-%\begin{align}
-%\| \gamma_{Sc}\beta_{c.}^T\|_{1,2}  &= \sum_{p\in S} \|\gamma_{pc} \beta_{c.}\|_2 \\
-%&=  \sum_{p\in S} |\gamma_{pc}| \| \beta_{c.}\|_2 
-%\end{align}
-
-%Since $\|\gamma_{Sc}\| \leq 1$, $\sum_{p \in S} \gamma_{pc} \|\beta_p\| \leq \|$
-\end{proof}
+\end{proposition}
 \end{proof}
 
 \end{proof}
