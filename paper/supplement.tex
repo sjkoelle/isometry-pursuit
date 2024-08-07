@@ -142,25 +142,48 @@ We show that zeroing components of $\beta_{p.}'$ where $p \not \in S$ and compen
 \begin{proposition}[Support replacement]
 Let $\beta_S"$ be the solution to
 \begin{align}
-X_S' \beta_S ' + X_{.c} \beta_{c.}^T = X_S' \beta_S". % NOTE (Sam): need to clarify that \beta_{c.} is a vector
+X_S' \beta_S ' + X_{S^C} \beta_{S^C} = X_S' \beta_S". % NOTE (Sam): need to clarify that \beta_{c.} is a vector
 \end{align}
 Note that this is guaranteed to exist since $X_S'$ is full rank.  
-Then $\|\beta_{S}'\|_{1,2} + \|\beta_c\|_2 \geq \|\beta_S"\|_{1,2}$
+Then $\|\beta_{S}'\|_{1,2} + \|\beta_{S^C}'\|_2 \geq \|\beta_S"\|_{1,2}$
 % NOTE (Sam): beta_c is not ' since its only operated on by the change from the earlier theorem.  Refitting would lead to a changed value.
 \end{proposition}
 
 \begin{proof}
-Since $X_S'$ is full rank we can define $\gamma_{Sc} \in \mathbb R^D$ such that $X_{.c} = X_S' \gamma_{Sc}$.
+Since $X_S'$ is full rank we can define $\gamma_{SS^C} \in \mathbb R^{D \times (P-D)}$ such that $X_{S^C} = X_S' \gamma_{SS^C}$.
 Then 
 \begin{align}
-X_S' \beta_S" &= X_S' \beta_S ' + X_{.c} \beta_c^T \\
-&= X_S' \beta_S ' + X_S' \gamma_{Sc} \beta_c^T \\
-&= X_S'( \beta_S ' + \gamma_{Sc} \beta_c^T )
+X_S' \beta_S" &= X_S' \beta_S ' + X_{S^C} \beta_{S^C} \\
+&= X_S' \beta_S ' + X_S' \gamma_{SS^C} \beta_{S^C} \\
+&= X_S'( \beta_S ' + \gamma_{SS^C} \beta_{S^C} )
 \end{align}
-Thus, $\beta_S" = \beta_S' + \gamma_{Sc}\beta_c^T$.
+Thus, $\beta_S" = \beta_S' + \gamma_{SS^C}\beta_{S^C}$.
 
-We therefore want to show that $\|\beta_S'\|_{1,2} + \|\beta_{c.}\|_2 \geq \| \beta_{S.}' + \gamma_{Sc}\beta_{c.}^T\|_{1,2}$.
-Another way to say this is $ \sum ( \|\beta_p' + \gamma_{pc} \beta_c \|_2  -  \|\beta_p'\|_2) \leq \|\beta_{c.}\| $
+We therefore want to show that $\|\beta_S'\|_{1,2} + \|\beta_{S^C}\|_{1,2} \geq \| \beta_{S.}' + \gamma_{SS^C}\beta_{S^C}\|_{1,2}$  % this seems
+or possibly (applying subadditivity)
+$\| \gamma_{SS^C}\beta_{S^C}\|_{1,2} \leq \|\beta_{S^C}\|_{1,2}$ % NOTE (Sam): this doesn't seem true in cases where the previous inequality holds
+We know that $\| \gamma_{Sp}\|\leq 1$.
+
+%Expand 
+%\begin{align}
+%\| \gamma_{SS^C}\beta_{S^C}\|_{1,2} &= \sum_{p \in S} \| \gamma_{pS^C} \beta_{S^C}\|_2 \\
+%&= \sum_{p \in S} \| \sum_{p' \in S^C} \gamma_{pp'} \beta_{p'}\|_2 \\
+%&= \sum_{p \in S} (\sum_{d = 1}^D (\sum_{p' \in S^C} \gamma_{pp'} \beta_{p'd})^2)^{1/2} \\
+%&= \sum_{p \in S} (\sum_{d = 1}^D (\sum_{p' \in S^C} (\sum_{p" \in S^C} \gamma_{pp'} \beta_{p'd}\gamma_{pp"} \beta_{p"d} )))^{1/2} \\
+%&= \sum_{p \in S} (\sum_{p' \in S^C} ( \sum_{p" \in S^C}( \sum_{d = 1}^D \gamma_{pp'} \beta_{p'd}\gamma_{pp"} \beta_{p"d}) ))^{1/2} \\
+%&= \sum_{p \in S} (\sum_{d = 1}^D (\gamma_{p.} \odot \beta_{.d} ) \otimes (\gamma_{p.} \odot \beta_{.d} ))^{1/2} 
+%\end{align}
+
+%Meanwhile,
+%\begin{align}
+%\|\beta_{S^C}\|_{1,2} &= \sum_{p \in S^C} \|\beta_{p}\|_2 \\
+%&= \sum_{p \in S^C} (\sum_{d = 1}^D \beta_{pd}^2 )^{1/2}
+%\end{align}
+%Note that $\beta_{S^C} \in \mathbb R^{(P-D) \times D}$.
+% NOTE (Sam): is GL norm submultiplicative for rectangular matrices?  I don't thinkthis would help but interesting question.
+
+
+%Another way to say this is $ \sum ( \|\beta_p' + \gamma_{pc} \beta_c \|_2  -  \|\beta_p'\|_2) \leq \|\beta_{c.}\| $
 % NOTE (Sam): this isn't a tight enough bound since 1 norm is greater than 2 norm expect on axes.
 %As in the proof of Proposition \ref{prop:support_orthogonalization}, $X_{.S'}$ unitary and $\|X_{.c}\|_2 \leq 1$ together imply that $\|\gamma_{Sc}\|_2 \leq 1$. 
 %Moreover, Proposition \ref{prop:subadditivity} implies that $ \| \beta_{S'.} + \gamma_{Sc}\beta_{c.}^T\|_{1,2} \leq \| \beta_{S'.} \|_{1,2}+ \| \gamma_{Sc}\beta_{c.}^T\|_{1,2}$.
