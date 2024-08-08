@@ -67,23 +67,22 @@ Given $X$, $\|\beta(X)\|_{1,2} \geq D$ and $\|\beta(X)\|_{1,2} = D \implies X_{.
 
 \begin{proof}
 
-This proof proceeds by showing that replacing $X_{.S(\beta)}$ with a unitary matrix - without loss of generality $I_D$ - leads to the existence of a solution $\beta_S' = X_S \beta_S = \beta$ such that $\|\beta_S\|_{1,2} \leq \|\beta_S' \|_{1,2}$.
+This proof proceeds by showing that replacing $X_{.S(\beta)}$ with a unitary matrix - without loss of generality $I_D$ - leads to the existence of a solution $\beta_S' = X_S \beta_S$ such that $\|\beta_S\|_{1,2} \geq \|\beta_S' \|_{1,2}$.
 
 
-\begin{proposition}[Support orthogonalization]
-\label{prop:support_orthogonalization}
-Let $\beta_{S.}' = X_{.S} \beta_{S.}$.
-Then $\|\beta_{S.}\|_{1,2} \geq \|\beta_{S.}'\|_{1,2}$
-\end{proposition}
-\begin{proof}
 We want to show that 
 \begin{align}
-\| X_{.S} \beta_{S.}  \|_{1,2} \leq \|\beta_{S.}\|_{1,2}. % this may not be true.  it can cause a sparse solution to become non sparse.
+\| X_{.S} \beta_{S.}  \|_{1,2} \leq \|\beta_{S.}\|_{1,2} % this may not be true.  it can cause a sparse solution to become non sparse.
 \end{align}
-We know that $\| X_{.p} \|_2 \leq 1.$
-We rewrite $\| X_{.S} \beta_{S.}  \|_{1,2} $
-
-\end{proof}
+We rewrite 
+\begin{align}
+\| X_{.S} \beta_{S.}  \|_{1,2}  &= \sum_{d=1}^D \| X_{dS}  \beta_{S.}  \|_{2}  
+\end{align}
+and
+\begin{align}
+\| \beta_{S.}  \|_{1,2}  &= \sum_{p \in S} \| \beta_{S.}  \|_{2}.
+\end{align}
+%We know that $\| X_{.p} \|_2 \leq 1.$
 
 
 We then show that replacing the output of vectors not in $S$ lowers loss as well.
