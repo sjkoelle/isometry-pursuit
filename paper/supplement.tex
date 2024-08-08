@@ -54,32 +54,34 @@ Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix
  \end{proposition}
  
  \begin{proof}
- 
-%The first component of this proof deals with $D$-sparse solutions only.  
-%In this section, there are two main claims: that, given that a matrix consists of column-vectors of a certain set of lengths, loss will be minimized if these vectors are orthogonal, and that, given that a matrix consists of orthogonal columns, loss will be minimized if these vectors are of length one.
-%These propositions suffice to show that, of all $D$-sparse solutions, the minimizer will be the unique unitary submatrix.
-%The second step of the proof consists of the claim that $D$-sparse solutions are preferable to those consisting of more components.
-%We proceed similarly, showing that loss is reduced by making any $D$-column submatrix of the putative solution orthonormal, and that loss is minimized further by removal of the non orthonormal components.
 
-This proof consists of showing that replacing an arbitrary $D$ subset $\mathcal S$ with a unitary $D \times D$ matrix leads to existence of a solution which reduces loss, and that if such a subset already exists, loss may not be reduced any further.
+This proof consists of showing that $D$ is the theoretical lower limit for the loss.
+This value is clearly obtained by $\beta_{S.}$ unitary and $\beta_{S^C.}$ zero elsewhere, so the real work consists of showing that solutions with $\|\beta\|_{1,2} < D$ are not possible, and that solutions with $\|\beta\|_{1,2}  = D$ are only obtained by $D$ sparse solutions.
 
 \begin{proposition}[Unitary Preference]
-Given a rank $D$ matrix $X \in \mathbb{R}^{D \times P}$, let $\beta$ be the solution to Program \ref{prog:isometry_pursuit}.
-Select an arbitrary subset $\mathcal{S} \subseteq [P]$ with $|\mathcal{S}| = D$.
-Define a new matrix $X' \in \mathbb{R}^{D \times P}$ as follows:
-\[
-X_{.p}' = \begin{cases} 
-X_{.p} & \text{if } p \notin \mathcal{S}, \\
-U_{.p} & \text{if } p \in \mathcal{S},
-\end{cases}
-\]
-where $U \in \mathbb{R}^{D \times D}$ is any unitary matrix.
+Given a rank $D$ matrix $X \in \mathbb{R}^{D \times P}$, let $\beta = \widehat \beta^P_q(X)$.
+Then $\|\beta^*\|_{1,2} = D$ and $\|\beta\|_{1,2} = D \implies |S(\beta)| = D$.
+
 \end{proposition}
 
 \begin{proof}
-By the conditions in Definition  \ref{def:symmetric_normalization}, the maximum length for vectors $\mathcal X^q_{.p}$ is attained when $\|\mathcal X_{.p}\|_2 = 1$.
-By Proposition \ref{prop:unitary_basis}, this is the case for unitary matrices, but it is also true for matrices for which $\mathcal X^q_{.p}$ are not orthogonal.
 
+This proof proceeds by replacing $X_{S(\beta)}$ with a unitary matrix - without loss of generality $I_D$.
+We will show that this lowers the loss.
+We then show that replacing the output of vectors not in $S$ lowers loss as well.
+
+Without loss of generality, let $U = I_D$ and 
+\begin{align}
+\beta^* = \begin{cases}
+U_{p.} & \text{if } p \in \mathcal{S} \\
+0 \text{ otherwise}
+\end{cases}.
+\end{align}
+
+%By the conditions in Definition  \ref{def:symmetric_normalization}, the maximum length for vectors $\mathcal X^q_{.p}$ is attained when $\|\mathcal X_{.p}\|_2 = 1$.
+%By Proposition \ref{prop:unitary_basis}, this is the case for unitary matrices, but it is also true for matrices for which $\mathcal X^q_{.p}$ are not orthogonal.
+
+Let $\beta_{S.}* = X_{.S} \beta_{S.} + $ and 
 
 \begin{proposition}[Support orthogonalization]
 \label{prop:support_orthogonalization}
@@ -89,7 +91,7 @@ Then $\|\beta_{S.}\|_{1,2} \geq \|\beta_{S.}'\|_{1,2}$
 \begin{proof}
 We want to show that 
 \begin{align}
-\| X_{.S} \beta_{S.}  \|_{1,2} \leq \|\beta_{S.}\|_{1,2}.
+\| X_{.S} \beta_{S.}  \|_{1,2} \leq \|\beta_{S.}\|_{1,2}. % this may not be true.  it can cause a sparse solution to become non sparse.
 \end{align}
 We know that $\| X_{.p} \|_2 \leq 1.$
 We rewrite $\| X_{.S} \beta_{S.}  \|_{1,2} $
