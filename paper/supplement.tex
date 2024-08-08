@@ -58,30 +58,17 @@ Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix
 This proof consists of showing that $D$ is the theoretical lower limit for the loss.
 This value is clearly obtained by $\beta_{S.}$ unitary and $\beta_{S^C.}$ zero elsewhere, so the real work consists of showing that solutions with $\|\beta\|_{1,2} < D$ are not possible, and that solutions with $\|\beta\|_{1,2}  = D$ are only obtained by $D$ sparse solutions.
 
+% NOTE (Sam): I think this should just be the main proposition.
 \begin{proposition}[Unitary Preference]
-Given a rank $D$ matrix $X \in \mathbb{R}^{D \times P}$, let $\beta = \widehat \beta^P_q(X)$.
-Then $\|\beta^*\|_{1,2} = D$ and $\|\beta\|_{1,2} = D \implies |S(\beta)| = D$.
-
+% Given $X$ as in Proposition \ref{prop:generalized_unitary_selection}, let $\beta = \widehat \beta^P_q(X)$.  Then $\|\beta^*\|_{1,2} = D$.
+Given $X$, $\|\beta(X)\|_{1,2} \geq D$ and $\|\beta(X)\|_{1,2} = D \implies X_{.S(\beta)}$ is unitary. 
+% NOTE (Sam): need to differentiate unitary and semi-unitary?
 \end{proposition}
 
 \begin{proof}
 
-This proof proceeds by replacing $X_{S(\beta)}$ with a unitary matrix - without loss of generality $I_D$.
-We will show that this lowers the loss.
-We then show that replacing the output of vectors not in $S$ lowers loss as well.
+This proof proceeds by showing that replacing $X_{.S(\beta)}$ with a unitary matrix - without loss of generality $I_D$ - leads to the existence of a solution $\beta_S' = X_S \beta_S = \beta$ such that $\|\beta_S\|_{1,2} \leq \|\beta_S' \|_{1,2}$.
 
-Without loss of generality, let $U = I_D$ and 
-\begin{align}
-\beta^* = \begin{cases}
-U_{p.} & \text{if } p \in \mathcal{S} \\
-0 \text{ otherwise}
-\end{cases}.
-\end{align}
-
-%By the conditions in Definition  \ref{def:symmetric_normalization}, the maximum length for vectors $\mathcal X^q_{.p}$ is attained when $\|\mathcal X_{.p}\|_2 = 1$.
-%By Proposition \ref{prop:unitary_basis}, this is the case for unitary matrices, but it is also true for matrices for which $\mathcal X^q_{.p}$ are not orthogonal.
-
-Let $\beta_{S.}* = X_{.S} \beta_{S.} + $ and 
 
 \begin{proposition}[Support orthogonalization]
 \label{prop:support_orthogonalization}
@@ -97,6 +84,14 @@ We know that $\| X_{.p} \|_2 \leq 1.$
 We rewrite $\| X_{.S} \beta_{S.}  \|_{1,2} $
 
 \end{proof}
+
+
+We then show that replacing the output of vectors not in $S$ lowers loss as well.
+
+
+
+%By the conditions in Definition  \ref{def:symmetric_normalization}, the maximum length for vectors $\mathcal X^q_{.p}$ is attained when $\|\mathcal X_{.p}\|_2 = 1$.
+%By Proposition \ref{prop:unitary_basis}, this is the case for unitary matrices, but it is also true for matrices for which $\mathcal X^q_{.p}$ are not orthogonal.
 
 The next component of the argument deals with elements of $[P]$ which are not contained within $\mathcal S$.
 We show that zeroing components of $\beta_{p.}'$ where $p \not \in S$ and compensating for the removal by altering the loadings within $\mathcal S$ results in lower loss.
