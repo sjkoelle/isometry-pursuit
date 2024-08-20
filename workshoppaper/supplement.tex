@@ -1,0 +1,43 @@
+\section{Supplement}
+% NOTE (Sam): make sure to add basis pursuit equivalence
+We give proofs in support of the propositions in the main text and supplemental experimental information to better contextualize the results. 
+
+\subsection{Proofs}
+\label{sec:proofs}
+
+\subsubsection{Proof of Proposition \ref{prop:basis_pursuit_selection_invariance}}
+\label{proof:basis_pursuit_program_invariance}
+
+In this proof we first show that the penalty $\|\beta\|_{1,2}$ is unchanged by unitary transformation of $\beta$.
+
+ \begin{proposition}{Loss equivalence}
+ \label{prop:basis_pursuit_loss_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $\|\beta\|_{1,2} = \|\beta U \|$.
+\end{proposition}
+
+\begin{proof}
+\begin{align}
+\|\beta U \|_{1,2} &= \sum_{p = 1}^P \| \beta_{p.} U \| \\
+&= \sum_{p = 1}^P \| \beta_{p.} \| \\
+&= \|\beta \|_{1,2}
+\end{align}
+\end{proof}
+
+We then show that this implies that the resultant loss is unchanged by unitary transformation of $\mathcal X$.
+
+\begin{proposition}
+ \label{prop:basis_pursuit_loss_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $\widehat \beta  (U \mathcal X) = \widehat \beta  ( \mathcal X) U$.
+\end{proposition}
+
+\begin{proof}
+\begin{align}
+\widehat \beta  (U \mathcal X)  &= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta\|_{1,2}  \; : \; I_{D} = U X \beta \\
+&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta\|_{1,2}  \; : \; U^{-1} U = U^{-1} U X \beta U \\
+&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta\|_{1,2}  \; : \;  I_D = X \beta U \\
+&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta U \|_{1,2}  \; : \;  I_D = X \beta U \\
+&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta \|_{1,2}  \; : \;  I_D = X \beta.
+\end{align}
+\end{proof}
