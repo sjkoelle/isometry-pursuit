@@ -1,116 +1,90 @@
 \section{Background}
 
-In this section we give background on both the techniques used in our method, and also the motivating applications on which it is applied.
+Variable selection in unsupervised learning is comparably less studied than in supervised learning.
+Thus, we explain the geometric criteria used to evaluate selection as well as the algorithmic considerations when designing such an algorithm.
 
 \subsection{Problem}
 
-Our goal is, given a matrix $\mathcal X \in \mathbb R^{D \times P}$, select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D_{-}$ and $D_{-} \leq D$ such that $X_{. \mathcal S}$ is as unitary as possible in a computationally efficient way.
+Our goal is, given a matrix $\mathcal X \in \mathbb R^{D \times P}$, select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is as orthonormal as possible in a computationally efficient way.
 To that end, define a ground truth loss function that measures unitariness, and then introduce a surrogate loss function that convexifies the problem so that it may be efficiently solved.
 
-\subsection{Techniques}
+\subsection{Interpretability and isometry}
 
-\subsubsection{Unitary matrices}
+Our motivating example is the selection of data representations from within sets of putative coordinates.
+These putative coordinates are simply consist of columns of a matrix.
+The proposed method is thus even simpler than Sparse PCA \citep{Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, in which column-covariance is used to select low-dimensional projections from within the span of such a subset.
 
-\begin{definition}[Unitary]
-A rank $D$ matrix $U \in \mathbb R^{D_\alpha \times D_\beta}$ is said to be \textbf{unitary} if $U^TU = I_D$.
+This method is specifically applicable with respect to interpretability, for which parsimony is at a premium.
+Interpretability arises through comparison of data with what is known to be important in the domain of the problem.
+This a priori knowledge often takes the form of a functional dictionary.
+%Such a dictionary may also be constructed out of non-interpretable features \cite{Kohli2021-lr}.
+Regardless of implementation details such as whether this dictionary is given or learned, core concepts like evaluation of independentness of dictionary features arise in numerous scenarios \citep{Chen2019-km, Koelle2022-ju, He2023-ch}.
+% cite anthropic functional independence.
+After functional independence \citep{Koelle2022-ju}, also known as feature decomposability \citep{templeton2024scaling}, which only requires that the differential of sets of dictionary features be full rank, metric properties of such sets are of natural interest.
+
+\begin{definition}
+The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ between $D$ dimensional manifolds $\M \subseteq \mathbb R^B$ and $\N \subseteq \mathbb R^P$ is a map in tangent bases $x^1 \dots x^{d_\M}$ of $T_\xi \M$ and $y^1 \dots y^{d_\N}$ of $T_{\phi(\xi)} \N$ consisting of entries
+\begin{align}
+\label{eq:diff}
+    D\phi (\xi) = \begin{bmatrix}
+    \frac{\partial \phi^1  }{\partial x^1}(\xi)  & \dots & \frac{\partial \phi^1 }{\partial x^D}(\xi)  \\
+    \vdots & & \vdots \\
+    \frac{\partial \phi^D }{\partial x^1}(\xi)  & \dots & \frac{\partial \phi^{D}  }{\partial x^{D}}(\xi) 
+    \end{bmatrix}.
+\end{align}
 \end{definition}
 
-While this definition implies $D_\alpha, D_\beta \geq D$, this paper typically works with equality.
-% NOTE (Sam): Actually just do it both ways.  Focus on long term impact.
-Even so, this paper uses the term singular values rather than eigenvalues, and Section \ref{sec:discussion} contains speculation that a similar set of techniques hold for rank-d unitary rectangular matrices.
-
-The property of unitary matrices that motivates our ground truth loss function comes from spectral analysis.
-\begin{proposition}[Singular values of a unitary matrix]
-\label{prop:unitary_spectrum}
-The singular values $\sigma_1 \dots \sigma_D$ are equal to $1$ if and only if $U \in \mathbb{R}^{D_\alpha \times D_\beta}$ is unitary.
-\end{proposition}
-
-As a ground truth loss function, we'd like the loss to be minimized uniquely by unitary matrices, invariant under rotation, and depend on all changes in the matrix.
-The first desired property precludes, for example, the log determinant, while the last precludes the operator norm, also known as the deformation. %check
-Finally, to simplify our overall exposition and exemplify the key features of the method, we'd like this ground truth loss to be as similar as possible to the convex loss we introduce.
-In fact, these losses will behave equivalently over diagonalizable matrices.
-That is, in a sense, the ground truth loss will be as convex as possible.
-%Thus, in Section \ref{sec:ground_truth}, we introduce a new loss based on the LogSumExp function.
-
-The property of unitary matrices that we use to define our alternative convex loss is slightly different from Proposition \ref{prop:unitary_spectrum}.
-%cite 
-\begin{proposition}[Basis vectors of a unitary matrix]
-\label{prop:unitary_basis}
-The component vectors $u^1 \dots u^D \in \mathbb R^B$ form a unitary matrix if and only if, for all $d_1, d_2 \in [D], u_{d_1} u^{d_2} = \begin{cases}
-1 \; d_1 = d_2\\ 
-0 \; d_1 \neq d_2 
-\end{cases}$.
-\end{proposition}
-
-We will show that the conditions of the antecedent of Proposition \ref{prop:unitary_basis} are satisfied by the solutions to the multitask basis pursuit problem applied to matrices consisting of suitably normalized vectors.
-The vectors are in particular length normalized so that the post-normalization vectors with the longest length have length $1$.
-As we show in Proposition , our main theoretical result,  the tendency of the multitask basis pursuit problem to select orthogonal features then ensures that a unitary matrix is deterministically selected, given that one is present.
-%explain that multitask and group are almost equivalent
-% if and only if is an equality in the logical statement (assertion, theorem) monoid.
-
-%While other properties like the operator norm
-%The nuclear norm is not 
-
-\subsubsection{Basis pursuit and lasso}
-
-% NOTE (Sam): find a citation for multitask basis pursuit.  Surely, this has been done before.
-
-We use "multitask" instead of "group" to refer to this algorithm, as grouping is entirely determined by the dependent variable.
-
-Basis pursuit programs are of the form 
-\begin{align}
-\min c(\beta) : d(y, x\beta) \leq o
-\end{align}
-
-Basis pursuit programs are convex, and solvable via standard interior point methods.
-
-On the other hand, the basis pursuit program admits 
-
-\subsubsection{Isometries}
-
-Another motivating example of this paper is the embedding of non-linear data manifolds by selecting functions from within a dictionary that preserve distances and angles.
-These sets of functions are called isometries if they do so globally and local isometries if they do so almost everywhere.
-If more pointwise specificity is required, they are known at isometric at a point.
-To avoid abstractness, we give the following definition in coordinates.
 \begin{definition}{Isometric at a point}
 \label{def:isometric_at_a_point}
-A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq R^{B_\alpha}$ and $\mathcal N  \subseteq R^{B_\beta}$ is an \textbf{isometry at a point} $p \in \mathcal M$ if
+A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq R^{B_\alpha}$ and $\mathcal N  \subseteq R^{B_\beta}$ is 
+$\phi$ is an \textbf{isometry at a point} $\xi \in \mathcal M$ if
 \begin{align}
-\| v^T D \phi (p) \| = \|v\| \forall v \in \mathbb R^D
+{D \phi (\xi)}^T D \phi (\xi) = I_D.
 \end{align}
-$D \phi$ is the differential implicitly given by $D_{F}^E \phi = U D \phi V^T$ where $U$ and $V$ are bases for $(T_p \mathcal M)$ and $T_{\phi(p)} \mathcal N$, the tangent spaces of $\mathbb R$ and $\mathcal N$ at $p$ and $\phi(p)$, respectively.
-% .  A Grassmannian.  (what is a Stiefel manifold?).
+That is, $\phi$ is an isometry at $\xi$ if $D \phi (\xi)$ is orthonormal.
 \end{definition}
 
-The reasons that pointwise isometry is interesting are themselves manifold.
-\cite{Kohli2021-lr} showed how pointwise isometries selected from a dictionary may be stitched together to form global embeddings.
-Another line of work \cite{Koelle2022-ju, Koelle2024-no} has shown how independent functions may be selected globally using group lasso, and that this selection process has implications for the metric properties of the selected embedding \cite{Koelle2022-ju}.
-Other approaches like Local Tangent Space Alignment seek to identify isometric coordinates non-parametrically through tangent space estimation prior to stitching, while multidimensional scaling and isomap do so directly through preservation of distances.
-A classic result in differential geometry equilibrates these two approaches.
-% NOTE (Sam): which came first?
+In other words, isometries of a $D$ dimensional data distribution consist of $D$ coordinate features whose gradients are orthogonal and evenly varying.
+Formulations of this quality within an objective function like deformation \citep{Kohli2021-lr} and nuclear norm \citep{Boyd2004-ql} use only a subset of the differential's information and are not uniquely minimized at unitarity, respectively.
+We therefore will introduce a new alternative objective based upon the entire spectrum which is uniquely minimized at isometry.
 
-Given the metric characterization of isometry in Definition \ref{def:isometric_at_a_point}, is it appropriate to recall another equivalent characterization of unitary matrices.
-\begin{proposition}[Metric properties of a unitary matrix]
-\label{prop:unitary_spectrum}
-$U \in \mathbb{R}^{D_\alpha \times D_\beta}$ is unitary if and only if $\| v^T  U$ for all $v \in \mathbb R^{D_\beta}$.
-\end{proposition}
-Thus, in coordinates, $D \phi (p)$ is unitary if $\phi$ is isometric at a point $p$.
+The applications of pointwise isometry are themselves manifold.
+Approaches that seek isometric embeddings non-parametrically include Local Tangent Space Alignment, multidimensional scaling and isomap. % cite
+On the other hand, \citet{Kohli2021-lr} showed how pointwise isometries selected from a dictionary may be stitched together to form global embeddings.
+This approach constructs isometries through greedy search, with putative dictionary features added one at a time.
+Other work \citep{Koelle2022-ju, Koelle2024-no} shows how group lasso may be used to select independent dictionary elements through a convex (i.e. non-greedy) algorithm.
+Will will show how this paradigm can be useful for selection of pointwise isometries as well.
 
-%Note that in the case of tabular data, where $\mathcal M = \mathbb R^P$, and $\mathcal N = \mathbb R^D$, and $\phi \in \mathbb R^{D \times P}$ is a linear map, this is equivalent to saying that $\phi$ is unitary.
-$X$ could be, for example, the Jacobian matrix $d g$ of a set of candidate coordinate functions $g = [g^1, \dotsc g^P]$.
+Note that it is not necessary to explicitly estimate tangent spaces when applying the definition of isometry.
+The most commonly encountered manifolds are simply vector spaces, in which case the tangent spaces are trivial.
+This is the case for full-rank tabular data, as well as latent spaces of deep learning models.
+For example, the transformer residual stream at different tokens are analogous to tangent spaces of a non-linear manifold in the sense that the relative directions of dictionary vectors are not consistent between tokens.
 
-% We assume that we are given a target dimension $T \leq D$ - do we?
-% BIG QUESTION: RUN IN D = B?  What is rank of $X$?    It's D if not running D = B
+\subsection{Subset selection}
 
-\subsection{Interpretable manifold learning}
+Given a matrix $\mathcal X \in \mathbb R^{D \times P}$, we compare algorithmic paradigms for solving problems of the form
 
-While variable selection in unsupervised learning is comparably less studied than in supervised learning, substantial literature exists.
-One method that exemplifies this area is Sparse PCA \cite{Dey2017-mx}, in which a subset of variables are used to generate low-dimensional projections.
-Within non-linear dimension reduction dictionaries can be either given \cite{Koelle2022-ju, Koelle2024-no} or learned \cite{Kohli2021-lr}. 
-In order of specificity, these methods may seek to optimize independent coordinates \cite{Chen2019-km, He2023-ch}, low distortion embeddings, or isometric embeddings.
-Optimization can be global or local.
-These coordinate selection algorithms can be greedy  or convex \cite{Koelle2022-ju, Koelle2024-no}.
+\begin{align}
+\label{prog:ground_truth}
+\arg \min_{\mathcal S \subseteq [P] : |\mathcal S| = D} l (\mathcal X_{.\mathcal S})
+\end{align}
+
+Brute force algorithms consider all possible solutions.
+These algorithms are conceptually simple, but often have prohibitive time complexity $O(C_lP^D)$ where $C_l$ is the cost of evaluating $l$.
+Greedy algorithms consist of iteratively adding one element at a time to $\mathcal S$.
+This algorithms have time complexity $O(CPD)$ and so are computationally more efficient than brute force algorithms, but can get stuck in local minima.
+
+Sometimes, it is possible to introduce an objective which convexifies problems of the above form.
+A classic example comes from basis pursuit solutions to the overcomplete regression problem $y = x\beta$ \cite{Chen2001-hh}.
+\begin{align}
+\arg \min f (\beta) : y  = x\beta 
+\end{align}
+When $f(\beta) = \|\beta\|_0$, this problem is non-convex, and must be solved via greedy or brute algorithms, but when $f(\beta) =\|\beta\|_1$, the problem is convex, and may be solved efficiently via interior-point methods.
+When the equality constraint is relaxed, Lagrangian duality may be used to reformulate as a so-called Lasso problem, which leads to an even richer set of optimization algorithms. % cite FISTA< glmnet, coordinate descent
+% Cite glmnet
 
 
-The motivating example for this research is the computation of embeddings by selection from within sets of embedding coordinates.
-However, as the general approach has usefulness outside of non-linear dimension reduction, we first give examples in the relatively simpler setting of diversification.
+The particular form of basis pursuit that we apply is inspired by the group basis pursuit approach in \citet{Koelle2022-ju}.
+In group basis pursuit (which we call multitask basis pursuit when grouping is dependent only on the structure of response variable $y$) the objective function is $f(\beta) = \|\beta\|_{1,2} := \sum_{p=1}^P \|\beta_{p.}\|_2$  \citep{Yuan2006-bt, Obozinski2006-kq, Yeung2011-fg}
+This objective creates joint sparsity across entire rows of $\beta_{p.}$ and was used in \citep{Koelle2022-ju} to select between sets of interpretable features.
+% NOTE (Sam): find a citation for multitask basis pursuit.  Cite first GBP paper.

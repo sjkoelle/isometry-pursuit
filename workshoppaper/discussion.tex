@@ -1,12 +1,7 @@
 \section{Discussion}
 \label{sec:discussion}
 
-This extension is a local version of Tangent Space Lasso.
-%The Hoeffding bound
-%Dimension estimation, the failure of duality
-%The presence of curvature
 
-Tangent space basis pursuit satisfies a similar property \cite{Koelle2022-lp} but the normalization process differs.
 
 It could be used in the stiching step of an algorithm like the kohli one
 We leave aside the question of patch alignment \cite{https://arxiv.org/pdf/2303.11620.pdf, LDLE paper}.
@@ -17,55 +12,47 @@ Let's compare the coefficients involved in projecting versus not projecting.
 We can perform regression in the high dimensional space instead of projecting on span of target variable.
 
 With respect to pseudoinverse estimation, sparse methods have been applied in \cite{Sun2012-vp}
-
 Even though by Lagrangian duality, the basis pursuit solution corresponds to $\lambda$ approaching $0$, the solution is sparse \cite{Tropp04-ju}.
-about the lasso is that all coefficients enter the regularization path.
-As we see by the correspondence between $\lambda$ approaching $0$ and the basis pursuit problem, some coefficients in fact do not go to $0$. 
 
+%(RAG, recommendations, training neural networks (infrequent meta)).
+%This approach relies on a to-our-knowledge novel matrix inversion algorithm that is sparse in the column space of the matrix.
+%Unsupervised learning methods like PCA, UMAP, and autoencoders are often concerned with minimizing reconstruction error without regard for the sparsity of the learned respresentation, and among those that sparsify, variable selection methods contrast with sparsification with respect to reconstruction from a learned latent space.
+% Multitask learning and lasso \cite{Hastie2015-qa}
+%The comparison of greedy (e.g. Orthogonal Matching Pursuit) \cite{Mallat93-wi, Tropp05-ml} and convex \cite{Tropp06-sg} basis pursuit formulations.
+%Basis pursuit \cite{Chen2001-hh} 
+% Cite dominique and marina.
+% Note that requiring the full structure of a multiplicative norm for normalization here is unnecessary for basic success of the algorithm, but certain characteristics such as $q(v^{-1}) = q(v)$ seem desirable, provided one can give a reasonable way to compute $v^{-1}$, such as by considering each vector as a scaled rotation subgroup of the general linear group.
 
-%One immediate question is - why $\beta$?  Can we just minimize some function of $X$ directly like $\|\exp_1 X\|_{1,2}$?  Direct minimization of this norm has nothing to do with correlation. We wouldn't need orthogonality - just constant length!
-
-
-
-% Proof of isometry (Copy from thesis)
-
-Proof of local isometry (simpler proof since no oscillation game)
-
-% failure of duality
-
+While the sparse PCA problem is non-convex, our approach can be taken as a simpler version in the sense that the loadings are constrained to be the identify matrix.
 \cite{Bertsimas2022-qo} gives a method for solving the sparse-PCA method more efficiently than the original greedy approach.
 Compared with the FISTA method used in  \cite{Koelle2022-ju, Koelle2024-no}, coordinate descent \cite{Friedman-2007-yb, Meier2008-ts, Qin2013-tx} is faster \cite{Catalina2018-ek, Zhao2023-xn}.
-Compared with \cite{Liu2009-yo}, the sklearn multitask lasso is $2,1$ rather than $\infty,1$ regularized.
+Compared with \cite{Tropp06-sg, Liu2009-yo}, the sklearn multitask lasso is $2,1$ rather than $\infty,1$ regularized.
+This misses the utility of our normalization for finding unitary matrices since isometry embeddings preserve important properties like distances between points.
 
-Compared with Gram-Schmidt
-It is likely that the transformed singular value loss could be reframed as a semdefinite programming problem, since the composition of two convex functions is convex \cite{Boyd2004-ql}.
-%\section{Comparison with other approach}
-
-Multitask lasso \cite{Obozinski2006-kq, Yeung2011-fg} is a form of group lasso \cite{Yuan2006-bt} where coefficients are group by response variable.
-
-See \cite{Obozinski2006-kq} for a comparison of forward and backward selection with lasso.
-%\subsection{Projection approach}
+%The Hoeffding bound
 
 Our notion of isometric recovery is distinct from the restricted isometry property \cite{Candes2005-dd, Hastie2015-qa}, which is used to show guaranteed recovery at fast convergence rates in supervised learning.
 In particular, our approach does not consider statistical error or the presence of a true underlying model.
-However, we note that disintigration of performance at high $\lambda$ values in the lasso formulation may have some relation to these properties, as discussed in \cite{Koelle2022-ju, Koelle2024-no}.
-%\begin{align}
-%x_M = (y^T y) x \\ 
-%({x_M}^T {x_M})^{-1} {x_M} I = ({(y^T y x)}^T {(y^T y x)})^{-1} {(y^T y x)} I = (x^T y^T y x)^{-1} (y^T y x)
-%\end{align}
+However, we note that disintegration of performance at high $\lambda$ values in the lasso formulation may have some relation to these properties, as discussed in \cite{Koelle2022-ju, Koelle2024-no}.
 
-%low distortion just means conformal?
+% low distortion just means conformal?
+% what happens when dictionary = feature space, or what are the convergence rates.
+% Convergence rate related to tangent space estimation.
 
-%Other interesting open questions about basis pursuit that are not covered here include can we equate the intrinsic curvature of the data manifold to the basis pursuit loss, or what happens when dictionary = feature space, or what happens if we estimate in the coordinates of the ambient space, or what are the convergence rates.  Convergence rate related to tangent space estimation.
+A major area of comparison is in diversification in recommendation systems where greedy algorithms are used \cite{Carbonell2017-gi, Wu2019-uk}, and also in document diversification for Retrieval Augmented Generation.
+% BIG QUESTION: RUN IN D = B?  What is rank of $X$?    It's D if not running D = B
+%Dimension estimation, the failure of duality
+% We assume that we are given a target dimension $T \leq D$ - do we?
+% Full-rank needed?
 
-% singular value criteria could be directly optimized.  singular value criteria would not be sparse
-% recommendation systems.  
-% RAG
+% NOTE (Sam): balance goes out the window with great flowers since there is no normalization.
 
-A major area of comparison is in diversification in recommendation systems.  Greedy algorithms are used \cite{Carbonell2017-gi, Wu2019-uk}
+% The necessity of the second selection step is unclear.
 
-Compared with sparse pca \cite{Bertsimas2022-qo, Bertsimas2022-dv}, we are not concerned with variability in the dataset, and select.
-While the sparse PCA problem is non-convex, our approach can be taken as a simpler version in the sense that the loadings are constrained to be the identify matrix.
-\cite{Tropp06-sg} and \cite{Liu2009-yo} use a $1,\infty$ norm to induce sparsity that misses the utility of our normalization for finding unitary matrices.
-since isometry embeddings preserve important properties like distances between points.
-
+The most pressing piece of theoretical work which remains on this topic is the removal of the resttriction $|S| = D$ on the conditions of Proposition.
+The resulting proposition, which seems almost obvious, is in fact more difficult to argue, and is seemingly violated by empirical results.
+Nevertheless, these violations are subtly non-dispositive since absence of sparsity and improvements of primal loss below $D$ are accompanied by violations of the constraint of a similar magnitude, suggesting that we a more refined approach to optimization, substantial improvements in estimation accuracy may be possible.
+From a geometric perspective, we note that isometries may not always exist in the presence of curvature, and comparison of our loss with curvature could prove fertile.
+Finally, the speed increases garnered by the particularly simple form of our algorithm warrants comparison with other pseudoinverse estimators warrant further comparison.
+An extension of our estimator we omit for brevity is to use the multitask lasso formulation to trim the size of $\hat P$.
+Besides our new normalization, this results in a simpler procedure than in \citet{Koelle2022-lp} and \citet{Koelle2024-no} that is amenable to the more performant multitask lasso solver in sklearn.
