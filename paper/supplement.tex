@@ -45,99 +45,44 @@ We then show that this implies that the resultant loss is unchanged by unitary t
 \subsubsection{Proof of Proposition \ref{prop:unitary_selection}}
 \label{sec:local_isometry_proof}
 
-In support of the proposition in the main text, we give a more general theorem which illustrates the key features of the method.
-From there, it is a straightforward step to specify to the chosen normalization.
-
- \begin{proposition}[Generalized unitary selection]
+ \begin{proposition}[Unitary selection]
 \label{prop:generalized_unitary_selection}
-Given a matrix $\mathcal X \in \mathbb R^{D \times P}$ with a rank $D$ submatrix $\mathcal X_{.\mathcal S} \in \mathbb R^{D \times D}$ that is the unique $D \times D$ rank $D$-unitary submatrix, and let $n_q$ be a normalization composed of normalizing functions $q$ that satisfy the conditions of Definition \ref{def:symmetric_normalization}, then  $\mathcal S = S(\widehat{\beta}_{q}^P (\mathcal X)))$.
+Let $w_c$ be a normalization satisfying the conditions in Definition \ref{eq:symmetric_normalization}.  Then $\arg \min_{X_{.S} \in \mathbb R^{D \times D}} \widehat \beta^{D}_c (X_{.S]) $ is orthonormal.  Moreover when $X$ is orthonormal, $\min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \; I_D = w ({ \mathcal X}, c) \beta = D$.
  \end{proposition}
  
  \begin{proof}
 
-This proof consists of showing that $D$ is the theoretical lower limit for the loss.
-This value is clearly obtained by $\beta_{S.}$ unitary and $\beta_{S^C.}$ zero elsewhere, so the real work consists of showing that solutions with $\|\beta\|_{1,2} < D$ are not possible, and that solutions with $\|\beta\|_{1,2}  = D$ are only obtained by $D$ sparse solutions.
-
-% NOTE (Sam): I think this should just be the main proposition.
-\begin{proposition}[Unitary Preference]
-% Given $X$ as in Proposition \ref{prop:generalized_unitary_selection}, let $\beta = \widehat \beta^P_q(X)$.  Then $\|\beta^*\|_{1,2} = D$.
-Given $X$, $\|\beta(X)\|_{1,2} \geq D$ and $\|\beta(X)\|_{1,2} = D \implies X_{.S(\beta)}$ is unitary. 
-% NOTE (Sam): need to differentiate unitary and semi-unitary?
-\end{proposition}
-
-\begin{proof}
-
-This proof proceeds by showing that replacing $X_{.S(\beta)}$ with a unitary matrix - without loss of generality $I_D$ - leads to the existence of a solution $\beta_S' = X_S \beta_S$ such that $\|\beta_S\|_{1,2} \geq \|\beta_S' \|_{1,2}$.
-
-
-We want to show that 
+The value of $D$ is clearly obtained by $\beta$ orthonormal, since by Proposition \ref{basis_pursuit_selection_invariance}, for $X$ orthogonal, without loss of generality 
 \begin{align}
-\| X_{.S} \beta_{S.}  \|_{1,2} \leq \|\beta_{S.}\|_{1,2} % this may not be true.  it can cause a sparse solution to become non sparse.
-\end{align}
-We rewrite 
-\begin{align}
-\| X_{.S} \beta_{S.}  \|_{1,2}  &= \sum_{d=1}^D \| X_{dS}  \beta_{S.}  \|_{2}  
-\end{align}
-and
-\begin{align}
-\| \beta_{S.}  \|_{1,2}  &= \sum_{p \in S} \| \beta_{S.}  \|_{2}.
-\end{align}
-%We know that $\| X_{.p} \|_2 \leq 1.$
-
-
-We then show that replacing the output of vectors not in $S$ lowers loss as well.
-
-
-
-%By the conditions in Definition  \ref{def:symmetric_normalization}, the maximum length for vectors $\mathcal X^q_{.p}$ is attained when $\|\mathcal X_{.p}\|_2 = 1$.
-%By Proposition \ref{prop:unitary_basis}, this is the case for unitary matrices, but it is also true for matrices for which $\mathcal X^q_{.p}$ are not orthogonal.
-
-The next component of the argument deals with elements of $[P]$ which are not contained within $\mathcal S$.
-We show that zeroing components of $\beta_{p.}'$ where $p \not \in S$ and compensating for the removal by altering the loadings within $\mathcal S$ results in lower loss.
-
-% NOTE (Sam): need to clarify that \beta_{c.} is a vector
-% NOTE (Sam): beta_c is not ' since its only operated on by the change from the earlier theorem.  Refitting would lead to a changed value.
-
-\begin{proposition}[Support replacement]
-\begin{align}
-\|\beta_{S}'\|_{1,2} + \|\beta_{S^C}\|_{1,2} \geq D
-\end{align}
-\end{proposition}
-\end{proof}
-
-\end{proof}
-\subsubsection{Proof of Proposition \ref{prop:lasso_selection_equivalence} }
-
-This proof proceeds similarly to the proof of Proposition  \ref{prop:basis_pursuit_selection_equivalence} .
-Proposition \ref{prop:lasso_selection_equivalence} relies on the fact that its loss is invariant under any unitary transformation.
-As a corollary, this fact gives that the identify matrix which is the "dependent variable" in the regression equation may be replaced by any $d \times d$ unitary matrix.
-For Proposition \ref{prop:basis_pursuit_selection_equivalence}, the loss is also invariant under unitary, transformation, but we also check that this transformation.
-Once again, this also implies that any unitary matrix may replace the identity in the constraint.
-%Minimizer?
-
- \begin{proposition}{Loss equivalence}
- \label{prop:lasso_loss_equivalence}
- Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $l_\lambda (\mathcal X, \beta) = l_\lambda (U \mathcal X, \beta U)$.
-\end{proposition}
-
-\begin{proof}
-We can write 
-\begin{eqnarray}
-l^*(X^i) = l(\beta^i) = \sum_{j = 1}^p (\sum_{i'=2}^n \| \beta_{i'j.} \|_2^2 +  \|  \beta_{1j.}^i \|_2^2 )^{1/2}=  \sum_{j = 1}^p (\sum_{i'=1}^n \| \beta_{i'j.} U \|_2^2)^{1/2} = l^*(X)
+\beta_{jk} = \begin{cases} 1 & j = k \in \{ 1 \dots d\}  \\
+0 & \text{otherwise}
+\end{cases}.
 \end{eqnarray}
-where the second to last equality is because the norm $\|v\|_2^2 $ is unitary invariant.
+Thus, we need to show that this is a lower bound on the obtained loss and is only obtained by unitary matrices.
 
+From the conditions in Definition \ref{eq:symmetric_normalization}, normalized matrices will consist of vectors of maximum length (i.e. $1$) if and only if the original matrix consists of vectors of length.  These vectors will clearly result in lower basis pursuit loss.
+
+Therefore, it remains to show that orthogonal vectors of length $1$ reduce loss over non-orthogonal vectors.
+Invertible matrices $X_{.S}$ admit QR decompositions $\tilde X_{.S} = QR$ where $Q$ and $R$ are square unitary and upper-triangular matrices, respectively \citep{Anderson1992-fb}.
+Since $l^*$ is invariant to unitary transformations, we can without loss of generality, consider $Q= I_d$.
+Denoting $I_d$ to be composed of basis vectors $[e^1 \dots e^d]$, the matrix $R$ has form
+\begin{align}
+R = \begin{bmatrix}
+\langle e^1, \tilde X_{i.{S_1}} \rangle & \langle e^1, \tilde X_{i.{S_2}} \rangle  &\dots &  \langle e^1, \tilde X_{i.{S_d}} \rangle \\
+0 & \langle e^2, \tilde X_{i.{S_2}} \rangle & \dots  &  \langle e^2, \tilde X_{i.{S_d}} \rangle\\
+0 & 0 & \dots & \dots  \\
+0 & 0 & 0& \langle e^d, \tilde X_{i.{S_d}} \rangle 
+\end{bmatrix}.
+\end{align}
+The diagonal entries $R_{jj} = \langle q^j, \tilde X_{i.{S_j}} \rangle$ of this matrix have form $\| \tilde X_{i.{S_j}} -  \sum_{j' \in \{1 \dots j-1\}} \langle \tilde X_{i.{S_{j}}}, e^{j'} \rangle e^{j'} \|$.
+Thus, $R_{jj} \in (0, \| \tilde X_{i.{S_j}}\|]$.
+On the other hand $\beta_{iS.} =R^{-1}$, which has diagonal elements $\beta_{jj} = R_{jj}^{-1}$, since $R$ is upper triangular.
+Thus, $\beta_{ijj} \geq \| \tilde X_{i.{S_j}}\|^{-1}$, and therefore $\|\beta_{iS_j.}\| \geq \|\beta_{iS_j.}'\|.$
+Since $\|\beta_{iS_j.}\| \geq \|\beta_{iS_j.}'\|$ for all $i$, then $\|\beta_{.S_j.}\| \geq \|\beta_{.S_j.}' \|$.
+%Finally, that this is true for all $j$.
+%That is, if we 
 \end{proof}
 
-\begin{proposition}{Programmatic equivalence}
-\label{prop:lasso_program_equivalence}
- Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $\hat \beta_{\lambda}  (U \mathcal X) = U\hat \beta_{\lambda} (\mathcal X)$.
-\end{proposition}
 
 
-
-\subsection{Experiments}
-
-
+\end{proof}

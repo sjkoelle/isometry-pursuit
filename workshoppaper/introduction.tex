@@ -9,17 +9,7 @@ This problem arises in interpretable learning because while the coordinate funct
 When this is the case, selection of candidate interpretable features as coordinates data representation may take the above form.
 While implementations vary across data and algorithmic domains, identification of such coordinates generally aids mechanistic understanding, generative control, and statistical efficiency.
 
-In this paper we show that an adapted version of the group lasso algorithm in \cite{Koelle2024-no} leads to a convex procedure competitive with greedy approaches such as those found in \cite{NEURIPS2019_6a10bbd4, Kohli2021-lr, Jones2007-uc} for finding isometries.
+This paper shows that an adapted version of the algorithm in \citet{Koelle2024-no} leads to a convex procedure that can improve upon greedy approaches such as those found in \citet{NEURIPS2019_6a10bbd4, Kohli2021-lr, Jones2007-uc} for finding isometries.
 The insight that leads to isometry pursuit is that $D$ function solutions multitask basis pursuit applied to an appropriately normalized $\mathcal X$ selects unitary submatrices.
 In particular, this normalization log-symmetrizes length in the column-space of $\mathcal X$ and favors vectors closer to unit length.
 The main advantage of this basis pursuit formulation is that it is convex and therefore computationally expedient.
-We exhibit the effectiveness of this approach experimentally in lieu of theoretical results.
-
-%(RAG, recommendations, training neural networks (infrequent meta), wind).
-%This approach relies on a to-our-knowledge novel matrix inversion algorithm that is sparse in the column space of the matrix.
-%Unsupervised learning methods like PCA, UMAP, and autoencoders are often concerned with minimizing reconstruction error without regard for the sparsity of the learned respresentation, and among those that sparsify, variable selection methods contrast with sparsification with respect to reconstruction from a learned latent space.
-% Multitask learning and lasso \cite{Hastie2015-qa}
-% cite some classic manifold learning papers
-%The comparison of greedy (e.g. Orthogonal Matching Pursuit) \cite{Mallat93-wi, Tropp05-ml} and convex \cite{Tropp06-sg} basis pursuit formulations.
-%Basis pursuit \cite{Chen2001-hh} 
-% Cite dominique and marina.

@@ -1,61 +1,21 @@
 \documentclass{article}
 
-\usepackage{subcaption}
-\usepackage{graphicx}
-
-\input{config.tex}
 \usepackage{iai_neurips_2024}
-\usepackage[utf8]{inputenc} % allow utf-8 input
-\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
-\usepackage{hyperref}       % hyperlinks
-\usepackage{url}            % simple URL typesetting
-\usepackage{booktabs}       % professional-quality tables
-\usepackage{amsfonts}       % blackboard math symbols
-\usepackage{nicefrac}       % compact symbols for 1/2, etc.
-\usepackage{microtype}      % microtypography
-\usepackage{xcolor}         % colors
-
+\bibliographystyle{unsrtnat}
+\input{config.tex}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\N}{\mathcal{N}}
 
 
 \title{Isometry pursuit}
 
-% The \author macro works with any number of authors. There are two commands
-% used to separate the names and addresses of multiple authors: \And and \AND.
-%
-% Using \And between authors leaves it to LaTeX to determine where to break the
-% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
-% authors names on the first line, and the last on the second line, try using
-% \AND instead of \And before the third author name.
-
 \author{%
-  Samson Koelle\thanks{Use footnote for providing further information
-    about author (webpage, alternative address)---\emph{not} for acknowledging
-    funding agencies.} \\
-  Department of Statistics\\
-  University of Washington\\
-  Seattle, WA, 98195  \\
+  Samson Koelle \\
   \texttt{sjkoelle@gmail.com} \\
-  % examples of more authors
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \AND
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
-  % \And
-  % Coauthor \\
-  % Affiliation \\
-  % Address \\
-  % \texttt{email} \\
+  \And
+  Marina Meila \\
+  University of Washington Department of Statistics\\
+  Seattle, WA \\
 }
 
 \begin{document}
@@ -64,14 +24,19 @@
 
 \begin{abstract}
 Isometry pursuit is an algorithm for identifying unitary column-submatrices of wide matrices.
-It achieves sparsity via use of the group lasso penalty.
+It achieves sparsity via use of the multitask basis pursuit penalty.
 Applied to Jacobians of putative coordinate functions, it helps identity isometric embeddings from within dictionaries.
 It therefore has relevance to interpretability of learned representations.
 \end{abstract}
 
-
 \input{introduction.tex}
 \input{background.tex}
 \input{method.tex}
+\input{experiments.tex}
+\input{discussion.tex}
+
+\bibliography{ref}
+
+\input{supplement.tex}
 
 \end{document}
