@@ -1,25 +1,22 @@
 \section{Background}
 
-Variable selection in unsupervised learning is comparably less studied than in supervised learning.
-Thus, we explain the geometric criteria used to evaluate selection as well as the algorithmic considerations when designing such an algorithm.
+Our algorithm is motivated by spectral and convex analysis.
 
 \subsection{Problem}
 
-Our goal is, given a matrix $\mathcal X \in \mathbb R^{D \times P}$, select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is as orthonormal as possible in a computationally efficient way.
-To that end, define a ground truth loss function that measures unitariness, and then introduce a surrogate loss function that convexifies the problem so that it may be efficiently solved.
+Our goal is, given a matrix $ X \in \mathbb R^{D \times P}$, select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is as orthonormal as possible in a computationally efficient way.
+To that end, define a ground truth loss function that measures orthonormalness, and then introduce a surrogate loss function that convexifies the problem so that it may be efficiently solved.
 
 \subsection{Interpretability and isometry}
 
 Our motivating example is the selection of data representations from within sets of putative coordinates.
-These putative coordinates are simply consist of columns of a matrix.
+These putative coordinates are simply the columns of a provided wide matrix.
 The proposed method is thus even simpler than Sparse PCA \citep{Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, in which column-covariance is used to select low-dimensional projections from within the span of such a subset.
 
 This method is specifically applicable with respect to interpretability, for which parsimony is at a premium.
 Interpretability arises through comparison of data with what is known to be important in the domain of the problem.
 This a priori knowledge often takes the form of a functional dictionary.
-%Such a dictionary may also be constructed out of non-interpretable features \cite{Kohli2021-lr}.
 Regardless of implementation details such as whether this dictionary is given or learned, core concepts like evaluation of independentness of dictionary features arise in numerous scenarios \citep{Chen2019-km, Koelle2022-ju, He2023-ch}.
-% cite anthropic functional independence.
 After functional independence \citep{Koelle2022-ju}, also known as feature decomposability \citep{templeton2024scaling}, which only requires that the differential of sets of dictionary features be full rank, metric properties of such sets are of natural interest.
 
 \begin{definition}
@@ -34,7 +31,7 @@ The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ betwe
 \end{align}
 \end{definition}
 
-\begin{definition}{Isometric at a point}
+\begin{definition}
 \label{def:isometric_at_a_point}
 A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq R^{B_\alpha}$ and $\mathcal N  \subseteq R^{B_\beta}$ is 
 $\phi$ is an \textbf{isometry at a point} $\xi \in \mathcal M$ if
@@ -44,16 +41,26 @@ $\phi$ is an \textbf{isometry at a point} $\xi \in \mathcal M$ if
 That is, $\phi$ is an isometry at $\xi$ if $D \phi (\xi)$ is orthonormal.
 \end{definition}
 
-In other words, isometries of a $D$ dimensional data distribution consist of $D$ coordinate features whose gradients are orthogonal and evenly varying.
-Formulations of this quality within an objective function like deformation \citep{Kohli2021-lr} and nuclear norm \citep{Boyd2004-ql} use only a subset of the differential's information and are not uniquely minimized at unitarity, respectively.
-We therefore will introduce a new alternative objective based upon the entire spectrum which is uniquely minimized at isometry.
+This property - that $D\phi$ is orthonormal, has several equivalent formulations.
+The formulation that motivates our ground truth loss function comes from spectral analysis.
+\begin{proposition}
+\label{prop:orthonormal_spectrum}
+The singular values $\sigma_1 \dots \sigma_D$ are equal to $1$ if and only if $U \in \mathbb{R}^{D \times D}$ is orthonormal.
+\end{proposition}
+On the other hand, the formulation that motivates Isometry Pursuit is that orthonormal matrices consist of $D$ coordinate features whose gradients are orthogonal and evenly varying.
+\begin{proposition}
+\label{prop:orthonormal_basis}
+The component vectors $u^1 \dots u^D \in \mathbb R^B$ form a orthonormal matrix if and only if, for all $d_1, d_2 \in [D], u_{d_1} u^{d_2} = \begin{cases}
+1 \; d_1 = d_2 \\ 
+0 \; d_1 \neq d_2 
+\end{cases}$.
+\end{proposition}
 
 The applications of pointwise isometry are themselves manifold.
-Approaches that seek isometric embeddings non-parametrically include Local Tangent Space Alignment, multidimensional scaling and isomap. % cite
-On the other hand, \citet{Kohli2021-lr} showed how pointwise isometries selected from a dictionary may be stitched together to form global embeddings.
+Local Tangent Space Alignment, Multidimensional Scaling and Isomap non-parametrically estimate embeddings that are as isometric as possible.
+% TODO (Sam): cite
+Pointwise isometries selected from a dictionary may be stitched together to form global embeddings \citep{Kohli2021-lr}.
 This approach constructs isometries through greedy search, with putative dictionary features added one at a time.
-Other work \citep{Koelle2022-ju, Koelle2024-no} shows how group lasso may be used to select independent dictionary elements through a convex (i.e. non-greedy) algorithm.
-Will will show how this paradigm can be useful for selection of pointwise isometries as well.
 
 Note that it is not necessary to explicitly estimate tangent spaces when applying the definition of isometry.
 The most commonly encountered manifolds are simply vector spaces, in which case the tangent spaces are trivial.
@@ -62,11 +69,11 @@ For example, the transformer residual stream at different tokens are analogous t
 
 \subsection{Subset selection}
 
-Given a matrix $\mathcal X \in \mathbb R^{D \times P}$, we compare algorithmic paradigms for solving problems of the form
+Given a matrix $ X \in \mathbb R^{D \times P}$, we compare algorithmic paradigms for solving problems of the form
 
 \begin{align}
 \label{prog:ground_truth}
-\arg \min_{\mathcal S \subseteq [P] : |\mathcal S| = D} l (\mathcal X_{.\mathcal S})
+\arg \min_{\mathcal S \subseteq [P] : |\mathcal S| = D} l ( X_{.\mathcal S})
 \end{align}
 
 Brute force algorithms consider all possible solutions.
@@ -76,16 +83,17 @@ This algorithms have time complexity $O(CPD)$ and so are computationally more ef
 Please see Section \ref{sec:algorithms} for additional information.
 
 Sometimes, it is possible to introduce an objective which convexifies problems of the above form.
-A classic example comes from basis pursuit solutions to the overcomplete regression problem $y = x\beta$ \cite{Chen2001-hh}.
+Solutions
 \begin{align}
-\arg \min f (\beta) : y  = x\beta 
+\arg \min f(\beta) : Y  = X\beta 
 \end{align}
+to the overcomplete regression problem $Y = X \beta$ are a classic example \cite{Chen2001-hh}.
 When $f(\beta) = \|\beta\|_0$, this problem is non-convex, and must be solved via greedy or brute algorithms, but when $f(\beta) =\|\beta\|_1$, the problem is convex, and may be solved efficiently via interior-point methods.
 When the equality constraint is relaxed, Lagrangian duality may be used to reformulate as a so-called Lasso problem, which leads to an even richer set of optimization algorithms. % cite FISTA< glmnet, coordinate descent
 % Cite glmnet
 
 
 The particular form of basis pursuit that we apply is inspired by the group basis pursuit approach in \citet{Koelle2022-ju}.
-In group basis pursuit (which we call multitask basis pursuit when grouping is dependent only on the structure of response variable $y$) the objective function is $f(\beta) = \|\beta\|_{1,2} := \sum_{p=1}^P \|\beta_{p.}\|_2$  \citep{Yuan2006-bt, Obozinski2006-kq, Yeung2011-fg}
+In group basis pursuit (which we call multitask basis pursuit when grouping is dependent only on the structure of matrix-valued response variable $y$) the objective function is $f(\beta) = \|\beta\|_{1,2} := \sum_{p=1}^P \|\beta_{p.}\|_2$  \citep{Yuan2006-bt, Obozinski2006-kq, Yeung2011-fg}
 This objective creates joint sparsity across entire rows of $\beta_{p.}$ and was used in \citep{Koelle2022-ju} to select between sets of interpretable features.
 % NOTE (Sam): find a citation for multitask basis pursuit.  Cite first GBP paper.

@@ -1,3 +1,4 @@
+*.blg
 *.egg-info
 *.bbl
 *.DS_Store

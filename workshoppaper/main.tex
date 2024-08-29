@@ -23,10 +23,11 @@
 \maketitle
 
 \begin{abstract}
-Isometry pursuit is an algorithm for identifying unitary column-submatrices of wide matrices.
-It achieves sparsity via use of the multitask basis pursuit penalty.
-Applied to Jacobians of putative coordinate functions, it helps identity isometric embeddings from within dictionaries.
-It therefore has relevance to interpretability of learned representations.
+Isometry pursuit is a convex algorithm for identifying orthonormal column-submatrices of wide matrices.
+It consists of a novel normalization method followed by multitask basis pursuit.
+Applied to Jacobians of putative coordinate functions, it helps identity isometric embeddings from within interpretable dictionaries.
+We provide theoretical and experimental results justifying this method.
+It appears to be more accurate than greedy search and more efficient than brute force search.
 \end{abstract}
 
 \input{introduction.tex}

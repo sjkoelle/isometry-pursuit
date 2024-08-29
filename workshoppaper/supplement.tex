@@ -8,7 +8,7 @@ This section contains algorithms and proofs in support of the main text.
 We give definitions of the brute and greedy algorithms used in this paper.
 
 \begin{algorithm}[H]
-\caption{\texttt{Brute}(Matrix $\mathcal{X} \in \mathbb{R}^{D \times P}$, objective $f$)}
+\caption{\brute(Matrix $\mathcal{X} \in \mathbb{R}^{D \times P}$, objective $f$)}
 \begin{algorithmic}[1]
 \FOR{each combination $S \subseteq \{1, 2, \dots, P\}$ with $|S| = D$}
     \STATE Evaluate $f(\mathcal{X}_{.S})$
@@ -18,7 +18,7 @@ We give definitions of the brute and greedy algorithms used in this paper.
 \end{algorithm}
 
 \begin{algorithm}[H]
-\caption{\texttt{Greedy}(Matrix $\mathcal{X} \in \mathbb{R}^{D \times P}$, objective $f$, selected set $S = \emptyset$, current size $d=0$)}
+\caption{\greedy(Matrix $\mathcal{X} \in \mathbb{R}^{D \times P}$, objective $f$, selected set $S = \emptyset$, current size $d=0$)}
 \begin{algorithmic}[1]
 \IF{$d = D$}
     \STATE {\bf Return} $S$
