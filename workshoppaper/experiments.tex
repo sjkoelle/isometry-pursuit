@@ -9,6 +9,8 @@ Preprocessing details such as tangent space estimation are shared with \citet{Ko
 We use the CVXPY Python package.
 We use the SCS interior point solver from CVXPY, which is able to push sparse values arbitrarily close to 0 \cite{cvxpy_sparse_solution}.
 
+To create samples, we resample
+
 \begin{figure}
 \centering
 \subcaptionbox{Boxplot of $\widehat S_{g}$. \label{fig:boxplot1}}
@@ -20,3 +22,5 @@ We use the SCS interior point solver from CVXPY, which is able to push sparse va
 \caption{Comparison with isometry loss.}
 \label{fig:boxplots}
 \end{figure}
+
+% table with parameters, show the selected sparsity level
