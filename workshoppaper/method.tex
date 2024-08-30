@@ -20,7 +20,7 @@ X &\mapsto \sum_{d = 1}^D g(\sigma^d( X), c)
 where $\sigma^d ( X)$ is the $d$-th singular value of $ X$ and
 \begin{align}
 g: \mathbb R^+ \times \mathbb R^+ &\to \mathbb R^+ \\
-t,c &\mapsto e^{t^c} + e^{t^{-c}}.
+t,c &\mapsto \frac{e^{t^c} + e^{t^{-c}}}{2e}.
 \end{align}
 Using Proposition \ref{prop:orthonormal_spectrum}, we can check that $g$ is uniquely maximized by orthonormal matrices.
 Moreover, $g( X^{-1}) = g( X)$ and $g$ is convex.
@@ -31,15 +31,16 @@ A graph of $g$ is given in Figure \ref{fig:gt_loss}, which also shows how this l
 Our ground truth program is therefore 
 \begin{align}
 \label{prog:ground_truth}
-\widehat {\mathcal S}_{GT}  &= \arg \min_{\mathcal S \in \binom{[P]}{d}} l_c ( X_{.\mathcal S})
+\widehat { S}_{GT}  &= \arg \min_{ S \in \binom{[P]}{d}} l_c ( X_{. S})
 \end{align}
-where $\binom{[P]}{d} = \left\{ A \subseteq [P] : \left|A\right| = d \right\}$
+where $\binom{[P]}{d} = \left\{ A \subseteq [P] : \left|A\right| = d \right\}$.
 Regardless of the convexity of $l_c$, brute combinatorial search over $[P]$ is inherently non-convex.
 
 \subsection{Normalization}
 \label{sec:normalization}
 
 Since basis pursuit methods tend to select longer vectors, selection of orthonormal submatrices requires normalization such that both long and short candidate basis vectors are penalized in the subsequent regression.
+We introduce the following definition.
 
 \begin{definition}[Symmetric normalization]
 A function $q: \mathbb R^D \to \mathbb R^+ $ is a symmetric normalization if 
@@ -78,12 +79,14 @@ Finally, the parameter $c$ grants control over the width of the basin, which is 
 \begin{figure}
 \centering
 \subcaptionbox{Ground truth loss scaling function $g$ as a function of $t$. \label{cat}}
-{\includegraphics[width = .33\textwidth]{../figures/Figure_1a.png}}
+{\includegraphics[width = .32\textwidth]{../figures/Figure_1a_bw.png}}
 \label{fig:gt_loss}
 \subcaptionbox{Length as a function of $t$ \label{elephant}}
-{\includegraphics[width = .33\textwidth]{../figures/Figure_1b.png}}
-\caption{Plots of Length and Loss for different values of $c$.
-   Since $t$ is one dimensional and therefore diagonalizable, basis pursuit and ground truth give identical loss values.}\label{animals}
+{\includegraphics[width = .32\textwidth]{../figures/Figure_1b_bw.png}}
+\subcaptionbox{Basis pursuit loss as a function of $t$ \label{snootfellow}}
+{\includegraphics[width = .32\textwidth]{../figures/Figure_1c_bw.png}}
+\caption{Plots of ground truth loss, vector length, and basis pursuit loss for different values of $c$ in the one-dimensional case $D = 1$.
+The two losses are equivalent in the one-dimensional case.}
 \end{figure}
 
 \subsection{Isometry pursuit}
@@ -132,7 +135,7 @@ Then $S(\widehat \beta  (U  X)) = S(\widehat \beta ( X))$.
 A proof is given in Section \ref{proof:basis_pursuit_program_invariance}.
 This has as an immediate corollary that we may replace $I_D$ in the constraint by any orthonormal $D \times D$ matrix.
 
-We also claim that the conditions of the consequent of Proposition \ref{prop:orthonormal_basis} are satisfied by minimizers of the multitask basis pursuit objective applied to suitably normalized matrices in the special case where both such a submatrix exists and $|\mathcal S| = D$.
+We also claim that the conditions of the consequent of Proposition \ref{prop:orthonormal_basis} are satisfied by minimizers of the multitask basis pursuit objective applied to suitably normalized matrices in the special case where both such a submatrix exists and $| S| = D$.
 \begin{proposition}[Unitary preference]
 Let $w_c$ be a normalization satisfying the conditions in Definition \ref{def:symmetric_normalization}.
 Then $\arg \min_{X_{.S} \in \mathbb R^{D \times D}} \widehat \beta^{D}_c ( X) $ is orthonormal.
@@ -144,7 +147,7 @@ A proof is given in Section \ref{sec:local_isometry_proof}.
 
 \subsection{Two-stage isometry pursuit}
 
-Since cannot in general ensure either that $|\widehat { \mathcal S|} = D$ or that a orthonormal submatrix $X_{.S}$ exists, we first use the convex problem to prune and then apply brute search upon the substantially reduced feature set.
+Since cannot in general ensure either that $|\widehat {  S|} = D$ or that a orthonormal submatrix $X_{.S}$ exists, we first use the convex problem to prune and then apply brute search upon the substantially reduced feature set.
 
 \begin{algorithm}[H]
 \caption{\tsip(Matrix ${X} \in \mathbb{R}^{D \times P}$, scaling constant $c$)}
