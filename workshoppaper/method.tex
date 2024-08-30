@@ -15,9 +15,9 @@ We therefore introduce an alternative ground truth objective that satisfies the 
 We define this objective as
 \begin{align}
 l_{c}: \mathbb R^{D \times P} &\to \mathbb R^{+} \\
-X &\mapsto \sum_{d = 1}^D g(\sigma^d( X), c)
+X &\mapsto \sum_{d = 1}^D g(\sigma_d( X), c)
 \end{align}
-where $\sigma^d ( X)$ is the $d$-th singular value of $ X$ and
+where $\sigma_d ( X)$ is the $d$-th singular value of $ X$ and
 \begin{align}
 g: \mathbb R^+ \times \mathbb R^+ &\to \mathbb R^+ \\
 t,c &\mapsto \frac{e^{t^c} + e^{t^{-c}}}{2e}.
@@ -47,7 +47,7 @@ A function $q: \mathbb R^D \to \mathbb R^+ $ is a symmetric normalization if
 \begin{align}
 \arg \max_{v \in \mathbb R^D} \ q (v) &=\{ v : \|v\| = 1 \} \\
 q(v) &= q(\frac{v}{\|v\|^2}) \\
-q(v^1) &= q(v^2) \; \forall \; v^1, v^2 : \|v^1\| = \|v^2\|.
+q(v_1) &= q(v_2) \; \forall v_1, v_2 \in \mathbb R^D : \|v_1\| = \|v_2\|.
 \end{align} \label{def:symmetric_normalization}
 \end{definition}
 
@@ -60,7 +60,7 @@ n , c &\mapsto \frac{n}{q(\|n\|_{2},c) }
 and matrices by
 \begin{align}
 w: \mathbb R^{D \times P} \times \mathbb R^+ &\to \mathbb R^D \\
- X_{.p} , c &\mapsto n( X_{.p}, c) \; \forall \; p \in [P].
+ X_{.p} , c &\mapsto n( X_{.p}, c) \; \forall p \in [P].
 \end{align}
 
 In particular, we choose $q$ as follows.
@@ -136,7 +136,7 @@ A proof is given in Section \ref{proof:basis_pursuit_program_invariance}.
 This has as an immediate corollary that we may replace $I_D$ in the constraint by any orthonormal $D \times D$ matrix.
 
 We also claim that the conditions of the consequent of Proposition \ref{prop:orthonormal_basis} are satisfied by minimizers of the multitask basis pursuit objective applied to suitably normalized matrices in the special case where both such a submatrix exists and $| S| = D$.
-\begin{proposition}[Unitary preference]
+\begin{proposition}
 Let $w_c$ be a normalization satisfying the conditions in Definition \ref{def:symmetric_normalization}.
 Then $\arg \min_{X_{.S} \in \mathbb R^{D \times D}} \widehat \beta^{D}_c ( X) $ is orthonormal.
 Moreover when $X$ is orthonormal, $(\min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \; I_D = w ({  X}, c) \beta) = D$.

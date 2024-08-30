@@ -6,12 +6,13 @@ For the latter, a dictionary of interpretable features are evaluated for their a
 Statistical replicas for Wine and Iris are created by resampling across $P$, while for Ethanol they are created by sampling from data point and their corresponding tangent spaces.
 For basis pursuit, We use the SCS interior point solver \citep{ocpb:16} from CVXPY \citep{diamond2016cvxpy, agrawal2018rewriting}, which is able to push sparse values arbitrarily close to 0 \citep{cvxpy_sparse_solution}.
 Table \ref{tab:experiments} presents results showing that the $l_c$ accrued by the subset $\widehat S_{G}$ estimated using \greedy~ with objective $l_c$ is higher than that for the subset estimated by \tsip.
+We also evaluated second stage \brute~ selection after random selection of $\widehat S_1$ but do not report it since it often lead to catastrophic failure to satisfy the basis pursuit constraint.
 
 \begin{table}[h!]
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
-Name & $D$ & $P$ & $R$ & $l_1(X_{.\widehat S_{G}})$ & $ |\widehat S_1 | $& $l_1(X_{.\widehat S})$ &P-value \\ \hline
+Name & $D$ & $P$ & $R$ & $l_1(X_{.\widehat S_{G}})$ & $ |\widehat S_1 | $& $l_1(X_{.\widehat S})$ & $P(l_1(X_{.\widehat S_{G}}),l_1(X_{.\widehat S}))$  \\ \hline
 Iris & $4$ & $75$ & $25$ & $13.4 \pm 6.4$ & $7 \pm 1$ &  $8.0 \pm 1.8$ & $10^{-4}$\\ \hline 
 Wine & $5$ & $89$ & $25$  & $5.7 \pm .2$ & $12 \pm 1$ & $5.6 \pm .1$ & $5 \times 10^{-5}$ \\ \hline
 Ethanol & $2$ & $756$ & $100$ & $2.6\pm .3$  & $90 \pm 164$  & $2.5\pm .2$& $2 \times 10^{-5}$ \\ \hline
@@ -19,7 +20,8 @@ Ethanol & $2$ & $756$ & $100$ & $2.6\pm .3$  & $90 \pm 164$  & $2.5\pm .2$& $2 \
 \caption{Experimental parameters and results.
 For the Wine dataset, even \brute~ on $\widehat { S}_1$ is prohibitive in $D=13$, and so we truncate our inputs to $D=5$.
 For Iris and Wine, $P$ is randomly downsampled by a factor of $2$ to create replicates.
-P-values are computed by paired two-sample T-test on  $l_1(X_{.\widehat S})$ and $l_1(X_{.\widehat S_{G}})$.}
+P-values are computed by paired two-sample T-test on  $l_1(X_{.\widehat S})$ and $l_1(X_{.\widehat S_{G}})$.
+}
 \label{tab:experiments}
 \end{table}
 

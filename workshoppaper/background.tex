@@ -20,13 +20,13 @@ Regardless of implementation details such as whether this dictionary is given or
 After functional independence \citep{Koelle2022-ju}, also known as feature decomposability \citep{templeton2024scaling}, which only requires that the differential of sets of dictionary features be full rank, metric properties of such sets are of natural interest.
 
 \begin{definition}
-The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ between $D$ dimensional manifolds $\M \subseteq \mathbb R^B$ and $\N \subseteq \mathbb R^P$ is a map in tangent bases $x^1 \dots x^{d_\M}$ of $T_\xi \M$ and $y^1 \dots y^{d_\N}$ of $T_{\phi(\xi)} \N$ consisting of entries
+The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ between $D$ dimensional manifolds $\M \subseteq \mathbb R^B$ and $\N \subseteq \mathbb R^P$ is a map in tangent bases $x_1 \dots x_{D}$ of $T_\xi \M$ and $y_1 \dots y_{D}$ of $T_{\phi(\xi)} \N$ consisting of entries
 \begin{align}
 \label{eq:diff}
     D\phi (\xi) = \begin{bmatrix}
-    \frac{\partial \phi^1  }{\partial x^1}(\xi)  & \dots & \frac{\partial \phi^1 }{\partial x^D}(\xi)  \\
+    \frac{\partial \phi_1  }{\partial x_1}(\xi)  & \dots & \frac{\partial \phi_1 }{\partial x_D}(\xi)  \\
     \vdots & & \vdots \\
-    \frac{\partial \phi^D }{\partial x^1}(\xi)  & \dots & \frac{\partial \phi^{D}  }{\partial x^{D}}(\xi) 
+    \frac{\partial \phi_D }{\partial x_1}(\xi)  & \dots & \frac{\partial \phi_{D}  }{\partial x_{D}}(\xi) 
     \end{bmatrix}.
 \end{align}
 \end{definition}
@@ -50,7 +50,7 @@ The singular values $\sigma_1 \dots \sigma_D$ are equal to $1$ if and only if $U
 On the other hand, the formulation that motivates Isometry Pursuit is that orthonormal matrices consist of $D$ coordinate features whose gradients are orthogonal and evenly varying.
 \begin{proposition}
 \label{prop:orthonormal_basis}
-The component vectors $u^1 \dots u^D \in \mathbb R^B$ form a orthonormal matrix if and only if, for all $d_1, d_2 \in [D], u_{d_1} u^{d_2} = \begin{cases}
+The component vectors $u_1 \dots u_D \in \mathbb R^B$ form a orthonormal matrix if and only if, for all $d_1, d_2 \in [D], \langle u_{d_1}, u_{d_2} \rangle = \begin{cases}
 1 \; d_1 = d_2 \\ 
 0 \; d_1 \neq d_2 
 \end{cases}$.
