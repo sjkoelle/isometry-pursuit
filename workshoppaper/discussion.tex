@@ -1,59 +1,15 @@
 \section{Discussion}
 \label{sec:discussion}
 
-% when are the losses different.
+We have shown the efficacy of a convex multitask basis pursuit approach for selecting isometric submatrices from wide-matrices.
+This approach - \isometrypursuit~ - should be considered as an alternative to greedy methods for selection of such features from within a dictionary.
+In a sense it is a simpler simpler version of Sparse PCA.
 
-It could be used in the stiching step of an algorithm like the kohli one
-We leave aside the question of patch alignment 
-%\cite{https://arxiv.org/pdf/2303.11620.pdf, LDLE paper}.
-The full gradient approach.
-In this case normalization prior to projection is subsumbmed by the larger coefficients needed to get the tangent space.
-Good news is tangent space estimation need not be performed.
-Let's compare the coefficients involved in projecting versus not projecting.
-We can perform regression in the high dimensional space instead of projecting on span of target variable.
+Algorithmic variants of interest include the multitask lasso extension of our estimator.
+Applications of interest include greedy diversification in recommendation systems \cite{Carbonell2017-gi, Wu2019-uk} and other retrieval-type systems, as well as decomposing interpretable yet overcomplete dictionaries in transformer residual streams.
+The most pressing piece of remaining theoretical work removal of the restriction $|S| = D$ on the conditions of Proposition \ref{prop:unitary_selection} and investigating of the necessity of the second selection step.
+The resulting proposition is intuitive but is more difficult to prove and seemingly violated by (omitted) empirical results that are subtly non-dispositive in the sense that improvements of primal loss below $D$ are accompanied by violations of the constraint of a similar magnitude.
+We also note that isometries may not always exist in the presence of curvature, so comparison of our loss with curvature could prove fertile, as could comparison with the so-called restricted isometry property used to show guaranteed recovery at fast convergence rates in supervised learning \cite{Candes2005-dd, Hastie2015-qa}.
 
-With respect to pseudoinverse estimation, sparse methods have been applied in \cite{Sun2012-vp}
-Even though by Lagrangian duality, the basis pursuit solution corresponds to $\lambda$ approaching $0$, the solution is sparse \cite{Tropp04-ju}.
-
-%(RAG, recommendations, training neural networks (infrequent meta)).
-%This approach relies on a to-our-knowledge novel matrix inversion algorithm that is sparse in the column space of the matrix.
-%Unsupervised learning methods like PCA, UMAP, and autoencoders are often concerned with minimizing reconstruction error without regard for the sparsity of the learned respresentation, and among those that sparsify, variable selection methods contrast with sparsification with respect to reconstruction from a learned latent space.
 % Multitask learning and lasso \cite{Hastie2015-qa}
 %The comparison of greedy (e.g. Orthogonal Matching Pursuit) \cite{Mallat93-wi, Tropp05-ml} and convex \cite{Tropp06-sg} basis pursuit formulations.
-%Basis pursuit \cite{Chen2001-hh} 
-% Cite dominique and marina.
-% Note that requiring the full structure of a multiplicative norm for normalization here is unnecessary for basic success of the algorithm, but certain characteristics such as $q(v^{-1}) = q(v)$ seem desirable, provided one can give a reasonable way to compute $v^{-1}$, such as by considering each vector as a scaled rotation subgroup of the general linear group.
-
-While the sparse PCA problem is non-convex, our approach can be taken as a simpler version in the sense that the loadings are constrained to be the identify matrix.
-\cite{Bertsimas2022-qo} gives a method for solving the sparse-PCA method more efficiently than the original greedy approach.
-Compared with the FISTA method used in  \cite{Koelle2022-ju, Koelle2024-no}, coordinate descent \cite{Friedman-2007-yb, Meier2008-ts, Qin2013-tx} is faster \cite{Catalina2018-ek, Zhao2023-xn}.
-Compared with \cite{Tropp06-sg, Liu2009-yo}, the sklearn multitask lasso is $2,1$ rather than $\infty,1$ regularized.
-This misses the utility of our normalization for finding unitary matrices since isometry embeddings preserve important properties like distances between points.
-
-%The Hoeffding bound
-
-Our notion of isometric recovery is distinct from the restricted isometry property \cite{Candes2005-dd, Hastie2015-qa}, which is used to show guaranteed recovery at fast convergence rates in supervised learning.
-In particular, our approach does not consider statistical error or the presence of a true underlying model.
-However, we note that disintegration of performance at high $\lambda$ values in the lasso formulation may have some relation to these properties, as discussed in \cite{Koelle2022-ju, Koelle2024-no}.
-
-% low distortion just means conformal?
-% what happens when dictionary = feature space, or what are the convergence rates.
-% Convergence rate related to tangent space estimation.
-
-A major area of comparison is in diversification in recommendation systems where greedy algorithms are used \cite{Carbonell2017-gi, Wu2019-uk}, and also in document diversification for Retrieval Augmented Generation.
-% BIG QUESTION: RUN IN D = B?  What is rank of $X$?    It's D if not running D = B
-%Dimension estimation, the failure of duality
-% We assume that we are given a target dimension $T \leq D$ - do we?
-% Full-rank needed?
-
-% NOTE (Sam): balance goes out the window with great flowers since there is no normalization.
-
-% The necessity of the second selection step is unclear.
-
-The most pressing piece of theoretical work which remains on this topic is the removal of the resttriction $|S| = D$ on the conditions of Proposition.
-The resulting proposition, which seems almost obvious, is in fact more difficult to argue, and is seemingly violated by empirical results.
-Nevertheless, these violations are subtly non-dispositive since absence of sparsity and improvements of primal loss below $D$ are accompanied by violations of the constraint of a similar magnitude, suggesting that we a more refined approach to optimization, substantial improvements in estimation accuracy may be possible.
-From a geometric perspective, we note that isometries may not always exist in the presence of curvature, and comparison of our loss with curvature could prove fertile.
-Finally, the speed increases garnered by the particularly simple form of our algorithm warrants comparison with other pseudoinverse estimators warrant further comparison.
-An extension of our estimator we omit for brevity is to use the multitask lasso formulation to trim the size of $\hat P$.
-Besides our new normalization, this results in a simpler procedure than in \citet{Koelle2022-lp} and \citet{Koelle2024-no} that is amenable to the more performant multitask lasso solver in sklearn.
