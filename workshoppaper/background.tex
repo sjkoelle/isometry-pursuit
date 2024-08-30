@@ -4,7 +4,7 @@ Our algorithm is motivated by spectral and convex analysis.
 
 \subsection{Problem}
 
-Our goal is, given a matrix $ X \in \mathbb R^{D \times P}$, select a subset $\mathcal S \subset [P]$ with $|\mathcal S| = D$ such that $X_{. \mathcal S}$ is as orthonormal as possible in a computationally efficient way.
+Our goal is, given a matrix $ X \in \mathbb R^{D \times P}$, select a subset $ S \subset [P]$ with $| S| = D$ such that $X_{.  S}$ is as orthonormal as possible in a computationally efficient way.
 To that end, define a ground truth loss function that measures orthonormalness, and then introduce a surrogate loss function that convexifies the problem so that it may be efficiently solved.
 
 \subsection{Interpretability and isometry}
@@ -73,12 +73,12 @@ Given a matrix $ X \in \mathbb R^{D \times P}$, we compare algorithmic paradigms
 
 \begin{align}
 \label{prog:ground_truth}
-\arg \min_{\mathcal S \subseteq [P] : |\mathcal S| = D} l ( X_{.\mathcal S})
+\arg \min_{ S \subseteq [P] : | S| = D} l ( X_{. S})
 \end{align}
 
 Brute force algorithms consider all possible solutions.
 These algorithms are conceptually simple, but often have prohibitive time complexity $O(C_lP^D)$ where $C_l$ is the cost of evaluating $l$.
-Greedy algorithms consist of iteratively adding one element at a time to $\mathcal S$.
+Greedy algorithms consist of iteratively adding one element at a time to $ S$.
 This algorithms have time complexity $O(CPD)$ and so are computationally more efficient than brute force algorithms, but can get stuck in local minima.
 Please see Section \ref{sec:algorithms} for additional information.
 
