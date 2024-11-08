@@ -1,0 +1,119 @@
+\section{Supplement}
+
+This section contains algorithms and proofs in support of the main text.
+
+\subsection{Algorithms}
+\label{sec:algorithms}
+
+We give definitions of the brute and greedy algorithms used in this paper.
+
+\begin{algorithm}[H]
+\caption{\brute(Matrix ${X} \in \mathbb{R}^{D \times P}$, objective $f$)}
+\begin{algorithmic}[1]
+\FOR{each combination $S \subseteq \{1, 2, \dots, P\}$ with $|S| = D$}
+    \STATE Evaluate $f({X}_{.S})$
+\ENDFOR
+\STATE {\bf Output} the combination $S^*$ that minimizes $f({X}_{.S})$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{\greedy(Matrix ${X} \in \mathbb{R}^{D \times P}$, objective $f$, selected set $S = \emptyset$, current size $d=0$)}
+\begin{algorithmic}[1]
+\IF{$d = D$}
+    \STATE {\bf Return} $S$
+\ELSE
+    \STATE {\bf Initialize} $S_{\text{best}} = S$
+    \STATE {\bf Initialize} $f_{\text{best}} = \infty$
+    \FOR{each $p \in \{1, 2, \dots, P\} \setminus S$}
+        \STATE {\bf Evaluate} $f({X}_{.(S \cup \{p\})})$
+        \IF{$f({X}_{.(S \cup \{p\})}) < f_{\text{best}}$}
+            \STATE {\bf Update} $S_{\text{best}} = S \cup \{p\}$
+            \STATE {\bf Update} $f_{\text{best}} = f(\mathcal{X}_{.(S \cup \{p\})})$
+        \ENDIF
+    \ENDFOR
+    \STATE {\bf Return} \greedy(${X}$, $f$, $S_{\text{best}}$, $d+1$)
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Proofs}
+\label{sec:proofs}
+
+\subsubsection{Proof of Proposition \ref{prop:basis_pursuit_selection_invariance}}
+\label{proof:basis_pursuit_program_invariance}
+
+In this proof we first show that the penalty $\|\beta\|_{1,2}$ is unchanged by unitary transformation of $\beta$.
+
+ \begin{proposition}
+ \label{prop:basis_pursuit_loss_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $\|\beta\|_{1,2} = \|\beta U \|$.
+\end{proposition}
+
+\begin{proof}
+\begin{align}
+\|\beta U \|_{1,2} &= \sum_{p = 1}^P \| \beta_{p.} U \| \\
+&= \sum_{p = 1}^P \| \beta_{p.} \| \\
+&= \|\beta \|_{1,2}
+\end{align}
+\end{proof}
+
+We then show that this implies that the resultant loss is unchanged by unitary transformation of $ X$.
+
+\begin{proposition}
+ \label{prop:basis_pursuit_loss_equivalence}
+ Let $U \in \mathbb R^{D \times D}$ be unitary.
+ Then $\widehat \beta  (U  X) = \widehat \beta  (  X) U$.
+\end{proposition}
+
+\begin{proof}
+\begin{align}
+\widehat \beta  (U  X)  &= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta\|_{1,2}  \; : \; I_{D} = U X \beta \\
+&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta\|_{1,2}  \; : \; U^{-1} U = U^{-1} U X \beta U \\
+&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta\|_{1,2}  \; : \;  I_D = X \beta U \\
+&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta U \|_{1,2}  \; : \;  I_D = X \beta U \\
+&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta \|_{1,2}  \; : \;  I_D = X \beta.
+\end{align}
+\end{proof}
+
+
+\subsubsection{Proof of Proposition \ref{prop:unitary_selection}}
+\label{sec:local_isometry_proof}
+
+ \begin{proposition}
+\label{prop:generalized_unitary_selection}
+Let $w_c$ be a normalization satisfying the conditions in Definition \ref{def:symmetric_normalization}.  Then $\arg \min_{X_{.S} \in \mathbb R^{D \times D}} \widehat \beta^{D}_c (X_{.S}) $ is orthonormal.  Moreover when $X$ is orthonormal, $\min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \; I_D = w (  X, c) \beta = D$.
+ \end{proposition}
+ 
+ \begin{proof}
+
+The value of $D$ is clearly obtained by $\beta$ orthonormal, since by Proposition \ref{prop:basis_pursuit_selection_invariance}, for $X$ orthogonal, without loss of generality 
+\begin{align}
+\beta_{dd'} = \begin{cases} 1 & d = d' \in \{ 1 \dots D\}  \\
+0 & \text{otherwise}
+\end{cases}.
+\end{align}
+Thus, we need to show that this is a lower bound on the obtained loss.
+
+From the conditions in Definition \ref{def:symmetric_normalization}, normalized matrices will consist of vectors of maximum length (i.e. $1$) if and only if the original matrix also consists of vectors of length $1$.
+Such vectors will clearly result in lower basis pursuit loss, since longer vectors in $X$ require smaller corresponding covectors in $\beta$ to equal the same result.
+
+Therefore, it remains to show that $X$ consisting of orthogonal vectors of length $1$ have lower compared with $X$ consisting of non-orthogonal vectors.
+Invertible matrices $X_{.S}$ admit QR decompositions $\tilde X_{.S} = QR$ where $Q$ and $R$ are orthonormal and upper-triangular matrices, respectively \citep{Anderson1992-fb}.
+Denoting $Q$ to be composed of basis vectors $[e^1 \dots e^d]$, the matrix $R$ has form
+\begin{align}
+R = \begin{bmatrix}
+\langle e^1, X_{.S_1} \rangle & \langle e^1,  X_{.S_2} \rangle  &\dots &  \langle e^1,  X_{.S_D} \rangle \\
+0 & \langle e^2,  X_{.S_2} \rangle & \dots  &  \langle e^2,  X_{.S_D} \rangle\\
+0 & 0 & \dots & \dots  \\
+0 & 0 & \dots & \langle e^d, X_{.S_D} \rangle 
+\end{bmatrix}.
+\end{align}
+Thus, $|R_{dd} | \leq \|X_{.{S_{d}}}\|_2$, with equality obtained across $d$ only by orthonormal matrices.
+On the other hand, by Proposition \ref{prop:basis_pursuit_selection_invariance}, $l(X) = l(R)$ and so $\|\beta\|_{1,2} = \|R^{-1}\|_{1,2}$.
+Since $R$ is upper triangular it has diagonal elements $\beta_{dd} = R_{dd}^{-1}$ and so $\|\beta_{d.}\| \geq \| X_{.{S_d}}\|^{-1} = 1$.
+That is, the penalty accrued by a particular covector in $\beta$ is bounded from below by $1$ - the inverse of the length of the corresponding vector in $X_{.S}$ - with equality occurring only when $X_{.S}$ is orthonormal.
+
+
+\end{proof}

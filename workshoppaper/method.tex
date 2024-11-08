@@ -24,16 +24,15 @@ t,c &\mapsto \frac{e^{t^c} + e^{t^{-c}}}{2e}.
 \end{align}
 Using Proposition \ref{prop:orthonormal_spectrum}, we can check that $g$ is uniquely maximized by orthonormal matrices.
 Moreover, $g( X^{-1}) = g( X)$ and $g$ is convex.
-A graph of $g$ is given in Figure \ref{fig:gt_loss}, which also shows how this loss specifically enables comparison with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.
+Figure \ref{fig:losses} gives a graph of $l_c$ when $D=1$ and compares it with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.
 % NOTE (Sam): Do we need proofs of maximized by orthonormal matrices and convex?
 % Can we prove this is a norm?
 
 Our ground truth program is therefore 
 \begin{align}
 \label{prog:ground_truth}
-\widehat { S}_{GT}  &= \arg \min_{ S \in \binom{[P]}{d}} l_c ( X_{. S})
+\widehat { S}_{GT}  &= \arg \min_{ S \in \binom{[P]}{d}} l_c ( X_{. S}).
 \end{align}
-where $\binom{[P]}{d} = \left\{ A \subseteq [P] : \left|A\right| = d \right\}$.
 Regardless of the convexity of $l_c$, brute combinatorial search over $[P]$ is inherently non-convex.
 
 \subsection{Normalization}
@@ -45,29 +44,29 @@ We introduce the following definition.
 \begin{definition}[Symmetric normalization]
 A function $q: \mathbb R^D \to \mathbb R^+ $ is a symmetric normalization if 
 \begin{align}
-\arg \max_{v \in \mathbb R^D} \ q (v) &=\{ v : \|v\| = 1 \} \\
-q(v) &= q(\frac{v}{\|v\|^2}) \\
-q(v_1) &= q(v_2) \; \forall v_1, v_2 \in \mathbb R^D : \|v_1\| = \|v_2\|.
+\arg \max_{v \in \mathbb R^D} \ q (v) &=\{ v : \|v\|_2 = 1 \} \\
+q(v) &= q(\frac{v}{\|v\|_2^2}) \\
+q(v_1) &= q(v_2) \; \forall v_1, v_2 \in \mathbb R^D : \|v_1\|_2 = \|v_2\|_2.
 \end{align} \label{def:symmetric_normalization}
 \end{definition}
 
 We use such functions to normalize vector length in such a way that vectors of length $1$ prior to normalization have longest length after normalization, vectors in general are shrunk proportionately to their deviation from $1$. 
 That is, we normalize vectors by 
 \begin{align}
-n: \mathbb R^D \times \mathbb R^+ &\to \mathbb R^D \\
-n , c &\mapsto \frac{n}{q(\|n\|_{2},c) }
+n: \mathbb R^D  &\to \mathbb R^D \\
+v &\mapsto {q(v) }v
 \end{align}
 and matrices by
 \begin{align}
-w: \mathbb R^{D \times P} \times \mathbb R^+ &\to \mathbb R^D \\
- X_{.p} , c &\mapsto n( X_{.p}, c) \; \forall p \in [P].
+w: \mathbb R^{D \times P}  &\to \mathbb R^D \\
+ X_{.p} &\mapsto n( X_{.p}) \; \forall p \in [P].
 \end{align}
 
-In particular, we choose $q$ as follows.
+In particular, given $c > 0$, we choose $q$ as follows.
 \begin{align}
 \label{eq:normalization}
-q: \mathbb R^+ \times \mathbb R^+  &\to \mathbb R^+ \\
-t , c &\mapsto \frac{e^{t^c} + e^{t^{-c}}}{2e},
+q_c: \mathbb R^D  &\to \mathbb R^+ \\
+v  &\mapsto \frac{e^{\|v\|_2^c} + e^{\|v\|_2^{-c}}}{2e}.
 \end{align}
 
 Besides satisfying the conditions in Definition \ref{def:symmetric_normalization}, this normalization has some additional nice properties.
@@ -85,8 +84,9 @@ Finally, the parameter $c$ grants control over the width of the basin, which is 
 {\includegraphics[width = .32\textwidth]{../figures/Figure_1b_bw.png}}
 \subcaptionbox{Basis pursuit loss as a function of $t$ \label{snootfellow}}
 {\includegraphics[width = .32\textwidth]{../figures/Figure_1c_bw.png}}
-\caption{Plots of ground truth loss, vector length, and basis pursuit loss for different values of $c$ in the one-dimensional case $D = 1$.
+\caption{Plots of ground truth loss, normalized length, and basis pursuit loss for different values of $c$ in the one-dimensional case $D = 1$.
 The two losses are equivalent in the one-dimensional case.}
+\label{fig:losses}
 \end{figure}
 
 \subsection{Isometry pursuit}
