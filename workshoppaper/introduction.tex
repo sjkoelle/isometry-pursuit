@@ -12,7 +12,7 @@ While implementations vary across data and algorithmic domains, identification o
 This paper shows that an adapted version of the algorithm in \citet{Koelle2024-no} leads to a convex procedure that helps improve upon greedy approaches such as those in \citet{5895106, NEURIPS2019_6a10bbd4, Kohli2021-lr, Jones2007-uc} for finding isometries.
 The insight that leads to isometry pursuit is that $D$ function solutions multitask basis pursuit applied to an appropriately normalized $ X$ selects orthonormal submatrices.
 In particular, the normalization log-symmetrizes length in the column-space of $ X$ and favors vectors closer to unit length, while basis pursuit favors vectors which are orthogonal.
-Our theoretical results formalize this intuition within a limited setting, while our experimental results show the usefulness of isometry pursuit as a trimming procedure prior to brute force search.
+Our theoretical results formalize this intuition within a limited setting, while our experimental results show the usefulness of isometry pursuit as a trimming procedure prior to brute force search for diversification and interpretable coordinate selection.
 Additionally, we introduce a novel ground truth objective function that we measure the success of our algorithm against.
 
  \footnotetext[2]{Code is available at \url{https://github.com/sjkoelle/convexlocalisometry}.}
