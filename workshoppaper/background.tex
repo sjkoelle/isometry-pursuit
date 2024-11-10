@@ -9,14 +9,11 @@ To that end, we define a ground truth loss function that measures orthonormalnes
 
 \subsection{Interpretability and isometry}
 
-Our motivating example is the selection of data representations from within sets of putative coordinates.
-These putative coordinates are simply the columns of a provided wide matrix.
-The proposed method is thus even simpler than Sparse PCA \citep{Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, in which column-covariance is used to select low-dimensional projections from within the span of such a subset.
-
+Our motivating example is the selection of data representations from within sets of putative coordinates - the columns of a provided wide matrix.
 This method is specifically applicable with respect to interpretability, for which parsimony is at a premium.
 Interpretability arises through comparison of data with what is known to be important in the domain of the problem.
 This a priori knowledge often takes the form of a functional dictionary.
-Regardless of implementation details such as whether this dictionary is given or learned, core concepts like evaluation of independentness of dictionary features arise in numerous scenarios \citep{Chen2019-km, Koelle2022-ju, He2023-ch}.
+Regardless of implementation details such as whether this dictionary is given or learned, core concepts like evaluation of independence of dictionary features arise in numerous scenarios \citep{Chen2019-km, Koelle2022-ju, He2023-ch}.
 After functional independence \citep{Koelle2022-ju}, also known as feature decomposability \citep{templeton2024scaling}, which only requires that the differential of sets of dictionary features be full rank, metric properties of such sets are of natural interest.
 
 \begin{definition}
