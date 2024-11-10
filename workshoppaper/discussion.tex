@@ -2,8 +2,9 @@
 \label{sec:discussion}
 
 We have shown the efficacy of a convex multitask basis pursuit approach for selecting isometric submatrices from wide-matrices.
-This approach - \isometrypursuit~ - should be considered as an alternative to greedy methods for selection of such features from within a dictionary.
-In a sense it is a simpler simpler version of Sparse PCA.
+This approach - \isometrypursuit~ - is alternative to greedy methods for selection of orthonormalized features from within a dictionary.
+It can be applied to diversification and geometrically-faithful coordinate estimation.
+Compared with Sparse PCA \citep{Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, we seek a low-dimensional representation from the set of column vectors rather than their span.
 
 Algorithmic variants of interest include the multitask lasso extension of our estimator.
 Applications of interest include greedy diversification in recommendation systems \cite{Carbonell2017-gi, Wu2019-uk} and other retrieval-type systems, as well as decomposing interpretable yet overcomplete dictionaries in transformer residual streams.
