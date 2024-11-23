@@ -25,6 +25,221 @@
   language = "en"
 }
 
+@ARTICLE{Pickett2024-ad,
+  title         = "Better {RAG} using Relevant Information Gain",
+  author        = "Pickett, Marc and Hartman, Jeremy and Bhowmick, Ayan Kumar
+                   and Alam, Raquib-Ul and Vempaty, Aditya",
+  journal       = "arXiv [cs.CL]",
+  abstract      = "A common way to extend the memory of large language models
+                   (LLMs) is by retrieval augmented generation (RAG), which
+                   inserts text retrieved from a larger memory into an LLM's
+                   context window. However, the context window is typically
+                   limited to several thousand tokens, which limits the number
+                   of retrieved passages that can inform a model's response. For
+                   this reason, it's important to avoid occupying context window
+                   space with redundant information by ensuring a degree of
+                   diversity among retrieved passages. At the same time, the
+                   information should also be relevant to the current task. Most
+                   prior methods that encourage diversity among retrieved
+                   results, such as Maximal Marginal Relevance (MMR), do so by
+                   incorporating an objective that explicitly trades off
+                   diversity and relevance. We propose a novel simple
+                   optimization metric based on relevant information gain, a
+                   probabilistic measure of the total information relevant to a
+                   query for a set of retrieved results. By optimizing this
+                   metric, diversity organically emerges from our system. When
+                   used as a drop-in replacement for the retrieval component of
+                   a RAG system, this method yields state-of-the-art performance
+                   on question answering tasks from the Retrieval Augmented
+                   Generation Benchmark (RGB), outperforming existing metrics
+                   that directly optimize for relevance and diversity.",
+  month         =  jul,
+  year          =  2024,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.CL"
+}
+
+@INPROCEEDINGS{Carbonell1998-ji,
+  title     = "The use of {MMR}, diversity-based reranking for reordering
+               documents and producing summaries",
+  author    = "Carbonell, Jaime and Goldstein, Jade",
+  booktitle = "Proceedings of the 21st annual international ACM SIGIR conference
+               on Research and development in information retrieval",
+  publisher = "ACM",
+  address   = "New York, NY, USA",
+  abstract  = "This paper presents a method for combining query-relevance with
+               information-novelty in the context of text retrieval and
+               summarization. The Maximal Marginal Relevance (MMR) criterion
+               strives to reduce redundancy while maintaining query relevance in
+               re-ranking retrieved documents and in selecting appropriate
+               passages for text summarization. Preliminary results indicate
+               some benefits for MMR diversity ranking in document retrieval and
+               in single document summarization. The latter are borne out by the
+               recent results of the SUMMAC conference in the evaluation of
+               summarization systems. However, the clearest advantage is
+               demonstrated in constructing non-redundant multi-document
+               summaries, where MMR results are clearly superior to non-MMR
+               passage selection.",
+  month     =  aug,
+  year      =  1998
+}
+
+@inproceedings{Yu2016AGA,
+  title={A Greedy Approach for Budgeted Maximum Inner Product Search},
+  author={Hsiang-Fu Yu and Cho-Jui Hsieh and Qi Lei and Inderjit S. Dhillon},
+  booktitle={Neural Information Processing Systems},
+  year={2016},
+  url={https://api.semanticscholar.org/CorpusID:7076785}
+}
+
+
+@ARTICLE{Huang2024-wr,
+  title         = "Diversity-aware $k$-Maximum Inner Product Search revisited",
+  author        = "Huang, Qiang and Wang, Yanhao and Sun, Yiqun and Tung,
+                   Anthony K H",
+  journal       = "arXiv [cs.IR]",
+  abstract      = "The $k$-Maximum Inner Product Search ($k$MIPS) serves as a
+                   foundational component in recommender systems and various
+                   data mining tasks. However, while most existing $k$MIPS
+                   approaches prioritize the efficient retrieval of highly
+                   relevant items for users, they often neglect an equally
+                   pivotal facet of search results: \emph{diversity}. To bridge
+                   this gap, we revisit and refine the diversity-aware $k$MIPS
+                   (D$k$MIPS) problem by incorporating two well-known diversity
+                   objectives -- minimizing the average and maximum pairwise
+                   item similarities within the results -- into the original
+                   relevance objective. This enhancement, inspired by Maximal
+                   Marginal Relevance (MMR), offers users a controllable
+                   trade-off between relevance and diversity. We introduce
+                   \textsc{Greedy} and \textsc{DualGreedy}, two linear
+                   scan-based algorithms tailored for D$k$MIPS. They both
+                   achieve data-dependent approximations and, when aiming to
+                   minimize the average pairwise similarity, \textsc{DualGreedy}
+                   attains an approximation ratio of $1/4$ with an additive term
+                   for regularization. To further improve query efficiency, we
+                   integrate a lightweight Ball-Cone Tree (BC-Tree) index with
+                   the two algorithms. Finally, comprehensive experiments on ten
+                   real-world data sets demonstrate the efficacy of our proposed
+                   methods, showcasing their capability to efficiently deliver
+                   diverse and relevant search results to users.",
+  month         =  feb,
+  year          =  2024,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.IR"
+}
+
+@INPROCEEDINGS {Barioni,
+author = { Barioni, Maria C. N. and Hadjieleftheriou, Marios and Vieira, Marcos R. and Traina, Caetano and Tsotras, Vassilis J. and Razente, Humberto L. and Srivastava, Divesh },
+booktitle = { 2011 27th IEEE International Conference on Data Engineering (ICDE 2011) },
+title = {{ On query result diversification }},
+year = {2011},
+volume = {},
+ISSN = {},
+pages = {1163-1174},
+abstract = { In this paper we describe a general framework for evaluation and optimization of methods for diversifying query results. In these methods, an initial ranking candidate set produced by a query is used to construct a result set, where elements are ranked with respect to relevance and diversity features, i.e., the retrieved elements should be as relevant as possible to the query, and, at the same time, the result set should be as diverse as possible. While addressing relevance is relatively simple and has been heavily studied, diversity is a harder problem to solve. One major contribution of this paper is that, using the above framework, we adapt, implement and evaluate several existing methods for diversifying query results. We also propose two new approaches, namely the Greedy with Marginal Contribution (GMC) and the Greedy Randomized with Neighborhood Expansion (GNE) methods. Another major contribution of this paper is that we present the first thorough experimental evaluation of the various diversification techniques implemented in a common framework. We examine the methods' performance with respect to precision, running time and quality of the result. Our experimental results show that while the proposed methods have higher running times, they achieve precision very close to the optimal, while also providing the best result quality. While GMC is deterministic, the randomized approach (GNE) can achieve better result quality if the user is willing to tradeoff running time. },
+keywords = {},
+doi = {10.1109/ICDE.2011.5767846},
+url = {https://doi.ieeecomputersociety.org/10.1109/ICDE.2011.5767846},
+publisher = {IEEE Computer Society},
+address = {Los Alamitos, CA, USA},
+month =apr}
+
+@article{KUNAVER2017154,
+title = {Diversity in recommender systems – A survey},
+journal = {Knowledge-Based Systems},
+volume = {123},
+pages = {154-162},
+year = {2017},
+issn = {0950-7051},
+doi = {https://doi.org/10.1016/j.knosys.2017.02.009},
+url = {https://www.sciencedirect.com/science/article/pii/S0950705117300680},
+author = {Matevž Kunaver and Tomaž Požrl},
+keywords = {Personalization, Recommender system, Diversity, Survey},
+abstract = {Diversification has become one of the leading topics of recommender system research not only as a way to solve the over-fitting problem but also an approach to increasing the quality of the user’s experience with the recommender system. This article aims to provide an overview of research done on this topic from one of the first mentions of diversity in 2001 until now. The articles ,and research, have been divided into three sub-topics for a better overview of the work done in the field of recommendation diversification: the definition and evaluation of diversity; the impact of diversification on the quality of recommendation results and the development of diversification algorithms themselves. In this way, the article aims both to offer a good overview to a researcher looking for the state-of-the-art on this topic and to help a new developer get familiar with the topic.}
+}
+
+@ARTICLE{Qin2012-ok,
+  title     = "Diversifying top-k results",
+  author    = "Qin, Lu and Yu, Jeffrey Xu and Chang, Lijun",
+  journal   = "Proceedings VLDB Endowment",
+  publisher = "Association for Computing Machinery (ACM)",
+  volume    =  5,
+  number    =  11,
+  pages     = "1124--1135",
+  abstract  = "Top- k query processing finds a list of k results that have
+               largest scores w.r.t the user given query, with the assumption
+               that all the k results are independent to each other. In
+               practice, some of the top- k results returned can be very similar
+               to each other. As a result some of the top- k results returned
+               are redundant. In the literature, diversified top- k search has
+               been studied to return k results that take both score and
+               diversity into consideration. Most existing solutions on
+               diversified top- k search assume that scores of all the search
+               results are given, and some works solve the diversity problem on
+               a specific problem and can hardly be extended to general cases.
+               In this paper, we study the diversified top- k search problem. We
+               define a general diversified top- k search problem that only
+               considers the similarity of the search results themselves. We
+               propose a framework, such that most existing solutions for top- k
+               query processing can be extended easily to handle diversified
+               top- k search, by simply applying three new functions, a
+               sufficient stop condition sufficient(), a necessary stop
+               condition necessary(), and an algorithm for diversified top- k
+               search on the current set of generated results,
+               div-search-current(). We propose three new algorithms, namely,
+               div-astar, div-dp, and div-cut to solve the div-search-current()
+               problem. div-astar is an A* based algorithm, div-dp is an
+               algorithm that decomposes the results into components which are
+               searched using div-astar independently and combined using dynamic
+               programming. div-cut further decomposes the current set of
+               generated results using cut points and combines the results using
+               sophisticated operations. We conducted extensive performance
+               studies using two real datasets, enwiki and reuters. Our div-cut
+               algorithm finds the optimal solution for diversified top- k
+               search problem in seconds even for k as large as 2, 000.",
+  month     =  jul,
+  year      =  2012,
+  language  = "en"
+}
+
+
+@ARTICLE{Gao2023-cn,
+  title         = "Retrieval-Augmented Generation for large Language Models: A
+                   survey",
+  author        = "Gao, Yunfan and Xiong, Yun and Gao, Xinyu and Jia, Kangxiang
+                   and Pan, Jinliu and Bi, Yuxi and Dai, Yi and Sun, Jiawei and
+                   Wang, Meng and Wang, Haofen",
+  journal       = "arXiv [cs.CL]",
+  abstract      = "Large Language Models (LLMs) showcase impressive capabilities
+                   but encounter challenges like hallucination, outdated
+                   knowledge, and non-transparent, untraceable reasoning
+                   processes. Retrieval-Augmented Generation (RAG) has emerged
+                   as a promising solution by incorporating knowledge from
+                   external databases. This enhances the accuracy and
+                   credibility of the generation, particularly for
+                   knowledge-intensive tasks, and allows for continuous
+                   knowledge updates and integration of domain-specific
+                   information. RAG synergistically merges LLMs' intrinsic
+                   knowledge with the vast, dynamic repositories of external
+                   databases. This comprehensive review paper offers a detailed
+                   examination of the progression of RAG paradigms, encompassing
+                   the Naive RAG, the Advanced RAG, and the Modular RAG. It
+                   meticulously scrutinizes the tripartite foundation of RAG
+                   frameworks, which includes the retrieval, the generation and
+                   the augmentation techniques. The paper highlights the
+                   state-of-the-art technologies embedded in each of these
+                   critical components, providing a profound understanding of
+                   the advancements in RAG systems. Furthermore, this paper
+                   introduces up-to-date evaluation framework and benchmark. At
+                   the end, this article delineates the challenges currently
+                   faced and points out prospective avenues for research and
+                   development.",
+  month         =  dec,
+  year          =  2023,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.CL"
+}
+
 
 @ARTICLE{Hesterberg2008-iy,
   title         = "Least angle and $\ell_1$ penalized regression: A review",
@@ -319,6 +534,213 @@ abstract = {Let A,B be nonzero positive semidefinite matrices. We prove that∥A
   year     =  2015
 }
 
+@article{Osborne2000OnTL,
+  title={On the LASSO and its Dual},
+  author={Michael R. Osborne and Brett Presnell and Berwin A. Turlach},
+  journal={Journal of Computational and Graphical Statistics},
+  year={2000},
+  volume={9},
+  pages={319 - 337},
+  url={https://api.semanticscholar.org/CorpusID:14422381}
+}
+
+@article{Dupuis2019TheGO,
+  title={The Geometry of Sparse Analysis Regularization},
+  author={Xavier Dupuis and Samuel Vaiter},
+  journal={SIAM J. Optim.},
+  year={2019},
+  volume={33},
+  pages={842-867},
+  url={https://api.semanticscholar.org/CorpusID:195791526}
+}
+
+@article{DOSSAL2012117,
+title = {A necessary and sufficient condition for exact sparse recovery by l1 minimization},
+journal = {Comptes Rendus Mathematique},
+volume = {350},
+number = {1},
+pages = {117-120},
+year = {2012},
+issn = {1631-073X},
+doi = {https://doi.org/10.1016/j.crma.2011.12.014},
+url = {https://www.sciencedirect.com/science/article/pii/S1631073X11003694},
+author = {Charles Dossal},
+abstract = {In this Note, a new sharp sufficient condition for exact sparse recovery by l1-penalized minimization from linear measurements is proposed. The main contribution of this paper is to show that, for most matrices, this condition is also necessary. Moreover, when the l1 minimizer is unique, we investigate its sensitivity to the measurements and we establish that the application associating the measurements to this minimizer is Lipschitz-continuous.
+Résumé
+Dans cette Note, une nouvelle condition suffisante pour lʼidentifiabilité parcimonieuse par minimisation l1 pénalisée à partir de mesures linéaires est proposée. La contribution majeure de ce travail est de prouver que pour la plupart des matrices, cette condition est aussi nécessaire. Par ailleurs, lorsque le minimiseur du problème l1 est unique, sa sensibilité aux mesures est étudiée et il est montré que lʼapplication qui envoie les mesures sur ce minimiseur est Lipschitz-continue.}
+}
+@MISC{Vectara,
+  title        = "Get Diverse Results and Comprehensive Summaries with Vectara’s
+                  {MMR} Reranker",
+  booktitle    = "Vectara",
+  url = "{https://www.vectara.com/blog/get-diverse-results-and-comprehensive-summaries-with-vectaras-mmr-reranker}",
+  note         = "Accessed: 2024-11-22",
+  language     = "en"
+}
+
+
+@ARTICLE{In2024-um,
+  title         = "Diversify-verify-adapt: Efficient and robust
+                   retrieval-augmented ambiguous question answering",
+  author        = "In, Yeonjun and Kim, Sungchul and Rossi, Ryan A and Tanjim,
+                   Md Mehrab and Yu, Tong and Sinha, Ritwik and Park, Chanyoung",
+  journal       = "arXiv [cs.CL]",
+  abstract      = "The retrieval augmented generation (RAG) framework addresses
+                   an ambiguity in user queries in QA systems by retrieving
+                   passages that cover all plausible interpretations and
+                   generating comprehensive responses based on the passages.
+                   However, our preliminary studies reveal that a single
+                   retrieval process often suffers from low quality results, as
+                   the retrieved passages frequently fail to capture all
+                   plausible interpretations. Although the iterative RAG
+                   approach has been proposed to address this problem, it comes
+                   at the cost of significantly reduced efficiency. To address
+                   these issues, we propose the diversify-verify-adapt (DIVA)
+                   framework. DIVA first diversifies the retrieved passages to
+                   encompass diverse interpretations. Subsequently, DIVA
+                   verifies the quality of the passages and adapts the most
+                   suitable approach tailored to their quality. This approach
+                   improves the QA systems accuracy and robustness by handling
+                   low quality retrieval issue in ambiguous questions, while
+                   enhancing efficiency.",
+  month         =  sep,
+  year          =  2024,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.CL"
+}
+
+
+@inproceedings{Guo-shengbo,
+author = {Guo, Shengbo and Sanner, Scott},
+title = {Probabilistic latent maximal marginal relevance},
+year = {2010},
+isbn = {9781450301534},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/1835449.1835639},
+doi = {10.1145/1835449.1835639},
+abstract = {Diversity has been heavily motivated in the information retrieval literature as an objective criterion for result sets in search and recommender systems. Perhaps one of the most well-known and most used algorithms for result set diversification is that of Maximal Marginal Relevance (MMR). In this paper, we show that while MMR is somewhat ad-hoc and motivated from a purely pragmatic perspective, we can derive a more principled variant via probabilistic inference in a latent variable graphical model. This novel derivation presents a formal probabilistic latent view of MMR (PLMMR) that (a) removes the need to manually balance relevance and diversity parameters, (b) shows that specific definitions of relevance and diversity metrics appropriate to MMR emerge naturally, and (c) formally derives variants of latent semantic indexing (LSI) similarity metrics for use in PLMMR. Empirically, PLMMR outperforms MMR with standard term frequency based similarity and diversity metrics since PLMMR maximizes latent diversity in the results.},
+booktitle = {Proceedings of the 33rd International ACM SIGIR Conference on Research and Development in Information Retrieval},
+pages = {833–834},
+numpages = {2},
+keywords = {maximal marginal relevance, graphical models, diversity},
+location = {Geneva, Switzerland},
+series = {SIGIR '10}
+}
+
+@INPROCEEDINGS{Mallat,
+  author={Mallat, S. and Zhang, Z.},
+  booktitle={[1992] Proceedings of the IEEE-SP International Symposium on Time-Frequency and Time-Scale Analysis}, 
+  title={Adaptive time-frequency decomposition with matching pursuits}, 
+  year={1992},
+  volume={},
+  number={},
+  pages={7-10},
+  keywords={Time frequency analysis;Matching pursuit algorithms;Dictionaries;Fourier transforms;Vectors;Signal processing algorithms;Pursuit algorithms;Interference;Signal processing;Wavelet transforms},
+  doi={10.1109/TFTSA.1992.274245}}
+
+
+@MISC{Langchain,
+  title        = "Select by maximal marginal relevance ({MMR})",
+  abstract     = "The MaxMarginalRelevanceExampleSelector selects examples based
+                  on a combination of which examples are most similar to the
+                  inputs, while also optimizing for diversity. It does this by
+                  finding the examples with the embeddings that have the
+                  greatest cosine similarity with the inputs, and then
+                  iteratively adding them while penalizing them for closeness to
+                  already selected examples.",
+  howpublished = "\url{https://python.langchain.com/docs/how\_to/example\_selectors\_mmr/}",
+  note         = "Accessed: 2024-11-22",
+  language     = "en"
+}
+
+
+@MISC{Weiss2024-xm,
+  title        = "Enhancing Diversity in {RAG} Document Retrieval Using
+                  Projection-Based Techniques",
+  author       = "Weiss, Sam",
+  booktitle    = "Medium",
+  abstract     = "Retrieval-Augmented Generation (RAG) has become a popular
+                  approach in language models to generate more accurate and
+                  contextually relevant outputs. Typically, the retrieval step
+                  in RAG relies on…",
+  month        =  aug,
+  year         =  2024,
+  howpublished = "\url{https://medium.com/@samcarlos\_14058/enhancing-diversity-in-rag-document-retrieval-using-projection-based-techniques-9fef5422e043}",
+  note         = "Accessed: 2024-11-22",
+  language     = "en"
+}
+
+@article{Chrtien2011OnTG,
+  title={On the generic uniform uniqueness of the LASSO estimator},
+  author={St{\'e}phane Chr{\'e}tien and S{\'e}bastien Darses},
+  journal={arXiv: Statistics Theory},
+  year={2011},
+  url={https://api.semanticscholar.org/CorpusID:88518316}
+}
+
+
+@article{Debarre2020OnTU,
+  title={On the uniqueness of solutions for the basis pursuit in the continuum},
+  author={Thomas Debarre and Quentin Denoyelle and Julien Fageot},
+  journal={Inverse Problems},
+  year={2020},
+  volume={38},
+  url={https://api.semanticscholar.org/CorpusID:246473440}
+}
+
+@ARTICLE{Schneider2020-qt,
+  title         = "The geometry of uniqueness, sparsity and clustering in
+                   penalized estimation",
+  author        = "Schneider, Ulrike and Tardivel, Patrick",
+  journal       = "arXiv [math.ST]",
+  abstract      = "We provide a necessary and sufficient condition for the
+                   uniqueness of penalized least-squares estimators whose
+                   penalty term is given by a norm with a polytope unit ball,
+                   covering a wide range of methods including SLOPE, PACS,
+                   fused, clustered and classical LASSO as well as the related
+                   method of basis pursuit. We consider a strong type of
+                   uniqueness that is relevant for statistical problems. The
+                   uniqueness condition is geometric and involves how the row
+                   span of the design matrix intersects the faces of the dual
+                   norm unit ball, which for SLOPE is given by the signed
+                   permutahedron. Further considerations based this condition
+                   also allow to derive results on sparsity and clustering
+                   features. In particular, we define the notion of a SLOPE
+                   pattern to describe both sparsity and clustering properties
+                   of this method and also provide a geometric characterization
+                   of accessible SLOPE patterns.",
+  month         =  apr,
+  year          =  2020,
+  archivePrefix = "arXiv",
+  primaryClass  = "math.ST"
+}
+
+
+@article{Ewald2017OnTD,
+  title={On the distribution, model selection properties and uniqueness of the Lasso estimator in low and high dimensions},
+  author={Karl Ewald and Ulrike Schneider},
+  journal={Electronic Journal of Statistics},
+  year={2017},
+  url={https://api.semanticscholar.org/CorpusID:54044415}
+}
+
+@article{Donoho2006ForML,
+  title={For most large underdetermined systems of linear equations the minimal l1‐norm solution is also the sparsest solution},
+  author={David L. Donoho},
+  journal={Communications on Pure and Applied Mathematics},
+  year={2006},
+  volume={59},
+  url={https://api.semanticscholar.org/CorpusID:8510060}
+}
+
+@inproceedings{Everink2024TheGA,
+  title={The Geometry and Well-Posedness of Sparse Regularized Linear Regression},
+  author={Jasper Marijn Everink and Yiqiu Dong and Martin Skovgaard Andersen},
+  year={2024},
+  url={https://api.semanticscholar.org/CorpusID:272424099}
+}
+
 
 @ARTICLE{Chen2001-hh,
   title    = "Atomic Decomposition by Basis Pursuit",
@@ -387,6 +809,39 @@ abstract = {Let A,B be nonzero positive semidefinite matrices. We prove that∥A
   language  = "en"
 }
 
+@article{Drosou,
+author = {Drosou, Marina and Pitoura, Evaggelia},
+title = {Search result diversification},
+year = {2010},
+issue_date = {March 2010},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {39},
+number = {1},
+issn = {0163-5808},
+url = {https://doi.org/10.1145/1860702.1860709},
+doi = {10.1145/1860702.1860709},
+abstract = {Result diversification has recently attracted much attention as a means of increasing user satisfaction in recommender systems and web search. Many different approaches have been proposed in the related literature for the diversification problem. In this paper, we survey, classify and comparatively study the various definitions, algorithms and metrics for result diversification.},
+journal = {SIGMOD Rec.},
+month = sep,
+pages = {41–47},
+numpages = {7}
+}
+
+
+
+@INPROCEEDINGS{Pati-93,
+  author={Pati, Y.C. and Rezaiifar, R. and Krishnaprasad, P.S.},
+  booktitle={Proceedings of 27th Asilomar Conference on Signals, Systems and Computers}, 
+  title={Orthogonal matching pursuit: recursive function approximation with applications to wavelet decomposition}, 
+  year={1993},
+  volume={},
+  number={},
+  pages={40-44 vol.1},
+  keywords={Matching pursuit algorithms;Function approximation;Pursuit algorithms;Dictionaries;Convergence},
+  doi={10.1109/ACSSC.1993.342465}}
+
+
 @ARTICLE{Mallat93-wi,
   author={Mallat, S.G. and Zhifeng Zhang},
   journal={IEEE Transactions on Signal Processing}, 
@@ -398,38 +853,25 @@ abstract = {Let A,B be nonzero positive semidefinite matrices. We prove that∥A
   keywords={Matching pursuit algorithms;Time frequency analysis;Dictionaries;Pursuit algorithms;Fourier transforms;Signal representations;Vocabulary;Signal processing algorithms;Interference;Natural languages},
   doi={10.1109/78.258082}}
   
-  
-@ARTICLE{Wu2019-uk,
-  title         = "Recent Advances in Diversified Recommendation",
-  author        = "Wu, Qiong and Liu, Yong and Miao, Chunyan and Zhao, Yin and
-                   Guan, Lu and Tang, Haihong",
-  abstract      = "With the rapid development of recommender systems, accuracy
-                   is no longer the only golden criterion for evaluating
-                   whether the recommendation results are satisfying or not. In
-                   recent years, diversity has gained tremendous attention in
-                   recommender systems research, which has been recognized to
-                   be an important factor for improving user satisfaction. On
-                   the one hand, diversified recommendation helps increase the
-                   chance of answering ephemeral user needs. On the other hand,
-                   diversifying recommendation results can help the business
-                   improve product visibility and explore potential user
-                   interests. In this paper, we are going to review the recent
-                   advances in diversified recommendation. Specifically, we
-                   first review the various definitions of diversity and
-                   generate a taxonomy to shed light on how diversity have been
-                   modeled or measured in recommender systems. After that, we
-                   summarize the major optimization approaches to diversified
-                   recommendation from a taxonomic view. Last but not the
-                   least, we project into the future and point out trending
-                   research directions on this topic.",
-  month         =  may,
-  year          =  2019,
-  archivePrefix = "arXiv",
-  primaryClass  = "cs.IR",
-  eprint        = "1905.06589"
+  @inproceedings{Abdool,
+author = {Abdool, Mustafa and Haldar, Malay and Ramanathan, Prashant and Sax, Tyler and Zhang, Lanbo and Manaswala, Aamir and Yang, Lynn and Turnbull, Bradley and Zhang, Qing and Legrand, Thomas},
+title = {Managing Diversity in Airbnb Search},
+year = {2020},
+isbn = {9781450379984},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3394486.3403345},
+doi = {10.1145/3394486.3403345},
+abstract = {One of the long-standing questions in search systems is the role of diversity in results. From a product perspective, showing diverse results provides the user with more choice and should lead to an improved experience. However, this intuition is at odds with common machine learning approaches to ranking which directly optimize the relevance of each individual item without a holistic view of the result set. In this paper, we describe our journey in tackling the problem of diversity for Airbnb search, starting from heuristic based approaches and concluding with a novel deep learning solution that produces an embedding of the entire query context by leveraging Recurrent Neural Networks (RNNs). We hope our lessons learned will prove useful to others and motivate further research in this area.},
+booktitle = {Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining},
+pages = {2952–2960},
+numpages = {9},
+keywords = {deep learning, diversity, e-commerce, neural networks, recurrent neural networks, search ranking},
+location = {Virtual Event, CA, USA},
+series = {KDD '20}
 }
 
-
+  
 @ARTICLE{Wu2019-uk,
   title         = "Recent Advances in Diversified Recommendation",
   author        = "Wu, Qiong and Liu, Yong and Miao, Chunyan and Zhao, Yin and
@@ -537,7 +979,7 @@ abstract = {Let A,B be nonzero positive semidefinite matrices. We prove that∥A
   institution = {Institute for Computational Engineering and Sciences, The University of Texas at Austin},
   type = {Technical Report},
   number = {04-04},
- % url = {\url{https://www.oden.utexas.edu/media/reports/2004/0404.pdf}}
+  url = {https://www.oden.utexas.edu/media/reports/2004/0404.pdf}
 }
 
 @misc{cvxpy_sparse_solution,
@@ -565,6 +1007,16 @@ keywords = {Combinatorial optimization, Convex relaxation, Multiple measurement 
 abstract = {A simultaneous sparse approximation problem requests a good approximation of several input signals at once using different linear combinations of the same elementary signals. At the same time, the problem balances the error in approximation against the total number of elementary signals that participate. These elementary signals typically model coherent structures in the input signals, and they are chosen from a large, linearly dependent collection. The first part of this paper presents theoretical and numerical results for a greedy pursuit algorithm, called simultaneous orthogonal matching pursuit. The second part of the paper develops another algorithmic approach called convex relaxation. This method replaces the combinatorial simultaneous sparse approximation problem with a closely related convex program that can be solved efficiently with standard mathematical programming software. The paper develops conditions under which convex relaxation computes good solutions to simultaneous sparse approximation problems.}
 }
 
+@article{Chen2006TheoreticalRO,
+  title={Theoretical Results on Sparse Representations of Multiple-Measurement Vectors},
+  author={Jie Chen and Xiaoming Huo},
+  journal={IEEE Transactions on Signal Processing},
+  year={2006},
+  volume={54},
+  pages={4634-4643},
+  url={https://api.semanticscholar.org/CorpusID:17333301}
+}
+
 @INPROCEEDINGS{Tropp05-ml,
   author={Tropp, J.A. and Gilbert, A.C. and Strauss, M.J.},
   booktitle={Proceedings. (ICASSP '05). IEEE International Conference on Acoustics, Speech, and Signal Processing, 2005.}, 
@@ -576,6 +1028,24 @@ abstract = {A simultaneous sparse approximation problem requests a good approxim
   keywords={Dictionaries;Sparse matrices;Matching pursuit algorithms;Optimized production technology;Mathematics;Vectors;Signal analysis;Pursuit algorithms;Approximation algorithms;Approximation error},
   doi={10.1109/ICASSP.2005.1416405}}
   
+  @article{Ali2018TheGL,
+  title={The Generalized Lasso Problem and Uniqueness},
+  author={Alnur Ali and Ryan J. Tibshirani},
+  journal={Electronic Journal of Statistics},
+  year={2018},
+  url={https://api.semanticscholar.org/CorpusID:51755233}
+}
+
+  @article{Tibshirani2012TheLP,
+  title={The Lasso Problem and Uniqueness},
+  author={Ryan J. Tibshirani},
+  journal={Electronic Journal of Statistics},
+  year={2012},
+  volume={7},
+  pages={1456-1490},
+  url={https://api.semanticscholar.org/CorpusID:5849668}
+}
+
 @BOOK{James2014-eg,
   title     = "An Introduction to Statistical Learning: with Applications in
                {R}",
@@ -928,6 +1398,13 @@ URL = {https://doi.org/10.1214/07-AOAS131}
   month    =  sep,
   year     =  2018,
   language = "en"
+}
+
+@inproceedings{Mishkin2022TheSP,
+  title={The Solution Path of the Group Lasso},
+  author={Aaron Mishkin and Mert Pilanci},
+  year={2022},
+  url={https://api.semanticscholar.org/CorpusID:259504228}
 }
 
 @article{ocpb:16,
