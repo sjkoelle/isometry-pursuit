@@ -46,7 +46,7 @@ A function $q: \mathbb R^D \to \mathbb R^+ $ is a symmetric normalization if
 \begin{align}
 \arg \max_{v \in \mathbb R^D} \ q (v) &=\{ v : \|v\|_2 = 1 \} \\
 q(v) &= q(\frac{v}{\|v\|_2^2}) \\
-q(v_1) &= q(v_2) \; \forall v_1, v_2 \in \mathbb R^D : \|v_1\|_2 = \|v_2\|_2.
+q(v_1) &= q(v_2) \; \forall \; v_1, v_2 \in \mathbb R^D : \|v_1\|_2 = \|v_2\|_2.
 \end{align} \label{def:symmetric_normalization}
 \end{definition}
 
@@ -59,7 +59,7 @@ v &\mapsto {q(v) }v
 and matrices by
 \begin{align}
 w: \mathbb R^{D \times P}  &\to \mathbb R^D \\
- X_{.p} &\mapsto n( X_{.p}) \; \forall p \in [P].
+ X_{.p} &\mapsto n( X_{.p}) \; \forall \; p \in [P].
 \end{align}
 
 In particular, given $c > 0$, we choose $q$ as follows.
@@ -72,7 +72,7 @@ v  &\mapsto \frac{e^{\|v\|_2^c} + e^{\|v\|_2^{-c}}}{2e}.
 Besides satisfying the conditions in Definition \ref{def:symmetric_normalization}, this normalization has some additional nice properties.
 First, $q$ is convex.
 Second, it grows asymptotically log-linearly.
-Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon exponentiation \citep{Boyd2004-ql}.
+Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp \citep{Boyd2004-ql} replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon exponentiation.
 Finally, the parameter $c$ grants control over the width of the basin, which is important in avoiding numerical issues arising close to $0$ and $\infty$.
 
 \begin{figure}
