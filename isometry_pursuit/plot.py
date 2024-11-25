@@ -5,6 +5,7 @@ import numpy as np
 def box_plot(losses_1, losses_2, D, xlabels, ylabel, filename):
 
     data = np.asarray([np.asarray(losses_1) - D, np.asarray(losses_2) - D]).transpose()
+    plt.figure(figsize=(15, 10))
     box = plt.boxplot(
         data,
         patch_artist=True,  # For custom box colors
@@ -33,4 +34,5 @@ def box_plot(losses_1, losses_2, D, xlabels, ylabel, filename):
             color = "black"
         plt.plot([1, 2], [left, right], color=color, alpha=0.5, linewidth=2)
 
-    plt.savefig(filename)
+    plt.savefig(filename, bbox_inches="tight")
+    plt.close()
