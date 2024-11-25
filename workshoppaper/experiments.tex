@@ -9,20 +9,56 @@ Table \ref{tab:experiments} presents results showing that the $l_c$ accrued by t
 We also evaluated second stage \brute~ selection after random selection of $\widehat S_1$ but do not report it since it often lead to catastrophic failure to satisfy the basis pursuit constraint.
 
 \begin{table}[h!]
+\tiny
 \centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|}
-\hline
-Name & $D$ & $P$ & $R$ & $l_1(X_{.\widehat S_{G}})$ & $ |\widehat S_1 | $& $l_1(X_{.\widehat S})$ & $P(\bar l_1(X_{.\widehat S_{G}}) > \bar l_1(X_{.\widehat S}))$  \\ \hline
-Iris & $4$ & $75$ & $25$ & $13.4 \pm 6.4$ & $7 \pm 1$ &  $8.0 \pm 1.8$ & $10^{-4}$\\ \hline 
-Wine & $5$ & $89$ & $25$  & $5.7 \pm .2$ & $12 \pm 1$ & $5.6 \pm .1$ & $5 \times 10^{-5}$ \\ \hline
-Ethanol & $2$ & $756$ & $100$ & $2.6\pm .3$  & $90 \pm 164$  & $2.5\pm .2$& $2 \times 10^{-5}$ \\ \hline
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+\toprule
+Name & $D$ & $P$ & $R$ & $c$ & $l_1(X_{.\widehat{S}_{G}})$ & $|\widehat{S}_1|$ & $l_1(X_{.\widehat{S}})$ & $ \thead{ \tiny P_R (l_1(X_{.\widehat{S}_{G}})   \\ > l_1(X_{.\widehat{S}}))}$  & $ \thead{ \tiny P_R (l_1(X_{.\widehat{S}_{G}}) \\ =  l_1(X_{.\widehat{S}}))}$ & $\thead{ \tiny\widehat P(\bar{l}_1(X_{.\widehat{S}_{G}}) \\ > \bar{l}_1(X_{.\widehat{S}}))}$ \\
+\midrule
+Iris & 4 & 75 & 25 & 1 & 13.8 ± 7.3 & 7 ± 1 & 6.9 ± 1.4 & 0.96 & 0. & 2.4e-05 \\
+Wine & 6 & 89 & 25 & 1 & 7.7 ± 0.3 & 13 ± 2 & 7.6 ± 0.3 & 0.64 & 0.16 & 6.3e-04 \\
+Ethanol & 2 & 756 & 100 & 1 & 2.6 ± 0.3 & 90 ± 165 & 2.5 ± 0.2 & 0.66 & 0.17 & 2.1e-05 \\
+\bottomrule
 \end{tabular}
 \caption{Experimental parameters and results.
-For the Wine dataset, even \brute~ on $\widehat { S}_1$ is prohibitive in $D=13$, and so we truncate our inputs to $D=5$.
+For the Wine dataset, even \brute~ on $\widehat {S}_1$ is prohibitive in $D=13$, and so we truncate our inputs to $D=6$.
 For Iris and Wine, $P$ is randomly downsampled by a factor of $2$ to create replicates.
 P-values are computed by paired two-sample T-test on  $l_1(X_{.\widehat S})$ and $l_1(X_{.\widehat S_{G}})$.
 }
 \label{tab:experiments}
 \end{table}
+
+
+
+\begin{figure}[t]
+    \centering
+    % Subfigure for Wine dataset
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/wine_standardized_0p5_1p0_isometry_losses}
+        \caption{Wine Dataset}
+        \label{fig:wine_isometry_losses}
+    \end{subfigure}
+    \hfill
+    % Subfigure for Iris dataset
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/iris_standardized_0p5_1p0_isometry_losses}
+        \caption{Iris Dataset}
+        \label{fig:iris_isometry_losses}
+    \end{subfigure}
+    \hfill
+    % Subfigure for Ethanol dataset
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/ethanol_isometry_losses}
+        \caption{Ethanol Dataset}
+        \label{fig:ethanol_isometry_losses}
+    \end{subfigure}
+    \caption{Isometry Loss Comparisons for Wine, Iris, and Ethanol Datasets}
+    \label{fig:isometry_losses}
+\end{figure}
+
+
 
 % TODO (Sam): remove mathcal on S
