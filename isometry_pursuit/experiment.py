@@ -17,11 +17,10 @@ def analyze_data(X, D, compute_brute=False, power=1.0, limit=1e7):
 
     data_transformed = exponential_transformation(X, power=power)
     beta = group_basis_pursuit(data_transformed)
-    print(data_transformed.shape)
     basis_pursuit_indices = np.where(np.linalg.norm(beta, axis=1))[0]
-    print(len(basis_pursuit_indices))
-    print(P, len(basis_pursuit_indices))
-    if len(list(combinations(range(P), len(basis_pursuit_indices)))) <= limit:
+    brute_complexity = len(list(combinations(range(P), len(basis_pursuit_indices))))
+    print("Brute force complexity", brute_complexity)
+    if brute_complexity <= limit:
         two_stage_output = basis_pursuit_indices[
             np.asarray(brute(X[:, basis_pursuit_indices], isometry_loss_power, D))
         ]  # plainly this is too hard 178**13 combinations
@@ -41,12 +40,13 @@ def analyze_data(X, D, compute_brute=False, power=1.0, limit=1e7):
         )
         random_two_stage_loss = isometry_loss_power(X[:, random_indices])
     else:
+        print("Brute force is too computationally expensive")
         two_stage_loss = np.nan
         random_two_stage_loss = np.nan
         greedy_multitask_norm_two_stage = np.nan
 
     if compute_brute:
-        if len(list(combinations(range(P), len(basis_pursuit_indices)))) > limit:
+        if brute_complexity > limit:
             print("Brute force is too computationally expensive")
             brute_loss = np.nan
             brute_isometry_loss = np.nan
