@@ -6,7 +6,8 @@ from .algorithm import greedy, brute, group_basis_pursuit
 from .loss import isometry_loss, group_lasso_norm
 
 
-def analyze_data(X, D, compute_brute=False, power=1.0):
+def analyze_data(X, D, compute_brute=False, power=1.0, limit=1e7):
+    P = X.shape[1]
     isometry_loss_power = lambda x: isometry_loss(x, power)
     group_brute_loss = lambda x: group_lasso_norm(np.linalg.inv(x))
     output = greedy(X, isometry_loss_power, D, [])
@@ -14,33 +15,45 @@ def analyze_data(X, D, compute_brute=False, power=1.0):
 
     data_transformed = exponential_transformation(X, power=power)
     beta = group_basis_pursuit(data_transformed)
+    print(data_transformed.shape)
     basis_pursuit_indices = np.where(np.linalg.norm(beta, axis=1))[0]
+    print(len(basis_pursuit_indices))
+    print(P, len(basis_pursuit_indices))
+    if P ** len(basis_pursuit_indices) <= 1e7:
+        two_stage_output = basis_pursuit_indices[
+            np.asarray(brute(X[:, basis_pursuit_indices], isometry_loss_power, D))
+        ]  # plainly this is too hard 178**13 combinations
+        two_stage_loss = isometry_loss_power(X[:, two_stage_output])
 
-    two_stage_output = basis_pursuit_indices[
-        np.asarray(brute(X[:, basis_pursuit_indices], isometry_loss_power, D))
-    ]  # plainly this is too hard 178**13 combinations
-    two_stage_loss = isometry_loss_power(X[:, two_stage_output])
-
-    two_stage_multitask = basis_pursuit_indices[
-        np.asarray(
-            brute(data_transformed[:, basis_pursuit_indices], group_brute_loss, D)
+        two_stage_multitask = basis_pursuit_indices[
+            np.asarray(
+                brute(data_transformed[:, basis_pursuit_indices], group_brute_loss, D)
+            )
+        ]  # plainly this is too hard 178**13 combinations
+        greedy_multitask_norm_two_stage = group_brute_loss(
+            data_transformed[:, two_stage_multitask]
         )
-    ]  # plainly this is too hard 178**13 combinations
-    greedy_multitask_norm_two_stage = group_brute_loss(
-        data_transformed[:, two_stage_multitask]
-    )
 
-    random_indices = np.random.choice(
-        range(X.shape[1]), len(basis_pursuit_indices), replace=False
-    )
-    random_two_stage_loss = isometry_loss_power(X[:, random_indices])
+        random_indices = np.random.choice(
+            range(X.shape[1]), len(basis_pursuit_indices), replace=False
+        )
+        random_two_stage_loss = isometry_loss_power(X[:, random_indices])
+    else:
+        two_stage_loss = np.nan
+        random_two_stage_loss = np.nan
+        greedy_multitask_norm_two_stage = np.nan
 
     if compute_brute:
-        brute_solution = brute(data_transformed[:, :], group_brute_loss, D)
-        brute_loss = group_brute_loss(data_transformed[:, brute_solution])
+        if P ** len(basis_pursuit_indices) > limit:
+            print("Brute force is too computationally expensive")
+            brute_loss = np.nan
+            brute_isometry_loss = np.nan
+        else:
+            brute_solution = brute(data_transformed[:, :], group_brute_loss, D)
+            brute_loss = group_brute_loss(data_transformed[:, brute_solution])
 
-        brute_isometry_solution = brute(X, isometry_loss_power, D)
-        brute_isometry_loss = isometry_loss_power(X[:, brute_isometry_solution])
+            brute_isometry_solution = brute(X, isometry_loss_power, D)
+            brute_isometry_loss = isometry_loss_power(X[:, brute_isometry_solution])
     else:
         brute_loss = np.nan
         brute_isometry_loss = np.nan
