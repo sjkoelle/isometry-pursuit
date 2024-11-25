@@ -78,7 +78,7 @@ def run_resampling_experiment(data, D, frac=0.5, R=25, compute_brute=False, powe
             greedy_multitask_norm_two_stage,
             brute_loss,
             brute_isometry_loss,
-        ) = analyze_data(X, D, compute_brute=compute_brute, power=1.0)
+        ) = analyze_data(X, D, compute_brute=compute_brute, power=power)
         losses.append(loss)
         support_cardinalities_basis_pursuit.append(support_cardinality_basis_pursuit)
         two_stage_losses.append(two_stage_loss)
