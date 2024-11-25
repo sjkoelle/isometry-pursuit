@@ -8,6 +8,7 @@ Due to differences in scales between features ($D$ indices), these were first st
 For basis pursuit, we use the SCS interior point solver \citep{ocpb:16} from CVXPY \citep{diamond2016cvxpy, agrawal2018rewriting}, which is able to push sparse values arbitrarily close to 0 \citep{cvxpy_sparse_solution}.
 
 Figure \ref{fig:isometry_losses} and Table \ref{tab:experiments} present results showing that the $l_1$ accrued by the subset $\widehat S_{G}$ estimated using \greedy~ with objective $l_1$ is higher than that for the subset estimated by \tsip.
+Distributions of support cardinalities are examined further in Section \ref{sec:support_cardinalities}.
 %We also evaluated second stage \brute~ selection after random selection of $\widehat S_1$ but do not report it since it often lead to catastrophic failure to satisfy the basis pursuit constraint.
 
 \begin{table}[h!]
@@ -15,7 +16,7 @@ Figure \ref{fig:isometry_losses} and Table \ref{tab:experiments} present results
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
 \toprule
-Name & $D$ & $P$ & $R$ & $c$ & $l_1(X_{.\widehat{S}_{G}})$ & $|\widehat{S}_{}|$ & $l_1(X_{.\widehat{S}})$ & $\thead{\tiny P_R (l_1(X_{.\widehat{S}_{G}})  \\ > l_1(X_{.\widehat{S}_{}}))}$ & $ \thead{ \tiny P_R (l_1(X_{.\widehat{S}_{G}}) \\ = l_1(X_{.\widehat{S}_{}}))}$ & $\thead{ \tiny \widehat P(\bar{l}_1(X_{.\widehat{S}_{G}}) \\> \bar{l}_1(X_{.\widehat{S}_{}}))}$ \\
+Name & $D$ & $P$ & $R$ & $c$ & $l_1(X_{.\widehat{S}_{G}})$ & $|\widehat{S}_{IP}|$ & $l_1(X_{.\widehat{S}})$ & $\thead{\tiny P_R (l_1(X_{.\widehat{S}_{G}})  \\ > l_1(X_{.\widehat{S}_{}}))}$ & $ \thead{ \tiny P_R (l_1(X_{.\widehat{S}_{G}}) \\ = l_1(X_{.\widehat{S}_{}}))}$ & $\thead{ \tiny \widehat P(\bar{l}_1(X_{.\widehat{S}_{G}}) \\> \bar{l}_1(X_{.\widehat{S}_{}}))}$ \\
 \midrule
 Iris & 4 & 75 & 25 & 1 & 13.8 ± 7.3 & 7 ± 1 & 6.9 ± 1.4 & 0.96 & 0. & 2.4e-05 \\
 Wine & 6 & 89 & 25 & 1 & 7.7 ± 0.3 & 13 ± 2 & 7.6 ± 0.3 & 0.64 & 0.16 & 6.3e-04 \\
@@ -31,15 +32,13 @@ For brevity, in this table $\widehat S := \widehat {S}_{TSIP}$.
 \label{tab:experiments}
 \end{table}
 
-
-
 \begin{figure}[t]
     \centering
     % Subfigure for Wine dataset
     \begin{subfigure}[b]{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/wine_standardized_0p5_1p0_isometry_losses}
-        \caption{Wine Dataset}
+        \caption{Wine dataset}
         \label{fig:wine_isometry_losses}
     \end{subfigure}
     \hfill
@@ -47,7 +46,7 @@ For brevity, in this table $\widehat S := \widehat {S}_{TSIP}$.
     \begin{subfigure}[b]{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/iris_standardized_0p5_1p0_isometry_losses}
-        \caption{Iris Dataset}
+        \caption{Iris dataset}
         \label{fig:iris_isometry_losses}
     \end{subfigure}
     \hfill
@@ -55,13 +54,12 @@ For brevity, in this table $\widehat S := \widehat {S}_{TSIP}$.
     \begin{subfigure}[b]{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/ethanol_isometry_losses}
-        \caption{Ethanol Dataset}
+        \caption{Ethanol dataset}
         \label{fig:ethanol_isometry_losses}
     \end{subfigure}
-    \caption{Isometry Loss Comparisons for Wine, Iris, and Ethanol Datasets}
+    \caption{Isometry losses $l_1$  for Wine, Iris, and Ethanol datasets across $R$ replicates.
+    Lower brute losses are shown with turquoise, while lower two stage losses are shown with pink.
+    Equal losses are shown with black lines.
+    As detailed in Table \ref{tab:experiments}, losses are generally lower for two-stage isometry pursuit solutions.}
     \label{fig:isometry_losses}
 \end{figure}
-
-
-
-% TODO (Sam): remove mathcal on S

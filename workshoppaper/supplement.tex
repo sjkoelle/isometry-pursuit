@@ -1,6 +1,6 @@
 \section{Supplement}
 
-This section contains algorithms and proofs in support of the main text.
+This section contains algorithms proofs, and experiments in support of the main text.
 
 \subsection{Algorithms}
 \label{sec:algorithms}
@@ -114,9 +114,14 @@ Thus, $|R_{dd} | \leq \|X_{.{S_{d}}}\|_2$, with equality obtained across $d$ onl
 On the other hand, by Proposition \ref{prop:basis_pursuit_selection_invariance}, $l(X) = l(R)$ and so $\|\beta\|_{1,2} = \|R^{-1}\|_{1,2}$.
 Since $R$ is upper triangular it has diagonal elements $\beta_{dd} = R_{dd}^{-1}$ and so $\|\beta_{d.}\| \geq \| X_{.{S_d}}\|^{-1} = 1$.
 That is, the penalty accrued by a particular covector in $\beta$ is bounded from below by $1$ - the inverse of the length of the corresponding vector in $X_{.S}$ - with equality occurring only when $X_{.S}$ is orthonormal.
+\end{proof}
 
-\subsection{Experiments}
-\label{sec:sup_exp}
+\subsection{Support cardinalities}
+\label{sec:support_cardinalities}
+
+We plot the distribution of $|\widehat{S}_{IP}|$ from Table \ref{tab:experiments} in order to contextualize the reported means.
+While typically $|\widehat{S}_{IP}| << P$, there are cases for Ethanol where this is not the case.
+These drive up the means.
 
 \begin{figure}[H]
     \centering
@@ -143,11 +148,12 @@ That is, the penalty accrued by a particular covector in $\beta$ is bounded from
         \caption{Ethanol Dataset}
         \label{fig:ethanol_cardinalities}
     \end{subfigure}
-    \caption{Support Cardinalities for Wine, Iris, and Ethanol Datasets}
+    \caption{Support Cardinalities for Wine, Iris, and Ethanol datasets}
     \label{fig:support_cardinalities}
 \end{figure}
 
-\subsubsection{Proposition \ref{prop:unitary_selection} deep dive}
+\subsection{Proposition \ref{prop:unitary_selection} deep dive}
+\label{sec:deep_dive}
 
 As mentioned in Section \ref{sec:discussion}, the conditions under which the restriction $S=D$ in Proposition \ref{prop:unitary_selection} may be relaxed are of theoretical and practical interest.
 The results in Section \ref{sec:experiments} show that there are circumstances in which the \greedy~ performs better than \tsip, so clearly \tsip~ does not always achieve a global optimum.
@@ -190,7 +196,7 @@ We present results supporting that the claim that a two-stage algorithm can achi
         \label{fig:wine_group_lasso_losses}
     \end{subfigure}
 
-    \caption{Comparison of Isometry and Group Lasso Losses across $25$ replicates for randomly downsampled Iris and Wine Datasets with $(P,D) = (4,15) and (13, 18)$, respectively.
+    \caption{Comparison of Isometry and Group Lasso Losses across $25$ replicates for randomly downsampled Iris and Wine Datasets with $(P,D) = (4,15)$ and $(13, 18)$, respectively.
     Note that this further downsampling compared with Section \ref{sec:experiments} was necessary to compute global minimizers of \brute.
     Lower brute losses are shown with turquoise, while lower two stage losses are shown with pink.
     Equal losses are shown with black lines.}
@@ -199,5 +205,3 @@ We present results supporting that the claim that a two-stage algorithm can achi
 
 These results support the argument sketched in Section \ref{sec:discussion} that the \isometrypursuit~ solution contains the global minimizer, and that failure to select the global optimum by \tsip~ is due to the mismatch between global optimums of brute optimization of the multitask penalty and the isometry loss given certain data.
 Theoretical formalization, as well of what data configurations this equivalence holds for, is a logical follow-up.
-
-\end{proof}
