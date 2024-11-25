@@ -1,3 +1,5 @@
+from math import comb
+
 import pandas as pd
 import numpy as np
 
@@ -5,11 +7,9 @@ from .transformation import exponential_transformation
 from .algorithm import greedy, brute, group_basis_pursuit
 from .loss import isometry_loss, group_lasso_norm
 
-from itertools import combinations
 
-
-def analyze_data(X, D, compute_brute=False, power=1.0, limit=1e7):
-    P = X.shape[1]
+def analyze_data(X, compute_brute=False, power=1.0, limit=1e9):
+    D, P = X.shape
     isometry_loss_power = lambda x: isometry_loss(x, power)
     group_brute_loss = lambda x: group_lasso_norm(np.linalg.inv(x))
     output = greedy(X, isometry_loss_power, D, [])
@@ -18,8 +18,9 @@ def analyze_data(X, D, compute_brute=False, power=1.0, limit=1e7):
     data_transformed = exponential_transformation(X, power=power)
     beta = group_basis_pursuit(data_transformed)
     basis_pursuit_indices = np.where(np.linalg.norm(beta, axis=1))[0]
-    brute_complexity = len(list(combinations(range(P), len(basis_pursuit_indices))))
-    print("Brute force complexity", brute_complexity)
+    nbp = len(basis_pursuit_indices)
+    brute_complexity = comb(nbp, D)
+    print(f"Brute force complexity {brute_complexity} from D={D} and nbp={nbp}")
     if brute_complexity <= limit:
         two_stage_output = basis_pursuit_indices[
             np.asarray(brute(X[:, basis_pursuit_indices], isometry_loss_power, D))
@@ -83,7 +84,7 @@ def run_resampling_experiment(data, D, frac=0.5, R=25, compute_brute=False, powe
 
     for i in range(R):
         np.random.seed(i)
-        X = data.sample(frac=frac).to_numpy().transpose()  # .5
+        X = data.sample(frac=frac).to_numpy().transpose()[:D, :]  # .5
         print("Data subsampled dimension", X.shape)
         (
             loss,
@@ -93,7 +94,7 @@ def run_resampling_experiment(data, D, frac=0.5, R=25, compute_brute=False, powe
             greedy_multitask_norm_two_stage,
             brute_loss,
             brute_isometry_loss,
-        ) = analyze_data(X, D, compute_brute=compute_brute, power=power)
+        ) = analyze_data(X, compute_brute=compute_brute, power=power)
         losses.append(loss)
         support_cardinalities_basis_pursuit.append(support_cardinality_basis_pursuit)
         two_stage_losses.append(two_stage_loss)
