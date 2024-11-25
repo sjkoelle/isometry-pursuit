@@ -5,6 +5,8 @@ from .transformation import exponential_transformation
 from .algorithm import greedy, brute, group_basis_pursuit
 from .loss import isometry_loss, group_lasso_norm
 
+from itertools import combinations
+
 
 def analyze_data(X, D, compute_brute=False, power=1.0, limit=1e7):
     P = X.shape[1]
@@ -19,7 +21,7 @@ def analyze_data(X, D, compute_brute=False, power=1.0, limit=1e7):
     basis_pursuit_indices = np.where(np.linalg.norm(beta, axis=1))[0]
     print(len(basis_pursuit_indices))
     print(P, len(basis_pursuit_indices))
-    if P ** len(basis_pursuit_indices) <= 1e7:
+    if len(list(combinations(range(P), len(basis_pursuit_indices)))) <= limit:
         two_stage_output = basis_pursuit_indices[
             np.asarray(brute(X[:, basis_pursuit_indices], isometry_loss_power, D))
         ]  # plainly this is too hard 178**13 combinations
@@ -44,7 +46,7 @@ def analyze_data(X, D, compute_brute=False, power=1.0, limit=1e7):
         greedy_multitask_norm_two_stage = np.nan
 
     if compute_brute:
-        if P ** len(basis_pursuit_indices) > limit:
+        if len(list(combinations(range(P), len(basis_pursuit_indices)))) > limit:
             print("Brute force is too computationally expensive")
             brute_loss = np.nan
             brute_isometry_loss = np.nan
