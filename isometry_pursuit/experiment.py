@@ -1,64 +1,79 @@
+import pandas as pd
 import numpy as np
 
-from .simulation import simulate_unitary_matrix
-from .loss import isometry_loss, group_lasso_norm
-from .algorithm import greedy, brute, group_basis_pursuit
 from .transformation import exponential_transformation
+from .algorithm import greedy, brute, group_basis_pursuit
+from .loss import isometry_loss, group_lasso_norm
 
 
-# NOTE (Sam): probably also need iterables of matrices for subsets of the functions here.
-def run_experiment(matrix, target_dimension, lambdas=np.logspace(1e-6, 1e-3)):
-    # NOTE (Sam): target dimension is assumed known
-    greedy_selection = greedy(
-        matrix=matrix, target_dimension=target_dimension, loss=isometry_loss
+def run_experiment(data, D, frac=0.5, R=25, compute_brute=False, power=1.0):
+
+    isometry_loss_power = lambda x: isometry_loss(x, power)
+    group_brute_loss = lambda x: group_lasso_norm(np.linalg.inv(x))
+    losses = []
+    support_cardinalities_basis_pursuit = []
+    two_stage_losses = []
+    random_two_stage_losses = []
+    greedy_multitask_norms_two_stage = []
+    brute_isometry_losses = []
+    brute_losses = []
+
+    for i in range(R):
+        np.random.seed(i)
+        X = data.sample(frac=frac).to_numpy().transpose()  # .5
+        print("Data subsampled dimension", X.shape)
+        output = greedy(X, isometry_loss_power, D, [])
+        loss = isometry_loss_power(X[:, output])
+        losses.append(loss)
+
+        data_transformed = exponential_transformation(X, power=power)
+        beta = group_basis_pursuit(data_transformed)
+        basis_pursuit_indices = np.where(np.linalg.norm(beta, axis=1))[0]
+
+        support_cardinalities_basis_pursuit.append(len(basis_pursuit_indices))
+
+        two_stage_output = basis_pursuit_indices[
+            np.asarray(brute(X[:, basis_pursuit_indices], isometry_loss_power, D))
+        ]  # plainly this is too hard 178**13 combinations
+        two_stage_loss = isometry_loss_power(X[:, two_stage_output])
+        two_stage_losses.append(two_stage_loss)
+
+        two_stage_multitask = basis_pursuit_indices[
+            np.asarray(
+                brute(data_transformed[:, basis_pursuit_indices], group_brute_loss, D)
+            )
+        ]  # plainly this is too hard 178**13 combinations
+        greedy_multitask_norms_two_stage.append(
+            group_brute_loss(data_transformed[:, two_stage_multitask])
+        )
+
+        random_indices = np.random.choice(
+            range(X.shape[1]), len(basis_pursuit_indices), replace=False
+        )
+        random_two_stage_losses.append(isometry_loss_power(X[:, random_indices]))
+
+        if compute_brute:
+            brute_solution = brute(data_transformed[:, :], group_brute_loss, D)
+            brute_losses.append(group_brute_loss(data_transformed[:, brute_solution]))
+
+            brute_isometry_solution = brute(X, isometry_loss_power, D)
+            brute_isometry_losses.append(
+                isometry_loss_power(X[:, brute_isometry_solution])
+            )
+        else:
+            brute_losses.append(np.nan)
+            brute_isometry_losses.append(np.nan)
+
+    # Creating the dataframe
+    results_df = pd.DataFrame(
+        {
+            "Losses": losses,
+            "Support Cardinalities (Basis Pursuit)": support_cardinalities_basis_pursuit,
+            "Two-Stage Losses": two_stage_losses,
+            "Random Two-Stage Losses": random_two_stage_losses,
+            "Greedy Multitask Norms (Two-Stage)": greedy_multitask_norms_two_stage,
+            "Brute Isometry Losses": brute_isometry_losses,
+            "Brute Losses": brute_losses,
+        }
     )
-    brute_selection = brute(
-        matrix=matrix, target_dimension=target_dimension, loss=isometry_loss
-    )
-
-    # NOTE (Sam): for this we determine the minimizer of the greedy selection one additional function at a time.
-    greedy_basis_pursuit_selection = greedy(
-        matrix=matrix,
-        target_dimension=target_dimension,
-        loss=lambda matrix: group_lasso_norm(
-            group_basis_pursuit(exponential_transformation(matrix))
-        ),
-    )
-
-    # the idea is that this this will give us a sparse (target_dimension) function solution.
-    # how much worse will this be than the overall best solution?
-    brute_basis_pursuit_selection = brute(
-        matrix=matrix,
-        target_dimension=target_dimension,
-        loss=basis_pursuit_loss,  # This isn't quite right.  I was thinking to do this on the dual.  Does it make sense here? % Direct minimization of this norm has nothing to do with correlation.
-    )
-
-    # convex basis pursuit (this should give the same answer as brute_basis_pursuit_selection) since the problem is convex
-    brute_basis_pursuit_selection = isometric_basis_pursuit(
-        matrix=matrix
-    )  # look at rank since more than D functions selected
-
-    # Two stage basis_pursuit_selection
-    brute_two_stage_selection = brute(
-        matrix=matrix[brute_basis_pursuit_selection],
-        target_dimension=target_dimension,
-        loss=isometry_loss,
-    )  # could also use the basis_pursuit_loss here
-
-    for lambda_ in lambdas:
-        lasso_selection = isometric_lasso(matrix=matrix, lambda_=lambda_)
-
-    # How many functions are retained?
-    # compute angle of the two spaces (its not the angle but kinda... frob norm of projection)
-
-
-def run_unitary_experiment(
-    ambient_dimension=10, unitary_dimension=5, noise_dimension=50
-):
-
-    unitary_matrix = simulate_unitary_matrix(
-        ambient_dimension=ambient_dimension,
-        unitary_dimension=unitary_dimension,
-        noise_dimension=noise_dimension,
-    )
-    run_experiment(matrix=unitary_matrix, target_dimension=unitary_dimension)
+    return results_df
