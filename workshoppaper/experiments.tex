@@ -14,10 +14,10 @@ We compute Jacoban matrices of putative parametrization functions and project th
 Rather than selecting between data points, we are selecting between functions which parameterize the data.
 
 For basis pursuit, we use the SCS interior point solver \citep{ocpb:16} from CVXPY \citep{diamond2016cvxpy, agrawal2018rewriting}, which is able to push sparse values arbitrarily close to 0 \citep{cvxpy_sparse_solution}.
-Statistical replicas for Wine and Iris are created by resampling across $P$.
+Statistical replicas for Wine and Iris are created by resampling across $[P]$.
 Due to differences in scales between rows, these are first standardized.
-For the Wine dataset, even \brute~ on $\widehat {S}_1$ is prohibitive in $D=13$, and so we truncate our inputs to $D=6$.
-For Ethanol, replicas are created by sampling from data points and their corresponding tangent spaces.
+For the Wine dataset, even \brute~ on $\widehat {S}_{IP}$ is prohibitive in $D=13$, and so we truncate our inputs to $D=6$.
+For Ethanol, replicas are created by sampling from data points and their corresponding tangent spaces are estimated in $B = 252$.
 
 Figure \ref{fig:isometry_losses} and Table \ref{tab:experiments} show that the $l_1$ accrued by the subset $\widehat S_{G}$ estimated using \greedy~ with objective $l_1$ is higher than that for the subset estimated by \tsip.
 This effect is statistically significant, but varies across datapoints and datasets.
@@ -38,7 +38,7 @@ Ethanol & 2 & 756 & 100 & 1 & 2.6 ± 0.3 & 90 ± 165 & 2.5 ± 0.2 & 0.66 & 0.17 
 \bottomrule
 \end{tabular}
 \caption{Experimental parameters and results.
-For Iris and Wine, $P$ is randomly downsampled by a factor of $2$ to create $R$ replicates.
+For Iris and Wine, $P$ results from random downsampling by a factor of $2$ to create $R$ replicates.
 $P_R$ values are empirical probabilities, while estimated P-values $\widehat P$ are computed by paired two-sample T-test on  $l_1(X_{.\widehat S})$ and $l_1(X_{.\widehat S_{G}})$.
 For brevity, in this table $\widehat S := \widehat {S}_{TSIP}$.
 }

@@ -1,6 +1,6 @@
 \section{Supplement}
 
-This section contains algorithms proofs, and experiments in support of the main text.
+This section contains algorithms, proofs, and experiments in support of the main text.
 
 \subsection{Algorithms}
 \label{sec:algorithms}
@@ -88,7 +88,8 @@ We then show that this implies that the resultant loss is unchanged by unitary t
 
  \begin{proposition}
 \label{prop:generalized_unitary_selection}
-Let $w_c$ be a normalization satisfying the conditions in Definition \ref{def:symmetric_normalization}.  Then $\arg \min_{X_{.S} \in \mathbb R^{D \times D}} \widehat \beta^{D}_c (X_{.S}) $ is orthonormal.  Moreover when $X$ is orthonormal, $\min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \; I_D = w (  X, c) \beta = D$.
+Let $w_c$ be a normalization satisfying the conditions in Definition \ref{def:symmetric_normalization}.
+Then $\arg \min_{X_{.S} \in \mathbb R^{D \times D}} \widehat \beta_c ( X_{.S}) $ is orthonormal and, given $X$ is orthonormal, $ \| \beta \|_{1,2} \; : \; I_D = w ({  X}, c) \beta = D$.
  \end{proposition}
  
  \begin{proof}
@@ -104,19 +105,20 @@ Thus, we need to show that this is a lower bound on the obtained loss.
 From the conditions in Definition \ref{def:symmetric_normalization}, normalized matrices will consist of vectors of maximum length (i.e. $1$) if and only if the original matrix also consists of vectors of length $1$.
 Such vectors will clearly result in lower basis pursuit loss, since longer vectors in $X$ require smaller corresponding covectors in $\beta$ to equal the same result.
 
-Therefore, it remains to show that $X$ consisting of orthogonal vectors of length $1$ have lower compared with $X$ consisting of non-orthogonal vectors.
+Therefore, it remains to show that $X$ consisting of orthogonal vectors of length $1$ have lower loss compared with $X$ consisting of non-orthogonal vectors.
 Invertible matrices $X_{.S}$ admit QR decompositions $\tilde X_{.S} = QR$ where $Q$ and $R$ are orthonormal and upper-triangular matrices, respectively \citep{Anderson1992-fb}.
-Denoting $Q$ to be composed of basis vectors $[e^1 \dots e^d]$, the matrix $R$ has form
+Denoting $Q$ to be composed of basis vectors $[e_1 \dots e_D]$, the matrix $R$ has form
 \begin{align}
 R = \begin{bmatrix}
-\langle e^1, X_{.S_1} \rangle & \langle e^1,  X_{.S_2} \rangle  &\dots &  \langle e^1,  X_{.S_D} \rangle \\
-0 & \langle e^2,  X_{.S_2} \rangle & \dots  &  \langle e^2,  X_{.S_D} \rangle\\
+\langle e_1, X_{.S_1} \rangle & \langle e_1,  X_{.S_2} \rangle  &\dots &  \langle e_1,  X_{.S_D} \rangle \\
+0 & \langle e_d,  X_{.S_2} \rangle & \dots  &  \langle e_2,  X_{.S_D} \rangle\\
 0 & 0 & \dots & \dots  \\
-0 & 0 & \dots & \langle e^d, X_{.S_D} \rangle 
+\dots & \dots & \dots & \dots \\
+0 & 0 & \dots & \langle e_D, X_{.S_D} \rangle 
 \end{bmatrix}.
 \end{align}
-Thus, $|R_{dd} | \leq \|X_{.{S_{d}}}\|_2$, with equality obtained across $d$ only by orthonormal matrices.
-On the other hand, by Proposition \ref{prop:basis_pursuit_selection_invariance}, $l(X) = l(R)$ and so $\|\beta\|_{1,2} = \|R^{-1}\|_{1,2}$.
+Thus, $|R_{dd} | \leq \|X_{.{S_{d}}}\|_2$ for all $d \in [D]$, with equality obtained only by orthonormal matrices.
+On the other hand, by Proposition \ref{prop:basis_pursuit_selection_invariance}, $l_c(X) = l_c(R)$ and so $\|\beta\|_{1,2} = \|R^{-1}\|_{1,2}$.
 Since $R$ is upper triangular it has diagonal elements $\beta_{dd} = R_{dd}^{-1}$ and so $\|\beta_{d.}\| \geq \| X_{.{S_d}}\|^{-1} = 1$.
 That is, the penalty accrued by a particular covector in $\beta$ is bounded from below by $1$ - the inverse of the length of the corresponding vector in $X_{.S}$ - with equality occurring only when $X_{.S}$ is orthonormal.
 \end{proof}
@@ -163,12 +165,12 @@ While typically $|\widehat{S}_{IP}| << P$, there are cases for Ethanol where thi
 \subsection{Proposition \ref{prop:unitary_selection} deep dive}
 \label{sec:deep_dive}
 
-As mentioned in Section \ref{sec:discussion}, the conditions under which the restriction $S=D$ in Proposition \ref{prop:unitary_selection} may be relaxed are of theoretical and practical interest.
+As mentioned in Section \ref{sec:discussion}, the conditions under which the restriction $P=D$ in Proposition \ref{prop:unitary_selection} may be relaxed are of theoretical and practical interest.
 The results in Section \ref{sec:experiments} show that there are circumstances in which the \greedy~ performs better than \tsip, so clearly \tsip~ does not always achieve a global optimum.
 Figure \ref{fig:comparison_losses} gives results on the line of inquiry about why this is the case based on the reasoning presented in Section \ref{sec:discussion}.
 In these results a two-stage algorithm achieves the global optimum of a slightly different brute problem, namely brute optimization of the multitask basis pursuit penalty $\|\cdot \|_{1,2}$.
 That is, brute search on $\|\cdot \|_{1,2}$ gives the same result as the two stage algorithm with brute search on $\|\cdot \|_{1,2}$ subsequent to isometry pursuit.
-This suggests that failure to select the global optimum by \tsip~ is due to the mismatch between global optimums of brute optimization of the multitask penalty and the isometry loss given certain data.
+This suggests that failure to select the global optimum by \tsip~ is in fact only due to the mismatch between global optimums of brute optimization of the multitask penalty and the isometry loss given certain data.
 Theoretical formalization, as well as investigation of what data configurations this equivalence holds for, is a logical follow-up.
 
 \begin{figure}[t] % Place at the top of the page
