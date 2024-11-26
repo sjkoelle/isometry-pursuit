@@ -1,7 +1,7 @@
 \section{Method}
 
 We adapt the group lasso paradigm used to select independent dictionary elements in \citet{Koelle2022-ju, Koelle2024-no} to select pointwise isometries from a dictionary.
-In particular, we first will define a ground truth objective computable via brute and greedy algorithms that is uniquely minimized by orthonormal matrices.
+We first define a ground truth objective computable via brute and greedy algorithms that is uniquely minimized by orthonormal matrices.
 We then define the combination of normalization and multitask basis pursuit that approximates this ground truth loss function.
 We finally give a brute post-processing method for ensuring that the solution is $D$ sparse.
 
@@ -10,9 +10,9 @@ We finally give a brute post-processing method for ensuring that the solution is
 
 We'd like a ground truth objective to be minimized uniquely by orthonormal matrices, invariant under rotation, and depend on all changes in the matrix.
 Deformation \citep{Kohli2021-lr} and nuclear norm \citep{Boyd2004-ql} use only a subset of the differential's information and are not uniquely minimized at unitarity, respectively.
-We therefore introduce an alternative ground truth objective that satisfies the above desiderata and has convenient connections to Isometry Pursuit.
+We therefore introduce an alternative ground truth objective that satisfies the above desiderata and has convenient connections to isometry pursuit.
 
-We define this objective as
+This objective is
 \begin{align}
 l_{c}: \mathbb R^{D \times P} &\to \mathbb R^{+} \\
 X &\mapsto \sum_{d = 1}^D g(\sigma_d( X), c)
@@ -152,10 +152,11 @@ Since cannot in general ensure either that $|\widehat {  S|} = D$ or that a orth
 \begin{algorithm}[H]
 \caption{\tsip(Matrix ${X} \in \mathbb{R}^{D \times P}$, scaling constant $c$)}
 \begin{algorithmic}[1]
-\STATE $\widehat{S_1} = \text{\isometrypursuit}( X, c)$
-\STATE $\widehat{S} = \text {\brute}({X}_{.\widehat{S_1}}, l_c)$
+\STATE $\widehat{S_{IP}} = \text{\isometrypursuit}( X, c)$
+\STATE $\widehat{S} = \text {\brute}({X}_{.\widehat{S_{IP}}}, l_c)$
 \STATE {\bf Output} $\widehat{S}$
 \end{algorithmic}
 \end{algorithm}
 
 Similar two-stage approaches are standard in the Lasso literature \cite{Hesterberg2008-iy}.
+This method forms our practical isometry estimator, is discussed further in Section \ref{sec:discussion} and Section \ref{sec:deep_dive}.
