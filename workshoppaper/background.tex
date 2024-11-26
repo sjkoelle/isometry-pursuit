@@ -35,10 +35,11 @@ The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ betwe
 It is not always necessary to explicitly estimate tangent spaces when applying this definition.
 The most commonly encountered manifolds are vector spaces for which the tangent spaces are trivial.
 This is the case for full-rank tabular data, for which isometry has a natural interpretation as a type of diversification, and often for the latent spaces of deep learning models.
+In this case, $B = D$.
 
 \begin{definition}
 \label{def:isometric_at_a_point}
-A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq R^{B_\alpha}$ and $\mathcal N  \subseteq R^{B_\beta}$
+A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq R^{B}$ and $\mathcal N  \subseteq R^{P}$
 $\phi$ is an \textbf{isometry at a point} $\xi \in \mathcal M$ if
 \begin{align}
 {D \phi (\xi)}^T D \phi (\xi) = I_D.
@@ -58,7 +59,7 @@ The one motivating our ground truth loss function comes from spectral analysis.
 \label{prop:orthonormal_spectrum}
 The singular values $\sigma_1 \dots \sigma_D$ are equal to $1$ if and only if $U \in \mathbb{R}^{D \times D}$ is orthonormal.
 \end{proposition}
-On the other hand, the formulation that motivates our convex approach is that orthonormal matrices consist of $D$ coordinate features whose gradients are orthogonal and evenly varying.
+On the other hand, the formulation that motivates our convex approach is that orthonormal matrices consist of $D$ coordinate features whose gradients are orthogonal and of unit length.
 \begin{proposition}
 \label{prop:orthonormal_basis}
 The component vectors $u_1 \dots u_D \in \mathbb R^B$ form a orthonormal matrix if and only if, for all $d_1, d_2 \in [D], \langle u_{d_1}, u_{d_2} \rangle = \begin{cases}
@@ -73,9 +74,9 @@ The component vectors $u_1 \dots u_D \in \mathbb R^B$ form a orthonormal matrix 
 Given a matrix $ X \in \mathbb R^{D \times P}$, we compare algorithmic paradigms for solving problems of the form
 \begin{align}
 \label{prog:ground_truth}
-\arg \min_{ S \in \binom{[P]}{d}} l ( X_{. S})
+\arg \min_{ S \in \binom{[P]}{D}} l ( X_{. S})
 \end{align}
-where $\binom{[P]}{d} = \left\{ A \subseteq [P] : \left|A\right| = d \right\}$.
+where $\binom{[P]}{D} = \left\{ A \subseteq [P] : \left|A\right| = D \right\}$.
 Brute force algorithms consider all possible solutions.
 These algorithms are conceptually simple, but have the often prohibitive time complexity $O(C_lP^D)$ where $C_l$ is the cost of evaluating $l$.
 Greedy algorithms consist of iteratively adding one element at a time to $ S$.
@@ -87,13 +88,10 @@ Solutions
 \begin{align}
 \arg \min f(\beta) : Y  = X\beta 
 \end{align}
-to the overcomplete regression problem $Y = X \beta$ are a classic example \cite{Chen2001-hh}.
-When $f(\beta) = \|\beta\|_0$, this problem is non-convex, and must be solved via greedy or brute algorithms, but when $f(\beta) =\|\beta\|_1$, the problem is convex, and may be solved efficiently via interior-point methods.
+to the overcomplete regression problem $Y = X \beta$ are a classic example \citep{Chen2001-hh}.
+When $f(\beta) = \|\beta\|_0$, this problem is non-convex, and is thus suitable for greedy or brute algorithms, but when $f(\beta) =\|\beta\|_1$, the problem is convex, and may be solved efficiently via interior-point methods.
 When the equality constraint is relaxed, Lagrangian duality may be used to reformulate as a so-called Lasso problem, which leads to an even richer set of optimization algorithms. % cite FISTA< glmnet, coordinate descent
-% Cite glmnet
-
 
 The form of basis pursuit that we apply is inspired by the group basis pursuit approach in \citet{Koelle2022-ju}.
-In group basis pursuit (which we call multitask basis pursuit when grouping is dependent only on the structure of matrix-valued response variable $y$) the objective function is $f(\beta) = \|\beta\|_{1,2} := \sum_{p=1}^P \|\beta_{p.}\|_2$  \citep{Yuan2006-bt, Obozinski2006-kq, Yeung2011-fg}
-This objective creates joint sparsity across entire rows of $\beta_{p.}$ and was used in \citep{Koelle2022-ju} to select between sets of interpretable features.
-% NOTE (Sam): find a citation for multitask basis pursuit.  Cite first GBP paper.
+In group basis pursuit (which we call multitask basis pursuit when grouping is dependent only on the structure of matrix-valued response variable $y$) the objective function is $f(\beta) = \|\beta\|_{1,2} := \sum_{p=1}^P \|\beta_{p.}\|_2$  \citep{Yuan2006-bt, Obozinski2006-kq, Yeung2011-fg}.
+This objective creates joint sparsity across entire rows $\beta_{p.}$ and was used in \citet{Koelle2022-ju} to select between sets of interpretable features.

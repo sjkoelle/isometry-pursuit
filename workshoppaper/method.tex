@@ -22,8 +22,8 @@ where $\sigma_d ( X)$ is the $d$-th singular value of $ X$ and
 g: \mathbb R^+ \times \mathbb R^+ &\to \mathbb R^+ \\
 t,c &\mapsto \frac{e^{t^c} + e^{t^{-c}}}{2e}.
 \end{align}
-Using Proposition \ref{prop:orthonormal_spectrum}, we can check that $g$ is uniquely maximized by orthonormal matrices.
-Moreover, $g( X^{-1}) = g( X)$ and $g$ is convex.
+Using Proposition \ref{prop:orthonormal_spectrum}, we can check that $l_c$ is uniquely maximized by orthonormal matrices.
+Moreover, $g$ is convex, and $l_c( X^{-1}) = l_c( X)$ when $X$ is invertible.
 Figure \ref{fig:losses} gives a graph of $l_c$ when $D=1$ and compares it with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.
 % NOTE (Sam): Do we need proofs of maximized by orthonormal matrices and convex?
 % Can we prove this is a norm?
@@ -31,7 +31,7 @@ Figure \ref{fig:losses} gives a graph of $l_c$ when $D=1$ and compares it with t
 Our ground truth program is therefore 
 \begin{align}
 \label{prog:ground_truth}
-\widehat { S}_{GT}  &= \arg \min_{ S \in \binom{[P]}{d}} l_c ( X_{. S}).
+\arg \min_{ S \in \binom{[P]}{d}} l_c ( X_{. S}).
 \end{align}
 Regardless of the convexity of $l_c$, brute combinatorial search over $[P]$ is inherently non-convex.
 
@@ -50,7 +50,7 @@ q(v_1) &= q(v_2) \; \forall \; v_1, v_2 \in \mathbb R^D : \|v_1\|_2 = \|v_2\|_2.
 \end{align} \label{def:symmetric_normalization}
 \end{definition}
 
-We use such functions to normalize vector length in such a way that vectors of length $1$ prior to normalization have longest length after normalization, vectors in general are shrunk proportionately to their deviation from $1$. 
+We use such functions to normalize vector length in such a way that vectors of length $1$ prior to normalization have longest length after normalization and vectors are shrunk proportionately to their deviation from $1$. 
 That is, we normalize vectors by 
 \begin{align}
 n: \mathbb R^D  &\to \mathbb R^D \\
@@ -64,25 +64,25 @@ w: \mathbb R^{D \times P}  &\to \mathbb R^D \\
 
 In particular, given $c > 0$, we choose $q$ as follows.
 \begin{align}
-\label{eq:normalization}
 q_c: \mathbb R^D  &\to \mathbb R^+ \\
 v  &\mapsto \frac{e^{\|v\|_2^c} + e^{\|v\|_2^{-c}}}{2e}.
+\label{eq:normalization}
 \end{align}
 
 Besides satisfying the conditions in Definition \ref{def:symmetric_normalization}, this normalization has some additional nice properties.
 First, $q$ is convex.
 Second, it grows asymptotically log-linearly.
 Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp \citep{Boyd2004-ql} replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon exponentiation.
-Finally, the parameter $c$ grants control over the width of the basin, which is important in avoiding numerical issues arising close to $0$ and $\infty$.
+Finally, the parameter $c$ grants control over the width of the basin, which may be useful for avoiding numerical issues arising close to $0$ and $\infty$.
 
 \begin{figure}
 \centering
-\subcaptionbox{Ground truth loss scaling function $g$ as a function of $t$. \label{cat}}
+\subcaptionbox{Ground truth loss \label{cat}}
 {\includegraphics[width = .32\textwidth]{../figures/Figure_1a_bw.png}}
 \label{fig:gt_loss}
-\subcaptionbox{Length as a function of $t$ \label{elephant}}
+\subcaptionbox{Normalized length as a function of unnormalized length \label{elephant}}
 {\includegraphics[width = .32\textwidth]{../figures/Figure_1b_bw.png}}
-\subcaptionbox{Basis pursuit loss as a function of $t$ \label{snootfellow}}
+\subcaptionbox{Basis pursuit loss \label{snootfellow}}
 {\includegraphics[width = .32\textwidth]{../figures/Figure_1c_bw.png}}
 \caption{Plots of ground truth loss, normalized length, and basis pursuit loss for different values of $c$ in the one-dimensional case $D = 1$.
 The two losses are equivalent in the one-dimensional case.}
@@ -98,7 +98,7 @@ Define the multitask basis pursuit penalty
 \| \cdot \|_{1,2}: \mathbb R^{P \times D} &\to \mathbb R^+ \\ 
 \beta &\mapsto  \sum_{p=1}^P  \|\beta_{p.}\|_2.
 \end{align}
-Given a matrix $Y \in \mathbb R^{D \times P}$, the multitask basis pursuit solution is
+Given a matrix $Y \in \mathbb R^{D \times D}$, the multitask basis pursuit solution is
 \begin{align}
 \label{prog:multitask_basis_pursuit}
 \widehat \beta_{MBP} (X, Y)  := \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \;Y =  X \beta.
@@ -111,7 +111,7 @@ Isometry pursuit is then given by
 where $I_D$ is the $D$ dimensional identity matrix and recovered functions are the indices of the dictionary elements with non-zero coefficients.
 That is, they are given by $S(\beta)$ where
 \begin{align}
-S: \mathbb{R}^{p \times d} &\to \binom{[P]}{d} \\
+S: \mathbb{R}^{P \times D} &\to \binom{[P]}{D} \\
 \beta &\mapsto \left\{ p \in [P] :  \|\beta_{p.}\| > 0 \right\}.
 \end{align}
 \begin{algorithm}[H]
@@ -125,7 +125,7 @@ S: \mathbb{R}^{p \times d} &\to \binom{[P]}{d} \\
 
 \subsection{Theory}
 
-The intuition behind our application of multitask basis pursuit in our setting is that submatrices consisting of vectors which are closer to 1 in length and more orthogonal will have smaller loss.
+The intuition behind our application of multitask basis pursuit is that submatrices consisting of vectors which are closer to 1 in length and more orthogonal will have smaller loss.
 A key initial theoretical assertion is that  \isometrypursuit~ is invariant to choice of basis for $ X$.
 \begin{proposition}
 \label{prop:basis_pursuit_selection_invariance}
@@ -135,11 +135,10 @@ Then $S(\widehat \beta  (U  X)) = S(\widehat \beta ( X))$.
 A proof is given in Section \ref{proof:basis_pursuit_program_invariance}.
 This has as an immediate corollary that we may replace $I_D$ in the constraint by any orthonormal $D \times D$ matrix.
 
-We also claim that the conditions of the consequent of Proposition \ref{prop:orthonormal_basis} are satisfied by minimizers of the multitask basis pursuit objective applied to suitably normalized matrices in the special case where both such a submatrix exists and $| S| = D$.
+We also claim that the conditions of the consequent of Proposition \ref{prop:orthonormal_basis} are satisfied by minimizers of the multitask basis pursuit objective applied to suitably normalized matrices in the special case where a rank $D$ orthonormal submatrix exists and $|S| = D$.
 \begin{proposition}
 Let $w_c$ be a normalization satisfying the conditions in Definition \ref{def:symmetric_normalization}.
-Then $\arg \min_{X_{.S} \in \mathbb R^{D \times D}} \widehat \beta^{D}_c ( X) $ is orthonormal.
-Moreover when $X$ is orthonormal, $(\min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \; I_D = w ({  X}, c) \beta) = D$.
+Then $\arg \min_{X_{.S} \in \mathbb R^{D \times D}} \widehat \beta_c ( X_{.S}) $ is orthonormal and, given $X$ is orthonormal, $ \| \beta \|_{1,2} \; : \; I_D = w ({  X}, c) \beta = D$.
 \label{prop:unitary_selection}
 \end{proposition}
 While this Proposition falls short of showing that an orthonormal submatrix will be selected should one be present, it provides intuition justifying the preferential efficacy of \isometrypursuit~ on real data.
