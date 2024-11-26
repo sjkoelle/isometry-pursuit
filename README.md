@@ -1,4 +1,4 @@
-# convexlocalisometry
+# Isometry pursuit
 
 ```
 git clone https://github.com/sjkoelle/isometry-pursuit.git
