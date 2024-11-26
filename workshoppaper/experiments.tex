@@ -8,9 +8,9 @@ Features like \textit{ petal width} are rows in $X$.
 They are features on the basis of which we may select among the flowers those which are most distinct from another.
 Thus, in diversification, $P = n$.
 
-We also analyze the Ethanol dataset from \citet{Chmiela2018-at, Koelle2022-ju}, but rather than selecting between bourbon and scotch we evaluate a dictionary of interpretable features for their ability to parameterize the molecular configuration space.
-In this interpretability use case, columns denote informative features.
-We compute Jacoban matrices of putative dictionary functions and project them onto estimated tangent spaces (see \citet{Koelle2022-ju} for preprocessing details).
+We also analyze the Ethanol dataset from \citet{Chmiela2018-at, Koelle2022-ju}, but rather than selecting between bourbon and scotch we evaluate a dictionary of interpretable features  - bond torsions - for their ability to parameterize the molecular configuration space.
+In this interpretability use case, columns denote gradients of informative features.
+We compute Jacoban matrices of putative parametrization functions and project them onto estimated tangent spaces (see \citet{Koelle2022-ju} for preprocessing details).
 Rather than selecting between data points, we are selecting between functions which parameterize the data.
 
 For basis pursuit, we use the SCS interior point solver \citep{ocpb:16} from CVXPY \citep{diamond2016cvxpy, agrawal2018rewriting}, which is able to push sparse values arbitrarily close to 0 \citep{cvxpy_sparse_solution}.
