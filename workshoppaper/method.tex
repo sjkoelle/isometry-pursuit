@@ -98,10 +98,10 @@ Define the multitask basis pursuit penalty
 \| \cdot \|_{1,2}: \mathbb R^{P \times D} &\to \mathbb R^+ \\ 
 \beta &\mapsto  \sum_{p=1}^P  \|\beta_{p.}\|_2.
 \end{align}
-Given a matrix $Y \in \mathbb R^{D \times E}$, the multitask basis pursuit solution is
+Given a matrix $Y \in \mathbb R^{D \times P}$, the multitask basis pursuit solution is
 \begin{align}
 \label{prog:multitask_basis_pursuit}
-\widehat \beta_{MBP} (X, Y)  := \arg \min_{\beta \in \mathbb R^{P \times E}} \| \beta \|_{1,2} \; : \;Y =  X \beta.
+\widehat \beta_{MBP} (X, Y)  := \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \;Y =  X \beta.
 \end{align}
 Isometry pursuit is then given by
 \begin{align}
@@ -147,16 +147,16 @@ A proof is given in Section \ref{sec:local_isometry_proof}.
 
 \subsection{Two-stage isometry pursuit}
 
-Since cannot in general ensure either that $|\widehat {  S|} = D$ or that a orthonormal submatrix $X_{.S}$ exists, we first use the convex problem to prune and then apply brute search upon the substantially reduced feature set.
+Since we cannot ensure either that $|\widehat {  S}| = D$ or that a orthonormal submatrix $X_{.S}$ exists, we first use the convex problem to prune and then apply brute search upon the substantially reduced feature set.
 
 \begin{algorithm}[H]
 \caption{\tsip(Matrix ${X} \in \mathbb{R}^{D \times P}$, scaling constant $c$)}
 \begin{algorithmic}[1]
-\STATE $\widehat{S_{IP}} = \text{\isometrypursuit}( X, c)$
-\STATE $\widehat{S} = \text {\brute}({X}_{.\widehat{S_{IP}}}, l_c)$
+\STATE $\widehat{S}_{IP} = \text{\isometrypursuit}( X, c)$
+\STATE $\widehat{S} = \text {\brute}({X}_{.\widehat{S}_{IP}}, l_c)$
 \STATE {\bf Output} $\widehat{S}$
 \end{algorithmic}
 \end{algorithm}
 
 Similar two-stage approaches are standard in the Lasso literature \cite{Hesterberg2008-iy}.
-This method forms our practical isometry estimator, is discussed further in Section \ref{sec:discussion} and Section \ref{sec:deep_dive}.
+This method forms our practical isometry estimator, and is discussed further in Sections \ref{sec:discussion} and \ref{sec:deep_dive}.

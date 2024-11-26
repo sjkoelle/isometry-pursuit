@@ -5,7 +5,8 @@ This section contains algorithms proofs, and experiments in support of the main 
 \subsection{Algorithms}
 \label{sec:algorithms}
 
-We give definitions of the brute and greedy algorithms used in this paper.
+We give definitions of the brute and greedy algorithms for the combinatorial problem studied in this paper.
+The brute force algorithm is computationally intractable for all but the smallest problems, but always finds the global minima.
 
 \begin{algorithm}[H]
 \caption{\brute(Matrix ${X} \in \mathbb{R}^{D \times P}$, objective $f$)}
@@ -16,6 +17,8 @@ We give definitions of the brute and greedy algorithms used in this paper.
 \STATE {\bf Output} the combination $S^*$ that minimizes $f({X}_{.S})$
 \end{algorithmic}
 \end{algorithm}
+
+Greedy algorithms are computationally expedient but can get stuck in local optima \citep{Cormen, Russell-09}, even with randomized restarts \citep{Dick2014HowMR}.
 
 \begin{algorithm}[H]
 \caption{\greedy(Matrix ${X} \in \mathbb{R}^{D \times P}$, objective $f$, selected set $S = \emptyset$, current size $d=0$)}
@@ -217,6 +220,7 @@ Theoretical formalization, as well as investigation of what data configurations 
 
 While wall-time of algorithms is a non-theoretical quantity that depends on implementation details, it provides valuable context for practitioners.
 We therefore report the following runtimes on a 2021 Macbook Pro.
+The particularly high variance for brute force search in the second step of \tsip~ is likely due to the large cardinalities reported in Figure \ref{fig:support_cardinalities}.
 
 \begin{table}[H]
 \centering
