@@ -70,6 +70,10 @@ def analyze_data(X, compute_brute=False, power=1.0, limit=1e9):
         brute_loss = np.nan
         brute_isometry_loss = np.nan
 
+    print("stage two time", stage_two_time)
+    print("greedy time", end_greedy - start_greedy)
+    print("basis pursuit time", end_basis_pursuit - start_basis_pursuit)
+
     return (
         loss,
         len(basis_pursuit_indices),

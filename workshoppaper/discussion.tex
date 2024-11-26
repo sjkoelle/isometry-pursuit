@@ -2,8 +2,8 @@
 \label{sec:discussion}
 
 We have shown that multitask basis pursuit can help select isometric submatrices from appropriately normalized wide-matrices.
-This approach - \isometrypursuit~ - is convex alternative to greedy methods for selection of orthonormalized features from within a dictionary.
-\isometrypursuit~ can be applied to diversification and geometrically-faithful coordinate estimation.
+This approach - isometry pursuit - is convex alternative to greedy methods for selection of orthonormalized features from within a dictionary.
+Isometry pursuit can be applied to diversification and geometrically-faithful coordinate estimation.
 Our experiments exemplify these applications, but more can be done.
 One potential application is diversification in recommendation systems \cite{Carbonell2017-gi, Wu2019-uk, Langchain} and other retrieval systems such as in RAG \cite{Gao2023-cn, Pickett2024-ad, In2024-um, Weiss2024-xm, Vectara}.
 Another is decomposing interpretable yet overcomplete dictionaries in transformer residual streams, with each token considered as generating its own tangent space.
@@ -12,10 +12,12 @@ Compared with the greedy algorithms used in such areas \cite{Carbonell1998-ji, B
 The comparison of greedy \cite{Mallat93-wi, Mallat, Pati-93, Tropp05-ml} and convex \cite{Chen2001-hh, Tropp06-sg,Chen2006TheoreticalRO} basis pursuit formulations has a rich history, and theoretical understanding of the behavior of this approximation is evolving.
 Diversification problems have been cited as NP-hard, and isometry pursuit can be considered analogous to them in the sense of basis pursuit and the lasso against best subset selection, with the caveat that best subset selection of the basis pursuit loss minimizer isn't totally equivalent to isometry pursuit even though they share the same unique optimum.
 Characterization of solutions resulting from removal of the restriction $|S| = D$ on the conditions of Proposition \ref{prop:unitary_selection} may help justify the second selection step.
-That the solution of a lasso problem can sometimes be a non-singleton convex set containing the $\ell 0 $ solution is well-known \cite{Osborne2000OnTL, DOSSAL2012117, Chrtien2011OnTG, Tibshirani2012TheLP, Ewald2017OnTD, Ali2018TheGL, Schneider2020-qt, Mishkin2022TheSP,Dupuis2019TheGO,Debarre2020OnTU,Everink2024TheGA}, and it appears empirically in our situation that this can occur even when the design matrix is not in so-called general position.
-The best subset support estimate - the isometry estimate - may be contained within the loss preimage fiber at the minimum loss.
-The convergence of SCS algorithm to the 2 norm minimizing solution due to the dual constraint penalty and the convexity of this premise may then imply that the two stage procedure would then always succeed.
+That the solution of a lasso problem can sometimes be a non-singleton convex set containing the sparsest solution is well-known \cite{Osborne2000OnTL, DOSSAL2012117, Chrtien2011OnTG, Tibshirani2012TheLP, Ewald2017OnTD, Ali2018TheGL, Schneider2020-qt, Mishkin2022TheSP,Dupuis2019TheGO,Debarre2020OnTU,Everink2024TheGA}.
+Perhaps surprisingly, it appears empirically that for isometry pursuit that this can occur even when the design matrix is not in general position.
+
+The convergence of SCS algorithm to the 2-norm minimizing solution due to the dual constraint penalty and the convexity of this preimage suggest that a related two stage procedure always succeeds in identifying the brute $\|\|_{1,2}$ minimizer.
 Related conditions have been discussed in \cite{Donoho2006ForML, Mishkin2022TheSP}, and we examine this topic experimentally in Section \ref{sec:deep_dive}.
+For this problem, the best subset support estimate - the isometry estimate - appears contained within the loss preimage fiber at the minimum loss.
 
 Algorithmic variants include the multitask lasso \cite{ Hastie2015-qa} extension of our estimator, as well as characterization of $D$ function selection within spaces larger than $\mathbb R^D$.
 Tangent-space specific variants have been studied in more detail in \cite{Koelle2022-ju, Koelle2024-no} with additional grouping across datapoints, and a corresponding variant of the isometry theorem that missed non-uniqueness was claimed in \cite{Koelle2022-lp}.

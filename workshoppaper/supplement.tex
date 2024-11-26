@@ -37,6 +37,8 @@ We give definitions of the brute and greedy algorithms used in this paper.
 \end{algorithmic}
 \end{algorithm}
 
+\newpage
+
 \subsection{Proofs}
 \label{sec:proofs}
 
@@ -116,14 +118,15 @@ Since $R$ is upper triangular it has diagonal elements $\beta_{dd} = R_{dd}^{-1}
 That is, the penalty accrued by a particular covector in $\beta$ is bounded from below by $1$ - the inverse of the length of the corresponding vector in $X_{.S}$ - with equality occurring only when $X_{.S}$ is orthonormal.
 \end{proof}
 
+\newpage
+
 \subsection{Support cardinalities}
 \label{sec:support_cardinalities}
 
-We plot the distribution of $|\widehat{S}_{IP}|$ from Table \ref{tab:experiments} in order to contextualize the reported means.
-While typically $|\widehat{S}_{IP}| << P$, there are cases for Ethanol where this is not the case.
-These drive up the means.
+Figure \ref{fig:support_cardinalities} plots the distribution of $|\widehat{S}_{IP}|$ from Table \ref{tab:experiments} in order to contextualize the reported means.
+While typically $|\widehat{S}_{IP}| << P$, there are cases for Ethanol where this is not the case that drive up the means.
 
-\begin{figure}[H]
+\begin{figure}[t]
     \centering
     % Subfigure for Wine dataset
     \begin{subfigure}[b]{0.3\textwidth}
@@ -152,13 +155,18 @@ These drive up the means.
     \label{fig:support_cardinalities}
 \end{figure}
 
+\newpage
+
 \subsection{Proposition \ref{prop:unitary_selection} deep dive}
 \label{sec:deep_dive}
 
 As mentioned in Section \ref{sec:discussion}, the conditions under which the restriction $S=D$ in Proposition \ref{prop:unitary_selection} may be relaxed are of theoretical and practical interest.
 The results in Section \ref{sec:experiments} show that there are circumstances in which the \greedy~ performs better than \tsip, so clearly \tsip~ does not always achieve a global optimum.
-This section follows a line of inquiry about why this is the case based on the reasoning presented in Section \ref{sec:discussion}.
-We present results supporting that the claim that a two-stage algorithm can achieve the global optimum of a slightly different brute problem, namely brute optimization of the multitask basis pursuit penalty.
+Figure \ref{fig:comparison_losses} gives results on the line of inquiry about why this is the case based on the reasoning presented in Section \ref{sec:discussion}.
+In these results a two-stage algorithm achieves the global optimum of a slightly different brute problem, namely brute optimization of the multitask basis pursuit penalty $\|\cdot \|_{1,2}$.
+That is, brute search on $\|\cdot \|_{1,2}$ gives the same result as the two stage algorithm with brute search on $\|\cdot \|_{1,2}$ subsequent to isometry pursuit.
+This suggests that failure to select the global optimum by \tsip~ is due to the mismatch between global optimums of brute optimization of the multitask penalty and the isometry loss given certain data.
+Theoretical formalization, as well as investigation of what data configurations this equivalence holds for, is a logical follow-up.
 
 \begin{figure}[t] % Place at the top of the page
     \centering
@@ -195,7 +203,6 @@ We present results supporting that the claim that a two-stage algorithm can achi
         \caption{Wine Multitask Losses}
         \label{fig:wine_group_lasso_losses}
     \end{subfigure}
-
     \caption{Comparison of Isometry and Group Lasso Losses across $25$ replicates for randomly downsampled Iris and Wine Datasets with $(P,D) = (4,15)$ and $(13, 18)$, respectively.
     Note that this further downsampling compared with Section \ref{sec:experiments} was necessary to compute global minimizers of \brute.
     Lower brute losses are shown with turquoise, while lower two stage losses are shown with pink.
@@ -203,5 +210,24 @@ We present results supporting that the claim that a two-stage algorithm can achi
     \label{fig:comparison_losses}
 \end{figure}
 
-These results support the argument sketched in Section \ref{sec:discussion} that the \isometrypursuit~ solution contains the global minimizer, and that failure to select the global optimum by \tsip~ is due to the mismatch between global optimums of brute optimization of the multitask penalty and the isometry loss given certain data.
-Theoretical formalization, as well of what data configurations this equivalence holds for, is a logical follow-up.
+\newpage
+
+\subsection{Timing}
+\label{sec:timing}
+
+While wall-time of algorithms is a non-theoretical quantity that depends on implementation details, it provides valuable context for practitioners.
+We therefore report the following runtimes on a 2021 Macbook Pro.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\toprule
+Name & IP & 2nd stage brute & Greedy \\
+\midrule
+Iris & 1.24 ± 0.02 & 0.00 ± 0.00 & 0.02 ± 0.00 \\
+Wine & 2.32 ± 0.17 & 0.13 ± 0.12 & 0.03 ± 0.00 \\
+Ethanol & 8.38 ± 0.57 & 0.55 ± 1.08 & 0.07 ± 0.01 \\
+\bottomrule
+\end{tabular}
+\caption{Algorithm runtimes in seconds across replicates.}
+\end{table}
