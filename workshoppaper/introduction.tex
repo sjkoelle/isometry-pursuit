@@ -3,7 +3,7 @@
 
 Many real-world problems may be abstracted as selecting a subset of the columns of a matrix representing stochastic observations or analytically exact data.
 This paper focuses on a simple such problem that appears in interpretable learning and diversification.
-Given a rank $D$ matrix $ X \in \mathbb R^{D \times P}$ with $P > D$, select a square submatrix $ X_{. S}$ where subset $ S \subset P$ satisfies $| S| = D$ that is as orthonormal as possible.
+Given a rank $D$ matrix $ X \in \mathbb R^{D \times P}$ with $P > D$, select a square submatrix $ X_{. S}$ where subset $ S \subset [P]$ satisfies $| S| = D$ that is as orthonormal as possible.
 
 This problem arises in interpretable learning specifically because while the coordinate functions of a given feature space may have no intrinsic meaning, it is sometimes possible to generate a dictionary of interpretable features which may be considered as potential parametrizing coordinates.
 When this is the case, selection of candidate interpretable features as coordinates can take the above form.
