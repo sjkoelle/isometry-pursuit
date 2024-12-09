@@ -1,0 +1,237 @@
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} 
+\usepackage{booktabs} 
+\usepackage{algorithm}
+\usepackage{framed}
+\usepackage{tikz-cd}
+%\usepackage{adjustbox}
+%\usepackage{pst-node, auto-pst-pdf}
+
+
+\usepackage[backslant]{aurical}       % Fontauri fonts 
+\usepackage{bm}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+%\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{subfig}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{enumerate}
+\usepackage{xcolor}
+\usepackage[font=small]{caption}
+%\usepackage[labelformat = empty,position=top]{subcaption}
+\usepackage[export]{adjustbox}
+%\usepackage{subcaption}
+
+\usepackage[backend=biber,style=apa,sorting=ynt]{biblatex}
+
+% \bibliographystyle{plainnat}
+
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{multirow}
+\usepackage{mdframed}
+\usepackage{media9}
+
+\captionsetup[algorithm]{labelformat=empty}
+% \usepackage{algpseudocode}
+\usepackage{algorithmic}
+
+\newcommand{\ols}{\textsc{ols}}
+
+
+\newenvironment{itemize*}{
+\begin{itemize}
+\setlength{\parskip}{0em}
+\setlength{\topparskip}{0em}
+}
+{\end{itemize}}
+
+\newenvironment{enumerate*}{
+\begin{enumerate}
+\setlength{\parskip}{0em}
+\setlength{\topparskip}{0em}
+}
+{\end{enumerate}}
+
+
+% Commands
+\newcommand{\comment}[1]{}
+\newcommand{\techreport}[1]{#1}
+
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+\newcommand{\beqa}{\begin{eqnarray}}
+\newcommand{\eeqa}{\end{eqnarray}}
+\newcommand{\beqas}{\begin{eqnarray*}}
+\newcommand{\eeqas}{\end{eqnarray*}}
+
+\newcommand{\bit}{\begin{itemize}}
+\newcommand{\eit}{\end{itemize}}
+\newcommand{\bits}{\begin{itemize*}}
+\newcommand{\eits}{\end{itemize*}}
+\newcommand{\benum}{\begin{enumerate}}
+\newcommand{\eenum}{\end{enumerate}}
+\newcommand{\benums}{\begin{enumerate*}}
+\newcommand{\eenums}{\end{enumerate*}}
+\newcommand{\mybullet}{$\bullet$}
+
+%\newcommand{\BlackBox}{\rule{1.5ex}{1.5ex}}  % end of proof
+
+% names
+
+\newcommand{\dpullalg}{{\sc PullBackDPhi}}
+\newcommand{\projg}{{\sc ProjectG}}
+\newcommand{\glassoalg}{{\sc GroupLasso}}
+\newcommand{\embedalg}{{\sc EmbeddingAlg}}
+\newcommand{\flassoalg}{{\sc GroupLasso}}
+\newcommand{\flasso}{{\sc GroupLasso}}  % to be replaced with \flassoalg !!
+\newcommand{\LEalg}{{\sc LaplacianEigenmaps}}
+\newcommand{\rmalg}{{\sc RMetric}}
+\newcommand{\lapalg}{{\sc Laplacian}}
+\newcommand{\tppalg}{{\sc LocalPCA}}
+\newcommand{\ouralg}{{\sc ManifoldLasso}}
+
+
+\newcommand{\srdata}{{\bf SwissRoll}}
+\newcommand{\redata}{{\bf RigidEthanol}}
+\newcommand{\ethdata}{{\bf Ethanol}}
+\newcommand{\toldata}{{\bf Toulene}}
+\newcommand{\maldata}{{\bf Malonaldehyde}}
+
+%  math mode commands
+
+\newcommand {\argmax}[2]{\mbox{\raisebox{-1.7ex}{$\stackrel{\textstyle
+ {\rm #1}}{\scriptstyle #2}$}}\,}
+\newcommand{\nchoosem}[2]{\left(\!\!\!\begin{array}{c}#1\\#2\end{array}\!\!\!\right)}  % use \binom{}{} instead
+\newcommand{\fracpartial}[2]{\frac{\partial #1}{\partial  #2}}
+
+\newcommand{\bigOO}{{\cal O}}
+\newcommand{\dataset}{{\cal D}}
+\newcommand{\onevector}{{\mathbf 1}}
+\newcommand{\rrr}{{\mathbb R}}
+
+\newcommand{\M}{{\cal M}}
+\newcommand{\T}{{\cal T}}
+\newcommand{\txim}{\ensuremath{\T_{\xi_i}\M}} % tangent subspace
+\newcommand{\I}{{\cal I}} % set of indices for which to compute gradients
+
+\newcommand{\G}{{\cal G}} % dictionary
+\newcommand{\neigh}{{\cal N}}
+\newcommand{\X}{{\cal X}}
+\newcommand{\xb}{\mathbf{X}}  % matrices for glasso
+\newcommand{\tilx}{\tilde{x}}
+%\newcommand{\g}{\Fontauri{g}} % R metric as a form Fontauri not working!
+\newcommand{\g}{\mathbf{g}} % R metric as a form
+%\newcommand{\id}{\Fontauri{id}} % induced Euclidean metric as a form
+\newcommand{\id}{\mathbf{id}} % induced Euclidean metric as a form
+
+
+\newcommand{\proj}{\operatorname{Proj}}
+\newcommand{\trace}{\operatorname{trace}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\range}{\operatorname{span}}
+\newcommand{\rowrange}{\operatorname{rowspan}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\grad}{\operatorname{grad}}
+\newcommand{\supp}{\operatorname{supp}}
+
+\newcommand{\barbx}{\bar{\bar{X}}}
+\newcommand{\bhat}{\hat{\beta}}
+\newcommand{\zhat}{\hat{z}}
+\newcommand{\barw}{\bar{\epsilon}}
+\newcommand{\bbar}{\bar{\beta}}
+
+\newcommand{\E}{{\cal E}} %the error manifold
+\newcommand{\N}{{\cal N}} %a normal space
+\newcommand{\Ho}{{\cal H}} %the horizontal space of a map
+\newcommand{\V}{{\cal V}} %the vertical space of a map
+\newcommand{\B}{{\cal B}} %the base manifold
+\newcommand{\txm}{\ensuremath{\T_{\xi}\M}}
+\newcommand{\tbasis}{\mathbf{T}} % basis T
+\newcommand{\cp}{\text{cp}}
+\newcommand{\tstsbp}{{\sc TwoStageTSBP}}
+\newcommand{\tsalg}{{\sc TSLasso}}
+\newcommand{\tsbp}{{\sc TSBasisPursuit}}
+\newcommand{\embedts}{\textsc{EmbedTS}}
+\newcommand{\embedgrad}{{\sc EmbedGrad}}
+\captionsetup[algorithm]{labelformat=empty}
+\newtheorem{proposition}{Proposition}
+
+
+\tikzset{%
+  symbol/.style={
+    draw=none,
+    every to/.append style={
+      edge node={node [sloped, allow upside down, auto=false]{$#1$}}
+    },
+  },
+}
+
+\usepackage{tcolorbox}
+
+\tcbuselibrary{fitting}
+
+\definecolor{beamer@blendedblue}{rgb}{0.2,0.2,0.7}
+%\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+%\setbeamercolor{mycolor}{fg=RoyalBlue,bg=GreenYellow}
+%\setbeamercolor{frametitle}{bg=violet}
+%\setbeamercolor{background canvas}{bg=violet}
+\setbeamercolor{pink}{bg=pink}
+\setbeamercolor{turquoise}{bg=teal}
+\setbeamercolor{orange}{bg=violet}
+\captionsetup[subfigure]{labelformat=empty}
+
+\setbeamercolor{author}{bg=beamer@blendedblue,fg=white}
+\setbeamercolor{institute}{bg=beamer@blendedblue,fg=white}
+\setbeamercolor{date}{bg=beamer@blendedblue,fg=white}
+%\setbeamertemplate{page number in head/foot}[framenumber]%
+\setbeamertemplate{title page}
+{
+  \vbox{}
+  \vfill
+  \begin{centering}
+    \begin{beamercolorbox}[sep=8pt,center]{title}
+      \usebeamerfont{title}\inserttitle
+    \end{beamercolorbox}
+     \vskip14em\par
+    \begin{beamercolorbox}[sep=8pt,center]{author}
+      \usebeamerfont{author}\insertauthor
+    \end{beamercolorbox}
+    \vskip-.5em\par % change here
+    \begin{beamercolorbox}[sep=8pt,center]{institute}
+      \usebeamerfont{institute}\insertinstitute
+    \end{beamercolorbox}
+    \vskip-.5em\par
+    \begin{beamercolorbox}[sep=8pt,center]{date}
+      \usebeamerfont{date}\insertdate
+    \end{beamercolorbox}\vskip0.5em
+  \end{centering}
+  \vfill
+}
+
+
+
+
+\date{\today}
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+%\newtheorem{definition}[lemma]{Definition}
+%\newtheorem{proposition}[lemma]{Proposition}
+
