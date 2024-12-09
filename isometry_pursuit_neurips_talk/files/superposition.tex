@@ -1,0 +1,17 @@
+\begin{frame}{Superposition}
+\begin{itemize}
+    \item Interpretability research for transformers tries to understand the relationship between textual concepts and positions in the residual stream.
+    \item Neuron that fire in multiple contexts are known as {\it polysemantic}
+    \item In this talk, we implicitly focus on neurons whose weights are $W_{O}$
+    \item A residual stream with basis given by polysemantic neurons is said to exhibit {\it superposition}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Superposition geometry depends on sparsity}
+\begin{figure}
+    \centering
+    \includegraphics[width = 8cm]{img/superpositionandsparsity.png}
+    \caption*{Simulated data, one layer MLP,  $D = \|W_i\|^2 / \sum_j (\langle \frac{W_i}{\|W_i\|}, W_j \rangle)^2\; $ \citep{Elhage-ob}}
+    \label{fig:enter-label}
+\end{figure}
+\end{frame}
