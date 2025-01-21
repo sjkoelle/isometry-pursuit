@@ -82,15 +82,6 @@ We then show that this implies that the resultant loss is unchanged by unitary t
 \end{align}
 \end{proof}
 
-The value of $D$ is clearly obtained by $\beta$ orthonormal, since by Proposition \ref{prop:basis_pursuit_selection_invariance}, for $X$ orthogonal, without loss of generality 
-\begin{align}
-\beta_{dd'} = \begin{cases} 1 & d = d' \in \{ 1 \dots D\}  \\
-0 & \text{otherwise}
-\end{cases}.
-\end{align}
-Thus, we need to show that this is a lower bound on the obtained loss.
-
-
 \subsubsection{Proof of Proposition \ref{prop:unitary_selection}}
 \label{sec:local_isometry_proof}
 
@@ -102,10 +93,88 @@ Then $ S \subseteq S( \{\arg \min_{\beta \in \mathbb R^{D \times P}} \|\beta\|_{
  \end{proposition}
  
  \begin{proof}
+ 
+ Without loss of generality, we show that $[I_D 0]$ satisfies the KKT conditions for $X = [I_D X_{-S}]$
+ The KKT conditions are 
+ 
+\begin{itemize}
+\item Primal feasibility: $w(X, c) \beta = I_D$
+\item Stationarity: there exists a dual variable $\nu \in \mathbb{R}^{D \times D}$ such that $0 \in \partial \|\beta\|_{1,2} - w(X, c)^T \nu$  where $\partial$ is the subdifferential operator.
+\item Dual feasibility
+\item Complementary slackness
+\end{itemize}
 
+Stationarity: 
+\begin{align}
+\|\beta\|_{1,2} = \sum_{p = 1}^P \|\beta_{p.}\|_2.
+\end{align}
+Then
+\begin{align}
+\partial \|\beta\|_{1,2} = \begin{bmatrix}
+I_D
+v_{d+1} \\
+\dotsc \\
+v_P
+\end{bmatrix}
+where $v_p \in \mathbb R^{D}$ satisfies $\|v_p\|_2 \leq 1$.
+\end{align}
+We therefore must satisfy
+\begin{align}
+\begin{bmatrix}
+I_D \\
+w(X_{-S},c)^T
+\end{bmatrix}\nu  = \begin{bmatrix}
+I_D \\
+V_{-S}
+\end{bmatrix}
+\end{align}
+where $\nu \in \mathbb R^{D\times D}$.
+
+At this point we can see that in fact $I_D$ is an appropriate choice of $\nu$ by the boundary on the range of the normalized vector.
+ %%%%
 From the conditions in Definition \ref{def:symmetric_normalization}, normalized matrices will consist of vectors of maximum length (i.e. $1$) if and only if the original matrix also consists of vectors of length $1$.
 Such vectors will result in lower basis pursuit loss, since longer vectors in $X$ require smaller corresponding covectors in $\beta$ to equal the same result.
 Therefore, it remains to show that $\beta$ consisting of $D$ orthogonal vectors of length $1$ have lower loss compared with $\beta$ with $|S(\beta)| \geq D$ consisting of potentially non-orthogonal vectors of length $1$.
+
+We begin with a proposition on the loss obtained by unitary solution
+\begin{proposition}
+\label{prop:minimum_loss}
+Given a rank $D$ (i.e. invertible) matrix $X_S \in \mathbb R^{D \times D}, (\|\beta\|_{1,2} : \beta = X_S^{-1)) = D$
+The value of $D$ is  obtained by $\beta$ orthonormal.
+\end{proposition}
+\begin{proof}
+By Proposition \ref{prop:basis_pursuit_selection_invariance}, for $X$ orthogonal, without loss of generality 
+\begin{align}
+\beta_{dd'} = \begin{cases} 1 & d = d' \in \{ 1 \dots D\}  \\
+0 & \text{otherwise}
+\end{cases}.
+\end{align}
+\end{proof}
+
+We then show that this is a lower bound on the obtained loss.
+Since this solution is obtained by a unitary matrix, then the unitary solution will be in the solution set.
+
+To argue for this property, we claim that we can start with a non-D sparse solution, and through a sequence of penalty-preserving operations, eventually end up with a $D$ sparse (i.e.) isometry solution.
+Recall that we want to show that the D sparse solution is contained within the set of solutions.
+Assume we are given a solution $S'$. % prob should be S and the other one S^* or something
+$S$ could intersect $S'$, be contained by it, or be disjoint from it.
+Regardless, the operations we consider will be on $X_{S \cup S'}$.
+
+Consider the transformed matrix $X_S^{-1} X$
+By Proposition \ref{prop:basis_pursuit_loss_equivalence}, the loss accrued by the solution to $X_S^{-1} X$ will be equivalent to the loss accrued by the solution to $X$ (i.e. $X_{S'}$).
+Not only that, the support set of a solution to $X$ will also provide a solution to $X_{S}^{-1} X$, with coefficients given by $\beta_{S'} X_S$.
+That is, if $\beta$ is a a solution to $X$, then $\beta X_S$ is a solution to $X_S^{-1} X$.
+
+The nice thing about the transformed problem is we can load up the covectors in $S$ with the remaining coefficient.
+Let $y = I_D - X_S \beta_S X_S$.
+This is the residual given by the elements of the support that are not in $S$.
+Now $X_{S'} \beta_{S'} X_S = y$.
+
+%This feels like it needs to use the configuration of $X_S$ (i.e. the special piece of knowledge about orthants).
+
+%although we can maybe playthe same game with X_S >_.._<
+%Can I assume X_S = I_D?
+%While later we will show that the D sparse solution is contained within the solution in practice.
 
 The uniqueness of the solution bears attention.
 A well-known result in Lasso literature states that if the columns of $X$ are in so-called general position (meaning that no more than $k+1$ columns are contained within any $k$ dimensional subspace, with $k < D$), then the standard lasso solution is unique.
@@ -125,7 +194,8 @@ Non-unique solutions arise when every orthant of a $k$ dimension half space cont
 
 %we have at least two ways.  besides the above (classify non-unique solutions, consider moves that leverage the specific structure of the non-unique solution, I was also just thinking I could kind of start with solution, make moves, yadida
  %I was going to decrease norm everytime I took a \beta_p \otimes X_{.p} thing and regressed it on X_S = I_D.
-%Another way of saying our desired claim is, we want to show D = \|I_D\|_{1,2} = \|\beta_{S.} + \beta_{-S} \otimes X_{.-S}\|_{1,2} \leq \|\beta\|_{1,2}
+%There is a special property of our non-unique solutions
+%$D = \|I_D\|_{1,2} = \|\beta_{S.} + \beta_{-S} \otimes X_{.-S}\|_{1,2} \leq \|\beta\|_{1,2}$
 %Proceeding feature by feature iteratively actually increased norms sometimes if I recall.
 %But the above is clearly what we want to show and plausibly true.
  
