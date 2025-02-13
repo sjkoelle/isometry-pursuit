@@ -87,7 +87,7 @@ We then show that this implies that the resultant loss is unchanged by unitary t
 
  \begin{proposition}
 \label{prop:generalized_unitary_selection}
-Let $w_c$ be a normalization satisfying the conditions in Definition \ref{def:symmetric_normalization}.
+Let $w_c$ be a normalization satisfying the conditions in Definition %\ref{def:symmetric_normalization}.
 Let $X \in \mathbb R^{D \times P}$ contain a rank $D$ orthonormal submatrix $X_{.S} \in \mathbb R^{D\times D}$.
 Then $ S \subseteq S( \{\arg \min_{\beta \in \mathbb R^{D \times P}} \|\beta\|_{1,2} :  I_D = \; w(X,c) \beta\} \; D)$.
  \end{proposition}
@@ -116,8 +116,9 @@ v_{d+1} \\
 \dotsc \\
 v_P
 \end{bmatrix}
-where $v_p \in \mathbb R^{D}$ satisfies $\|v_p\|_2 \leq 1$.
 \end{align}
+where $v_p \in \mathbb R^{D}$ satisfies $\|v_p\|_2 \leq 1$.
+
 We therefore must satisfy
 \begin{align}
 \begin{bmatrix}
@@ -131,50 +132,41 @@ V_{-S}
 where $\nu \in \mathbb R^{D\times D}$.
 
 At this point we can see that in fact $I_D$ is an appropriate choice of $\nu$ by the boundary on the range of the normalized vector.
- %%%%
-From the conditions in Definition \ref{def:symmetric_normalization}, normalized matrices will consist of vectors of maximum length (i.e. $1$) if and only if the original matrix also consists of vectors of length $1$.
-Such vectors will result in lower basis pursuit loss, since longer vectors in $X$ require smaller corresponding covectors in $\beta$ to equal the same result.
-Therefore, it remains to show that $\beta$ consisting of $D$ orthogonal vectors of length $1$ have lower loss compared with $\beta$ with $|S(\beta)| \geq D$ consisting of potentially non-orthogonal vectors of length $1$.
-
-We begin with a proposition on the loss obtained by unitary solution
-\begin{proposition}
-\label{prop:minimum_loss}
-Given a rank $D$ (i.e. invertible) matrix $X_S \in \mathbb R^{D \times D}, (\|\beta\|_{1,2} : \beta = X_S^{-1)) = D$
-The value of $D$ is  obtained by $\beta$ orthonormal.
-\end{proposition}
-\begin{proof}
-By Proposition \ref{prop:basis_pursuit_selection_invariance}, for $X$ orthogonal, without loss of generality 
-\begin{align}
-\beta_{dd'} = \begin{cases} 1 & d = d' \in \{ 1 \dots D\}  \\
-0 & \text{otherwise}
-\end{cases}.
-\end{align}
+ 
 \end{proof}
 
-We then show that this is a lower bound on the obtained loss.
-Since this solution is obtained by a unitary matrix, then the unitary solution will be in the solution set.
+\begin{proposition}
+The SCS algorithm identities the minimum 2-norm solution
+\end{proposition}
+\begin{proof}
+% One thing to note is that the augmented Lagrangians of both constrained and unconstrained optimization problems are the same (check?)
+The splitting conic solver algorithm, also known as alternative direction method of multipliers (ADMM), makes use of the follow "split augmented Lagrangian" objective function
+\begin{align}
+\label{eq:admm_lagrangian}
+\mathcal L_\rho (X, Z \beta, \lambda_1) &= \|\beta\|_{1,2} + \lambda_1^T (I_D - X \beta) + \lambda_2^T (\beta - Z)  +  \rho \| I_D - X \beta\|_2^2 + \rho \|\beta - Z\|_2^2
+\end{align}
+This function provably has the same minimizer over $\beta$ as \ref{eq:basis_pursuit}, but is more amenable to optimization.
+By differentiating this expression w.r.t. $\beta$ to write out its update rule, we show that the update requires computing a pseudoinverse.
+This pseudoinverse is in fact chosen to be a ridge regression pseudoinverse (i.e. $(X^T X + \Lambda)^{-1} $) which, as the closed form solution for ridge regression, for $\|\beta\|_2^2$ minimization.
 
-To argue for this property, we claim that we can start with a non-D sparse solution, and through a sequence of penalty-preserving operations, eventually end up with a $D$ sparse (i.e.) isometry solution.
-Recall that we want to show that the D sparse solution is contained within the set of solutions.
-Assume we are given a solution $S'$. % prob should be S and the other one S^* or something
-$S$ could intersect $S'$, be contained by it, or be disjoint from it.
-Regardless, the operations we consider will be on $X_{S \cup S'}$.
 
-Consider the transformed matrix $X_S^{-1} X$
-By Proposition \ref{prop:basis_pursuit_loss_equivalence}, the loss accrued by the solution to $X_S^{-1} X$ will be equivalent to the loss accrued by the solution to $X$ (i.e. $X_{S'}$).
-Not only that, the support set of a solution to $X$ will also provide a solution to $X_{S}^{-1} X$, with coefficients given by $\beta_{S'} X_S$.
-That is, if $\beta$ is a a solution to $X$, then $\beta X_S$ is a solution to $X_S^{-1} X$.
 
-The nice thing about the transformed problem is we can load up the covectors in $S$ with the remaining coefficient.
-Let $y = I_D - X_S \beta_S X_S$.
-This is the residual given by the elements of the support that are not in $S$.
-Now $X_{S'} \beta_{S'} X_S = y$.
+\begin{proposition}
+Equation \ref{eq:admm_lagrangian} is strongly convex.
+\end{proposition}
+\begin{proof}
+\end{proof}
 
-%This feels like it needs to use the configuration of $X_S$ (i.e. the special piece of knowledge about orthants).
+Since the squared $2$-norm is strongly convex, this minimizer is unique.
+%To describe ADMM, we write out the augmented Lagrangian.
+%\begin{align}
+%\mathcal L_\rho (X, \beta, \lambda) = \|\beta\|_{1,2} + \lambda (I_D - X \beta) + \rho \| I_D - X \beta\|_2^2
+%\end{align}
+\end{proof}
 
-%although we can maybe playthe same game with X_S >_.._<
-%Can I assume X_S = I_D?
-%While later we will show that the D sparse solution is contained within the solution in practice.
+\begin{proposition}
+The minimizing solution is contained within the estimated set
+\end{proposition}
 
 The uniqueness of the solution bears attention.
 A well-known result in Lasso literature states that if the columns of $X$ are in so-called general position (meaning that no more than $k+1$ columns are contained within any $k$ dimensional subspace, with $k < D$), then the standard lasso solution is unique.
@@ -182,68 +174,6 @@ This result has been generalized to show that the lasso solution is unique if an
 That is, the rowspan of $X$ must not intersect too many corners of the $P$ dimensional cube.
 In our case, at least the corner among indices $S$ is obtainable, so this codimension is at least one.
 Since we can rewrite our multitask problem as a block sparse problem with grouping across blocks, we can see that after a point, additional dimensions mandate that the solution be non-unique.
-
-Notwithstanding the possible presence of non-unique solutions, we would like to show that the isometry solution is on of the solutions.
-Clearly, the isometry solution has loss $D$.
-We therefore need only to show that all solutions have loss greater than or equal to $D$.
-Our general procedure will be to take a solution and operate on it to find a sparser solution of equal loss, and show that eventually a $D$ sparse solution can be arrived at, where the output is unique.
-
-In order to demonstrate the generalizabiliity of this procedure and the sort of moves which are permitted, we need to represent non-unique solutions in a sufficiently general way.
-Non-unique solutions arise when every orthant of a $k$ dimension half space contain a vector.
-
-
-%we have at least two ways.  besides the above (classify non-unique solutions, consider moves that leverage the specific structure of the non-unique solution, I was also just thinking I could kind of start with solution, make moves, yadida
- %I was going to decrease norm everytime I took a \beta_p \otimes X_{.p} thing and regressed it on X_S = I_D.
-%There is a special property of our non-unique solutions
-%$D = \|I_D\|_{1,2} = \|\beta_{S.} + \beta_{-S} \otimes X_{.-S}\|_{1,2} \leq \|\beta\|_{1,2}$
-%Proceeding feature by feature iteratively actually increased norms sometimes if I recall.
-%But the above is clearly what we want to show and plausibly true.
- 
-% We have $\|I_D\|_{1,2} = \|w(X, c)\beta\|_{1,2}$.
-% Then I'd love to say $\|I_D\|_{1,2} \leq \|w(X_c)\|_{\infty,2} \|\beta\|_{1,2}$
-
-
-%This approach (suggested by ChatGPT) is logically unsound
-%Each basis vector $e_d$ in $I_D$ is constructed as a sum $e_d = \sum_{p = 1}^P \beta_{pd} X_{.d}$.
-%Thus, 
-%\begin{align}
-%\|e_d\| &= \|\sum_{p=1}^P \beta_{pd} X_{.d}\|
-%\end{align}
-%We can use the triangular inequality to get the bound
-%\begin{align}
-%\|\sum_{p=1}^P \beta_{pd} X_{.d}\| &\leq \sum_{p=1}^P \|\beta_{pd} X_{.d}\| \\
-%&= \sum_{p=1}^P | \beta_{pd}| \|X_{.d}\| \\
-%&= \sum_{p=1}^P | \beta_{pd}| 
-%\end{align}
-%Then, since $\|e_d\|  = 1$ we have that $\sum_{p=1}^P | \beta_{pd}| \geq 1$.
-%This doesn't imply that $\sum_{p=1}^P \|\beta_{p.}\| \geq D$.
-%Take for example when you have a $2\times 2$ matrix with entires $.5$.
-%but this couldn't be the inverse
-
-%are the values in the inverse themselves bounded?
-
-%The QR decomposition approach has a nice intuition.
-%But there was a part of it that broke down
-%I forget where however...
-
-
-
-Invertible matrices $X_{.S}$ admit QR decompositions $\tilde X_{.S} = QR$ where $Q$ and $R$ are orthonormal and upper-triangular matrices, respectively \citep{Anderson1992-fb}.
-Denoting $Q$ to be composed of basis vectors $[e_1 \dots e_D]$, the matrix $R$ has form
-\begin{align}
-R = \begin{bmatrix}
-\langle e_1, X_{.S_1} \rangle & \langle e_1,  X_{.S_2} \rangle  &\dots &  \langle e_1,  X_{.S_D} \rangle \\
-0 & \langle e_d,  X_{.S_2} \rangle & \dots  &  \langle e_2,  X_{.S_D} \rangle\\
-0 & 0 & \dots & \dots  \\
-\dots & \dots & \dots & \dots \\
-0 & 0 & \dots & \langle e_D, X_{.S_D} \rangle 
-\end{bmatrix}.
-\end{align}
-Thus, $|R_{dd} | \leq \|X_{.{S_{d}}}\|_2$ for all $d \in [D]$, with equality obtained only by orthonormal matrices.
-On the other hand, by Proposition \ref{prop:basis_pursuit_selection_invariance}, $l_c(X) = l_c(R)$ and so $\|\beta\|_{1,2} = \|R^{-1}\|_{1,2}$.
-Since $R$ is upper triangular it has diagonal elements $\beta_{dd} = R_{dd}^{-1}$ and so $\|\beta_{d.}\| \geq \| X_{.{S_d}}\|^{-1} = 1$.
-That is, the penalty accrued by a particular covector in $\beta$ is bounded from below by $1$ - the inverse of the length of the corresponding vector in $X_{.S}$ - with equality occurring only when $X_{.S}$ is orthonormal.
-\end{proof}
 
 \newpage
 
