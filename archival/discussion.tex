@@ -1,0 +1,24 @@
+\section{Discussion}
+\label{sec:discussion}
+
+We have shown that multitask basis pursuit can help select isometric submatrices from appropriately normalized wide matrices.
+This approach - isometry pursuit - is a convex alternative to greedy methods for selection of orthonormalized features from within a dictionary.
+Isometry pursuit can be applied to diversification and geometrically-faithful coordinate estimation.
+Our experiments exemplify these applications, but more can be done.
+One potential application is diversification in recommendation systems \citep{Carbonell2017-gi, Wu2019-uk, Langchain} and other retrieval systems such as in RAG \citep{Gao2023-cn, Pickett2024-ad, In2024-um, Weiss2024-xm, Vectara}.
+Another is decomposing interpretable yet overcomplete dictionaries in transformer residual streams, with each token considered as generating its own tangent space \citep{templeton2024scaling, Makelov2024-bw}.
+
+Compared with the greedy algorithms used in such areas \citep{Carbonell1998-ji, Barioni, Drosou, Qin2012-ok, KUNAVER2017154, Guo-shengbo, Abdool,Yu2016AGA,  Huang2024-wr, Pickett2024-ad}, the convex reformulation may add speed and convergence to a global minima.
+The comparison of greedy \cite{Mallat93-wi, Mallat, Pati-93, Tropp05-ml} and convex \citep{Chen2001-hh, Tropp06-sg,Chen2006TheoreticalRO} basis pursuit formulations has a rich history, and theoretical understanding of the behavior of this approximation is evolving.
+Diversification problems have been cited as NP-hard, and isometry pursuit can be considered analogous to them in the sense of basis pursuit and the lasso against best subset selection, with the caveat that best subset selection of the basis pursuit loss minimizer isn't totally equivalent to isometry pursuit even though they share the same unique optimum.
+Characterization of solutions resulting from removal of the restriction $P = D$ on the conditions of Proposition \ref{prop:unitary_selection} may help justify the second selection step.
+That the solution of a lasso problem can sometimes be a non-singleton set is well-known \citep{Osborne2000OnTL, DOSSAL2012117, Chrtien2011OnTG, Tibshirani2012TheLP, Ewald2017OnTD, Ali2018TheGL, Schneider2020-qt, Mishkin2022TheSP,Dupuis2019TheGO,Debarre2020OnTU,Everink2024TheGA}.
+Perhaps surprisingly, it appears empirically that for isometry pursuit that this can occur even when the design matrix is not in general position.
+
+This convex set appears to contain the brute solution of a related problem.
+The convergence of SCS algorithm to the 2-norm minimizing solution due to the Lagrangian dual constraint penalty and the convexity of the loss minimizer preimage suggest that a related two stage procedure always succeeds in identifying the brute $\|\|_{1,2}$ minimizer.
+Related conditions have been discussed in \citet{Donoho2006ForML, Mishkin2022TheSP}, and we examine this topic experimentally in Section \ref{sec:deep_dive}.
+
+Algorithmic variants include the multitask lasso \citep{ Hastie2015-qa} extension of our estimator, as well as characterization of $D$ function selection within $\mathbb R^B$.
+Tangent-space specific variants have been studied in more detail in \citet{Koelle2022-ju, Koelle2024-no} with additional grouping across datapoints, and a corresponding variant of the isometry theorem that missed non-uniqueness was claimed in \citet{Koelle2022-lp}.
+Comparison of our loss with curvature - whose presence prohibits $D$ element isometry - could prove fertile, as could comparison with the so-called restricted isometry property used to show guaranteed recovery at fast convergence rates in supervised learning \citep{Candes2005-dd, Hastie2015-qa}.

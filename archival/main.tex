@@ -1,0 +1,51 @@
+\documentclass{article}
+
+\usepackage[final]{neurips_2025}
+\usepackage{makecell}
+\bibliographystyle{unsrtnat}
+\input{config.tex}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\N}{\mathcal{N}}
+
+
+\title{Isometry pursuit}
+
+\author{%
+  Samson Koelle \\
+  Amazon  \\
+  koelle@amazon.com
+  \And
+  Marina Meila \\
+  Department of Statistics\\
+  University of Washington \\
+  mmp@uw.edu
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Isometry pursuit is a convex algorithm for identifying orthonormal column-submatrices of wide matrices.
+It consists of a normalization that shrinks lengths of columns proportionally to the absolute value of the log of their length, followed by multitask basis pursuit optimization to select the longest and most orthogonal vectors.
+We provide theoretical and experimental results justifying this method, including a proof with realistic assumptions that isometric submatrices are contained within the obtained support.
+For problems involving coordinate selection and diversification, Isometry Pursuit offers a synergistic alternative to greedy and brute force search.
+\end{abstract}
+
+\footnotetext[1]{Work conducted outside of Amazon.}
+
+\input{introduction.tex}
+\input{background.tex}
+\input{method.tex}
+\input{experiments.tex}
+\input{discussion.tex}
+
+\newpage
+
+%\bibliography{ref}
+
+\newpage
+
+\input{supplement.tex}
+
+\end{document}
