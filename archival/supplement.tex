@@ -40,8 +40,6 @@ Greedy algorithms are computationally expedient but can get stuck in local optim
 \end{algorithmic}
 \end{algorithm}
 
-\newpage
-
 \subsection{Proofs}
 \label{sec:proofs}
 
@@ -168,12 +166,6 @@ Since the squared $2$-norm is strongly convex, this minimizer is unique.
 The minimizing solution is contained within the estimated set
 \end{proposition}
 
-The uniqueness of the solution bears attention.
-A well-known result in Lasso literature states that if the columns of $X$ are in so-called general position (meaning that no more than $k+1$ columns are contained within any $k$ dimensional subspace, with $k < D$), then the standard lasso solution is unique.
-This result has been generalized to show that the lasso solution is unique if and only if the codimension of the intersection of the row span of $X$ with the $P$ dimensional unit cube does not exceed the dimension of the row span of $X$.
-That is, the rowspan of $X$ must not intersect too many corners of the $P$ dimensional cube.
-In our case, at least the corner among indices $S$ is obtainable, so this codimension is at least one.
-Since we can rewrite our multitask problem as a block sparse problem with grouping across blocks, we can see that after a point, additional dimensions mandate that the solution be non-unique.
 
 \newpage
 
