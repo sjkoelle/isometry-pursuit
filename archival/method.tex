@@ -79,17 +79,33 @@ Finally, the parameter $c$ grants control over the width of the basin, which may
 
 \begin{figure}
 \centering
-\subcaptionbox{Ground truth loss \label{cat}}
+% First row of images
+\subcaptionbox{Raw data\label{fig:data}}
+{\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/data.png}}
+\subcaptionbox{Selected subset\label{fig:selection}}
+{\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/selection.png}}
+\subcaptionbox{Normalization step\label{fig:normalization}}
+{\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/normalization.png}}
+
+% Second row of images
+\subcaptionbox{Ground truth loss\label{fig:gt_loss}}
 {\includegraphics[width = .32\textwidth]{../figures/Figure_1a_bw.png}}
-\label{fig:gt_loss}
-\subcaptionbox{Normalized length as a function of unnormalized length \label{elephant}}
+\subcaptionbox{Normalized length vs. unnormalized length\label{fig:normalized_length}}
 {\includegraphics[width = .32\textwidth]{../figures/Figure_1b_bw.png}}
-\subcaptionbox{Basis pursuit loss \label{snootfellow}}
+\subcaptionbox{Basis pursuit loss\label{fig:bp_loss}}
 {\includegraphics[width = .32\textwidth]{../figures/Figure_1c_bw.png}}
-\caption{Plots of ground truth loss, normalized length, and basis pursuit loss for different values of $c$ in the one-dimensional case $D = 1$.
-The two losses are equivalent in the one-dimensional case.}
+
+\caption{\ref{fig:data} raw data $X$ represented as column-vectors.
+ \ref{fig:selection} a isometric subset - the identification of which is our objective.
+ \ref{fig:normalization} the vectors after normalization so that vectors of length $1$ maintain longest length after normalization.
+ \ref{fig:gt_loss} our ground truth loss function.
+ \ref{fig:normalized_length} normalized length used to rescale Figure \ref{fig:data} to get vectors in Figure \ref{fig:normalization}.
+ \ref{fig:bp_loss}d basis pursuit loss for different values of $c$ in the one-dimensional case $D = 1$. 
+This loss is equivalent to that shown in Figure \ref{fig:gt_loss} in the one-dimensional case.
 \label{fig:losses}
+}
 \end{figure}
+
 
 \subsection{Isometry pursuit}
 
@@ -159,16 +175,9 @@ $X =
 1 & 0 & \frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2}  \\
 0 & 1 & \frac{\sqrt{2}}{2} & \frac{\sqrt{-2}}{2}  
 \end{bmatrix}$
-- can be understood as resulting from the rotation invariance Proposition \ref{prop:unitary_selection}, but more surprising examples exist.
+results from the rotation invariance Proposition \ref{prop:unitary_selection}, but more subtle examples exist.
  
-%While this Proposition falls short of showing that an orthonormal submatrix will be selected should one be present, it provides intuition justifying the preferential efficacy of \isometrypursuit~ on real data.
-
-
-
-%The requirement for existence of a response variable $y$ leading to nonunique beta is that the rowspan of the $X$ intersects the $P-1$ dimensional unit hypercube in $P$ dimensions at a point with codimension larger than the dimension of the design matrix itself.
-%Here, codimension is defined as the codimension of a surface, not the linear algebra codimension.
-%That is, the rowspan of $X$ must not intersect too many corners of the $P$ dimensional cube.
-%For our setting, we can rewrite the multitask basis pursuit objective as $y  = \vec(I_D) \in \mathbb R^{PD}$
+ %For our setting, we can rewrite the multitask basis pursuit objective as $y  = \vec(I_D) \in \mathbb R^{PD}$
 %\begin{align}
 %y =
 %    \begin{bmatrix}
@@ -183,27 +192,26 @@ $X =
 %with grouping across replicates of $X$.
 %If $row(X)$ intersects the 1-ball in a location with codimension $C$, then the repeated $X$ intersects this higher-dimensional 2-1 ball in a location with codimension $D * (C -1 ) + 1$ since $C - 1$ is the rank-deficiency induced by the structure of the matrix $X$ rather than intrinsic to the $D-1$ dimensional ball.
 
-
-% I dont think this is true %A grreater number of tasks increases the codimension of the combined matrix and can thus enable non-unique solutions for design matrices that would satisfy uniqueness for basis pursuit.
-% Note that that given the presence of an isometry solution, for which by the rotation invariance Proposition \ref{prop:basis_pursuit_selection_invariance}, $C$ is at least $D$.
-
-%A well-known result in Lasso literature states that if the columns of $X$ are in so-called general position (meaning that no more than $k+1$ columns are contained within any $k$ dimensional subspace, with $k < D$), then the standard lasso solution is unique.
-
 \subsection{Optimization}
 
-When the solution is non-unique, we naturally wonder what are the properties of the solution that we end up with, and if that solution has some stable characterization or is random across replicates.
-The typical response to considerations of non-uniqueness in such problems is the characterization of the "min-norm" solution.
-Group lasso's uniqueness has been studied in \citet{Mishkin2022-yf} and lasso's uniqueness has been studied in \citet{Tibshirani2012-vw}.
-While in \citet{Tibshirani2012-vw} the selection of the minimum l2-norm solution (the "min-norm") solution among the lasso solution was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, \citet{Mishkin2022-yf} assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
+A typical response to considerations of non-uniqueness in such problems is the characterization of the "min-norm" solution - that is, the solution which minimizes the $\ell_2$ norm.
+This implicit regularization assumption is reasonable.
+For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum l2-norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf} simply assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
+Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) stably estimates the min-norm solution when initialized at $0$, but we leave theoretical and experimental proof of this feature of this feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our final proposition.
 
-Behavior of estimating algorithms in the of particular interest given the presence of non-unique solutions.
-The computational estimation of the isometry pursuit solution is of particular interest because of the increased potential for non-unique solutions that comes with the increased number of tasks.
-
-
+\begin{proposition}
+Let $S_{IP}^{\ell_2} (X)$ be the min-norm Isometry Pursuit solution.
+Let $w_c$ be a normalization satisfying the conditions in Definition \ref{def:symmetric_normalization}.
+Let $X \in \mathbb R^{D \times P}$ contain an orthonormal $D \times D$ matrix $X_S$.
+Then $S \subseeteq S_{IP}^{\ell_2} (X)$.
+\label{prop:two_stage}
+\end{proposition}
 
 \subsection{Two-stage isometry pursuit}
 
-Since we cannot ensure either that $|\widehat {  S}| = D$ or that a orthonormal submatrix $X_{.S}$ exists, we first use the convex problem to prune and then apply brute search upon the substantially reduced feature set.
+Proposition \ref{prop:two_stage} suggests the following algorithm, which first uses the convex problem to prune and then apply brute search upon the substantially reduced feature set.
+Similar two-stage approaches are standard in the Lasso literature \cite{Hesterberg2008-iy, Koelle2022-ju}.
+This method forms our practical isometry estimator, and is discussed further in Sections \ref{sec:discussion} and \ref{sec:deep_dive}.
 
 \begin{algorithm}[H]
 \caption{\tsip(Matrix ${X} \in \mathbb{R}^{D \times P}$, scaling constant $c$)}
@@ -214,5 +222,6 @@ Since we cannot ensure either that $|\widehat {  S}| = D$ or that a orthonormal 
 \end{algorithmic}
 \end{algorithm}
 
-Similar two-stage approaches are standard in the Lasso literature \cite{Hesterberg2008-iy}.
-This method forms our practical isometry estimator, and is discussed further in Sections \ref{sec:discussion} and \ref{sec:deep_dive}.
+This approach is guaranteed to select an isometric submatrix should one exist.
+In fact, it will identify the brute force minimizer of the corresponding lasso dual problem.
+Note however that if an isometric column submatrix does not exist, then it will not identify the optimum of Program \ref{prog:ground_truth}, since the lasso objective and the singular value objective do not necessarily share a minimizer for all choices of $X$.
