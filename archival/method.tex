@@ -8,6 +8,7 @@ We finally give a brute post-processing method for ensuring that the solution is
 \subsection{Ground truth}
 \label{sec:ground_truth}
 
+We first introduce a novel ground truth objective function against which we measure the success of our algorithm.
 We'd like a ground truth objective that is minimized uniquely by orthonormal matrices, invariant under rotation, and depends on all the singular values of the matrix.
 Deformation \citep{Kohli2021-lr} uses only the extremal eigenvalues, while nuclear norm and log-determinant \citep{Boyd2004-ql} and are not uniquely minimized at unitarity.
 We therefore introduce an alternative ground truth objective that satisfies the above desiderata.
