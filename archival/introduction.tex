@@ -2,27 +2,31 @@
 \label{sec:introduction}
 
 Many real-world problems may be abstracted as selecting a subset of the columns of a matrix representing stochastic observations or analytically exact data.
-This paper focuses on a simple such problem that appears in interpretable learning and diversification.
+This paper focuses on a simple such problem.
 Given a rank $D$ matrix $ X \in \mathbb R^{D \times P}$ with $P > D$, select a square submatrix $ X_{. S}$ where subset $ S \subset [P]$ satisfies $| S| = D$ that is as orthonormal as possible.
 
-This problem arises in interpretable learning specifically because while the coordinate functions of a given feature space may have no intrinsic meaning, it is sometimes possible to generate a dictionary of interpretable features which may be considered as potential parametrizing coordinates.
-When this is the case, selection of candidate interpretable features as coordinates can take the above form.
+This best subset selection problem arises in applications like interpretable learning and diversification.
+In the former case, selection of candidate parameterizing features from an interpretable dictionary can take the above form \citep{5895106, NEURIPS2019_6a10bbd4, Kohli2021-lr, Jones2007-uc}.
 While implementations vary across data and algorithmic domains, identification of such coordinates generally aids mechanistic understanding, generative control, and statistical efficiency.
-Greedy approaches for identification of isometries have been exposited in \citet{5895106, NEURIPS2019_6a10bbd4, Kohli2021-lr, Jones2007-uc}.
+Diversification, rather than being concerned with selecting a uncorrelated set of features, seeks to select a dissimilar set of data points, for example in order to create balanced set of search results.
+The variety of measures used to assess diversity of each subset exceeds even the not exactly well-defined idea of orthonormalness.
+However, across cases, due to the intractibility of brute force calculations, greedy selection approaches have predominated.
 
-Diversification, rather than being concerned with selecting a uncorrelated set of features, seeks to select a uncorrelated set of data points.
-This type of task is for example performed to create a balanced set of search results.
-Once again, due to the intractibility of brute force calculations, greedy approaches have predominated.
+% reedy approaches for identification of orthonormal submatrices have been exposited in \citet{5895106, NEURIPS2019_6a10bbd4, Kohli2021-lr, Jones2007-uc}.
 
-Practical use and theoretical assessment of $\ell 1$ sparsity-based convex relaxations of otherwise-intractable best subset selection problems has attracted significant interest.
-The "spikey corners" of the $\ell 1$ norm induce a pruning effect in lasso regularization, and a pruning effect is also evident in the limiting case of basis pursuit that is extremal with respect to the Lagrangian duality.
-Statistical literature has included consistency and convergence rate analysis in the presence of noise with respect to some underlying noise model and ground truth, as well purely algorithmic analyses such as those that seek to understand the relation of a relaxed program to its corresponding best subset selection problem.
+Convex relaxations of best subset selection problems can provide a tractable and performant alternative to greedy optimization. 
+Such a reformulation is said to be exact if the solution to the convex problem provides a solution to the non-convex problem.
+Often, a reformulation will be exact over some subset of the algorithmic input space.
+If an optimization problem is NP-hard, then an exact relaxation over the entire input space does not exist.
+Nevertheless, whether by tightness of the relaxation or likelihood of membership within this favored set, convex relaxations have enjoyed broad appeal.
+%A common approach is to use $\ell 1$ sparsity as an alternative to $\ell 0$.
+%The spikey corners of $\ell 1$ norm induce a pruning effect in lasso regularization, as well as in the limiting case of basis pursuit that is extremal with respect to the Lagrangian duality.
+%Statistical literature has included consistency and convergence rate analysis in the presence of noise with respect to some underlying noise model and ground truth, as well purely algorithmic analyses such as those that seek to understand the relation of a relaxed program to its corresponding best subset selection problem.
 
-This paper, part of the latter program, shows that an adapted version of the algorithm in \citet{Koelle2024-no} leads to a convex procedure for finding isometries.
+This paper shows that an adapted version of the algorithm in \citet{Koelle2024-no} leads to a convex procedure for finding isometries.
 The insight leading to isometry pursuit is that multitask basis pursuit applied to an appropriately normalized $ X$ selects orthonormal submatrices.
 This normalization on vectors in $\mathbb R^D$ log-symmetrizes length and favors those closer to unit length.
 Multitask basis pursuit then selects a sparse orthogonal subset that are orthogonal.
-We provide theoretical results that formalize this intuition, and give experimental results on isometry selection and diversification that exhibit the practical features of the proposed algorithm.
-Together, our results show the usefulness of isometry pursuit as a trimming procedure prior to brute force search for diversification and interpretable coordinate selection.
+We provide theoretical results that formalize this intuition, and give that exhibit the the usefulness of isometry pursuit as a trimming procedure prior to brute force search for diversification and interpretable coordinate selection.
 
  \footnotetext[2]{Code is available at \url{https://github.com/sjkoelle/isometry-pursuit}.}
