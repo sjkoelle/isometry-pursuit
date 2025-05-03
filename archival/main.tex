@@ -27,9 +27,10 @@
 
 \begin{abstract}
 Isometry pursuit is a convex algorithm for identifying orthonormal column-submatrices of wide matrices.
-It consists of a normalization that shrinks lengths of columns proportionally to the absolute value of the log of their length, followed by multitask basis pursuit optimization to select the longest and most orthogonal vectors.
+It consists of vector normalization followed by multitask basis pursuit.
+Applied to Jacobians of putative coordinate functions, it helps identity isometric embeddings from within interpretable dictionaries.
 We provide theoretical and experimental results justifying this method, including a proof with realistic assumptions that such isometric submatrices, should they exist, are contained within the obtained support.
-For problems involving coordinate selection and diversification, Isometry Pursuit is therefore a synergistic alternative to greedy and brute force search.
+For problems involving coordinate selection and diversification, it offers a synergistic alternative to greedy and brute force search.
 \end{abstract}
 
 \footnotetext[1]{Work conducted outside of Amazon.}
