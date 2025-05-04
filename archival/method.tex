@@ -8,11 +8,9 @@ We finally give a brute post-processing method for ensuring that the solution is
 \subsection{Ground truth}
 \label{sec:ground_truth}
 
-We first introduce a novel ground truth objective function against which we measure the success of our algorithm.
-We'd like a ground truth objective that is minimized uniquely by orthonormal matrices, invariant under rotation, and depends on all the singular values of the matrix.
-Deformation \citep{Kohli2021-lr} uses only the extremal eigenvalues, while nuclear norm and log-determinant \citep{Boyd2004-ql} and are not uniquely minimized at unitarity.
-We therefore introduce an alternative ground truth objective that satisfies the above desiderata.
-We will use this objective as the ground truth against which we evaluate our approach.
+We'd like a ground truth objective to be minimized uniquely by orthonormal matrices, invariant under rotation, and depend on all changes in the matrix.
+Deformation \citep{Kohli2021-lr} and nuclear norm \citep{Boyd2004-ql} use only a subset of the differential's information and are not uniquely minimized at unitarity, respectively.
+We therefore introduce an alternative ground truth objective that satisfies the above desiderata and has convenient connections to isometry pursuit.
 
 This ground truth objective is
 \begin{align}
@@ -72,6 +70,7 @@ q_c: \mathbb R^D  &\to \mathbb R^+ \\
 v  &\mapsto \frac{e^{\|v\|_2^c} + e^{\|v\|_2^{-c}}}{2e}.
 \label{eq:normalization}
 \end{align}
+
 Besides satisfying the conditions in Definition \ref{def:symmetric_normalization}, this normalization has some additional nice properties.
 First, $q$ is convex.
 Second, it grows asymptotically log-linearly.
@@ -87,8 +86,6 @@ Finally, the parameter $c$ grants control over the width of the basin, which may
 {\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/selection.png}}
 \subcaptionbox{Normalization step\label{fig:normalization}}
 {\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/normalization.png}}
-
-% Second row of images
 \subcaptionbox{Ground truth loss\label{fig:gt_loss}}
 {\includegraphics[width = .32\textwidth]{../figures/Figure_1a_bw.png}}
 \subcaptionbox{Normalized length vs. unnormalized length\label{fig:normalized_length}}
@@ -117,15 +114,37 @@ Define the multitask basis pursuit penalty
 \| \cdot \|_{1,2}: \mathbb R^{P \times D} &\to \mathbb R^+ \\ 
 \beta &\mapsto  \sum_{p=1}^P  \|\beta_{p.}\|_2.
 \end{align}
-Given a matrix $Y \in \mathbb R^{D \times D}$, the multitask basis pursuit solution is
+Given a matrix $Y \in \mathbb R^{D \times D}$, the multitask basis pursuit solutions are
 \begin{align}
 \label{prog:multitask_basis_pursuit}
-\widehat \beta_{MBP} (X, Y)  := \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \;Y =  X \beta.
+\widehat \mathcal \beta_{MBP} (X, Y)  := \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \;Y =  X \beta.
 \end{align}
+
+Note that multitask basis pursuit solution is not unique under more relaxed conditions than for standard basis pursuit.
+Recall that, given a design matrix $X$, there exists a response variable $y$ such that the lasso admits a non-unique solution if and only if the rowspan of the design matrix $X$ contains a sufficient codimension edge of the $p$ dimensional hypercube \citep{JMLR:v23:21-0420}.
+This condition generalizes the previously introduced general position condition - that affinely independent columns of the design matrix guarantee non-uniqueness.
+However, for Isometry Pursuit, non-unique solutions may occur even when this condition is satisfied.
+A simple example -
+$X =
+\begin{bmatrix}
+1 & 0 & \frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2}  \\
+0 & 1 & \frac{\sqrt{2}}{2} & \frac{\sqrt{-2}}{2}  
+\end{bmatrix}$
+results from the rotation invariance Proposition \ref{prop:unitary_selection}, but more subtle examples exist.
+We therefore define
+\begin{align}
+\widehat \beta^{\ell_2}_{MLP} (X,Y) = \arg \min \|\beta\|_F : \beta \in \mathcal \beta_{MBP} (X, Y) .
+\end{align}
+By the strong convexity of the $\ell_2$ norm, $\widehat \beta^{\ell_2}_{MLP} (X,Y)$ is well defined.
+
+This implicit regularization assumption is reasonable.
+For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum l2-norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf} simply assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
+Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) stably estimates the min-norm solution when initialized at $0$, but we leave theoretical and experimental proof of this feature of this feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our final proposition.
+
 Isometry pursuit is then given by
 \begin{align}
 \label{prog:isometry_pursuit}
-\widehat \beta_c ( X) := \widehat \beta_{MBP} ( w(X,c), I_D )
+\widehat \beta_c ( X) := \widehat \beta_{MBP}^{\ell_2} ( w(X,c), I_D )
 \end{align}
 where $I_D$ is the $D$ dimensional identity matrix and recovered functions are the indices of the dictionary elements with non-zero coefficients.
 That is, they are given by $S(\beta)$ where
@@ -137,7 +156,7 @@ S: \mathbb{R}^{P \times D} &\to \binom{[P]}{D} \\
 \caption{\isometrypursuit(Matrix ${X} \in \mathbb{R}^{D \times P}$, scaling constant $c$)}
 \begin{algorithmic}[1]
 \STATE {Normalize} $X_c = w({X},c)$
-\STATE {Optimize} $\widehat \beta = \widehat \beta_{MBP} (X_c, I_D)$
+\STATE {Optimize} $\widehat \beta = \widehat \beta_{MBP}^{\ell_2} (X_c, I_D)$
 \STATE {\bf Output} $\widehat{S} = S (\widehat \beta)$
 \end{algorithmic}
 \end{algorithm}
@@ -145,68 +164,23 @@ S: \mathbb{R}^{P \times D} &\to \binom{[P]}{D} \\
 \subsection{Theory}
 
 The intuition behind our application of multitask basis pursuit is that submatrices consisting of vectors which are closer to 1 in length and more orthogonal will have smaller loss.
-A key initial theoretical assertion is that \isometrypursuit~ is invariant to choice of basis for $ X$.
+A key theoretical assertion is that \isometrypursuit~ is invariant to choice of basis for $ X$.
 \begin{proposition}
 \label{prop:basis_pursuit_selection_invariance}
 Let $U \in \mathbb R^{D \times D}$ be orthonormal.
 Then $S(\widehat \beta  (U  X)) = S(\widehat \beta ( X))$.
 \end{proposition}
 A proof is given in Section \ref{proof:basis_pursuit_program_invariance}.
-This has as an immediate corollary that we may replace $I_D$ in the constraint by any orthonormal $D \times D$ matrix.
+A corollary is that we may replace $I_D$ in the constraint by any orthonormal $D \times D$ matrix.
 
-When a rank $D$ orthonormal column-submatrix $X_{S}$ exists, a minimizer of Program \ref{prog:multitask_basis_pursuit} consists of the inverse of this submatrix.
+When a rank $D$ orthonormal column-submatrix $X_{.S}$ exists, the output of Program \ref{prog:isometry_pursuit} will contain $S$.
 \begin{proposition}
-Let $w_c$ be a normalization satisfying the conditions in Definition \ref{def:symmetric_normalization}.
-Let $X \in \mathbb R^{D \times P}$ contain an orthonormal $D \times D$ matrix $X_S$.
-Then $S \in \mathcal S_{IP} (X)$.
+Let $X \in \mathbb R^{D \times P$ have a rank $D$ orthonormal column submatrix $X_{.S}$.
+Then $S \subseteq \widehat \beta_c ( X)$.
 \label{prop:unitary_selection}
 \end{proposition}
-However, this solution is not necessarily unique.
-\begin{proposition}
-\end{proposition}
+
 Proofs of these propositions are given in Section \ref{sec:local_isometry_proof}, with corresponding experimental results in Section \ref{sec:experiments}.
-
-Non-unique solutions to \ref{prog:isometry_pursuit} are subtly more common than in standard lasso theory.
-Recall that, given a design matrix $X$, there exists a response variable $y$ such that the lasso admits a non-unique solution if and only if the rowspan of the design matrix $X$ contains a sufficient codimension edge of the $p$ dimensional hypercube \citep{JMLR:v23:21-0420}.
-This condition generalizes the previously introduced general position condition - that affinely independent columns of the design matrix guarantee non-uniqueness.
-However, for Isometry Pursuit, non-unique solutions may occur even when this condition is satisfied.
-A simple example -
-$X =
-\begin{bmatrix}
-1 & 0 & \frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2}  \\
-0 & 1 & \frac{\sqrt{2}}{2} & \frac{\sqrt{-2}}{2}  
-\end{bmatrix}$
-results from the rotation invariance Proposition \ref{prop:unitary_selection}, but more subtle examples exist.
- 
- %For our setting, we can rewrite the multitask basis pursuit objective as $y  = \vec(I_D) \in \mathbb R^{PD}$
-%\begin{align}
-%y =
-%    \begin{bmatrix}
-%        X & 0 & 0 & \cdots & 0 \\
-%        0 & X & 0 & \cdots & 0 \\
-%        0 & 0 & X & \cdots & 0 \\
-%      \vdots & \vdots & \vdots & \ddots & \vdots \\
-%       0 & 0 & 0 & \cdots & X
-%   \end{bmatrix}
-%   \beta
-%\end{align}
-%with grouping across replicates of $X$.
-%If $row(X)$ intersects the 1-ball in a location with codimension $C$, then the repeated $X$ intersects this higher-dimensional 2-1 ball in a location with codimension $D * (C -1 ) + 1$ since $C - 1$ is the rank-deficiency induced by the structure of the matrix $X$ rather than intrinsic to the $D-1$ dimensional ball.
-
-\subsection{Optimization}
-
-A typical response to considerations of non-uniqueness in such problems is the characterization of the "min-norm" solution - that is, the solution which minimizes the $\ell_2$ norm.
-This implicit regularization assumption is reasonable.
-For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum l2-norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf} simply assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
-Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) stably estimates the min-norm solution when initialized at $0$, but we leave theoretical and experimental proof of this feature of this feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our final proposition.
-
-\begin{proposition}
-Let $S_{IP}^{\ell_2} (X)$ be the min-norm Isometry Pursuit solution.
-Let $w_c$ be a normalization satisfying the conditions in Definition \ref{def:symmetric_normalization}.
-Let $X \in \mathbb R^{D \times P}$ contain an orthonormal $D \times D$ matrix $X_S$.
-Then $S \subseteq S_{IP}^{\ell_2} (X)$.
-\label{prop:two_stage}
-\end{proposition}
 
 \subsection{Two-stage isometry pursuit}
 
