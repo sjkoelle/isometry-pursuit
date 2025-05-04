@@ -81,32 +81,43 @@ We then show that this implies that the resultant loss is unchanged by unitary t
 \end{proof}
 
 \subsubsection{Proof of Proposition \ref{prop:unitary_selection}}
-\label{sec:local_isometry_proof}
+\label{proof:unitary_selection}
 
- \begin{proposition}
-\label{prop:generalized_unitary_selection}
-Let $w_c$ be a normalization satisfying the conditions in Definition %\ref{def:symmetric_normalization}.
-Let $X \in \mathbb R^{D \times P}$ contain a rank $D$ orthonormal submatrix $X_{.S} \in \mathbb R^{D\times D}$.
-Then $ S \subseteq S( \{\arg \min_{\beta \in \mathbb R^{D \times P}} \|\beta\|_{1,2} :  I_D = \; w(X,c) \beta\} \; D)$.
+In this proof we first show that the orthonormal submatrix $X_{.S}$ is contained within the set $\widehat \mathcal \beta_{MBP} (w(X,c), I_D)$.
+
+\begin{proposition}
+\label{prop:kkt}
+Let $X_{.S}$ be a rank $D$ orthonormal submatrix of $X$.
+Then $S \in S(\beta) : \beta \in \widehat \mathcal \beta_{MBP} (w(X,c), I_D))$.
  \end{proposition}
  
  \begin{proof}
  
- Without loss of generality, we show that $[I_D 0]$ satisfies the KKT conditions for $X = [I_D X_{-S}]$
- The KKT conditions are 
+ By Proposition \ref{prop:basis_pursuit_selection_invariance} without loss of generality, let $X_{.S} = I_D$.
+ Also, without loss of generality let $S = \{1 \dotsc D\}$.
+ We show that $\beta = [I_D 0]$ satisfies the KKT conditions for $X = [I_D X_{-S}]$.
  
+Recall that the KKT conditions for a convex optimization problem are a set of conditions on an element of the domain of the optimization algorithm that, if satisfied, certify that the element is a solution.
+To write out the KKT conditions, we define the Lagrangian
+\begin{align}
+\mathcal L(X,\beta,\nu) = \|\beta\|_{1,2} + \nu^T (I_D - w(X,c) \beta)
+\end{align}
+where $\nu \in \mathbb R^{D\times D}$ is the dual variable.
+
+The KKT conditions are then
 \begin{itemize}
 \item Primal feasibility: $w(X, c) \beta = I_D$
-\item Stationarity: there exists a dual variable $\nu \in \mathbb{R}^{D \times D}$ such that $0 \in \partial \|\beta\|_{1,2} - w(X, c)^T \nu$  where $\partial$ is the subdifferential operator.
-\item Dual feasibility
-\item Complementary slackness
+\item Stationarity: there exists a dual variable $\nu$ such that $0 \in \partial \|\beta\|_{1,2} - w(X, c)^T \nu$  where $\partial$ is the subdifferential operator.
 \end{itemize}
+where dual feasibility and complementary slackness are ignorable by virtue of the absence of inequality constraints.
 
-Stationarity: 
+First note that in our case, primal feasibility is satisfied by $X$ being rank $D$ and $w$ not effecting the rank of the transformed matrix since it only rescales length and not direction.
+
+For stationarity, recall that 
 \begin{align}
 \|\beta\|_{1,2} = \sum_{p = 1}^P \|\beta_{p.}\|_2.
 \end{align}
-Then
+Then, by the definition of subdifferential
 \begin{align}
 \partial \|\beta\|_{1,2} = \begin{bmatrix}
 I_D
@@ -115,9 +126,9 @@ v_{d+1} \\
 v_P
 \end{bmatrix}
 \end{align}
-where $v_p \in \mathbb R^{D}$ satisfies $\|v_p\|_2 \leq 1$.
+where $v_p \in \mathbb R^{D}$ can be any vector satisfying $\|v_p\|_2 \leq 1$.
 
-We therefore must satisfy
+We therefore must show that there exists a $\nu$ that satisfies
 \begin{align}
 \begin{bmatrix}
 I_D \\
@@ -125,47 +136,30 @@ w(X_{-S},c)^T
 \end{bmatrix}\nu  = \begin{bmatrix}
 I_D \\
 V_{-S}
-\end{bmatrix}
+\end{bmatrix}.
 \end{align}
-where $\nu \in \mathbb R^{D\times D}$.
+At this point we can see that in fact $I_D$ is an appropriate choice of $\nu$ since normalization by $w$ leads to vectors satisfying $\|w(X,c\|_2 \leq 1$.
 
-At this point we can see that in fact $I_D$ is an appropriate choice of $\nu$ by the boundary on the range of the normalized vector.
- 
+Since for this $\beta$, $S(\beta) = S$, we have shown that $S$ is the support of a solution to $\beta_{MBP} (w(X,c), I_D)$.
 \end{proof}
 
+The next part of the proof handles the presence of non-unique solutions.
+
 \begin{proposition}
-The SCS algorithm identities the minimum 2-norm solution
-\end{proposition}
+\label{prop:support_containment}
+$S(\widehat \beta_c ( X)) = \cup S(\beta): \beta \in  \mathcal \beta_{MBP} (w(X,c), I_D)$
+ \end{proposition}
+
 \begin{proof}
-% One thing to note is that the augmented Lagrangians of both constrained and unconstrained optimization problems are the same (check?)
-The splitting conic solver algorithm, also known as alternative direction method of multipliers (ADMM), makes use of the follow "split augmented Lagrangian" objective function
-\begin{align}
-\label{eq:admm_lagrangian}
-\mathcal L_\rho (X, Z \beta, \lambda_1) &= \|\beta\|_{1,2} + \lambda_1^T (I_D - X \beta) + \lambda_2^T (\beta - Z)  +  \rho \| I_D - X \beta\|_2^2 + \rho \|\beta - Z\|_2^2
-\end{align}
-This function provably has the same minimizer over $\beta$ as \ref{eq:basis_pursuit}, but is more amenable to optimization.
-By differentiating this expression w.r.t. $\beta$ to write out its update rule, we show that the update requires computing a pseudoinverse.
-This pseudoinverse is in fact chosen to be a ridge regression pseudoinverse (i.e. $(X^T X + \Lambda)^{-1} $) which, as the closed form solution for ridge regression, for $\|\beta\|_2^2$ minimization.
+The proposition follows from geometric properties of the solution set.
+We ignore the case for singleton solutions, for which the proposition is obvious.
+Recall that $\widehat \beta_c ( X) := \widehat \beta_{MBP}^{\ell_2} ( w(X,c), I_D ) =  \arg \min_{\beta \in \mathbb R^{P \times D} } \|\beta\|_F : \beta \in \widehat \mathcal \beta_{MBP} (X, I_D)  $.
+By definition of $\widehat \mathcal \beta_{MBP} (X, I_D) $, $\|\beta_{p.} \|_2 : \beta \in  \widehat \mathcal \beta_{MBP} (X, I_D) $ is an affine linear subspace of $\mathbb R^{P}.$
+The projection of the vector of minimum $\ell_2$ distance from the origin to a affine space intersects that space perpendicularly.
+However, for all $\|\beta_{.p}\|$ such that $\beta$ is on the intersection of the solution polytope with the coordinate hyperplanes, this vector doesn't intersect this space perpendicularly.
+This shows that $\widehat \beta_c ( X)$ is not on the of the solution polytope $ \mathcal \beta_{MBP} (w(X,c), I_D)$ with the coordinate hyperplanes, and is thus maximally non-sparse with respect to any of the minimizing solutions.
 
-
-
-\begin{proposition}
-Equation \ref{eq:admm_lagrangian} is strongly convex.
-\end{proposition}
-\begin{proof}
 \end{proof}
-
-Since the squared $2$-norm is strongly convex, this minimizer is unique.
-%To describe ADMM, we write out the augmented Lagrangian.
-%\begin{align}
-%\mathcal L_\rho (X, \beta, \lambda) = \|\beta\|_{1,2} + \lambda (I_D - X \beta) + \rho \| I_D - X \beta\|_2^2
-%\end{align}
-\end{proof}
-
-\begin{proposition}
-The minimizing solution is contained within the estimated set
-\end{proposition}
-
 
 \newpage
 
