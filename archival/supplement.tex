@@ -83,12 +83,12 @@ We then show that this implies that the resultant loss is unchanged by unitary t
 \subsubsection{Proof of Proposition \ref{prop:unitary_selection}}
 \label{proof:unitary_selection}
 
-In this proof we first show that the orthonormal submatrix $X_{.S}$ is contained within the set $\widehat \mathcal \beta_{MBP} (w(X,c), I_D)$.
+In this proof we first show that the orthonormal submatrix $X_{.S}$ is contained within the set $\widehat { \mathcal \beta}_{MBP} (w(X,c), I_D)$.
 
 \begin{proposition}
 \label{prop:kkt}
 Let $X_{.S}$ be a rank $D$ orthonormal submatrix of $X$.
-Then $S \in S(\beta) : \beta \in \widehat \mathcal \beta_{MBP} (w(X,c), I_D))$.
+Then $S \in S(\beta) : \beta \in \widehat{ \mathcal \beta}_{MBP} (w(X,c), I_D))$.
  \end{proposition}
  
  \begin{proof}
@@ -152,13 +152,13 @@ $S(\widehat \beta_c ( X)) = \cup S(\beta): \beta \in  \mathcal \beta_{MBP} (w(X,
 
 \begin{proof}
 The proposition follows from geometric properties of the solution set.
-We ignore the case for singleton solutions, for which the proposition is obvious.
-Recall that $\widehat \beta_c ( X) := \widehat \beta_{MBP}^{\ell_2} ( w(X,c), I_D ) =  \arg \min_{\beta \in \mathbb R^{P \times D} } \|\beta\|_F : \beta \in \widehat \mathcal \beta_{MBP} (X, I_D)  $.
-By definition of $\widehat \mathcal \beta_{MBP} (X, I_D) $, $\|\beta_{p.} \|_2 : \beta \in  \widehat \mathcal \beta_{MBP} (X, I_D) $ is an affine linear subspace of $\mathbb R^{P}.$
+We ignore the case for singleton solutions, for which the proposition is self-evident.
+Recall that $\widehat \beta_c ( X) := \widehat \beta_{MBP}^{\ell_2} ( w(X,c), I_D ) =  \arg \min_{\beta \in \mathbb R^{P \times D} } \|\beta\|_F : \beta \in \widehat {\mathcal \beta}_{MBP}(X, I_D)  $.
+By definition of $\widehat {\mathcal \beta}_{MBP} (X, I_D) $, $\|\beta_{p.} \|_2 : \beta \in  \widehat { \mathcal \beta}_{MBP} (X, I_D) $ is an affine linear subspace of $\mathbb R^{P}.$
 The projection of the vector of minimum $\ell_2$ distance from the origin to a affine space intersects that space perpendicularly.
-However, for all $\|\beta_{.p}\|$ such that $\beta$ is on the intersection of the solution polytope with the coordinate hyperplanes, this vector doesn't intersect this space perpendicularly.
-This shows that $\widehat \beta_c ( X)$ is not on the of the solution polytope $ \mathcal \beta_{MBP} (w(X,c), I_D)$ with the coordinate hyperplanes, and is thus maximally non-sparse with respect to any of the minimizing solutions.
-
+However, for all $\|\beta_{.p}\|_2$ such that $\beta$ is on the intersection of this affine space with the coordinate hyperplanes formed by fixing any choices of $\|\beta_{.p}\|_2 = $, this vector doesn't intersect this space perpendicularly.
+Thus, $\widehat \beta_c ( X)$ is not on the intersection of the solution polytope $ \widehat {\mathcal \beta}_{MBP} (w(X,c), I_D)$ with the coordinate hyperplanes.
+It is therefore maximally non-sparse with respect to any of the minimizing solutions.
 \end{proof}
 
 \newpage
@@ -203,13 +203,11 @@ While typically $|\widehat{S}_{IP}| << P$, there are cases for Ethanol where thi
 \subsection{Proposition \ref{prop:unitary_selection} deep dive}
 \label{sec:deep_dive}
 
-As mentioned in Section \ref{sec:discussion}, the conditions under which the restriction $P=D$ in Proposition \ref{prop:unitary_selection} may be relaxed are of theoretical and practical interest.
 The results in Section \ref{sec:experiments} show that there are circumstances in which the \greedy~ performs better than \tsip, so clearly \tsip~ does not always achieve a global optimum.
 Figure \ref{fig:comparison_losses} gives results on the line of inquiry about why this is the case based on the reasoning presented in Section \ref{sec:discussion}.
 In these results a two-stage algorithm achieves the global optimum of a slightly different brute problem, namely brute optimization of the multitask basis pursuit penalty $\|\cdot \|_{1,2}$.
 That is, brute search on $\|\cdot \|_{1,2}$ gives the same result as the two stage algorithm with brute search on $\|\cdot \|_{1,2}$ subsequent to isometry pursuit.
 This suggests that failure to select the global optimum by \tsip~ is in fact only due to the mismatch between global optimums of brute optimization of the multitask penalty and the isometry loss given certain data.
-Theoretical formalization, as well as investigation of what data configurations this equivalence holds for, is a logical follow-up.
 
 \begin{figure}[t] % Place at the top of the page
     \centering

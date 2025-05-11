@@ -117,7 +117,7 @@ Define the multitask basis pursuit penalty
 Given a matrix $Y \in \mathbb R^{D \times D}$, the multitask basis pursuit solutions are
 \begin{align}
 \label{prog:multitask_basis_pursuit}
-\widehat \mathcal \beta_{MBP} (X, Y)  := \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \;Y =  X \beta.
+\widehat {\mathcal {\beta}}_{MBP} (X, Y)  := \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \;Y =  X \beta.
 \end{align}
 
 Note that multitask basis pursuit solution is not unique under more relaxed conditions than for standard basis pursuit.
@@ -175,7 +175,7 @@ A corollary is that we may replace $I_D$ in the constraint by any orthonormal $D
 
 When a rank $D$ orthonormal column-submatrix $X_{.S}$ exists, the output of Program \ref{prog:isometry_pursuit} will contain $S$.
 \begin{proposition}
-Let $X \in \mathbb R^{D \times P$ have a rank $D$ orthonormal column submatrix $X_{.S}$.
+Let $X \in \mathbb R^{D \times P}$ have a rank $D$ orthonormal column submatrix $X_{.S}$.
 Then $S \subseteq \widehat \beta_c ( X)$.
 \label{prop:unitary_selection}
 \end{proposition}
@@ -184,9 +184,11 @@ Proofs of these propositions are given in Section \ref{sec:local_isometry_proof}
 
 \subsection{Two-stage isometry pursuit}
 
-Proposition \ref{prop:two_stage} suggests the following algorithm, which first uses the convex problem to prune and then apply brute search upon the substantially reduced feature set.
-Similar two-stage approaches are standard in the Lasso literature \cite{Hesterberg2008-iy, Koelle2022-ju}.
-This method forms our practical isometry estimator, and is discussed further in Sections \ref{sec:discussion} and \ref{sec:deep_dive}.
+Proposition \ref{prop:unitary_selection} suggests the following algorithm, which first uses the convex problem to prune and then apply brute search upon the substantially reduced feature set.
+This method forms our practical isometry estimator.
+%Similar two-stage approaches are standard in the Lasso literature \cite{Hesterberg2008-iy, Koelle2022-ju}.
+This approach is guaranteed to select an isometric submatrix should one exist.
+Note however that if an isometric column submatrix does not exist, then it will not identify the optimum of Program \ref{prog:ground_truth}, since the lasso objective and the singular value objective do not necessarily share a minimizer for all choices of $X$.
 
 \begin{algorithm}[H]
 \caption{\tsip(Matrix ${X} \in \mathbb{R}^{D \times P}$, scaling constant $c$)}
@@ -197,6 +199,3 @@ This method forms our practical isometry estimator, and is discussed further in 
 \end{algorithmic}
 \end{algorithm}
 
-This approach is guaranteed to select an isometric submatrix should one exist.
-In fact, it will identify the brute force minimizer of the corresponding lasso dual problem.
-Note however that if an isometric column submatrix does not exist, then it will not identify the optimum of Program \ref{prog:ground_truth}, since the lasso objective and the singular value objective do not necessarily share a minimizer for all choices of $X$.

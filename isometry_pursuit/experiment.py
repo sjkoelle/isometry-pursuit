@@ -85,6 +85,7 @@ def analyze_data(X, compute_brute=False, power=1.0, limit=1e9):
         end_basis_pursuit - start_basis_pursuit,
         stage_two_time,
         end_greedy - start_greedy,
+        two_stage_multitask,
     )
 
 
@@ -100,11 +101,13 @@ def run_resampling_experiment(data, D, frac=0.5, R=25, compute_brute=False, powe
     greedy_times = []
     basis_pursuit_times = []
     stage_two_times = []
-
+    P = data.shape[0]
+    co_occurence_matrix = np.zeros((P, P))
     for i in range(R):
         np.random.seed(i)
-        X = data.sample(frac=frac).to_numpy().transpose()[:D, :]  # .5
-        print("Data subsampled dimension", X.shape)
+        # Select 25 out of 50 indices
+        random_indices = np.random.choice(range(P), 25, replace=False)
+        X = data.to_numpy()[random_indices].transpose()[:D, :]  # .5
         (
             loss,
             support_cardinality_basis_pursuit,
@@ -116,6 +119,7 @@ def run_resampling_experiment(data, D, frac=0.5, R=25, compute_brute=False, powe
             basis_pursuit_time,
             stage_two_time,
             greedy_time,
+            two_stage_multitask,
         ) = analyze_data(X, compute_brute=compute_brute, power=power)
         losses.append(loss)
         support_cardinalities_basis_pursuit.append(support_cardinality_basis_pursuit)
@@ -127,7 +131,13 @@ def run_resampling_experiment(data, D, frac=0.5, R=25, compute_brute=False, powe
         basis_pursuit_times.append(basis_pursuit_time)
         stage_two_times.append(stage_two_time)
         greedy_times.append(greedy_time)
-    # Creating the dataframe
+        from itertools import combinations
+
+        co_occurences = combinations(two_stage_multitask, 2)
+        for co in co_occurences:
+            co_occurence_matrix[random_indices[co[0]], random_indices[co[1]]] += 1
+            co_occurence_matrix[random_indices[co[1]], random_indices[co[0]]] += 1
+
     results_df = pd.DataFrame(
         {
             "Losses": losses,
@@ -143,4 +153,7 @@ def run_resampling_experiment(data, D, frac=0.5, R=25, compute_brute=False, powe
         }
     )
 
-    return results_df
+    return results_df, co_occurence_matrix
+
+
+2 + 2
