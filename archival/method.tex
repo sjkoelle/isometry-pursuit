@@ -4,7 +4,7 @@
 % First row of images
 \subcaptionbox{Raw data\label{fig:data}}
 {\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/data.png}}
-\subcaptionbox{Selected subset\label{fig:selection}}
+\subcaptionbox{Isometric subset\label{fig:selection}}
 {\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/selection.png}}
 \subcaptionbox{Normalization step\label{fig:normalization}}
 {\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/normalization.png}}
@@ -17,10 +17,10 @@
 
 \caption{\ref{fig:data} Raw data $X$ represented as column-vectors.
  \ref{fig:selection} An isometric subset - the identification of which is our objective.
- \ref{fig:normalization} The vectors after normalization so that vectors of length $1$ maintain longest length after normalization.
- \ref{fig:gt_loss} Our ground truth loss function.
+ \ref{fig:normalization} The vectors after normalization so that vectors of length $1$ maintain longest length.
+ \ref{fig:gt_loss} Our ground truth loss function for different values of $c$ in the one-dimensional case $D = 1$
  \ref{fig:normalized_length} Normalized length used to rescale Figure \ref{fig:data} to get vectors in Figure \ref{fig:normalization}.
- \ref{fig:bp_loss} Basis pursuit loss for different values of $c$ in the one-dimensional case $D = 1$. 
+ \ref{fig:bp_loss} Basis pursuit loss. 
 This loss is equivalent to that shown in Figure \ref{fig:gt_loss} in the one-dimensional case.
 \label{fig:losses}
 }
@@ -28,7 +28,7 @@ This loss is equivalent to that shown in Figure \ref{fig:gt_loss} in the one-dim
 
 \section{Method}
 
-We adapt the group lasso paradigm used to select independent dictionary elements in \citet{Koelle2022-ju, Koelle2024-no} to select pointwise isometries from a dictionary.
+We apply the group lasso paradigm used to select independent dictionary elements in \citet{Koelle2022-ju, Koelle2024-no} to the more specific problem of selecting pointwise isometries from a dictionary.
 We first define a ground truth objective computable via brute and greedy algorithms that is uniquely minimized by orthonormal matrices.
 We then define the combination of normalization and multitask basis pursuit that approximates this ground truth loss function.
 We finally give a brute post-processing method for ensuring that the solution is $D$ sparse, and provide a theoretical result that the two stage approach will always result in recovery of an isometric solution from the dictionary, should one exist.
@@ -107,7 +107,7 @@ First, $q$ is convex.
 Second, it grows asymptotically log-linearly.
 Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp \citep{Boyd2004-ql} replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon exponentiation.
 Finally, the parameter $c$ grants control over the width of the basin, which may be useful for avoiding numerical issues arising close to $0$ and $\infty$.
-
+We plot this normalization function in Figure \ref{fig:normalized_length} and its effect on our example data in Figure \ref{fig:normalization}.
 
 
 
@@ -134,23 +134,24 @@ A simple example -
 $X =
 \begin{bmatrix}
 1 & 0 & \frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2}  \\
-0 & 1 & \frac{\sqrt{2}}{2} & \frac{\sqrt{-2}}{2}  
+0 & 1 & \frac{\sqrt{2}}{2} & \frac{-\sqrt{2}}{2}  
 \end{bmatrix}$
 results from the rotation invariance Proposition \ref{prop:unitary_selection}, but more subtle examples exist.
 We therefore define
 \begin{align}
-\widehat \beta^{\ell_2}_{MLP} (X,Y) = \arg \min \|\beta\|_F : \beta \in \mathcal \beta_{MBP} (X, Y) .
+\widehat \beta^{l_2}_{MLP} (X,Y) = \arg \min \|\beta\|_F : \beta \in \mathcal \beta_{MBP} (X, Y) .
 \end{align}
-By the strong convexity of the $\ell_2$ norm, $\widehat \beta^{\ell_2}_{MLP} (X,Y)$ is well defined.
+By the strong convexity of the $l_2$ norm, $\widehat \beta^{l_2}_{MLP} (X,Y)$ is well defined.
 
 This implicit regularization assumption is reasonable.
-For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum l2-norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf,Mishkin2023-yt } simply assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
-Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) stably estimates the min-norm solution when initialized at $0$, but we leave theoretical and experimental proof of this feature of this feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our eventual proposition.
+% Mishkin2023-yt is broken
+For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum $l_2$ norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf}  assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
+Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) \citep{O-Donoghue2013-wf} stably estimates the min-norm solution when initialized at $0$, but besides a brief exploration in Section \ref{sec:deep_dive} we leave theoretical and experimental proof of this feature of the feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our eventual proposition.
 
 Isometry pursuit is then given by
 \begin{align}
 \label{prog:isometry_pursuit}
-\widehat \beta_c ( X) := \widehat \beta_{MBP}^{\ell_2} ( w(X,c), I_D )
+\widehat \beta_c ( X) := \widehat \beta_{MBP}^{l_2} ( w(X,c), I_D )
 \end{align}
 where $I_D$ is the $D$ dimensional identity matrix and recovered functions are the indices of the dictionary elements with non-zero coefficients.
 That is, they are given by $S(\beta)$ where
@@ -162,7 +163,7 @@ S: \mathbb{R}^{P \times D} &\to \binom{[P]}{D} \\
 \caption{\isometrypursuit(Matrix ${X} \in \mathbb{R}^{D \times P}$, scaling constant $c$)}
 \begin{algorithmic}[1]
 \STATE {Normalize} $X_c = w({X},c)$
-\STATE {Optimize} $\widehat \beta = \widehat \beta_{MBP}^{\ell_2} (X_c, I_D)$
+\STATE {Optimize} $\widehat \beta = \widehat \beta_{MBP}^{l_2} (X_c, I_D)$
 \STATE {\bf Output} $\widehat{S} = S (\widehat \beta)$
 \end{algorithmic}
 \end{algorithm}
@@ -176,10 +177,10 @@ A key theoretical assertion is that \isometrypursuit~ is invariant to choice of 
 Let $U \in \mathbb R^{D \times D}$ be orthonormal.
 Then $S(\widehat \beta  (U  X)) = S(\widehat \beta ( X))$.
 \end{proposition}
-A proof is given in Section \ref{proof:basis_pursuit_program_invariance}.
-A corollary is that we may replace $I_D$ in the constraint by any orthonormal $D \times D$ matrix.
+This proposition establishes the basis-independence of Isometry Pursuit and that we may replace $I_D$ in the constraint by any orthonormal $D \times D$ matrix.
+It is also essential for showing the following main theoretical result.
 
-Our main theoretical result is that when a rank $D$ orthonormal column-submatrix $X_{.S}$ exists, the output of Program \ref{prog:isometry_pursuit} will contain $S$.
+When a rank $D$ orthonormal column-submatrix $X_{.S}$ exists, the output of Program \ref{prog:isometry_pursuit} will contain $S$.
 \begin{proposition}
 Let $X \in \mathbb R^{D \times P}$ have a rank $D$ orthonormal column submatrix $X_{.S}$.
 Then $S \subseteq \widehat \beta_c ( X)$.
@@ -189,14 +190,13 @@ Then $S \subseteq \widehat \beta_c ( X)$.
 Proofs of these propositions are given in Section \ref{sec:proofs}, with corresponding experimental results in Section \ref{sec:experiments}.
 The proof mostly relies on the KKT conditions \citep{Hastie2015-qa} being used to verify that an isometric subset yields a corresponding basis pursuit solution for an appropriate normalized matrix.
 This is a formalization of our intuition that longer and more orthogonal vectors will minimize loss.
-We then apply a simple argument to show that the $\ell-2$ minimizing solution is the least sparse solution, which means that it contains the isometry solution, should it exist.
+We then apply a simple argument to show that the $l_2$ minimizing solution is the least sparse solution, which means that it contains the isometry solution, should it exist.
 
 \subsection{Two-stage isometry pursuit}
 
-Proposition \ref{prop:unitary_selection} suggests the following algorithm, which first uses the convex problem to prune and then apply brute search upon the substantially reduced feature set.
+Proposition \ref{prop:unitary_selection} suggests the following algorithm, which first uses the convex \isometrypursuit~ algorithm to prune the $P$ candidate features and then applies brute search upon the reduced feature set.
 Similar two-stage approaches are standard in the Lasso literature \cite{Hesterberg2008-iy, Koelle2022-ju}, and Proposition \ref{prop:unitary_selection} puts them on relatively strong footing in our application, since this approach is guaranteed to select an isometric submatrix should one exist.
-This method forms our practical isometry estimator.
-Note however that if an isometric column submatrix does not exist, then it will not identify the optimum of Program \ref{prog:ground_truth}, since the lasso objective and the singular value objective do not necessarily share a minimizer for all choices of $X$.
+This method forms our practical isometry estimator, the core advantage of which over purely brute search is a substantially reduced feature set.
 
 \begin{algorithm}[H]
 \caption{\tsip(Matrix ${X} \in \mathbb{R}^{D \times P}$, scaling constant $c$)}

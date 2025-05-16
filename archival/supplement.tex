@@ -95,7 +95,7 @@ Then $S \in S(\beta) : \beta \in \widehat{ \mathcal \beta}_{MBP} (w(X,c), I_D))$
  
  By Proposition \ref{prop:basis_pursuit_selection_invariance} without loss of generality, let $X_{.S} = I_D$.
  Also, without loss of generality let $S = \{1 \dotsc D\}$.
- We show that $\beta = [I_D 0]$ satisfies the KKT conditions for $X = [I_D X_{-S}]$.
+ We show that $\beta = [I_D \; 0]$ satisfies the KKT conditions for $X = [I_D \; X_{-S}]$.
  
 Recall that the KKT conditions for a convex optimization problem are a set of conditions on an element of the domain of the optimization algorithm that, if satisfied, certify that the element is a solution.
 To write out the KKT conditions, we define the Lagrangian
@@ -147,16 +147,16 @@ The next part of the proof handles the presence of non-unique solutions.
 
 \begin{proposition}
 \label{prop:support_containment}
-$S(\widehat \beta_c ( X)) = \cup S(\beta): \beta \in  \mathcal \beta_{MBP} (w(X,c), I_D)$
+$S(\widehat \beta_c ( X)) = \cup \; S(\beta) \; : \;  \beta \in  \mathcal \beta_{MBP} (w(X,c), I_D)$
  \end{proposition}
 
 \begin{proof}
 The proposition follows from geometric properties of the solution set.
 We ignore the case for singleton solutions, for which the proposition is self-evident.
-Recall that $\widehat \beta_c ( X) := \widehat \beta_{MBP}^{\ell_2} ( w(X,c), I_D ) =  \arg \min_{\beta \in \mathbb R^{P \times D} } \|\beta\|_F : \beta \in \widehat {\mathcal \beta}_{MBP}(X, I_D)  $.
+Recall that $\widehat \beta_c ( X) := \widehat \beta_{MBP}^{l_2} ( w(X,c), I_D ) =  \arg \min_{\beta \in \mathbb R^{P \times D} } \|\beta\|_F : \beta \in \widehat {\mathcal \beta}_{MBP}(X, I_D)  $.
 By definition of $\widehat {\mathcal \beta}_{MBP} (X, I_D) $, $\|\beta_{p.} \|_2 : \beta \in  \widehat { \mathcal \beta}_{MBP} (X, I_D) $ is an affine linear subspace of $\mathbb R^{P}.$
-The projection of the vector of minimum $\ell_2$ distance from the origin to a affine space intersects that space perpendicularly.
-However, for all $\|\beta_{.p}\|_2$ such that $\beta$ is on the intersection of this affine space with the coordinate hyperplanes formed by fixing any choices of $\|\beta_{.p}\|_2 = $, this vector doesn't intersect this space perpendicularly.
+The projection of the vector of minimum $l_2$ distance from the origin to a affine space intersects that space perpendicularly.
+However, for all $\|\beta_{.p}\|_2$ such that $\beta$ is on the intersection of this affine space with the coordinate hyperplanes formed by fixing any choices of $\|\beta_{.p}\|_2 = 0$, this vector doesn't intersect this space perpendicularly.
 Thus, $\widehat \beta_c ( X)$ is not on the intersection of the solution polytope $ \widehat {\mathcal \beta}_{MBP} (w(X,c), I_D)$ with the coordinate hyperplanes.
 It is therefore maximally non-sparse with respect to any of the minimizing solutions.
 \end{proof}
@@ -168,7 +168,7 @@ It is therefore maximally non-sparse with respect to any of the minimizing solut
 
 Figure \ref{fig:support_cardinalities} plots the distribution of $|\widehat{S}_{IP}|$ from Table \ref{tab:experiments} in order to contextualize the reported means.
 While typically $|\widehat{S}_{IP}| << P$, there are cases for Ethanol where this is not the case that drive up the means.
-Further investigation into the extremely failure of Isometric Pursuit to sparsify in the the minor chunk of the bimodal Ethanol support cardinality distribution would be warranted.
+Further investigation into the extreme failure of isometry pursuit to sparsify in the the minor chunk of the bimodal Ethanol support cardinality distribution is warranted.
 
 \begin{figure}[t]
     \centering
@@ -176,7 +176,7 @@ Further investigation into the extremely failure of Isometric Pursuit to sparsif
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/wine_cardinalities}
-        \caption{Wine Dataset}
+        \caption{Wine }
         \label{fig:wine_cardinalities}
     \end{subfigure}
     \hfill
@@ -184,7 +184,7 @@ Further investigation into the extremely failure of Isometric Pursuit to sparsif
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/iris_cardinalities}
-        \caption{Iris Dataset}
+        \caption{Iris }
         \label{fig:iris_cardinalities}
     \end{subfigure}
 
@@ -194,7 +194,7 @@ Further investigation into the extremely failure of Isometric Pursuit to sparsif
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/ethanol_cardinalities}
-        \caption{Ethanol Dataset}
+        \caption{Ethanol }
         \label{fig:ethanol_cardinalities}
     \end{subfigure}
     \hfill
@@ -202,11 +202,11 @@ Further investigation into the extremely failure of Isometric Pursuit to sparsif
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/words_cardinalities}
-        \caption{Words Dataset}
+        \caption{Words }
         \label{fig:words_cardinalities}
     \end{subfigure}
 
-    \caption{Support cardinalities for each dataset under Basis Pursuit.}
+    \caption{Support cardinalities for each dataset after \isometrypursuit.}
     \label{fig:support_cardinalities}
 \end{figure}
 
@@ -222,7 +222,7 @@ In these results a two-stage algorithm achieves the global optimum of a slightly
 That is, brute search on $\|\cdot \|_{1,2}$ gives the same result as the two stage algorithm with brute search on $\|\cdot \|_{1,2}$ subsequent to isometry pursuit.
 This suggests that failure to select the global optimum by \tsip~ is due to the mismatch between global optimums of brute optimization of the multitask penalty and the isometry loss given certain data.
 It also confirms that the minimizer of brute optimization of the $\|\|_{1,2}$ objective is contained within the isometry pursuit solution.
-Note that this would include an isometric solution, should it exist.
+Note that by Proposition \ref{prop:unitary_selection}, this would include an isometric solution, should it exist.
 
 \begin{figure}[t]
     \centering
@@ -230,7 +230,7 @@ Note that this would include an isometric solution, should it exist.
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/iris_isometry_losses_iso_ecdf}
-        \caption{Iris $\ell_1(X_{.\widehat S})$ comparison for brute optimization of $\ell_1$ versus two-stage Isometry Pursuit optimization of $\ell_1$}
+        \caption{Iris $\ell_1(X_{.\widehat S})$ comparison for \brute~ optimization of $\ell_1$ versus \tsip~ optimization of $\ell_1$}
         \label{fig:iris_isometry_losses_ecdf}
     \end{subfigure}
     \hfill
@@ -238,7 +238,7 @@ Note that this would include an isometric solution, should it exist.
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/iris_isometry_losses_ts_ecdf}
-        \caption{Iris $\|X_{.\widehat S}\|_{1,2}$ comparison for brute optimization of $\|\|_{1,2}$ versus two-stage Isometry Pursuit optimization of $\|\|_{1,2}$}
+        \caption{Iris $\|X_{.\widehat S}\|_{1,2}$ comparison for \brute~ optimization of $\|\|_{1,2}$ versus \tsip~ optimization of $\|\|_{1,2}$}
         \label{fig:iris_multitask_losses_ecdf}
     \end{subfigure}
 
@@ -248,7 +248,7 @@ Note that this would include an isometric solution, should it exist.
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/wine_isometry_losses_iso_ecdf}
-        \caption{Wine $\ell_1(X_{.\widehat S})$ comparison for brute optimization of $\ell_1$ versus two-stage Isometry Pursuit optimization of $\ell_1$}
+        \caption{Wine $\ell_1(X_{.\widehat S})$ comparison for \brute~ optimization of $\ell_1$ versus \tsip~ optimization of $\ell_1$}
         \label{fig:wine_isometry_losses_ecdf}
     \end{subfigure}
     \hfill
@@ -256,13 +256,12 @@ Note that this would include an isometric solution, should it exist.
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/wine_isometry_losses_ts_ecdf}
-        \caption{Wine $\|X_{.\widehat S}\|_{1,2}$ comparison for brute optimization of $\|\|_{1,2}$ versus two-stage Isometry Pursuit optimization of $\|\|_{1,2}$}
+        \caption{Wine $\|X_{.\widehat S}\|_{1,2}$ comparison for \brute optimization of $\|\|_{1,2}$ versus \tsip~ optimization of $\|\|_{1,2}$}
         \label{fig:wine_multitask_losses_ecdf}
     \end{subfigure}
 
     \caption{Comparison of Isometry and Group Lasso Losses across $25$ replicates for randomly downsampled Iris and Wine Datasets with $(P,D) = (4,15)$ and $(13, 18)$, respectively.
     Note that this further downsampling compared with Section \ref{sec:experiments} was necessary to compute global minimizers of \brute.
-    Left column: isometry losses $\ell_1(X_{.\widehat{S}})$. Right column: multitask norms $\|w(X_{.\widehat{S}})\|_{1,2}$.
     }
     \label{fig:ecdf_comparison_losses}
 \end{figure}
@@ -274,7 +273,7 @@ Note that this would include an isometric solution, should it exist.
 
 We applied \isometrypursuit~ on a word embedding dataset with the following construction.
 We used all-MiniLM-L6-v2 from the Sentence Transformers library \citep{reimers-2019-sentence-bert}.
-We defined $6$ axes of variation using the word categories shown in table \ref{tab:semantic_axes}
+We defined $6$ axes of variation using the word categories shown in Table \ref{tab:semantic_axes}.
 Each axis is defined by the difference between two poles, computed from the centroids of the embeddings of the corresponding word sets.
 We then projected the word embeddings onto these axes and standardized in order to create a linear conceptual embedding space.
 This was the representation that we evaluated.
@@ -299,7 +298,7 @@ warm    & cold      & warmth   & warm, friendly, kind, loving, affectionate & co
 \end{table}
 
 In order to illustrate the semantic interpretation of our analyses, we plot the following co-occurrence graph for retrieved words.
-While we do not provide any additional quantitative evaluation, in the plotted replicate two-stage Isometry Pursuit better separates words from the same category (e.g. cold, warm) than does greedy search.
+While we do not provide any quantitative evaluation beyond those in Section \ref{sec:experiments}, in the plotted replicate two-stage isometry pursuit better separates words from the same category (e.g. cold, warm) than does greedy search.
 
 \begin{figure}[h]
     \centering
@@ -325,8 +324,6 @@ While we do not provide any additional quantitative evaluation, in the plotted r
     Colors denote semantic axis.}
     \label{fig:co_occurrence_graphs}
 \end{figure}
-
-
 
 
 \subsection{Timing}
