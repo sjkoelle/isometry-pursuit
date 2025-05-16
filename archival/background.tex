@@ -89,10 +89,10 @@ Solutions
 \begin{align}
 \arg \min f(\beta) : Y  = X\beta 
 \end{align}
-to the overcomplete regression problem $Y = X \beta$ are a classic example \citep{Chen2001-hh, Comparisons_undated-tw}.
+to the overcomplete regression problem $Y = X \beta$ are a classic example \citep{Chen2001-hh}.
 When $f(\beta) = \|\beta\|_0$, this problem is non-convex, and is thus suitable for greedy or brute algorithms, but when $f(\beta) =\|\beta\|_1$, the problem is convex, and may be solved efficiently via interior-point methods.
 When the equality constraint is relaxed, Lagrangian duality may be used to reformulate as a so-called Lasso problem, which leads to an even richer set of optimization algorithms \citep{Hastie2016-cn}. % cite FISTA< glmnet, coordinate descent
 
 The form of basis pursuit that we apply is inspired by the group basis pursuit approach in \citet{Koelle2022-ju}.
 In group basis pursuit (which we call multitask basis pursuit when grouping is dependent only on the structure of matrix-valued response variable $y$) the objective function is $f(\beta) = \|\beta\|_{1,2} := \sum_{p=1}^P \|\beta_{p.}\|_2$  \citep{Yuan2006-bt, Obozinski2006-kq, Yeung2011-fg}.
-This objective creates joint sparsity across entire rows $\beta_{p.}$ and was used in \citet{Koelle2022-ju} to select between sets of interpretable features.
+This objective creates joint sparsity across entire rows $\beta_{p.}$ and was used in \citet{Koelle2022-ju} to select independent subsets among interpretable features.

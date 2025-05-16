@@ -42,17 +42,18 @@ Thus, in diversification, $P = n$.
         \caption{Words}
         \label{fig:words_isometry_losses}
     \end{subfigure}
-    \caption{Empirical CDFs of isometry losses $\ell_1(\widehat{S}_g) - \ell_1(\widehat{S}_{TSIP})$ for Wine, Iris, and Ethanol datasets across $R$ replicates.
-    The CDF reflects the proportion of replicates where the greedy loss is less than or equal to the two-stage loss.
-    As detailed in Table \ref{tab:experiments}, losses are generally lower for two-stage isometry pursuit solutions.}
+    \caption{Empirical cumulative distributions of isometry losses $\ell_1(\widehat{S}_g) - \ell_1(\widehat{S}_{TSIP})$ for Wine, Iris, Ethanol, and Words datasets across $R$ replicates.
+    The distributions reflect the relative $\ell_1$ losses of the supports estimated by greedy optimization on the $\ell_1$ objective is less than or equal to $\ell_1$ loss of the support estimated by \tsip.
+    As shown here and detailed  in Table \ref{tab:experiments}, losses are generally lower for two-stage isometry pursuit solutions.}
     \label{fig:isometry_losses}
 \end{figure}
 
-We analyze the Ethanol dataset from \citet{Chmiela2018-at, Koelle2022-ju}, but rather than selecting between bourbon and scotch we evaluate a dictionary of interpretable features  - bond torsions - for their ability to parameterize the molecular configuration space.
+Our main interpretability dataset is the Ethanol dataset from \citet{Chmiela2018-at, Koelle2022-ju}.
+Tather than selecting between bourbon and scotch we evaluate a dictionary of interpretable features  - bond torsions - for their ability to parameterize the molecular configuration space.
 In this interpretability use case, columns denote gradients of informative features.
 We compute Jacoban matrices of putative parametrization functions and project them onto estimated tangent spaces (see \citet{Koelle2022-ju} for preprocessing details).
 Rather than selecting between data points, we are selecting between functions which parameterize the data.
-This dataset exemplifies our motivating example - the search for locally isometric embeddings.
+This dataset exemplifies our motivating example - the search for locally isometric embeddings - and is comparable in application to greedy Algorithm 2 in \citet{Kohli2021}.
 
 We also construct a small word embedding dataset.
 Inspired by the linear representation hypothesis \citep{Park2023-hq,Mikolov2013-lt } and the construction over complete dictionaries of concepts in representation space \citep{templeton2024scaling, Makelov2024-bw}, we apply isometric pursuit to prune down embeddings of concept dictionaries into their basis components.
@@ -99,14 +100,13 @@ For the Wine dataset, even \brute~ on $\widehat {S}_{IP}$ is prohibitive in $D=1
 For Ethanol, replicas are created by sampling from data points and their corresponding tangent spaces are estimated in $B = 252$.
 
 Figure \ref{fig:isometry_losses} and Table \ref{tab:experiments} show that the $\ell_1$ accrued by the subset $\widehat S_{G}$ estimated using \greedy~ with objective $\ell_1$ is higher than that for the subset estimated by \tsip.
-This effect is statistically significant, but varies across datapoints and datasets.
-Generally speaking, the ground truth loss obtained by greedy solutions is greater than obtained by two-stage Isometry Pursuit.
-Figure \ref{fig:support_cardinalities} details intermediate support recovery cardinalities from \isometrypursuit.
-We also evaluated second stage \brute~ selection after random selection of $\widehat S_{IP}$ but do not report it since it often lead to catastrophic failure to satisfy the basis pursuit constraint.
+This effect is statistically significant across datasets.
+Generally, the ground truth loss obtained by \greedy~ optimization of $\ell_1$ is higher and therefore worse than that obtained by two-stage isometry pursuit.
+Table \ref{tab:experiments}  and Figure \ref{fig:support_cardinalities} detail intermediate support recovery cardinalities from \isometrypursuit.
+Isometry pursuit substantially reduced the size of the dictionary and made brute search computationally feasible.
 Wall-clock runtimes are given in Section \ref{sec:timing}.
-
-Finally, we also analyze robustness of two-stage Isometry Pursuit to different choices of $c$ and $D$ on the Wine dataset in Figure \ref{fig:stacked_power_comparison}.
-These show that the preference for the two-stage Isometry Pursuit solution is strongest around $c=1$ and is consistent across feature truncation dimensions.
+However, the preferable performance of two-stage isometry pursuit is not robust to different choices of $c$ on the Wine dataset in Figure \ref{fig:stacked_power_comparison}.
+These show that the preference for the two-stage isometry pursuit solution is strongest around $c=1$ and is consistent across feature truncation dimensions.
 
 \clearpage
 
@@ -115,7 +115,7 @@ These show that the preference for the two-stage Isometry Pursuit solution is st
     \includegraphics[width=\textwidth]{../figures/grid_power_comparison_filled.png}
     \caption{
         Proportions of support selection outcomes as power parameter $c$ varies, for different values of $D$ in the Wine dataset across various values of $c$.
-        The turquoise area indicates when greedy solution  $\widehat{S}_G$ outperforms $\widehat{S}_{\text{TSIP}}$, gray shows ties, and pink indicates $\widehat{S}_{\text{TSIP}}$ is better.
+        The turquoise area indicates when greedy solution  $\widehat{S}_G$ outperforms $\widehat{S}_{\text{TSIP}}$, purple shows ties, and pink indicates $\widehat{S}_{\text{TSIP}}$ is better.
         Solution at $c=10$ is not plotted for $D=6$ due to numerical overflow.
     }
     \label{fig:stacked_power_comparison}
