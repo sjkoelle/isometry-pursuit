@@ -6,12 +6,12 @@ Our algorithm is motivated by spectral and convex analysis.
 
 Our goal is, given a matrix $ X \in \mathbb R^{D \times P}$, to select a subset $ S \subset [P]$ with $| S| = D$ such that $X_{.  S}$ is as orthonormal as possible in a computationally efficient way.
 To this end, we define a ground truth loss function that measures orthonormalness, and then introduce a surrogate loss function that convexifies the problem so that it may be efficiently solved.
-
+Figure \ref{fig:data} and \ref{fig:selection} provide a visual depiction of this problem when $D=2$ and $P=30$.
 
 \subsection{Interpretability and isometry}
 
 Our motivating example is the selection of data representations from within sets of putative coordinates: the columns of a provided wide matrix.
-Compared with Sparse PCA \citep{Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, we seek a low-dimensional representation from the set of these column vectors rather than their span.
+Compared with Sparse PCA \citep{DAspremont2007-aq, Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, we seek a low-dimensional representation from the set of these column vectors rather than their span.
 
 This method applies to interpretability, for which parsimony is at a premium.
 Interpretability arises through comparison of data with what is known to be important in the domain of the problem.
@@ -84,14 +84,14 @@ Greedy algorithms consist of iteratively adding one element at a time to $ S$.
 This algorithms have time complexity $O(C_lPD)$ and so are computationally more efficient than brute force algorithms, but can get stuck in local minima.
 Formal definitions are given in Section \ref{sec:algorithms}.
 
-Sometimes, it is possible to introduce an objective which convexifies problems of the above form.
+Sometimes, it is possible to introduce an objective which convexifies problems of the above form  \citep{Liberti2004-iu, Abdi2013-th, Zhou2021-zz}.
 Solutions
 \begin{align}
 \arg \min f(\beta) : Y  = X\beta 
 \end{align}
-to the overcomplete regression problem $Y = X \beta$ are a classic example \citep{Chen2001-hh}.
+to the overcomplete regression problem $Y = X \beta$ are a classic example \citep{Chen2001-hh, Comparisons_undated-tw}.
 When $f(\beta) = \|\beta\|_0$, this problem is non-convex, and is thus suitable for greedy or brute algorithms, but when $f(\beta) =\|\beta\|_1$, the problem is convex, and may be solved efficiently via interior-point methods.
-When the equality constraint is relaxed, Lagrangian duality may be used to reformulate as a so-called Lasso problem, which leads to an even richer set of optimization algorithms. % cite FISTA< glmnet, coordinate descent
+When the equality constraint is relaxed, Lagrangian duality may be used to reformulate as a so-called Lasso problem, which leads to an even richer set of optimization algorithms \citep{Hastie2016-cn}. % cite FISTA< glmnet, coordinate descent
 
 The form of basis pursuit that we apply is inspired by the group basis pursuit approach in \citet{Koelle2022-ju}.
 In group basis pursuit (which we call multitask basis pursuit when grouping is dependent only on the structure of matrix-valued response variable $y$) the objective function is $f(\beta) = \|\beta\|_{1,2} := \sum_{p=1}^P \|\beta_{p.}\|_2$  \citep{Yuan2006-bt, Obozinski2006-kq, Yeung2011-fg}.

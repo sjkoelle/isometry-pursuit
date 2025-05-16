@@ -52,7 +52,11 @@ We also analyze the Ethanol dataset from \citet{Chmiela2018-at, Koelle2022-ju}, 
 In this interpretability use case, columns denote gradients of informative features.
 We compute Jacoban matrices of putative parametrization functions and project them onto estimated tangent spaces (see \citet{Koelle2022-ju} for preprocessing details).
 Rather than selecting between data points, we are selecting between functions which parameterize the data.
+This dataset exemplifies our motivating example - the search for locally isometric embeddings.
 
+Finally, we also construct a small word embedding dataset.
+Inspired by the linear representation hypothesis \citep{Park2023-hq,Mikolov2013-lt } and the construction over complete dictionaries of concepts in representation space, we apply isometric pursuit to prune down embeddings of concept dictionaries into their basis components.
+As with the other datasets, we measure success primarily numerically against the ground truth objective values obtained by greedy solutions.
 
 \begin{table}[h!]
 \tiny
@@ -88,22 +92,24 @@ For brevity, in this table $\widehat S := \widehat {S}_{TSIP}$.
 \end{table}
 
 For basis pursuit, we use the SCS interior point solver \citep{ocpb:16} from CVXPY \citep{diamond2016cvxpy, agrawal2018rewriting}, which is able to push sparse values arbitrarily close to 0 \citep{cvxpy_sparse_solution}.
-Statistical replicas for Wine and Iris are created by resampling across $[P]$.
+Statistical replicas for Wine, Iris, and Words are created by resampling across $[P]$.
 Due to differences in scales between rows, these are first standardized.
 For the Wine dataset, even \brute~ on $\widehat {S}_{IP}$ is prohibitive in $D=13$, and so we truncate our inputs to $D=6$.
 For Ethanol, replicas are created by sampling from data points and their corresponding tangent spaces are estimated in $B = 252$.
 
-Figure \ref{fig:isometry_losses} and Table \ref{tab:experiments} show that the $l_1$ accrued by the subset $\widehat S_{G}$ estimated using \greedy~ with objective $l_1$ is higher than that for the subset estimated by \tsip.
+Figure \ref{fig:isometry_losses} and Table \ref{tab:experiments} show that the $\ell_1$ accrued by the subset $\widehat S_{G}$ estimated using \greedy~ with objective $\ell_1$ is higher than that for the subset estimated by \tsip.
 This effect is statistically significant, but varies across datapoints and datasets.
+Generally speaking, the ground truth loss obtained by greedy solutions is greater than obtained by two-stage Isometry Pursuit.
 Figure \ref{fig:support_cardinalities} details intermediate support recovery cardinalities from \isometrypursuit.
 We also evaluated second stage \brute~ selection after random selection of $\widehat S_{IP}$ but do not report it since it often lead to catastrophic failure to satisfy the basis pursuit constraint.
 Wall-clock runtimes are given in Section \ref{sec:timing}.
 
-% Make bands! 
+Finally, we also analyze robustness of two-stage Isometry Pursuit to different choices of $c$ and $D$ on the Wine dataset in Figure \ref{fig:stacked_power_comparison}.
+These show that the preference for the two-stage Isometry Pursuit solution is strongest around $c=1$ and is consistent across feature truncation dimensions.
 
+\clearpage
 
-
-\begin{figure}[t]
+\begin{figure}[t!]
     \centering
     \includegraphics[width=\textwidth]{../figures/grid_power_comparison_filled.png}
     \caption{

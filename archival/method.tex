@@ -1,3 +1,31 @@
+
+\begin{figure}[t]
+\centering
+% First row of images
+\subcaptionbox{Raw data\label{fig:data}}
+{\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/data.png}}
+\subcaptionbox{Selected subset\label{fig:selection}}
+{\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/selection.png}}
+\subcaptionbox{Normalization step\label{fig:normalization}}
+{\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/normalization.png}}
+\subcaptionbox{Ground truth loss\label{fig:gt_loss}}
+{\includegraphics[width = .32\textwidth]{../figures/Figure_1a_bw.png}}
+\subcaptionbox{Normalized length vs. unnormalized length\label{fig:normalized_length}}
+{\includegraphics[width = .32\textwidth]{../figures/Figure_1b_bw.png}}
+\subcaptionbox{Basis pursuit loss\label{fig:bp_loss}}
+{\includegraphics[width = .32\textwidth]{../figures/Figure_1c_bw.png}}
+
+\caption{\ref{fig:data} Raw data $X$ represented as column-vectors.
+ \ref{fig:selection} An isometric subset - the identification of which is our objective.
+ \ref{fig:normalization} The vectors after normalization so that vectors of length $1$ maintain longest length after normalization.
+ \ref{fig:gt_loss} Our ground truth loss function.
+ \ref{fig:normalized_length} Normalized length used to rescale Figure \ref{fig:data} to get vectors in Figure \ref{fig:normalization}.
+ \ref{fig:bp_loss} Basis pursuit loss for different values of $c$ in the one-dimensional case $D = 1$. 
+This loss is equivalent to that shown in Figure \ref{fig:gt_loss} in the one-dimensional case.
+\label{fig:losses}
+}
+\end{figure}
+
 \section{Method}
 
 We adapt the group lasso paradigm used to select independent dictionary elements in \citet{Koelle2022-ju, Koelle2024-no} to select pointwise isometries from a dictionary.
@@ -22,9 +50,12 @@ where $\sigma_d ( X)$ is the $d$-th singular value of $ X$ and
 g: \mathbb R^+ \times \mathbb R^+ &\to \mathbb R^+ \\
 t,c &\mapsto \frac{e^{t^c} + e^{t^{-c}}}{2e}.
 \end{align}
-By Proposition \ref{prop:orthonormal_spectrum}, we can see that $l_c$ is uniquely maximized by orthonormal matrices.
-Moreover, $g$ is convex, and $l_c( X^{-1}) = l_c( X)$ when $X$ is invertible.
-Figure \ref{fig:losses} gives a graph of $l_c$ when $D=1$.
+By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell_c$ is uniquely maximized by orthonormal matrices.
+Moreover, $g$ is convex, and $\ell_c( X^{-1}) = \ell_c( X)$ when $X$ is invertible.
+Figure \ref{fig:gt_loss} gives a graph of $l_c$ when $D=1$.
+
+
+
 % compares it with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.
 % NOTE (Sam): Do we need proofs of maximized by orthonormal matrices and convex?
 % Can we prove this is a norm?
@@ -77,32 +108,7 @@ Second, it grows asymptotically log-linearly.
 Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp \citep{Boyd2004-ql} replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon exponentiation.
 Finally, the parameter $c$ grants control over the width of the basin, which may be useful for avoiding numerical issues arising close to $0$ and $\infty$.
 
-\begin{figure}
-\centering
-% First row of images
-\subcaptionbox{Raw data\label{fig:data}}
-{\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/data.png}}
-\subcaptionbox{Selected subset\label{fig:selection}}
-{\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/selection.png}}
-\subcaptionbox{Normalization step\label{fig:normalization}}
-{\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/normalization.png}}
-\subcaptionbox{Ground truth loss\label{fig:gt_loss}}
-{\includegraphics[width = .32\textwidth]{../figures/Figure_1a_bw.png}}
-\subcaptionbox{Normalized length vs. unnormalized length\label{fig:normalized_length}}
-{\includegraphics[width = .32\textwidth]{../figures/Figure_1b_bw.png}}
-\subcaptionbox{Basis pursuit loss\label{fig:bp_loss}}
-{\includegraphics[width = .32\textwidth]{../figures/Figure_1c_bw.png}}
 
-\caption{\ref{fig:data} raw data $X$ represented as column-vectors.
- \ref{fig:selection} a isometric subset - the identification of which is our objective.
- \ref{fig:normalization} the vectors after normalization so that vectors of length $1$ maintain longest length after normalization.
- \ref{fig:gt_loss} our ground truth loss function.
- \ref{fig:normalized_length} normalized length used to rescale Figure \ref{fig:data} to get vectors in Figure \ref{fig:normalization}.
- \ref{fig:bp_loss}d basis pursuit loss for different values of $c$ in the one-dimensional case $D = 1$. 
-This loss is equivalent to that shown in Figure \ref{fig:gt_loss} in the one-dimensional case.
-\label{fig:losses}
-}
-\end{figure}
 
 
 \subsection{Isometry pursuit}
@@ -121,7 +127,7 @@ Given a matrix $Y \in \mathbb R^{D \times D}$, the multitask basis pursuit solut
 \end{align}
 
 Note that multitask basis pursuit solution is not unique under more relaxed conditions than for standard basis pursuit.
-Recall that, given a design matrix $X$, there exists a response variable $y$ such that the lasso admits a non-unique solution if and only if the rowspan of the design matrix $X$ contains a sufficient codimension edge of the $p$ dimensional hypercube \citep{JMLR:v23:21-0420}.
+Recall that, given a design matrix $X$, there exists a response variable $y$ such that the lasso admits a non-unique solution if and only if the rowspan of the design matrix $X$ contains a sufficient codimension edge of the $p$ dimensional hypercube \citep{Schneider2022-hi}.
 This condition generalizes the previously introduced general position condition - that affinely independent columns of the design matrix guarantee non-uniqueness.
 However, for Isometry Pursuit, non-unique solutions may occur even when this condition is satisfied.
 A simple example -
@@ -138,8 +144,8 @@ We therefore define
 By the strong convexity of the $\ell_2$ norm, $\widehat \beta^{\ell_2}_{MLP} (X,Y)$ is well defined.
 
 This implicit regularization assumption is reasonable.
-For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum l2-norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf} simply assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
-Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) stably estimates the min-norm solution when initialized at $0$, but we leave theoretical and experimental proof of this feature of this feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our final proposition.
+For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum l2-norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf,Mishkin2023-yt } simply assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
+Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) stably estimates the min-norm solution when initialized at $0$, but we leave theoretical and experimental proof of this feature of this feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our eventual proposition.
 
 Isometry pursuit is then given by
 \begin{align}
@@ -173,7 +179,7 @@ Then $S(\widehat \beta  (U  X)) = S(\widehat \beta ( X))$.
 A proof is given in Section \ref{proof:basis_pursuit_program_invariance}.
 A corollary is that we may replace $I_D$ in the constraint by any orthonormal $D \times D$ matrix.
 
-When a rank $D$ orthonormal column-submatrix $X_{.S}$ exists, the output of Program \ref{prog:isometry_pursuit} will contain $S$.
+Our main theoretical result is that when a rank $D$ orthonormal column-submatrix $X_{.S}$ exists, the output of Program \ref{prog:isometry_pursuit} will contain $S$.
 \begin{proposition}
 Let $X \in \mathbb R^{D \times P}$ have a rank $D$ orthonormal column submatrix $X_{.S}$.
 Then $S \subseteq \widehat \beta_c ( X)$.
@@ -185,8 +191,8 @@ Proofs of these propositions are given in Section \ref{sec:proofs}, with corresp
 \subsection{Two-stage isometry pursuit}
 
 Proposition \ref{prop:unitary_selection} suggests the following algorithm, which first uses the convex problem to prune and then apply brute search upon the substantially reduced feature set.
+Similar two-stage approaches are standard in the Lasso literature \cite{Hesterberg2008-iy, Koelle2022-ju}, and Proposition \ref{prop:unitary_selection} puts them on relatively strong footing in our application, since this approach is guaranteed to select an isometric submatrix should one exist.
 This method forms our practical isometry estimator.
-This approach is guaranteed to select an isometric submatrix should one exist.
 Note however that if an isometric column submatrix does not exist, then it will not identify the optimum of Program \ref{prog:ground_truth}, since the lasso objective and the singular value objective do not necessarily share a minimizer for all choices of $X$.
 
 \begin{algorithm}[H]
