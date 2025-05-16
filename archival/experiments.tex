@@ -8,10 +8,84 @@ Features like \textit{ petal width} are rows in $X$.
 They are features on the basis of which we may select among the flowers those which are most distinct from another.
 Thus, in diversification, $P = n$.
 
+%add description of words
+\begin{figure}[t]
+   \centering
+    % Row 1: Wine and Iris
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/wine_standardized_isometry_losses_ecdf}
+        \caption{Wine}
+        \label{fig:wine_isometry_losses}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/iris_standardized_isometry_losses_ecdf}
+        \caption{Iris}
+        \label{fig:iris_isometry_losses}
+    \end{subfigure}
+
+    \vspace{1em}
+
+    % Row 2: Ethanol and Words
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/ethanol_isometry_losses_ecdf}
+        \caption{Ethanol}
+        \label{fig:ethanol_isometry_losses}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/words_ecdf}
+        \caption{Words}
+        \label{fig:words_isometry_losses}
+    \end{subfigure}
+    \caption{Empirical CDFs of isometry losses $\ell_1(\widehat{S}_g) - \ell_1(\widehat{S}_{TSIP})$ for Wine, Iris, and Ethanol datasets across $R$ replicates.
+    The CDF reflects the proportion of replicates where the greedy loss is less than or equal to the two-stage loss.
+    As detailed in Table \ref{tab:experiments}, losses are generally lower for two-stage isometry pursuit solutions.}
+    \label{fig:isometry_losses}
+\end{figure}
+
 We also analyze the Ethanol dataset from \citet{Chmiela2018-at, Koelle2022-ju}, but rather than selecting between bourbon and scotch we evaluate a dictionary of interpretable features  - bond torsions - for their ability to parameterize the molecular configuration space.
 In this interpretability use case, columns denote gradients of informative features.
 We compute Jacoban matrices of putative parametrization functions and project them onto estimated tangent spaces (see \citet{Koelle2022-ju} for preprocessing details).
 Rather than selecting between data points, we are selecting between functions which parameterize the data.
+
+
+\begin{table}[h!]
+\tiny
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+\toprule
+Name & $D$ & $P$ & $R$ & $c$ & $\ell_1(X_{.\widehat{S}_{G}})$ & $|\widehat{S}|$ & $\ell_1(X_{.\widehat{S}})$ &
+\begin{tabular}{c}
+$\widehat P (\ell_1(X_{.\widehat{S}_{G}}) >$ \\
+$\ell_1(X_{.\widehat{S}}))$
+\end{tabular} &
+\begin{tabular}{c}
+$\widehat P (\ell_1(X_{.\widehat{S}_{G}}) =$ \\
+$\ell_1(X_{.\widehat{S}}))$
+\end{tabular} &
+\begin{tabular}{c}
+$\widehat P(\bar{\ell}_1(X_{.\widehat{S}_{G}}) >$ \\
+$\bar{\ell}_1(X_{.\widehat{S}}))$
+\end{tabular} \\
+\midrule
+Iris & 4 & 75 & 25 & 1 & 14 ± 7.3 & 6.7 ± 1 & 6.9 ± 1.4 & 0.96 & 0 & 2.4e-05 \\
+Wine & 6 & 89 & 25 & 1 & 7.7 ± 0.33 & 13 ± 1.5 & 7.6 ± 0.29 & 0.64 & 0.16 & 6.3e-04 \\
+Ethanol & 2 & 756 & 100 & 1 & 2.6 ± 0.3 & 90 ± 1.7e+02 & 2.5 ± 0.2 & 0.66 & 0.17 & 2.1e-05 \\
+Words & 6 & 61 & 25 & 1 & 14 ± 1.3 & 11 ± 1.3 & 14 ± 1.2 & 0.52 & 0.12 & 2.1e-02 \\
+\bottomrule
+\end{tabular}
+\caption{Experimental parameters and results.
+For Iris and Wine, $\widehat P$ estimates result from random downsampling by a factor of $2$ to create $R$ replicates.
+Distributional probabilities $\widehat P (\ell_1(X_{.\widehat{S}_{G}}) > \ell_1(X_{.\widehat{S}_{TSIP}}))$ and $\widehat P (\ell_1(X_{.\widehat{S}_{G}}) = \ell_1(X_{.\widehat{S}_{TSIP}}))$ are empirical across replicates, while asymptotic probabilities $\widehat P(\bar{\ell}_1(X_{.\widehat{S}_{G}}) > \bar{\ell}_1(X_{.\widehat{S}_{TSIP}}))$ is computed by paired two-sample T-test on  $\ell_1(X_{.\widehat S})$ and $\ell_1(X_{.\widehat S_{G}})$.
+For brevity, in this table $\widehat S := \widehat {S}_{TSIP}$.
+}
+\label{tab:experiments}
+\end{table}
 
 For basis pursuit, we use the SCS interior point solver \citep{ocpb:16} from CVXPY \citep{diamond2016cvxpy, agrawal2018rewriting}, which is able to push sparse values arbitrarily close to 0 \citep{cvxpy_sparse_solution}.
 Statistical replicas for Wine and Iris are created by resampling across $[P]$.
@@ -25,57 +99,20 @@ Figure \ref{fig:support_cardinalities} details intermediate support recovery car
 We also evaluated second stage \brute~ selection after random selection of $\widehat S_{IP}$ but do not report it since it often lead to catastrophic failure to satisfy the basis pursuit constraint.
 Wall-clock runtimes are given in Section \ref{sec:timing}.
 
-
 % Make bands! 
 
-\begin{table}[h!]
-\tiny
-\centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
-\toprule
-Name & $D$ & $P$ & $R$ & $c$ & $l_1(X_{.\widehat{S}_{G}})$ & $|\widehat{S}_{IP}|$ & $l_1(X_{.\widehat{S}})$ & $\thead{\tiny P_R (l_1(X_{.\widehat{S}_{G}})  \\ > l_1(X_{.\widehat{S}_{}}))}$ & $ \thead{ \tiny P_R (l_1(X_{.\widehat{S}_{G}}) \\ = l_1(X_{.\widehat{S}_{}}))}$ & $\thead{ \tiny \widehat P(\bar{l}_1(X_{.\widehat{S}_{G}}) \\> \bar{l}_1(X_{.\widehat{S}_{}}))}$ \\
-\midrule
-Iris & 4 & 75 & 25 & 1 & 13.8 ± 7.3 & 7 ± 1 & 6.9 ± 1.4 & 0.96 & 0. & 2.4e-05 \\
-Wine & 6 & 89 & 25 & 1 & 7.7 ± 0.3 & 13 ± 2 & 7.6 ± 0.3 & 0.64 & 0.16 & 6.3e-04 \\
-Ethanol & 2 & 756 & 100 & 1 & 2.6 ± 0.3 & 90 ± 165 & 2.5 ± 0.2 & 0.66 & 0.17 & 2.1e-05 \\
-\bottomrule
-\end{tabular}
-\caption{Experimental parameters and results.
-For Iris and Wine, $P$ results from random downsampling by a factor of $2$ to create $R$ replicates.
-$P_R$ values are empirical probabilities, while estimated P-values $\widehat P$ are computed by paired two-sample T-test on  $l_1(X_{.\widehat S})$ and $l_1(X_{.\widehat S_{G}})$.
-For brevity, in this table $\widehat S := \widehat {S}_{TSIP}$.
-}
-\label{tab:experiments}
-\end{table}
+
 
 \begin{figure}[t]
     \centering
-    % Subfigure for Wine dataset
-    \begin{subfigure}[b]{0.3\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{../figures/wine_standardized_0p5_1p0_isometry_losses}
-        \caption{Wine dataset}
-        \label{fig:wine_isometry_losses}
-    \end{subfigure}
-    \hfill
-    % Subfigure for Iris dataset
-    \begin{subfigure}[b]{0.3\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{../figures/iris_standardized_0p5_1p0_isometry_losses}
-        \caption{Iris dataset}
-        \label{fig:iris_isometry_losses}
-    \end{subfigure}
-    \hfill
-    % Subfigure for Ethanol dataset
-    \begin{subfigure}[b]{0.3\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{../figures/ethanol_isometry_losses}
-        \caption{Ethanol dataset}
-        \label{fig:ethanol_isometry_losses}
-    \end{subfigure}
-    \caption{Isometry losses $l_1$  for Wine, Iris, and Ethanol datasets across $R$ replicates.
-    Lower greedy losses are shown with turquoise, while lower two stage losses are shown with pink.
-    Equal losses are shown with black lines.
-    As detailed in Table \ref{tab:experiments}, losses are generally lower for two-stage isometry pursuit solutions.}
-    \label{fig:isometry_losses}
+    \includegraphics[width=\textwidth]{../figures/grid_power_comparison_filled.png}
+    \caption{
+        Proportions of support selection outcomes as power parameter $c$ varies, for different values of $D$ in the Wine dataset across various values of $c$.
+        The turquoise area indicates when greedy solution  $\widehat{S}_G$ outperforms $\widehat{S}_{\text{TSIP}}$, gray shows ties, and pink indicates $\widehat{S}_{\text{TSIP}}$ is better.
+        Solution at $c=10$ is not plotted for $D=6$ due to numerical overflow.
+    }
+    \label{fig:stacked_power_comparison}
 \end{figure}
+
+
+
