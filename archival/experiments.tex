@@ -48,15 +48,16 @@ Thus, in diversification, $P = n$.
     \label{fig:isometry_losses}
 \end{figure}
 
-We also analyze the Ethanol dataset from \citet{Chmiela2018-at, Koelle2022-ju}, but rather than selecting between bourbon and scotch we evaluate a dictionary of interpretable features  - bond torsions - for their ability to parameterize the molecular configuration space.
+We analyze the Ethanol dataset from \citet{Chmiela2018-at, Koelle2022-ju}, but rather than selecting between bourbon and scotch we evaluate a dictionary of interpretable features  - bond torsions - for their ability to parameterize the molecular configuration space.
 In this interpretability use case, columns denote gradients of informative features.
 We compute Jacoban matrices of putative parametrization functions and project them onto estimated tangent spaces (see \citet{Koelle2022-ju} for preprocessing details).
 Rather than selecting between data points, we are selecting between functions which parameterize the data.
 This dataset exemplifies our motivating example - the search for locally isometric embeddings.
 
-Finally, we also construct a small word embedding dataset.
+We also construct a small word embedding dataset.
 Inspired by the linear representation hypothesis \citep{Park2023-hq,Mikolov2013-lt } and the construction over complete dictionaries of concepts in representation space, we apply isometric pursuit to prune down embeddings of concept dictionaries into their basis components.
 As with the other datasets, we measure success primarily numerically against the ground truth objective values obtained by greedy solutions.
+Further details on this dataset are given in Section \ref{sec:word_embeddings}.
 
 \begin{table}[h!]
 \tiny

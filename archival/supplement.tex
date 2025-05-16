@@ -168,6 +168,7 @@ It is therefore maximally non-sparse with respect to any of the minimizing solut
 
 Figure \ref{fig:support_cardinalities} plots the distribution of $|\widehat{S}_{IP}|$ from Table \ref{tab:experiments} in order to contextualize the reported means.
 While typically $|\widehat{S}_{IP}| << P$, there are cases for Ethanol where this is not the case that drive up the means.
+Further investigation into the extremely failure of Isometric Pursuit to sparsify in the the minor chunk of the bimodal Ethanol support cardinality distribution would be warranted.
 
 \begin{figure}[t]
     \centering
@@ -216,54 +217,117 @@ While typically $|\widehat{S}_{IP}| << P$, there are cases for Ethanol where thi
 \label{sec:deep_dive}
 
 The results in Section \ref{sec:experiments} show that there are circumstances in which the \greedy~ performs better than \tsip, so clearly \tsip~ does not always achieve a global optimum.
-Figure \ref{fig:comparison_losses} gives results on the line of inquiry about why this is the case based on the reasoning presented in Section \ref{sec:discussion}.
+Figure \ref{fig:ecdf_comparison_losses} gives results on the line of inquiry about why this is the case based on the reasoning presented in Section \ref{sec:discussion}.
 In these results a two-stage algorithm achieves the global optimum of a slightly different brute problem, namely brute optimization of the multitask basis pursuit penalty $\|\cdot \|_{1,2}$.
 That is, brute search on $\|\cdot \|_{1,2}$ gives the same result as the two stage algorithm with brute search on $\|\cdot \|_{1,2}$ subsequent to isometry pursuit.
-This suggests that failure to select the global optimum by \tsip~ is in fact only due to the mismatch between global optimums of brute optimization of the multitask penalty and the isometry loss given certain data.
+This suggests that failure to select the global optimum by \tsip~ is due to the mismatch between global optimums of brute optimization of the multitask penalty and the isometry loss given certain data.
+It also confirms that the minimizer of brute optimization of the $\|\|_{1,2}$ objective is contained within the isometry pursuit solution.
+Note that this would include an isometric solution, should it exist.
 
-\begin{figure}[t] % Place at the top of the page
+\begin{figure}[t]
     \centering
-    % Top-left plot
+    % Top-left plot: Iris Isometry Loss ECDF
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/iris_standardized_0p1_1p0_isometry_losses}
-        \caption{Iris Isometry Losses}
-        \label{fig:iris_isometry_losses}
+        \includegraphics[width=\textwidth]{../figures/iris_isometry_losses_iso_ecdf}
+        \caption{Iris $\ell_1(X_{.\widehat S})$ comparison for brute optimization of $\ell_1$ versus two-stage Isometry Pursuit optimization of $\ell_1$}
+        \label{fig:iris_isometry_losses_ecdf}
     \end{subfigure}
     \hfill
-    % Top-right plot
+    % Top-right plot: Iris Multitask Loss ECDF
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/iris_standardized_0p1_1p0_group_lasso_losses}
-        \caption{Iris Multitask Losses}
-        \label{fig:iris_group_lasso_losses}
+        \includegraphics[width=\textwidth]{../figures/iris_isometry_losses_ts_ecdf}
+        \caption{Iris $\|X_{.\widehat S}\|_{1,2}$ comparison for brute optimization of $\|\|_{1,2}$ versus two-stage Isometry Pursuit optimization of $\|\|_{1,2}$}
+        \label{fig:iris_multitask_losses_ecdf}
     \end{subfigure}
 
-    \vspace{0.5cm} % Add vertical spacing between rows
+    \vspace{0.5cm}
 
-    % Bottom-left plot
+    % Bottom-left plot: Wine Isometry Loss ECDF
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/wine_standardized_0p1_1p0_isometry_losses}
-        \caption{Wine Isometry Losses}
-        \label{fig:wine_isometry_losses}
+        \includegraphics[width=\textwidth]{../figures/wine_isometry_losses_iso_ecdf}
+        \caption{Wine $\ell_1(X_{.\widehat S})$ comparison for brute optimization of $\ell_1$ versus two-stage Isometry Pursuit optimization of $\ell_1$}
+        \label{fig:wine_isometry_losses_ecdf}
     \end{subfigure}
     \hfill
-    % Bottom-right plot
+    % Bottom-right plot: Wine Multitask Loss ECDF
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/wine_standardized_0p1_1p0_group_lasso_losses}
-        \caption{Wine Multitask Losses}
-        \label{fig:wine_group_lasso_losses}
+        \includegraphics[width=\textwidth]{../figures/wine_isometry_losses_ts_ecdf}
+        \caption{Wine $\|X_{.\widehat S}\|_{1,2}$ comparison for brute optimization of $\|\|_{1,2}$ versus two-stage Isometry Pursuit optimization of $\|\|_{1,2}$}
+        \label{fig:wine_multitask_losses_ecdf}
     \end{subfigure}
+
     \caption{Comparison of Isometry and Group Lasso Losses across $25$ replicates for randomly downsampled Iris and Wine Datasets with $(P,D) = (4,15)$ and $(13, 18)$, respectively.
     Note that this further downsampling compared with Section \ref{sec:experiments} was necessary to compute global minimizers of \brute.
-    Lower brute losses are shown with turquoise, while lower two stage losses are shown with pink.
-    Equal losses are shown with black lines.}
-    \label{fig:comparison_losses}
+    Left column: isometry losses $\ell_1(X_{.\widehat{S}})$. Right column: multitask norms $\|w(X_{.\widehat{S}})\|_{1,2}$.
+    }
+    \label{fig:ecdf_comparison_losses}
 \end{figure}
 
 \newpage
+
+\subsection{Word embeddings}
+\label{sec:word_embeddings}
+
+We applied \isometrypursuit~ on a word embedding dataset with the following construction.
+We used all-MiniLM-L6-v2 from the Sentence Transformers library \citep{reimers-2019-sentence-bert}.
+We defined $6$ axes of variation using the word categories shown in table \ref{tab:semantic_axes}
+Each axis is defined by the difference between two poles, computed from the centroids of the embeddings of the corresponding word sets.
+We then projected the word embeddings onto these axes and standardized in order to create a linear conceptual embedding space.
+This was the representation that we evaluated.
+
+\begin{table}[t]
+\centering
+\begin{tabular}{|c|c|c|p{5cm}|p{5cm}|}
+\hline
+\textbf{Pole 1} & \textbf{Pole 2} & \textbf{Category} & \textbf{Words (Pole 1)} & \textbf{Words (Pole 2)} \\
+\hline
+man     & woman     & gender   & man, male, guy, gentleman, sir & woman, female, lady, madam, gal \\
+regent  & slave     & status   & regent, sovereign, monarch, emperor, pharaoh & slave, wench \\
+young   & old       & age      & young, kid & old, elderly \\
+warrior & scholar   & domain   & warrior, soldier, knight, fighter, mercenary & scholar, academic, professor, intellectual, scientist \\
+rich    & poor      & wealth   & rich, wealthy, affluent, millionaire, tycoon & poor, impoverished, broke, destitute, beggar \\
+urban   & rural     & location & urban, city, metropolitan, cosmopolitan, downtown & rural, village, countryside, agrarian, pastoral \\
+warm    & cold      & warmth   & warm, friendly, kind, loving, affectionate & cold, aloof, harsh, distant, indifferent \\
+\hline
+\end{tabular}
+\caption{Semantic axes used for projection of word embeddings. }
+\label{tab:semantic_axes}
+\end{table}
+
+In order to illustrate the semantic interpretation of our analyses, we plot the following co-occurrence graph for retrieved words.
+While we do not provide any additional quantitative evaluation, in the plotted replicate two-stage Isometry Pursuit better separates words from the same category (e.g. cold, warm) than does greedy search.
+
+\begin{figure}[h]
+    \centering
+    % First graph
+    \begin{subfigure}[b]{0.47\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/ip_graph.png}
+        \caption{Two-stage isometry pursuit selected word co-occurrences}
+        \label{fig:co_occurrence_brute}
+    \end{subfigure}
+    \hfill
+    % Second graph
+    \begin{subfigure}[b]{0.47\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/greedy_graph.png}
+        \caption{Greedy algorithm selected word co-occurrences}
+        \label{fig:co_occurrence_two_stage}
+    \end{subfigure}
+    
+    \caption{Force-directed graphs of word co-occurrences for each selection method.
+    Node size reflects marginal frequency across replicates.
+    Edge width represents co-occurrence strength ($\geq 5$).
+    Colors denote semantic axis.}
+    \label{fig:co_occurrence_graphs}
+\end{figure}
+
+
+
 
 \subsection{Timing}
 \label{sec:timing}
