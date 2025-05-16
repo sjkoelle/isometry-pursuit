@@ -171,32 +171,44 @@ While typically $|\widehat{S}_{IP}| << P$, there are cases for Ethanol where thi
 
 \begin{figure}[t]
     \centering
-    % Subfigure for Wine dataset
-    \begin{subfigure}[b]{0.3\textwidth}
+    % Wine
+    \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/wine_cardinalities}
         \caption{Wine Dataset}
         \label{fig:wine_cardinalities}
     \end{subfigure}
     \hfill
-    % Subfigure for Iris dataset
-    \begin{subfigure}[b]{0.3\textwidth}
+    % Iris
+    \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{..//figures/iris_cardinalities}
+        \includegraphics[width=\textwidth]{../figures/iris_cardinalities}
         \caption{Iris Dataset}
         \label{fig:iris_cardinalities}
     \end{subfigure}
-    \hfill
-    % Subfigure for Ethanol dataset
-    \begin{subfigure}[b]{0.3\textwidth}
+
+    \vspace{0.5em}  % small vertical space between rows
+
+    % Ethanol
+    \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/ethanol_cardinalities}
         \caption{Ethanol Dataset}
         \label{fig:ethanol_cardinalities}
     \end{subfigure}
-    \caption{Support Cardinalities for Wine, Iris, and Ethanol datasets}
+    \hfill
+    % Words
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/words_cardinalities}
+        \caption{Words Dataset}
+        \label{fig:words_cardinalities}
+    \end{subfigure}
+
+    \caption{Support cardinalities for each dataset under Basis Pursuit.}
     \label{fig:support_cardinalities}
 \end{figure}
+
 
 \newpage
 
@@ -262,13 +274,14 @@ The particularly high variance for brute force search in the second step of \tsi
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|c}
 \toprule
-Name & IP & 2nd stage brute & Greedy \\
+Name & IP & 2nd stage & Greedy \\
 \midrule
 Iris & 1.24 ± 0.02 & 0.00 ± 0.00 & 0.02 ± 0.00 \\
 Wine & 2.32 ± 0.17 & 0.13 ± 0.12 & 0.03 ± 0.00 \\
 Ethanol & 8.38 ± 0.57 & 0.55 ± 1.08 & 0.07 ± 0.01 \\
+Words & 0.98 ± 0.20 & 0.03 ± 0.02 & 0.01 ± 0.00 \\
 \bottomrule
 \end{tabular}
 \caption{Algorithm runtimes in seconds across replicates.}
