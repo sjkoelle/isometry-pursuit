@@ -187,6 +187,9 @@ Then $S \subseteq \widehat \beta_c ( X)$.
 \end{proposition}
 
 Proofs of these propositions are given in Section \ref{sec:proofs}, with corresponding experimental results in Section \ref{sec:experiments}.
+The proof mostly relies on the KKT conditions \citep{Hastie2015-qa} being used to verify that an isometric subset yields a corresponding basis pursuit solution for an appropriate normalized matrix.
+This is a formalization of our intuition that longer and more orthogonal vectors will minimize loss.
+We then apply a simple argument to show that the $\ell-2$ minimizing solution is the least sparse solution, which means that it contains the isometry solution, should it exist.
 
 \subsection{Two-stage isometry pursuit}
 
