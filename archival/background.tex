@@ -1,0 +1,98 @@
+\section{Background}
+
+Our algorithm is motivated by spectral and convex analysis.
+
+\subsection{Problem}
+
+Our goal is, given a matrix $ X \in \mathbb R^{D \times P}$, to select a subset $ S \subset [P]$ with $| S| = D$ such that $X_{.  S}$ is as orthonormal as possible in a computationally efficient way.
+To this end, we define a ground truth loss function that measures orthonormalness, and then introduce a surrogate loss function that convexifies the problem so that it may be efficiently solved.
+Figure \ref{fig:data} and \ref{fig:selection} provide a visual depiction of this problem when $D=2$ and $P=30$.
+
+\subsection{Interpretability and isometry}
+
+Our motivating example is the selection of data representations from within sets of putative coordinates: the columns of a provided wide matrix.
+Compared with Sparse PCA \citep{DAspremont2007-aq, Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, we seek a low-dimensional representation from the set of these column vectors rather than their span.
+
+This method applies to interpretability, for which parsimony is at a premium.
+Interpretability arises through comparison of data with what is known to be important in the domain of the problem.
+This knowledge often takes the form of a functional dictionary.
+Evaluation of independence of dictionary features arises in numerous scenarios \citep{Chen2019-km, Koelle2022-ju, He2023-ch}.
+The requirement that dictionary features be full rank has been called functional independence \citep{Koelle2022-ju} or feature decomposability \citep{templeton2024scaling}, with connection between dictionary rank and independence via the implicit function theorem.
+Besides independence, the metric properties of such dictionary elements are of natural interest.
+This is formalized through the notion of differential.
+
+\begin{definition}
+The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ between $D$ dimensional manifolds $\M \subseteq \mathbb R^B$ and $\N \subseteq \mathbb R^P$ is a map in tangent bases $x_1 \dots x_{D}$ of $T_\xi \M$ and $y_1 \dots y_{D}$ of $T_{\phi(\xi)} \N$ consisting of entries
+\begin{align}
+\label{eq:diff}
+    D\phi (\xi) = \begin{bmatrix}
+    \frac{\partial \phi_1  }{\partial x_1}(\xi)  & \dots & \frac{\partial \phi_1 }{\partial x_D}(\xi)  \\
+    \vdots & & \vdots \\
+    \frac{\partial \phi_D }{\partial x_1}(\xi)  & \dots & \frac{\partial \phi_{D}  }{\partial x_{D}}(\xi) 
+    \end{bmatrix}.
+\end{align}
+\end{definition}
+
+It is not always necessary to explicitly estimate tangent spaces when applying this definition.
+The most commonly encountered manifolds are vector spaces for which the tangent spaces are trivial.
+This is the case for full-rank tabular data, for which isometry has a natural interpretation as a type of diversification, and often for the latent spaces of deep learning models.
+In this case, $B = D$.
+
+\begin{definition}
+\label{def:isometric_at_a_point}
+A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq R^{B}$ and $\mathcal N  \subseteq R^{P}$
+$\phi$ is an \textbf{isometry at a point} $\xi \in \mathcal M$ if
+\begin{align}
+{D \phi (\xi)}^T D \phi (\xi) = I_D.
+\end{align}
+That is, $\phi$ is an isometry at $\xi$ if $D \phi (\xi)$ is orthonormal.
+\end{definition}
+
+The applications of pointwise isometry are themselves manifold.
+Pointwise isometric embeddings faithfully preserve high-dimensional geometry.
+For example, Local Tangent Space Alignment \citep{ZhangZ:04}, Multidimensional Scaling \citep{ChenBuja:localMDS09} and Isomap \citep{tenenbaum2000ggf} non-parametrically estimate embeddings that are as isometric as possible.
+Another approach stitches together pointwise isometries selected from a dictionary to form global embeddings \citep{Kohli2021-lr}.
+The method is particularly relevant since it constructs such isometries through greedy search, with putative dictionary features added one at a time.
+
+That $D\phi$ is orthonormal has several equivalent formulations.
+The one motivating our ground truth loss function comes from spectral analysis.
+\begin{proposition}
+\label{prop:orthonormal_spectrum}
+The singular values $\sigma_1 \dots \sigma_D$ are equal to $1$ if and only if $U \in \mathbb{R}^{D \times D}$ is orthonormal.
+\end{proposition}
+On the other hand, the formulation that motivates our convex approach is that orthonormal matrices consist of $D$ coordinate features whose gradients are orthogonal and of unit length.
+\begin{proposition}
+\label{prop:orthonormal_basis}
+The component vectors $u_1 \dots u_D \in \mathbb R^B$ form a orthonormal matrix if and only if, for all $d_1, d_2 \in [D], \langle u_{d_1}, u_{d_2} \rangle = \begin{cases}
+1 \; d_1 = d_2 \\ 
+0 \; d_1 \neq d_2 
+\end{cases}$.
+\end{proposition}
+
+
+\subsection{Best subset selection}
+
+Given a matrix $ X \in \mathbb R^{D \times P}$, we compare algorithmic paradigms for solving problems of the form
+\begin{align}
+\label{prog:ground_truth}
+\arg \min_{ S \in \binom{[P]}{D}} l ( X_{. S})
+\end{align}
+where $\binom{[P]}{D} = \left\{ A \subseteq [P] : \left|A\right| = D \right\}$.
+Brute force algorithms consider all possible solutions.
+These algorithms are conceptually simple, but have the often prohibitive time complexity $O(C_lP^D)$ where $C_l$ is the cost of evaluating $l$.
+Greedy algorithms consist of iteratively adding one element at a time to $ S$.
+This algorithms have time complexity $O(C_lPD)$ and so are computationally more efficient than brute force algorithms, but can get stuck in local minima.
+Formal definitions are given in Section \ref{sec:algorithms}.
+
+Sometimes, it is possible to introduce an objective which convexifies problems of the above form  \citep{Liberti2004-iu, Abdi2013-th, Zhou2021-zz}.
+Solutions
+\begin{align}
+\arg \min f(\beta) : Y  = X\beta 
+\end{align}
+to the overcomplete regression problem $Y = X \beta$ are a classic example \citep{Chen2001-hh}.
+When $f(\beta) = \|\beta\|_0$, this problem is non-convex, and is thus suitable for greedy or brute algorithms, but when $f(\beta) =\|\beta\|_1$, the problem is convex, and may be solved efficiently via interior-point methods.
+When the equality constraint is relaxed, Lagrangian duality may be used to reformulate as a so-called Lasso problem, which leads to an even richer set of optimization algorithms \citep{Hastie2016-cn}. % cite FISTA< glmnet, coordinate descent
+
+The form of basis pursuit that we apply is inspired by the group basis pursuit approach in \citet{Koelle2022-ju}.
+In group basis pursuit (which we call multitask basis pursuit when grouping is dependent only on the structure of matrix-valued response variable $y$) the objective function is $f(\beta) = \|\beta\|_{1,2} := \sum_{p=1}^P \|\beta_{p.}\|_2$  \citep{Yuan2006-bt, Obozinski2006-kq, Yeung2011-fg}.
+This objective creates joint sparsity across entire rows $\beta_{p.}$ and was used in \citet{Koelle2022-ju} to select independent subsets among interpretable features.

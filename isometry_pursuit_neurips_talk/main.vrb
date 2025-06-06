@@ -1,0 +1,26 @@
+\frametitle{Interpretability examples}
+\centering
+\begin{figure}[H]
+    \centering
+\begin{tikzcd}[column sep=small]
+ & \text{Data } \mathcal{D} \in  \mathbb R^{N \times B} \arrow[dl] \arrow[dr] & \\
+\text{Embedding } \phi(\mathcal{D}) & &  \text{Dictionary } g (\mathcal D) = [g^1, \dots, g^P]
+\end{tikzcd}
+    \label{fig:summary}
+\end{figure}
+\begin{table}[H]
+\tiny
+\centering
+\begin{tabular}{|p{1.8cm}|p{1.8cm}|p{2cm}|p{2.4cm}|p{2cm}|}
+\hline
+\textbf{Data} & \textbf{Featurization} &\textbf{Embedding} & \textbf{Dictionary} & \textbf{Explanation} \\
+\hline
+Configurations & Planar angles & UMAP & Dihedral angles & Methyl rotation \\
+Sentences & Tokens & LLM embeddings & Sparse autoencoder & Time of day \\
+Cells & Gene expression & UMAP & Gene sets & Cell cycle \\
+Galaxies & Spectra & Diffusion maps & Stellar features & Age \\
+\hline
+\end{tabular}
+\label{tab:concept_examples}
+\caption*{Examples of explanations in various scientific domains}
+\end{table}

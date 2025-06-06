@@ -1,3 +1,4 @@
+models/
 *.fdb_latexmk
 *.fls
 *.blg
