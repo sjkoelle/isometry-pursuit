@@ -1,0 +1,538 @@
+
+
+@ARTICLE{Vaswani2017-em,
+  title    = "Attention is All you Need",
+  author   = "Vaswani, Ashish and Shazeer, Noam M and Parmar, Niki and
+              Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser,
+              Lukasz and Polosukhin, Illia",
+  abstract = "The dominant sequence transduction models are based on complex
+              recurrent or convolutional neural networks in an encoder-decoder
+              configuration. The best performing models also connect the
+              encoder and decoder through an attention mechanism. We propose a
+              new simple network architecture, the Transformer, based solely on
+              attention mechanisms, dispensing with recurrence and convolutions
+              entirely. Experiments on two machine translation tasks show these
+              models to be superior in quality while being more parallelizable
+              and requiring significantly less time to train. Our model
+              achieves 28.4 BLEU on the WMT 2014 English-to-German translation
+              task, improving over the existing best results, including
+              ensembles by over 2 BLEU. On the WMT 2014 English-to-French
+              translation task, our model establishes a new single-model
+              state-of-the-art BLEU score of 41.8 after training for 3.5 days
+              on eight GPUs, a small fraction of the training costs of the best
+              models from the literature. We show that the Transformer
+              generalizes well to other tasks by applying it successfully to
+              English constituency parsing both with large and limited training
+              data.",
+  journal  = "Adv. Neural Inf. Process. Syst.",
+  pages    = "5998--6008",
+  month    =  jun,
+  year     =  2017
+}
+
+
+@MISC{Nanda-wv,
+  title        = "A Mathematical Framework for Transformer Circuits",
+  howpublished = "\url{https://transformer-circuits.pub/2021/framework/index.html}",
+  note         = "Accessed: 2024-5-13",
+  language     = "en"
+}
+
+
+@ARTICLE{Cunningham-2024-kw,
+  title  = "{SPARSE} {AUTOENCODERS} {FIND} {HIGHLY} {INTER-} {PRETABLE}
+            {FEATURES} {IN} {LANGUAGE} {MODELS}",
+  author = "Cunningham, Hoagy and Ewart, Aidan and Riggs, Logan and Huben,
+            Robert and Sharkey, Lee"
+}
+
+
+% The entry below contains non-ASCII chars that could not be converted
+% to a LaTeX equivalent.
+@ARTICLE{Robert-AIZI-undated-qg,
+  title    = "Explaining ``Taking features out of superposition with sparse
+              autoencoders''",
+  author   = "{Robert\_AIZI}",
+  abstract = "[Thanks to Logan Riggs and Hoagy for their help writing this
+              post.] …"
+}
+
+
+@ARTICLE{Engels2024-cm,
+  title         = "Not All Language Model Features Are Linear",
+  author        = "Engels, Joshua and Liao, Isaac and Michaud, Eric J and
+                   Gurnee, Wes and Tegmark, Max",
+  abstract      = "Recent work has proposed the linear representation
+                   hypothesis: that language models perform computation by
+                   manipulating one-dimensional representations of concepts
+                   (``features'') in activation space. In contrast, we explore
+                   whether some language model representations may be
+                   inherently multi-dimensional. We begin by developing a
+                   rigorous definition of irreducible multi-dimensional
+                   features based on whether they can be decomposed into either
+                   independent or non-co-occurring lower-dimensional features.
+                   Motivated by these definitions, we design a scalable method
+                   that uses sparse autoencoders to automatically find
+                   multi-dimensional features in GPT-2 and Mistral 7B. These
+                   auto-discovered features include strikingly interpretable
+                   examples, e.g. circular features representing days of the
+                   week and months of the year. We identify tasks where these
+                   exact circles are used to solve computational problems
+                   involving modular arithmetic in days of the week and months
+                   of the year. Finally, we provide evidence that these
+                   circular features are indeed the fundamental unit of
+                   computation in these tasks with intervention experiments on
+                   Mistral 7B and Llama 3 8B, and we find further circular
+                   representations by breaking down the hidden states for these
+                   tasks into interpretable components.",
+  month         =  may,
+  year          =  2024,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.LG",
+  eprint        = "2405.14860"
+}
+
+@ARTICLE{Cunningham2023-mu,
+  title         = "Sparse autoencoders find highly interpretable features in
+                   language models",
+  author        = "Cunningham, Hoagy and Ewart, Aidan and Riggs, Logan and
+                   Huben, Robert and Sharkey, Lee",
+  abstract      = "One of the roadblocks to a better understanding of neural
+                   networks' internals is
+                   \textbackslashtextit\{polysemanticity\}, where neurons
+                   appear to activate in multiple, semantically distinct
+                   contexts. Polysemanticity prevents us from identifying
+                   concise, human-understandable explanations for what neural
+                   networks are doing internally. One hypothesised cause of
+                   polysemanticity is \textbackslashtextit\{superposition\},
+                   where neural networks represent more features than they have
+                   neurons by assigning features to an overcomplete set of
+                   directions in activation space, rather than to individual
+                   neurons. Here, we attempt to identify those directions,
+                   using sparse autoencoders to reconstruct the internal
+                   activations of a language model. These autoencoders learn
+                   sets of sparsely activating features that are more
+                   interpretable and monosemantic than directions identified by
+                   alternative approaches, where interpretability is measured
+                   by automated methods. Moreover, we show that with our
+                   learned set of features, we can pinpoint the features that
+                   are causally responsible for counterfactual behaviour on the
+                   indirect object identification task
+                   \textbackslashcitep\{wang2022interpretability\} to a finer
+                   degree than previous decompositions. This work indicates
+                   that it is possible to resolve superposition in language
+                   models using a scalable, unsupervised method. Our method may
+                   serve as a foundation for future mechanistic
+                   interpretability work, which we hope will enable greater
+                   model transparency and steerability.",
+  month         =  sep,
+  year          =  2023,
+  copyright     = "http://creativecommons.org/licenses/by/4.0/",
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.LG",
+  eprint        = "2309.08600"
+}
+
+
+
+@MISC{Elhage-ob,
+  title        = "Toy Models of Superposition",
+  howpublished = "\url{https://transformer-circuits.pub/2022/toy_model/index.html}",
+  note         = "Accessed: 2024-5-13",
+  language     = "en"
+}
+
+
+@ARTICLE{Ribeiro2016-rm,
+  title         = "``Why Should {I} Trust You?'': Explaining the Predictions of
+                   Any Classifier",
+  author        = "Ribeiro, Marco Tulio and Singh, Sameer and Guestrin, Carlos",
+  abstract      = "Despite widespread adoption, machine learning models remain
+                   mostly black boxes. Understanding the reasons behind
+                   predictions is, however, quite important in assessing trust,
+                   which is fundamental if one plans to take action based on a
+                   prediction, or when choosing whether to deploy a new model.
+                   Such understanding also provides insights into the model,
+                   which can be used to transform an untrustworthy model or
+                   prediction into a trustworthy one. In this work, we propose
+                   LIME, a novel explanation technique that explains the
+                   predictions of any classifier in an interpretable and
+                   faithful manner, by learning an interpretable model locally
+                   around the prediction. We also propose a method to explain
+                   models by presenting representative individual predictions
+                   and their explanations in a non-redundant way, framing the
+                   task as a submodular optimization problem. We demonstrate
+                   the flexibility of these methods by explaining different
+                   models for text (e.g. random forests) and image
+                   classification (e.g. neural networks). We show the utility
+                   of explanations via novel experiments, both simulated and
+                   with human subjects, on various scenarios that require
+                   trust: deciding if one should trust a prediction, choosing
+                   between models, improving an untrustworthy classifier, and
+                   identifying why a classifier should not be trusted.",
+  month         =  feb,
+  year          =  2016,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.LG",
+  eprint        = "1602.04938"
+}
+
+@misc{chen2019modern,
+  title={Modern manifold learning methods for md data--a step by step procedural overview},
+  author={Chen, Yu-Chia and McQueen, James and Koelle, Samson J and Meila, Marina and Chmiela, Stefan and Tkatchenko, Alexandre},
+  year={2019}
+}
+
+
+% The entry below contains non-ASCII chars that could not be converted
+% to a LaTeX equivalent.
+@ARTICLE{Buenl2021-jg,
+  title    = "Tangent Space Least Adaptive Clustering",
+  author   = "Buenﬁl, James and Koelle, Samson and Meil{\u a}, M",
+  abstract = "A method for enhanced sampling that uses non-linear geometry
+              estimated by an unsupervised learning algorithm in a
+              reinforcement-learning enhanced sampler in a
+              reinforcement-learning enhanced sampler is introduced. The
+              biasing of dynamical simulations along collective variables
+              uncovered by unsupervised learning has become a standard approach
+              in analysis of molecular systems. However, despite parallels with
+              reinforcement learning (RL), state of the art RL methods have yet
+              to reach the molecular dynamics community. The interaction
+              between un-supervised learning, dynamical simulations, and RL is
+              therefore a promising area of research. We introduce a method for
+              enhanced sampling that uses non-linear geometry estimated by an
+              unsupervised learning algorithm in a reinforcement-learning
+              enhanced sampler. We give theoretical background justifying this
+              method, and show re-sults on data.",
+  year     =  2021,
+  language = "en"
+}
+
+
+@ARTICLE{Chmiela2018-at,
+  title    = "Towards exact molecular dynamics simulations with machine-learned
+              force fields",
+  author   = "Chmiela, Stefan and Sauceda, Huziel E and M{\"u}ller,
+              Klaus-Robert and Tkatchenko, Alexandre",
+  abstract = "Molecular dynamics (MD) simulations employing classical force
+              fields constitute the cornerstone of contemporary atomistic
+              modeling in chemistry, biology, and materials science. However,
+              the predictive power of these simulations is only as good as the
+              underlying interatomic potential. Classical potentials often fail
+              to faithfully capture key quantum effects in molecules and
+              materials. Here we enable the direct construction of flexible
+              molecular force fields from high-level ab initio calculations by
+              incorporating spatial and temporal physical symmetries into a
+              gradient-domain machine learning (sGDML) model in an automatic
+              data-driven way. The developed sGDML approach faithfully
+              reproduces global force fields at quantum-chemical CCSD(T) level
+              of accuracy and allows converged molecular dynamics simulations
+              with fully quantized electrons and nuclei. We present MD
+              simulations, for flexible molecules with up to a few dozen atoms
+              and provide insights into the dynamical behavior of these
+              molecules. Our approach provides the key missing ingredient for
+              achieving spectroscopic accuracy in molecular simulations.",
+  journal  = "Nat. Commun.",
+  volume   =  9,
+  number   =  1,
+  pages    = "3887",
+  month    =  sep,
+  year     =  2018,
+  language = "en"
+}
+
+@INPROCEEDINGS{Koelle2024-no,
+  title     = "Consistency of dictionary-based manifold learning",
+  booktitle = "Proceedings of The 27th International Conference on Artificial
+               Intelligence and Statistics",
+  author    = "Koelle, Samson J and Zhang, Hanyu and Murad, Octavian-Vlad and
+               Meila, Marina",
+  editor    = "Dasgupta, Sanjoy and Mandt, Stephan and Li, Yingzhen",
+  abstract  = "We analyze a paradigm for interpretable Manifold Learning for
+               scientific data analysis, whereby one parametrizes a manifold
+               with d smooth functions from a scientist-provided dictionary of
+               meaningful, domain-related functions. When such a
+               parametrization exists, we provide an algorithm for finding it
+               based on sparse regression in the manifold tangent bundle,
+               bypassing more standard, agnostic manifold learning algorithms.
+               We prove conditions for the existence of such parameterizations
+               in function space and the first end to end recovery results from
+               finite samples. The method is demonstrated on both synthetic
+               problems and with data from a real scientific domain.",
+  publisher = "PMLR",
+  volume    =  238,
+  pages     = "4348--4356",
+  series    = "Proceedings of Machine Learning Research",
+  year      =  2024
+}
+
+
+@MISC{Bills2023-ec,
+  title        = "Language models can explain neurons in language models",
+  author = "OpenAI",
+  year = 2023,
+  howpublished = "\url{https://openaipublic.blob.core.windows.net/neuron-explainer/paper/index.html}",
+  note         = "Accessed: 2024-5-13"
+}
+
+
+@MISC{Anthropic-dr,
+  title        = "Scaling Monosemanticity: Extracting Interpretable Features
+                  from Claude 3 Sonnet",
+  howpublished = "\url{https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html}",
+  note         = "Accessed: 2024-5-29",
+  language     = "en"
+}
+
+
+@INPROCEEDINGS{Mikolov2013-bs,
+  title     = "Linguistic Regularities in Continuous Space Word Representations",
+  booktitle = "Proceedings of the 2013 Conference of the North {A}merican
+               Chapter of the Association for Computational Linguistics: Human
+               Language Technologies",
+  author    = "Mikolov, Tomas and Yih, Wen-Tau and Zweig, Geoffrey",
+  editor    = "Vanderwende, Lucy and Daum{\'e}, III, Hal and Kirchhoff, Katrin",
+  publisher = "Association for Computational Linguistics",
+  pages     = "746--751",
+  month     =  jun,
+  year      =  2013,
+  address   = "Atlanta, Georgia"
+}
+
+
+@MISC{Conmy-undated-os,
+  title       = "{Automatic-Circuit-Discovery}",
+  author      = "Conmy, Arthur",
+  institution = "Github",
+  language    = "en"
+}
+
+
+@ARTICLE{Wang2022-yo,
+  title         = "Interpretability in the Wild: a Circuit for Indirect Object
+                   Identification in {GPT-2} small",
+  author        = "Wang, Kevin and Variengien, Alexandre and Conmy, Arthur and
+                   Shlegeris, Buck and Steinhardt, Jacob",
+  abstract      = "Research in mechanistic interpretability seeks to explain
+                   behaviors of machine learning models in terms of their
+                   internal components. However, most previous work either
+                   focuses on simple behaviors in small models, or describes
+                   complicated behaviors in larger models with broad strokes.
+                   In this work, we bridge this gap by presenting an
+                   explanation for how GPT-2 small performs a natural language
+                   task called indirect object identification (IOI). Our
+                   explanation encompasses 26 attention heads grouped into 7
+                   main classes, which we discovered using a combination of
+                   interpretability approaches relying on causal interventions.
+                   To our knowledge, this investigation is the largest
+                   end-to-end attempt at reverse-engineering a natural behavior
+                   ``in the wild'' in a language model. We evaluate the
+                   reliability of our explanation using three quantitative
+                   criteria--faithfulness, completeness and minimality. Though
+                   these criteria support our explanation, they also point to
+                   remaining gaps in our understanding. Our work provides
+                   evidence that a mechanistic understanding of large ML models
+                   is feasible, opening opportunities to scale our
+                   understanding to both larger models and more complex tasks.",
+  month         =  nov,
+  year          =  2022,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.LG",
+  eprint        = "2211.00593"
+}
+
+
+@MISC{Bricken-undated-zm,
+  title        = "Towards Monosemanticity: Decomposing Language Models With
+                  Dictionary Learning",
+  howpublished = "\url{https://transformer-circuits.pub/2023/monosemantic-features}",
+  note         = "Accessed: 2024-5-13",
+  language     = "en"
+}
+
+
+@MISC{Molnar2023-le,
+  title        = "Interpretable Machine Learning",
+  author       = "Molnar, Christoph",
+  abstract     = "Machine learning algorithms usually operate as black boxes
+                  and it is unclear how they derived a certain decision. This
+                  book is a guide for practitioners to make machine learning
+                  decisions interpretable.",
+  month        =  aug,
+  year         =  2023,
+  howpublished = "\url{https://christophm.github.io/interpretable-ml-book/}",
+  note         = "Accessed: 2024-5-13"
+}
+
+
+@MISC{einops-undated-sp,
+  title        = "Writing better code with pytorch and einops",
+  booktitle    = "Writing better code with pytorch and einops",
+  abstract     = "Learning by example: rewriting and fixing popular code
+                  fragments",
+  howpublished = "\url{https://einops.rocks/pytorch-examples.html}",
+  note         = "Accessed: 2024-5-15",
+  language     = "en"
+}
+
+
+
+@ARTICLE{Koelle2023-oa,
+  title    = "Modeling the cell-type-specific mesoscale murine connectome with
+              anterograde tracing experiments",
+  author   = "Koelle, Samson and Mastrovito, Dana and Whitesell, Jennifer D and
+              Hirokawa, Karla E and Zeng, Hongkui and Meila, Marina and Harris,
+              Julie A and Mihalas, Stefan",
+  abstract = "The Allen Mouse Brain Connectivity Atlas consists of anterograde
+              tracing experiments targeting diverse structures and classes of
+              projecting neurons. Beyond regional anterograde tracing done in
+              C57BL/6 wild-type mice, a large fraction of experiments are
+              performed using transgenic Cre-lines. This allows access to
+              cell-class-specific whole-brain connectivity information, with
+              class defined by the transgenic lines. However, even though the
+              number of experiments is large, it does not come close to
+              covering all existing cell classes in every area where they
+              exist. Here, we study how much we can fill in these gaps and
+              estimate the cell-class-specific connectivity function given the
+              simplifying assumptions that nearby voxels have smoothly varying
+              projections, but that these projection tensors can change sharply
+              depending on the region and class of the projecting cells. This
+              paper describes the conversion of Cre-line tracer experiments
+              into class-specific connectivity matrices representing the
+              connection strengths between source and target structures. We
+              introduce and validate a novel statistical model for creation of
+              connectivity matrices. We extend the Nadaraya-Watson kernel
+              learning method that we previously used to fill in spatial gaps
+              to also fill in gaps in cell-class connectivity information. To
+              do this, we construct a ``cell-class space'' based on
+              class-specific averaged regionalized projections and combine
+              smoothing in 3D space as well as in this abstract space to share
+              information between similar neuron classes. Using this method, we
+              construct a set of connectivity matrices using multiple levels of
+              resolution at which discontinuities in connectivity are assumed.
+              We show that the connectivities obtained from this model display
+              expected cell-type- and structure-specific connectivities. We
+              also show that the wild-type connectivity matrix can be factored
+              using a sparse set of factors, and analyze the informativeness of
+              this latent variable model.",
+  journal  = "Netw Neurosci",
+  volume   =  7,
+  number   =  4,
+  pages    = "1497--1512",
+  month    =  dec,
+  year     =  2023,
+  keywords = "Cell type; Connectivity; Mouse",
+  language = "en"
+}
+
+@ARTICLE{Koelle2017-ho,
+  title    = "Quantitative stability of hematopoietic stem and progenitor cell
+              clonal output in rhesus macaques receiving transplants",
+  author   = "Koelle, Samson J and Espinoza, Diego A and Wu, Chuanfeng and Xu,
+              Jason and Lu, Rong and Li, Brian and Donahue, Robert E and
+              Dunbar, Cynthia E",
+  abstract = "Autologous transplantation of hematopoietic stem and progenitor
+              cells lentivirally labeled with unique oligonucleotide barcodes
+              flanked by sequencing primer targets enables quantitative
+              assessment of the self-renewal and differentiation patterns of
+              these cells in a myeloablative rhesus macaque model. Compared
+              with other approaches to clonal tracking, this approach is highly
+              quantitative and reproducible. We documented stable multipotent
+              long-term hematopoietic clonal output of monocytes, granulocytes,
+              B cells, and T cells from a polyclonal pool of hematopoietic stem
+              and progenitor cells in 4 macaques observed for up to 49 months
+              posttransplantation. A broad range of clonal behaviors
+              characterized by contribution level and biases toward certain
+              cell types were extremely stable over time. Correlations between
+              granulocyte and monocyte clonalities were greatest, followed by
+              correlations between these cell types and B cells. We also
+              detected quantitative expansion of T cell-biased clones
+              consistent with an adaptive immune response. In contrast to
+              recent data from a nonquantitative murine model, there was little
+              evidence for clonal succession after initial hematopoietic
+              reconstitution. These findings have important implications for
+              human hematopoiesis, given the similarities between macaque and
+              human physiologies.",
+  journal  = "Blood",
+  volume   =  129,
+  number   =  11,
+  pages    = "1448--1457",
+  month    =  mar,
+  year     =  2017,
+  language = "en"
+}
+
+
+@INPROCEEDINGS{Koelle2024-no,
+  title     = "Consistency of {Dictionary-Based} Manifold Learning",
+  booktitle = "Proceedings of The 27th International Conference on Artificial
+               Intelligence and Statistics",
+  author    = "Koelle, Samson J and Zhang, Hanyu and Murad, Octavian-Vlad and
+               Meila, Marina",
+  editor    = "Dasgupta, Sanjoy and Mandt, Stephan and Li, Yingzhen",
+  abstract  = "We analyze a paradigm for interpretable Manifold Learning for
+               scientific data analysis, whereby one parametrizes a manifold
+               with d smooth functions from a scientist-provided dictionary of
+               meaningful, domain-related functions. When such a
+               parametrization exists, we provide an algorithm for finding it
+               based on sparse regression in the manifold tangent bundle,
+               bypassing more standard, agnostic manifold learning algorithms.
+               We prove conditions for the existence of such parameterizations
+               in function space and the first end to end recovery results from
+               finite samples. The method is demonstrated on both synthetic
+               problems and with data from a real scientific domain.",
+  publisher = "PMLR",
+  volume    =  238,
+  pages     = "4348--4356",
+  series    = "Proceedings of Machine Learning Research",
+  year      =  2024
+}
+
+@ARTICLE{Koelle2022-oj,
+  title    = "Manifold Coordinates with Physical Meaning",
+  author   = "Koelle, Samson J and Zhang, Hanyu and Meila, Marina and Chen,
+              Yu-Chia",
+  journal  = "J. Mach. Learn. Res.",
+  volume   =  23,
+  number   =  133,
+  pages    = "1--57",
+  year     =  2022
+}
+
+
+@ARTICLE{Sheng2009-ij,
+  title  = "Section 5. Geodesics and the exponential map",
+  author = "Sheng, Weimin",
+   year     =  2009
+}
+
+
+@ARTICLE{Tiwary2013-di,
+  title    = "From metadynamics to dynamics",
+  author   = "Tiwary, Pratyush and Parrinello, Michele",
+  abstract = "Metadynamics is a commonly used and successful enhanced sampling
+              method. By the introduction of a history dependent bias which
+              depends on a restricted number of collective variables it can
+              explore complex free energy surfaces characterized by several
+              metastable states separated by large free energy barriers. Here
+              we extend its scope by introducing a simple yet powerful method
+              for calculating the rates of transition between different
+              metastable states. The method does not rely on a previous
+              knowledge of the transition states or reaction coordinates, as
+              long as collective variables are known that can distinguish
+              between the various stable minima in free energy space. We
+              demonstrate that our method recovers the correct escape rates out
+              of these stable states and also preserves the correct sequence of
+              state-to-state transitions, with minimal extra computational
+              effort needed over ordinary metadynamics. We apply the formalism
+              to three different problems and in each case find excellent
+              agreement with the results of long unbiased molecular dynamics
+              runs.",
+  journal  = "Phys. Rev. Lett.",
+  volume   =  111,
+  number   =  23,
+  pages    = "230602",
+  month    =  dec,
+  year     =  2013,
+  language = "en"
+}

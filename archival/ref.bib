@@ -1,0 +1,1989 @@
+
+@ARTICLE{Kohli2021-lr,
+  title    = "{LDLE}: Low Distortion Local Eigenmaps",
+  author   = "Kohli, Dhruv and Cloninger, Alexander and Mishne, Gal",
+  abstract = "We present Low Distortion Local Eigenmaps (LDLE), a manifold
+              learning technique which constructs a set of low distortion local
+              views of a data set in lower dimension and registers them to
+              obtain a global embedding. The local views are constructed using
+              the global eigenvectors of the graph Laplacian and are registered
+              using Procrustes analysis. The choice of these eigenvectors may
+              vary across the regions. In contrast to existing techniques, LDLE
+              can embed closed and non-orientable manifolds into their
+              intrinsic dimension by tearing them apart. It also provides
+              gluing instruction on the boundary of the torn embedding to help
+              identify the topology of the original manifold. Our experimental
+              results will show that LDLE largely preserved distances up to a
+              constant scale while other techniques produced higher distortion.
+              We also demonstrate that LDLE produces high quality embeddings
+              even when the data is noisy or sparse.",
+  journal  = "J. Mach. Learn. Res.",
+  volume   =  22,
+  year     =  2021,
+  keywords = "closed manifold; graph laplacian; local parameterization;
+              manifold learning; non-orientable manifold; procrustes analysis",
+  language = "en"
+}
+
+@ARTICLE{Mishkin2022-yf,
+  title    = "The solution path of the group lasso",
+  author   = "Mishkin, Aaron and Pilanci, Mert",
+  abstract = "We prove continuity of the solution path for the group lasso, a
+              popular method of computing group-sparse models. Unlike the more
+              classical lasso method, the group lasso solution path is
+              non-linear and cannot be evaluated algorithmically. To circumvent
+              this, we ﬁrst characterize the group lasso solution set and then
+              show how to construct an implicit function for the min-norm path.
+              We prove our implicit representation is continuous almost
+              everywhere and extend this to continuity every-where when the
+              group lasso solution is unique. These results can be viewed as
+              extending solution path analyses from the lasso to the group lasso
+              and imply that grid-search is a sensible approach to
+              hyper-parameter selection. Our work applies to linear models as
+              well as convex reformulations of neural networks and provides new
+              tools for understanding solution paths of shallow ReLU models.",
+  year     =  2022
+}
+
+
+@article{JMLR:v23:21-0420,
+  author  = {Ulrike Schneider and Patrick Tardivel},
+  title   = {The Geometry of Uniqueness, Sparsity and Clustering in Penalized Estimation},
+  journal = {Journal of Machine Learning Research},
+  year    = {2022},
+  volume  = {23},
+  number  = {331},
+  pages   = {1--36},
+  url     = {http://jmlr.org/papers/v23/21-0420.html}
+}
+@ARTICLE{Tibshirani2012-vw,
+  title         = "The lasso problem and uniqueness",
+  author        = "Tibshirani, Ryan J",
+  journal       = "arXiv [math.ST]",
+  abstract      = "The lasso is a popular tool for sparse linear regression,
+                   especially for problems in which the number of variables p
+                   exceeds the number of observations n. But when p>n, the lasso
+                   criterion is not strictly convex, and hence it may not have a
+                   unique minimum. An important question is: when is the lasso
+                   solution well-defined (unique)? We review results from the
+                   literature, which show that if the predictor variables are
+                   drawn from a continuous probability distribution, then there
+                   is a unique lasso solution with probability one, regardless
+                   of the sizes of n and p. We also show that this result
+                   extends easily to $\ell_1$ penalized minimization problems
+                   over a wide range of loss functions. A second important
+                   question is: how can we deal with the case of non-uniqueness
+                   in lasso solutions? In light of the aforementioned result,
+                   this case really only arises when some of the predictor
+                   variables are discrete, or when some post-processing has been
+                   performed on continuous predictor measurements. Though we
+                   certainly cannot claim to provide a complete answer to such a
+                   broad question, we do present progress towards understanding
+                   some aspects of non-uniqueness. First, we extend the LARS
+                   algorithm for computing the lasso solution path to cover the
+                   non-unique case, so that this path algorithm works for any
+                   predictor matrix. Next, we derive a simple method for
+                   computing the component-wise uncertainty in lasso solutions
+                   of any given problem instance, based on linear programming.
+                   Finally, we review results from the literature on some of the
+                   unifying properties of lasso solutions, and also point out
+                   particular forms of solutions that have distinctive
+                   properties.",
+  month         =  jun,
+  year          =  2012,
+  archivePrefix = "arXiv",
+  primaryClass  = "math.ST"
+}
+
+@ARTICLE{Pickett2024-ad,
+  title         = "Better {RAG} using Relevant Information Gain",
+  author        = "Pickett, Marc and Hartman, Jeremy and Bhowmick, Ayan Kumar
+                   and Alam, Raquib-Ul and Vempaty, Aditya",
+  journal       = "arXiv [cs.CL]",
+  abstract      = "A common way to extend the memory of large language models
+                   (LLMs) is by retrieval augmented generation (RAG), which
+                   inserts text retrieved from a larger memory into an LLM's
+                   context window. However, the context window is typically
+                   limited to several thousand tokens, which limits the number
+                   of retrieved passages that can inform a model's response. For
+                   this reason, it's important to avoid occupying context window
+                   space with redundant information by ensuring a degree of
+                   diversity among retrieved passages. At the same time, the
+                   information should also be relevant to the current task. Most
+                   prior methods that encourage diversity among retrieved
+                   results, such as Maximal Marginal Relevance (MMR), do so by
+                   incorporating an objective that explicitly trades off
+                   diversity and relevance. We propose a novel simple
+                   optimization metric based on relevant information gain, a
+                   probabilistic measure of the total information relevant to a
+                   query for a set of retrieved results. By optimizing this
+                   metric, diversity organically emerges from our system. When
+                   used as a drop-in replacement for the retrieval component of
+                   a RAG system, this method yields state-of-the-art performance
+                   on question answering tasks from the Retrieval Augmented
+                   Generation Benchmark (RGB), outperforming existing metrics
+                   that directly optimize for relevance and diversity.",
+  month         =  jul,
+  year          =  2024,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.CL"
+}
+
+@INPROCEEDINGS{Carbonell1998-ji,
+  title     = "The use of {MMR}, diversity-based reranking for reordering
+               documents and producing summaries",
+  author    = "Carbonell, Jaime and Goldstein, Jade",
+  booktitle = "Proceedings of the 21st annual international ACM SIGIR conference
+               on Research and development in information retrieval",
+  publisher = "ACM",
+  address   = "New York, NY, USA",
+  abstract  = "This paper presents a method for combining query-relevance with
+               information-novelty in the context of text retrieval and
+               summarization. The Maximal Marginal Relevance (MMR) criterion
+               strives to reduce redundancy while maintaining query relevance in
+               re-ranking retrieved documents and in selecting appropriate
+               passages for text summarization. Preliminary results indicate
+               some benefits for MMR diversity ranking in document retrieval and
+               in single document summarization. The latter are borne out by the
+               recent results of the SUMMAC conference in the evaluation of
+               summarization systems. However, the clearest advantage is
+               demonstrated in constructing non-redundant multi-document
+               summaries, where MMR results are clearly superior to non-MMR
+               passage selection.",
+  month     =  aug,
+  year      =  1998
+}
+
+@inproceedings{Yu2016AGA,
+  title={A Greedy Approach for Budgeted Maximum Inner Product Search},
+  author={Hsiang-Fu Yu and Cho-Jui Hsieh and Qi Lei and Inderjit S. Dhillon},
+  booktitle={Neural Information Processing Systems},
+  year={2016},
+  url={https://api.semanticscholar.org/CorpusID:7076785}
+}
+
+
+@ARTICLE{Huang2024-wr,
+  title         = "Diversity-aware $k$-Maximum Inner Product Search revisited",
+  author        = "Huang, Qiang and Wang, Yanhao and Sun, Yiqun and Tung,
+                   Anthony K H",
+  journal       = "arXiv [cs.IR]",
+  abstract      = "The $k$-Maximum Inner Product Search ($k$MIPS) serves as a
+                   foundational component in recommender systems and various
+                   data mining tasks. However, while most existing $k$MIPS
+                   approaches prioritize the efficient retrieval of highly
+                   relevant items for users, they often neglect an equally
+                   pivotal facet of search results: \emph{diversity}. To bridge
+                   this gap, we revisit and refine the diversity-aware $k$MIPS
+                   (D$k$MIPS) problem by incorporating two well-known diversity
+                   objectives -- minimizing the average and maximum pairwise
+                   item similarities within the results -- into the original
+                   relevance objective. This enhancement, inspired by Maximal
+                   Marginal Relevance (MMR), offers users a controllable
+                   trade-off between relevance and diversity. We introduce
+                   \textsc{Greedy} and \textsc{DualGreedy}, two linear
+                   scan-based algorithms tailored for D$k$MIPS. They both
+                   achieve data-dependent approximations and, when aiming to
+                   minimize the average pairwise similarity, \textsc{DualGreedy}
+                   attains an approximation ratio of $1/4$ with an additive term
+                   for regularization. To further improve query efficiency, we
+                   integrate a lightweight Ball-Cone Tree (BC-Tree) index with
+                   the two algorithms. Finally, comprehensive experiments on ten
+                   real-world data sets demonstrate the efficacy of our proposed
+                   methods, showcasing their capability to efficiently deliver
+                   diverse and relevant search results to users.",
+  month         =  feb,
+  year          =  2024,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.IR"
+}
+
+@INPROCEEDINGS {Barioni,
+author = { Barioni, Maria C. N. and Hadjieleftheriou, Marios and Vieira, Marcos R. and Traina, Caetano and Tsotras, Vassilis J. and Razente, Humberto L. and Srivastava, Divesh },
+booktitle = { 2011 27th IEEE International Conference on Data Engineering (ICDE 2011) },
+title = {{ On query result diversification }},
+year = {2011},
+volume = {},
+ISSN = {},
+pages = {1163-1174},
+abstract = { In this paper we describe a general framework for evaluation and optimization of methods for diversifying query results. In these methods, an initial ranking candidate set produced by a query is used to construct a result set, where elements are ranked with respect to relevance and diversity features, i.e., the retrieved elements should be as relevant as possible to the query, and, at the same time, the result set should be as diverse as possible. While addressing relevance is relatively simple and has been heavily studied, diversity is a harder problem to solve. One major contribution of this paper is that, using the above framework, we adapt, implement and evaluate several existing methods for diversifying query results. We also propose two new approaches, namely the Greedy with Marginal Contribution (GMC) and the Greedy Randomized with Neighborhood Expansion (GNE) methods. Another major contribution of this paper is that we present the first thorough experimental evaluation of the various diversification techniques implemented in a common framework. We examine the methods' performance with respect to precision, running time and quality of the result. Our experimental results show that while the proposed methods have higher running times, they achieve precision very close to the optimal, while also providing the best result quality. While GMC is deterministic, the randomized approach (GNE) can achieve better result quality if the user is willing to tradeoff running time. },
+keywords = {},
+doi = {10.1109/ICDE.2011.5767846},
+url = {https://doi.ieeecomputersociety.org/10.1109/ICDE.2011.5767846},
+publisher = {IEEE Computer Society},
+address = {Los Alamitos, CA, USA},
+month =apr}
+
+@article{KUNAVER2017154,
+title = {Diversity in recommender systems – A survey},
+journal = {Knowledge-Based Systems},
+volume = {123},
+pages = {154-162},
+year = {2017},
+issn = {0950-7051},
+doi = {https://doi.org/10.1016/j.knosys.2017.02.009},
+url = {https://www.sciencedirect.com/science/article/pii/S0950705117300680},
+author = {Matevž Kunaver and Tomaž Požrl},
+keywords = {Personalization, Recommender system, Diversity, Survey},
+abstract = {Diversification has become one of the leading topics of recommender system research not only as a way to solve the over-fitting problem but also an approach to increasing the quality of the user’s experience with the recommender system. This article aims to provide an overview of research done on this topic from one of the first mentions of diversity in 2001 until now. The articles ,and research, have been divided into three sub-topics for a better overview of the work done in the field of recommendation diversification: the definition and evaluation of diversity; the impact of diversification on the quality of recommendation results and the development of diversification algorithms themselves. In this way, the article aims both to offer a good overview to a researcher looking for the state-of-the-art on this topic and to help a new developer get familiar with the topic.}
+}
+
+@ARTICLE{Qin2012-ok,
+  title     = "Diversifying top-k results",
+  author    = "Qin, Lu and Yu, Jeffrey Xu and Chang, Lijun",
+  journal   = "Proceedings VLDB Endowment",
+  publisher = "Association for Computing Machinery (ACM)",
+  volume    =  5,
+  number    =  11,
+  pages     = "1124--1135",
+  abstract  = "Top- k query processing finds a list of k results that have
+               largest scores w.r.t the user given query, with the assumption
+               that all the k results are independent to each other. In
+               practice, some of the top- k results returned can be very similar
+               to each other. As a result some of the top- k results returned
+               are redundant. In the literature, diversified top- k search has
+               been studied to return k results that take both score and
+               diversity into consideration. Most existing solutions on
+               diversified top- k search assume that scores of all the search
+               results are given, and some works solve the diversity problem on
+               a specific problem and can hardly be extended to general cases.
+               In this paper, we study the diversified top- k search problem. We
+               define a general diversified top- k search problem that only
+               considers the similarity of the search results themselves. We
+               propose a framework, such that most existing solutions for top- k
+               query processing can be extended easily to handle diversified
+               top- k search, by simply applying three new functions, a
+               sufficient stop condition sufficient(), a necessary stop
+               condition necessary(), and an algorithm for diversified top- k
+               search on the current set of generated results,
+               div-search-current(). We propose three new algorithms, namely,
+               div-astar, div-dp, and div-cut to solve the div-search-current()
+               problem. div-astar is an A* based algorithm, div-dp is an
+               algorithm that decomposes the results into components which are
+               searched using div-astar independently and combined using dynamic
+               programming. div-cut further decomposes the current set of
+               generated results using cut points and combines the results using
+               sophisticated operations. We conducted extensive performance
+               studies using two real datasets, enwiki and reuters. Our div-cut
+               algorithm finds the optimal solution for diversified top- k
+               search problem in seconds even for k as large as 2, 000.",
+  month     =  jul,
+  year      =  2012,
+  language  = "en"
+}
+
+
+@ARTICLE{Gao2023-cn,
+  title         = "Retrieval-Augmented Generation for large Language Models: A
+                   survey",
+  author        = "Gao, Yunfan and Xiong, Yun and Gao, Xinyu and Jia, Kangxiang
+                   and Pan, Jinliu and Bi, Yuxi and Dai, Yi and Sun, Jiawei and
+                   Wang, Meng and Wang, Haofen",
+  journal       = "arXiv [cs.CL]",
+  abstract      = "Large Language Models (LLMs) showcase impressive capabilities
+                   but encounter challenges like hallucination, outdated
+                   knowledge, and non-transparent, untraceable reasoning
+                   processes. Retrieval-Augmented Generation (RAG) has emerged
+                   as a promising solution by incorporating knowledge from
+                   external databases. This enhances the accuracy and
+                   credibility of the generation, particularly for
+                   knowledge-intensive tasks, and allows for continuous
+                   knowledge updates and integration of domain-specific
+                   information. RAG synergistically merges LLMs' intrinsic
+                   knowledge with the vast, dynamic repositories of external
+                   databases. This comprehensive review paper offers a detailed
+                   examination of the progression of RAG paradigms, encompassing
+                   the Naive RAG, the Advanced RAG, and the Modular RAG. It
+                   meticulously scrutinizes the tripartite foundation of RAG
+                   frameworks, which includes the retrieval, the generation and
+                   the augmentation techniques. The paper highlights the
+                   state-of-the-art technologies embedded in each of these
+                   critical components, providing a profound understanding of
+                   the advancements in RAG systems. Furthermore, this paper
+                   introduces up-to-date evaluation framework and benchmark. At
+                   the end, this article delineates the challenges currently
+                   faced and points out prospective avenues for research and
+                   development.",
+  month         =  dec,
+  year          =  2023,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.CL"
+}
+
+
+@ARTICLE{Hesterberg2008-iy,
+  title         = "Least angle and $\ell_1$ penalized regression: A review",
+  author        = "Hesterberg, Tim and Choi, Nam Hee and Meier, Lukas and
+                   Fraley, Chris",
+  abstract      = "Least Angle Regression is a promising technique for variable
+                   selection applications, offering a nice alternative to
+                   stepwise regression. It provides an explanation for the
+                   similar behavior of LASSO ($\ell_1$-penalized regression)
+                   and forward stagewise regression, and provides a fast
+                   implementation of both. The idea has caught on rapidly, and
+                   sparked a great deal of research interest. In this paper, we
+                   give an overview of Least Angle Regression and the current
+                   state of related research.",
+  month         =  feb,
+  year          =  2008,
+  archivePrefix = "arXiv",
+  primaryClass  = "stat.ME",
+  eprint        = "0802.0964"
+}
+@article{HIAI2004155,
+title = {Submultiplicativity vs subadditivity for unitarily invariant norms},
+journal = {Linear Algebra and its Applications},
+volume = {377},
+pages = {155-164},
+year = {2004},
+issn = {0024-3795},
+doi = {https://doi.org/10.1016/j.laa.2003.08.006},
+url = {https://www.sciencedirect.com/science/article/pii/S0024379503007134},
+author = {Fumio Hiai and Xingzhi Zhan},
+keywords = {Positive semidefinite matrix, Unitarily invariant norm, Submultiplicativity, Subadditivity, Hadamard product, Matrix Young inequality, Majorization},
+abstract = {Let A,B be nonzero positive semidefinite matrices. We prove that∥AB∥∥A∥∥B∥⩽∥A+B∥∥A∥+∥B∥,∥A∘B∥∥A∥∥B∥⩽∥A+B∥∥A∥+∥B∥for any unitarily invariant norm with ∥diag(1,0,…,0)∥⩾1. Some related inequalities are derived.}
+}
+
+@ARTICLE{Bertsimas2022-dv,
+  title    = "Solving {Large-Scale} Sparse {PCA} to Certifiable (Near)
+              Optimality",
+  author   = "Bertsimas, Dimitris and Cory-Wright, Ryan and Pauphilet, Jean",
+  journal  = "J. Mach. Learn. Res.",
+  volume   =  23,
+  number   =  13,
+  pages    = "1--35",
+  year     =  2022
+}
+@Article{ChenBuja:localMDS09,
+  Author =       {Lisha Chen and Andreas Buja},
+  title =        {Local {Multidimensional} {Scaling} for nonlinear dimension reduction, graph drawing and proximity analysis},
+  journal =      {Journal of the American Statistical Association},
+  year =         {2009},
+  volume =       {104},
+  number =       {485},
+  pages =        {209--219},
+  month =        {March},
+}
+
+@inproceedings{NEURIPS2019_6a10bbd4,
+ author = {Chen, Yu-Chia and Meila, Marina},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {H. Wallach and H. Larochelle and A. Beygelzimer and F. d\textquotesingle Alch\'{e}-Buc and E. Fox and R. Garnett},
+ pages = {},
+ publisher = {Curran Associates, Inc.},
+ title = {Selecting the independent coordinates of manifolds with large aspect ratios},
+ url = {https://proceedings.neurips.cc/paper_files/paper/2019/file/6a10bbd480e4c5573d8f3af73ae0454b-Paper.pdf},
+ volume = {32},
+ year = {2019}
+}
+
+@article{Fazel2001ARM,
+  title={A rank minimization heuristic with application to minimum order system approximation},
+  author={Maryam Fazel and Haitham A. Hindi and Stephen P. Boyd},
+  journal={Proceedings of the 2001 American Control Conference. (Cat. No.01CH37148)},
+  year={2001},
+  volume={6},
+  pages={4734-4739 vol.6},
+  url={https://api.semanticscholar.org/CorpusID:6000077}
+}
+
+@ARTICLE{Qin2013-tx,
+  title     = "Efficient block-coordinate descent algorithms for the Group
+               Lasso",
+  author    = "Qin, Zhiwei and Scheinberg, Katya and Goldfarb, Donald",
+  journal   = "Math. Program. Comput.",
+  publisher = "Springer Science and Business Media LLC",
+  volume    =  5,
+  number    =  2,
+  pages     = "143--169",
+  month     =  jun,
+  year      =  2013,
+  language  = "en"
+}
+
+
+@BOOK{Boyd2004-ql,
+  title     = "Convex Optimization",
+  author    = "Boyd, Stephen P and Vandenberghe, Lieven",
+  abstract  = "Convex optimization problems arise frequently in many different
+               fields. This book provides a comprehensive introduction to the
+               subject, and shows in detail how such problems can be solved
+               numerically with great efficiency. The book begins with the
+               basic elements of convex sets and functions, and then describes
+               various classes of convex optimization problems. Duality and
+               approximation techniques are then covered, as are statistical
+               estimation techniques. Various geometrical problems are then
+               presented, and there is detailed discussion of unconstrained and
+               constrained minimization problems, and interior-point methods.
+               The focus of the book is on recognizing convex optimization
+               problems and then finding the most appropriate technique for
+               solving them. It contains many worked examples and homework
+               exercises and will appeal to students, researchers and
+               practitioners in fields such as engineering, computer science,
+               mathematics, statistics, finance and economics.",
+  publisher = "Cambridge University Press",
+  month     =  mar,
+  year      =  2004,
+  language  = "en"
+}
+
+
+
+@ARTICLE{Zhao2023-xn,
+  title         = "A Survey of Numerical Algorithms that can Solve the Lasso
+                   Problems",
+  author        = "Zhao, Yujie and Huo, Xiaoming",
+  abstract      = "In statistics, the least absolute shrinkage and selection
+                   operator (Lasso) is a regression method that performs both
+                   variable selection and regularization. There is a lot of
+                   literature available, discussing the statistical properties
+                   of the regression coefficients estimated by the Lasso
+                   method. However, there lacks a comprehensive review
+                   discussing the algorithms to solve the optimization problem
+                   in Lasso. In this review, we summarize five representative
+                   algorithms to optimize the objective function in Lasso,
+                   including the iterative shrinkage threshold algorithm
+                   (ISTA), fast iterative shrinkage-thresholding algorithms
+                   (FISTA), coordinate gradient descent algorithm (CGDA),
+                   smooth L1 algorithm (SLA), and path following algorithm
+                   (PFA). Additionally, we also compare their convergence rate,
+                   as well as their potential strengths and weakness.",
+  month         =  mar,
+  year          =  2023,
+  archivePrefix = "arXiv",
+  primaryClass  = "stat.CO",
+  eprint        = "2303.03576"
+}
+
+
+% The entry below contains non-ASCII chars that could not be converted
+% to a LaTeX equivalent.
+@ARTICLE{Meier2008-ts,
+  title    = "The group lasso for logistic regression",
+  author   = "Meier, L and van de Geer, Sara and B{\"u}hlmann, P",
+  abstract = "Summary. The group lasso is an extension of the lasso to do
+              variable selection on (predefined) groups of variables in linear
+              regression models. The estimates have the attractive property of
+              being invariant under groupwise orthogonal reparameterizations.
+              We extend the group lasso to logistic regression models and
+              present an efficient algorithm, that is especially suitable for
+              high dimensional problems, which can also be applied to
+              generalized linear models to solve the corresponding convex
+              optimization problem. The group lasso estimator for logistic
+              regression is shown to be statistically consistent even if the
+              number of predictors is much larger than sample size but with
+              sparse true underlying structure. We further use a two‐stage
+              procedure which aims for sparser models than the group lasso,
+              leading to improved prediction performance for some cases.
+              Moreover, owing to the two‐stage nature, the estimates can be
+              constructed to be hierarchical. The methods are used on simulated
+              and real data sets about splice site detection in DNA sequences.",
+  journal  = "J. R. Stat. Soc. Series B Stat. Methodol.",
+  volume   =  70,
+  month    =  feb,
+  year     =  2008
+}
+
+
+@ARTICLE{Candes2005-dd,
+  title         = "Decoding by Linear Programming",
+  author        = "Candes, Emmanuel and Tao, Terence",
+  abstract      = "This paper considers the classical error correcting problem
+                   which is frequently discussed in coding theory. We wish to
+                   recover an input vector $f \in \R^n$ from corrupted
+                   measurements $y = A f + e$. Here, $A$ is an $m$ by $n$
+                   (coding) matrix and $e$ is an arbitrary and unknown vector
+                   of errors. Is it possible to recover $f$ exactly from the
+                   data $y$? We prove that under suitable conditions on the
+                   coding matrix $A$, the input $f$ is the unique solution to
+                   the $\ell_1$-minimization problem ($\|x\|_\{\ell_1\} :=
+                   \sum_i |x_i|$) $$ \textbackslashmin_\{g \textbackslashin
+                   \textbackslashR^n\} \textbackslash| y - Ag
+                   \textbackslash|_\{\textbackslashell_1\} $$ provided that the
+                   support of the vector of errors is not too large,
+                   $\|e\|_\{\ell_0\} := |\{i : e_i \neq 0\}| \le \rho \cdot m$
+                   for some $\rho > 0$. In short, $f$ can be recovered exactly
+                   by solving a simple convex optimization problem (which one
+                   can recast as a linear program). In addition, numerical
+                   experiments suggest that this recovery procedure works
+                   unreasonably well; $f$ is recovered exactly even in
+                   situations where a significant fraction of the output is
+                   corrupted.",
+  month         =  feb,
+  year          =  2005,
+  archivePrefix = "arXiv",
+  primaryClass  = "math.MG",
+  eprint        = "math/0502327"
+}
+
+@ARTICLE{Dey2017-mx,
+  title    = "Sparse principal component analysis and its $l_1$-relaxation",
+  author   = "Dey, Santanu S and Mazumder, R and Molinaro, M and Wang, Guanyi",
+  abstract = "Principal component analysis (PCA) is one of the most widely used
+              dimensionality reduction methods in scientific data analysis. In
+              many applications, for additional interpretability, it is
+              desirable for the factor loadings to be sparse, that is, we solve
+              PCA with an additional cardinality (l0) constraint. The resulting
+              optimization problem is called the sparse principal component
+              analysis (SPCA). One popular approach to achieve sparsity is to
+              replace the l0 constraint by an l1 constraint. In this paper, we
+              prove that, independent of the data, the optimal objective
+              function value of the problem with l0 constraint is within a
+              constant factor of the the optimal objective function value of
+              the problem with l1 constraint. To the best of our knowledge,
+              this is the first formal relationship established between the l0
+              and the l1 constraint version of the problem.",
+  journal  = "arXiv: Optimization and Control",
+  month    =  dec,
+  year     =  2017
+}
+
+@ARTICLE{Bertsimas2022-qo,
+  title    = "Sparse {PCA}: A geometric approach",
+  author   = "Bertsimas, D and Kitane, Driss Lahlou",
+  abstract = "We consider the problem of maximizing the variance explained from
+              a data matrix using orthogonal sparse principal components that
+              have a support of fixed cardinality. While most existing methods
+              focus on building principal components (PCs) iteratively through
+              deflation, we propose GeoSPCA, a novel algorithm to build all PCs
+              at once while satisfying the orthogonality constraints which
+              brings substantial benefits over deflation. This novel approach
+              is based on the left eigenvalues of the covariance matrix which
+              helps circumvent the non-convexity of the problem by
+              approximating the optimal solution using a binary linear
+              optimization problem that can find the optimal solution. The
+              resulting approximation can be used to tackle different versions
+              of the sparse PCA problem including the case in which the
+              principal components share the same support or have disjoint
+              supports and the Structured Sparse PCA problem. We also propose
+              optimality bounds and illustrate the benefits of GeoSPCA in
+              selected real world problems both in terms of explained variance,
+              sparsity and tractability. Improvements vs. the greedy algorithm,
+              which is often at par with state-of-the-art techniques, reaches
+              up to 24\% in terms of variance while solving real world problems
+              with 10,000s of variables and support cardinality of 100s in
+              minutes. We also apply GeoSPCA in a face recognition problem
+              yielding more than 10\% improvement vs. other PCA based technique
+              such as structured sparse PCA.",
+  journal  = "J. Mach. Learn. Res.",
+  volume   =  24,
+  pages    = "32:1--32:33",
+  month    =  oct,
+  year     =  2022
+}
+
+@ARTICLE{Hastie2015-qa,
+  title    = "Statistical Learning with sparsity: The lasso and Generalizations",
+  author   = "Hastie, T and Tibshirani, R and Wainwright, M",
+  abstract = "Discover New Methods for Dealing with High-Dimensional Data A
+              sparse statistical model has only a small number of nonzero
+              parameters or weights; therefore, it is much easier to estimate
+              and interpret than a dense model. Statistical Learning with
+              Sparsity: The Lasso and Generalizations presents methods that
+              exploit sparsity to help recover the underlying signal in a set
+              of data. Top experts in this rapidly evolving field, the authors
+              describe the lasso for linear regression and a simple coordinate
+              descent algorithm for its computation. They discuss the
+              application of 1 penalties to generalized linear models and
+              support vector machines, cover generalized penalties such as the
+              elastic net and group lasso, and review numerical methods for
+              optimization. They also present statistical inference methods for
+              fitted (lasso) models, including the bootstrap, Bayesian methods,
+              and recently developed approaches. In addition, the book examines
+              matrix decomposition, sparse multivariate analysis, graphical
+              models, and compressed sensing. It concludes with a survey of
+              theoretical results for the lasso. In this age of big data, the
+              number of features measured on a person or object can be large
+              and might be larger than the number of observations. This book
+              shows how the sparsity assumption allows us to tackle these
+              problems and extract useful and reproducible patterns from big
+              datasets. Data analysts, computer scientists, and theorists will
+              appreciate this thorough and up-to-date treatment of sparse
+              statistical modeling.",
+  month    =  may,
+  year     =  2015
+}
+
+@article{Osborne2000OnTL,
+  title={On the LASSO and its Dual},
+  author={Michael R. Osborne and Brett Presnell and Berwin A. Turlach},
+  journal={Journal of Computational and Graphical Statistics},
+  year={2000},
+  volume={9},
+  pages={319 - 337},
+  url={https://api.semanticscholar.org/CorpusID:14422381}
+}
+
+@article{Dupuis2019TheGO,
+  title={The Geometry of Sparse Analysis Regularization},
+  author={Xavier Dupuis and Samuel Vaiter},
+  journal={SIAM J. Optim.},
+  year={2019},
+  volume={33},
+  pages={842-867},
+  url={https://api.semanticscholar.org/CorpusID:195791526}
+}
+
+@article{DOSSAL2012117,
+title = {A necessary and sufficient condition for exact sparse recovery by l1 minimization},
+journal = {Comptes Rendus Mathematique},
+volume = {350},
+number = {1},
+pages = {117-120},
+year = {2012},
+issn = {1631-073X},
+doi = {https://doi.org/10.1016/j.crma.2011.12.014},
+url = {https://www.sciencedirect.com/science/article/pii/S1631073X11003694},
+author = {Charles Dossal},
+abstract = {In this Note, a new sharp sufficient condition for exact sparse recovery by l1-penalized minimization from linear measurements is proposed. The main contribution of this paper is to show that, for most matrices, this condition is also necessary. Moreover, when the l1 minimizer is unique, we investigate its sensitivity to the measurements and we establish that the application associating the measurements to this minimizer is Lipschitz-continuous.
+Résumé
+Dans cette Note, une nouvelle condition suffisante pour lʼidentifiabilité parcimonieuse par minimisation l1 pénalisée à partir de mesures linéaires est proposée. La contribution majeure de ce travail est de prouver que pour la plupart des matrices, cette condition est aussi nécessaire. Par ailleurs, lorsque le minimiseur du problème l1 est unique, sa sensibilité aux mesures est étudiée et il est montré que lʼapplication qui envoie les mesures sur ce minimiseur est Lipschitz-continue.}
+}
+@MISC{Vectara,
+  title        = "Get Diverse Results and Comprehensive Summaries with Vectara’s
+                  {MMR} Reranker",
+  booktitle    = "Vectara",
+  url = "{https://www.vectara.com/blog/get-diverse-results-and-comprehensive-summaries-with-vectaras-mmr-reranker}",
+  note         = "Accessed: 2024-11-22",
+  language     = "en"
+}
+
+
+@ARTICLE{In2024-um,
+  title         = "Diversify-verify-adapt: Efficient and robust
+                   retrieval-augmented ambiguous question answering",
+  author        = "In, Yeonjun and Kim, Sungchul and Rossi, Ryan A and Tanjim,
+                   Md Mehrab and Yu, Tong and Sinha, Ritwik and Park, Chanyoung",
+  journal       = "arXiv [cs.CL]",
+  abstract      = "The retrieval augmented generation (RAG) framework addresses
+                   an ambiguity in user queries in QA systems by retrieving
+                   passages that cover all plausible interpretations and
+                   generating comprehensive responses based on the passages.
+                   However, our preliminary studies reveal that a single
+                   retrieval process often suffers from low quality results, as
+                   the retrieved passages frequently fail to capture all
+                   plausible interpretations. Although the iterative RAG
+                   approach has been proposed to address this problem, it comes
+                   at the cost of significantly reduced efficiency. To address
+                   these issues, we propose the diversify-verify-adapt (DIVA)
+                   framework. DIVA first diversifies the retrieved passages to
+                   encompass diverse interpretations. Subsequently, DIVA
+                   verifies the quality of the passages and adapts the most
+                   suitable approach tailored to their quality. This approach
+                   improves the QA systems accuracy and robustness by handling
+                   low quality retrieval issue in ambiguous questions, while
+                   enhancing efficiency.",
+  month         =  sep,
+  year          =  2024,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.CL"
+}
+
+
+@inproceedings{Guo-shengbo,
+author = {Guo, Shengbo and Sanner, Scott},
+title = {Probabilistic latent maximal marginal relevance},
+year = {2010},
+isbn = {9781450301534},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/1835449.1835639},
+doi = {10.1145/1835449.1835639},
+abstract = {Diversity has been heavily motivated in the information retrieval literature as an objective criterion for result sets in search and recommender systems. Perhaps one of the most well-known and most used algorithms for result set diversification is that of Maximal Marginal Relevance (MMR). In this paper, we show that while MMR is somewhat ad-hoc and motivated from a purely pragmatic perspective, we can derive a more principled variant via probabilistic inference in a latent variable graphical model. This novel derivation presents a formal probabilistic latent view of MMR (PLMMR) that (a) removes the need to manually balance relevance and diversity parameters, (b) shows that specific definitions of relevance and diversity metrics appropriate to MMR emerge naturally, and (c) formally derives variants of latent semantic indexing (LSI) similarity metrics for use in PLMMR. Empirically, PLMMR outperforms MMR with standard term frequency based similarity and diversity metrics since PLMMR maximizes latent diversity in the results.},
+booktitle = {Proceedings of the 33rd International ACM SIGIR Conference on Research and Development in Information Retrieval},
+pages = {833–834},
+numpages = {2},
+keywords = {maximal marginal relevance, graphical models, diversity},
+location = {Geneva, Switzerland},
+series = {SIGIR '10}
+}
+
+@INPROCEEDINGS{Mallat,
+  author={Mallat, S. and Zhang, Z.},
+  booktitle={[1992] Proceedings of the IEEE-SP International Symposium on Time-Frequency and Time-Scale Analysis}, 
+  title={Adaptive time-frequency decomposition with matching pursuits}, 
+  year={1992},
+  volume={},
+  number={},
+  pages={7-10},
+  keywords={Time frequency analysis;Matching pursuit algorithms;Dictionaries;Fourier transforms;Vectors;Signal processing algorithms;Pursuit algorithms;Interference;Signal processing;Wavelet transforms},
+  doi={10.1109/TFTSA.1992.274245}}
+
+
+@MISC{Langchain,
+  title        = "Select by maximal marginal relevance ({MMR})",
+  abstract     = "The MaxMarginalRelevanceExampleSelector selects examples based
+                  on a combination of which examples are most similar to the
+                  inputs, while also optimizing for diversity. It does this by
+                  finding the examples with the embeddings that have the
+                  greatest cosine similarity with the inputs, and then
+                  iteratively adding them while penalizing them for closeness to
+                  already selected examples.",
+  howpublished = "\url{https://python.langchain.com/docs/how\_to/example\_selectors\_mmr/}",
+  note         = "Accessed: 2024-11-22",
+  language     = "en"
+}
+
+
+@MISC{Weiss2024-xm,
+  title        = "Enhancing Diversity in {RAG} Document Retrieval Using
+                  Projection-Based Techniques",
+  author       = "Weiss, Sam",
+  booktitle    = "Medium",
+  abstract     = "Retrieval-Augmented Generation (RAG) has become a popular
+                  approach in language models to generate more accurate and
+                  contextually relevant outputs. Typically, the retrieval step
+                  in RAG relies on…",
+  month        =  aug,
+  year         =  2024,
+  howpublished = "\url{https://medium.com/@samcarlos\_14058/enhancing-diversity-in-rag-document-retrieval-using-projection-based-techniques-9fef5422e043}",
+  note         = "Accessed: 2024-11-22",
+  language     = "en"
+}
+
+@article{Chrtien2011OnTG,
+  title={On the generic uniform uniqueness of the LASSO estimator},
+  author={St{\'e}phane Chr{\'e}tien and S{\'e}bastien Darses},
+  journal={arXiv: Statistics Theory},
+  year={2011},
+  url={https://api.semanticscholar.org/CorpusID:88518316}
+}
+
+@ARTICLE{Schneider2022-hi,
+  title   = "The geometry of uniqueness, sparsity and clustering in penalized
+             estimation",
+  author  = "Schneider, Ulrike and Tardivel, Patrick",
+  journal = "J. Mach. Learn. Res.",
+  volume  =  23,
+  number  =  331,
+  pages   = "1--36",
+  year    =  2022
+}
+
+@INPROCEEDINGS{Zhu2020-qn,
+  title     = "A match pursuit based method adapted to overcomplete dictionary
+               for compressive spectral imaging",
+  author    = "Zhu, Jianchen and Zhao, Shengjie and Zhang, Rongqing",
+  booktitle = "2020 Asia-Pacific Signal and Information Processing Association
+               Annual Summit and Conference (APSIPA ASC)",
+  publisher = "IEEE",
+  pages     = "170--173",
+  abstract  = "This paper proposes to introduce greedy pursuit, a conceptually
+               simple hard thresholding pursuit algorithm called Signal Space
+               Subspace Pursuit (SSSP) for calculating spare signal
+               representations with overcomplete dictionaries whenever the
+               sensing matrix (sampling operator) satisfies the Restricted
+               Isometry Property adapted to Dictionary (D-RIP). Signal space
+               greedy method has the ability to optimally compute (near) best
+               projections that allow one to identify the most related a small
+               number of dictionary atoms of an arbitrary signal in this
+               setting. More practically, standard recovery algorithms are
+               applicable to such projections while maintaining accurate signal
+               recovery. Simulation results with a typical hyperspectral data
+               set demonstrate the superiority of the proposed approach.",
+  month     =  dec,
+  year      =  2020,
+  language  = "en"
+}
+
+
+
+@ARTICLE{Zhou2021-zz,
+  title         = "Conditions for Exact Convex Relaxation and No Spurious Local
+                   Optima",
+  author        = "Zhou, Fengyu and Low, Steven H",
+  journal       = "arXiv [math.OC]",
+  abstract      = "Non-convex optimization problems can be approximately solved
+                   via relaxation or local algorithms. For many practical
+                   problems such as optimal power flow (OPF) problems, both
+                   approaches tend to succeed in the sense that relaxation is
+                   usually exact and local algorithms usually converge to a
+                   global optimum. In this paper, we study conditions which are
+                   sufficient or necessary for such non-convex problems to
+                   simultaneously have exact relaxation and no spurious local
+                   optima. Those conditions help us explain the widespread
+                   empirical experience that local algorithms for OPF problems
+                   often work extremely well.",
+  month         =  feb,
+  year          =  2021,
+  archivePrefix = "arXiv",
+  primaryClass  = "math.OC"
+}
+
+
+@article{Debarre2020OnTU,
+  title={On the uniqueness of solutions for the basis pursuit in the continuum},
+  author={Thomas Debarre and Quentin Denoyelle and Julien Fageot},
+  journal={Inverse Problems},
+  year={2020},
+  volume={38},
+  url={https://api.semanticscholar.org/CorpusID:246473440}
+}
+@ARTICLE{Mikolov2013-lt,
+  title         = "Efficient estimation of word representations in vector space",
+  author        = "Mikolov, Tomas and Chen, Kai and Corrado, Greg and Dean,
+                   Jeffrey",
+  journal       = "arXiv [cs.CL]",
+  abstract      = "We propose two novel model architectures for computing
+                   continuous vector representations of words from very large
+                   data sets. The quality of these representations is measured
+                   in a word similarity task, and the results are compared to
+                   the previously best performing techniques based on different
+                   types of neural networks. We observe large improvements in
+                   accuracy at much lower computational cost, i.e. it takes less
+                   than a day to learn high quality word vectors from a 1.6
+                   billion words data set. Furthermore, we show that these
+                   vectors provide state-of-the-art performance on our test set
+                   for measuring syntactic and semantic word similarities.",
+  month         =  jan,
+  year          =  2013,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.CL"
+}
+
+
+@ARTICLE{Schneider2020-qt,
+  title         = "The geometry of uniqueness, sparsity and clustering in
+                   penalized estimation",
+  author        = "Schneider, Ulrike and Tardivel, Patrick",
+  journal       = "arXiv [math.ST]",
+  abstract      = "We provide a necessary and sufficient condition for the
+                   uniqueness of penalized least-squares estimators whose
+                   penalty term is given by a norm with a polytope unit ball,
+                   covering a wide range of methods including SLOPE, PACS,
+                   fused, clustered and classical LASSO as well as the related
+                   method of basis pursuit. We consider a strong type of
+                   uniqueness that is relevant for statistical problems. The
+                   uniqueness condition is geometric and involves how the row
+                   span of the design matrix intersects the faces of the dual
+                   norm unit ball, which for SLOPE is given by the signed
+                   permutahedron. Further considerations based this condition
+                   also allow to derive results on sparsity and clustering
+                   features. In particular, we define the notion of a SLOPE
+                   pattern to describe both sparsity and clustering properties
+                   of this method and also provide a geometric characterization
+                   of accessible SLOPE patterns.",
+  month         =  apr,
+  year          =  2020,
+  archivePrefix = "arXiv",
+  primaryClass  = "math.ST"
+}
+
+@ARTICLE{Park2023-hq,
+  title         = "The linear representation hypothesis and the geometry of
+                   large language models",
+  author        = "Park, Kiho and Choe, Yo Joong and Veitch, Victor",
+  journal       = "arXiv [cs.CL]",
+  abstract      = "Informally, the 'linear representation hypothesis' is the
+                   idea that high-level concepts are represented linearly as
+                   directions in some representation space. In this paper, we
+                   address two closely related questions: What does ``linear
+                   representation'' actually mean? And, how do we make sense of
+                   geometric notions (e.g., cosine similarity or projection) in
+                   the representation space? To answer these, we use the
+                   language of counterfactuals to give two formalizations of
+                   ``linear representation'', one in the output (word)
+                   representation space, and one in the input (sentence) space.
+                   We then prove these connect to linear probing and model
+                   steering, respectively. To make sense of geometric notions,
+                   we use the formalization to identify a particular
+                   (non-Euclidean) inner product that respects language
+                   structure in a sense we make precise. Using this causal inner
+                   product, we show how to unify all notions of linear
+                   representation. In particular, this allows the construction
+                   of probes and steering vectors using counterfactual pairs.
+                   Experiments with LLaMA-2 demonstrate the existence of linear
+                   representations of concepts, the connection to interpretation
+                   and control, and the fundamental role of the choice of inner
+                   product.",
+  month         =  nov,
+  year          =  2023,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.CL"
+}
+
+
+@PHDTHESIS{Abdi2013-th,
+  title  = "Cardinality optimization problems",
+  author = "Abdi, M",
+  month  =  dec,
+  year   =  2013
+}
+
+
+@PHDTHESIS{Liberti2004-iu,
+  title     = "Reformulation and Convex Relation Techniques for Global
+               Optimization",
+  author    = "Liberti, Leo Sergio",
+  publisher = "Springer Science and Business Media LLC",
+  month     =  oct,
+  year      =  2004,
+  language  = "en",
+  school    = "Imperial College London"
+}
+
+
+@article{Ewald2017OnTD,
+  title={On the distribution, model selection properties and uniqueness of the Lasso estimator in low and high dimensions},
+  author={Karl Ewald and Ulrike Schneider},
+  journal={Electronic Journal of Statistics},
+  year={2017},
+  url={https://api.semanticscholar.org/CorpusID:54044415}
+}
+
+@article{Donoho2006ForML,
+  title={For most large underdetermined systems of linear equations the minimal l1‐norm solution is also the sparsest solution},
+  author={David L. Donoho},
+  journal={Communications on Pure and Applied Mathematics},
+  year={2006},
+  volume={59},
+  url={https://api.semanticscholar.org/CorpusID:8510060}
+}
+
+@inproceedings{Everink2024TheGA,
+  title={The Geometry and Well-Posedness of Sparse Regularized Linear Regression},
+  author={Jasper Marijn Everink and Yiqiu Dong and Martin Skovgaard Andersen},
+  year={2024},
+  url={https://api.semanticscholar.org/CorpusID:272424099}
+}
+
+
+@ARTICLE{Chen2001-hh,
+  title    = "Atomic Decomposition by Basis Pursuit",
+  author   = "{Scott Shaobing Chen and David L. Donoho and Michael A. Saunders}",
+  abstract = "The time-frequency and time-scale communities have recently
+              developed a large number of overcomplete waveform
+              dictionaries---stationary wavelets, wavelet packets, cosine
+              packets, chirplets, and warplets, to name a few. Decomposition
+              into overcomplete systems is not unique, and several methods for
+              decomposition have been proposed, including the method of frames
+              (MOF), matching pursuit (MP), and, for special dictionaries, the
+              best orthogonal basis (BOB). Basis pursuit (BP) is a principle
+              for decomposing a signal into an ``optimal'' superposition of
+              dictionary elements, where optimal means having the smallest l 1
+              norm of coefficients among all such decompositions. We give
+              examples exhibiting several advantages over MOF, MP, and BOB,
+              including better sparsity and superresolution. BP has interesting
+              relations to ideas in areas as diverse as ill-posed problems,
+              abstract harmonic analysis, total variation denoising, and
+              multiscale edge denoising. BP in highly overcomplete dictionaries
+              leads to large-scale optimization problems. With signals of
+              length 8192 and a wavelet packet dictionary, one gets an
+              equivalent linear program of size 8192 by 212,992. Such problems
+              can be attacked successfully only because of recent advances in
+              linear and quadratic programming by interior-point methods. We
+              obtain reasonable success with a primal-dual logarithmic barrier
+              method and conjugategradient solver.",
+  journal  = "SIAM REVIEW",
+  volume   =  43,
+  number   =  1,
+  pages    = "129",
+  month    =  feb,
+  year     =  2001
+}
+
+
+@ARTICLE{Yuan2006-bt,
+  title     = "Model selection and estimation in regression with grouped
+               variables",
+  author    = "Yuan, Ming and Lin, Yi",
+  abstract  = "SummaryWe consider the problem of selecting grouped variables
+               (factors) for accurate prediction in regression. Such a problem
+               arises naturally in many practical situations with the
+               multifactor analysis-of-variance problem as the most important
+               and well-known example. Instead of selecting factors by stepwise
+               backward elimination, we focus on the accuracy of estimation and
+               consider extensions of the lasso, the LARS algorithm and the
+               non-negative garrotte for factor selection. The lasso, the LARS
+               algorithm and the non-negative garrotte are recently proposed
+               regression methods that can be used to select individual
+               variables. We study and propose efficient algorithms for the
+               extensions of these methods for factor selection and show that
+               these extensions give superior performance to the traditional
+               stepwise backward elimination method in factor selection
+               problems. We study the similarities and the differences between
+               these methods. Simulations and real examples are used to
+               illustrate the methods.",
+  journal   = "J. R. Stat. Soc. Series B Stat. Methodol.",
+  publisher = "Oxford University Press (OUP)",
+  volume    =  68,
+  number    =  1,
+  pages     = "49--67",
+  month     =  feb,
+  year      =  2006,
+  copyright = "https://academic.oup.com/journals/pages/open\_access/funder\_policies/chorus/standard\_publication\_model",
+  language  = "en"
+}
+
+@article{Drosou,
+author = {Drosou, Marina and Pitoura, Evaggelia},
+title = {Search result diversification},
+year = {2010},
+issue_date = {March 2010},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {39},
+number = {1},
+issn = {0163-5808},
+url = {https://doi.org/10.1145/1860702.1860709},
+doi = {10.1145/1860702.1860709},
+abstract = {Result diversification has recently attracted much attention as a means of increasing user satisfaction in recommender systems and web search. Many different approaches have been proposed in the related literature for the diversification problem. In this paper, we survey, classify and comparatively study the various definitions, algorithms and metrics for result diversification.},
+journal = {SIGMOD Rec.},
+month = sep,
+pages = {41–47},
+numpages = {7}
+}
+
+
+
+@INPROCEEDINGS{Pati-93,
+  author={Pati, Y.C. and Rezaiifar, R. and Krishnaprasad, P.S.},
+  booktitle={Proceedings of 27th Asilomar Conference on Signals, Systems and Computers}, 
+  title={Orthogonal matching pursuit: recursive function approximation with applications to wavelet decomposition}, 
+  year={1993},
+  volume={},
+  number={},
+  pages={40-44 vol.1},
+  keywords={Matching pursuit algorithms;Function approximation;Pursuit algorithms;Dictionaries;Convergence},
+  doi={10.1109/ACSSC.1993.342465}}
+
+
+@ARTICLE{Mallat93-wi,
+  author={Mallat, S.G. and Zhifeng Zhang},
+  journal={IEEE Transactions on Signal Processing}, 
+  title={Matching pursuits with time-frequency dictionaries}, 
+  year={1993},
+  volume={41},
+  number={12},
+  pages={3397-3415},
+  keywords={Matching pursuit algorithms;Time frequency analysis;Dictionaries;Pursuit algorithms;Fourier transforms;Signal representations;Vocabulary;Signal processing algorithms;Interference;Natural languages},
+  doi={10.1109/78.258082}}
+  
+  @inproceedings{Abdool,
+author = {Abdool, Mustafa and Haldar, Malay and Ramanathan, Prashant and Sax, Tyler and Zhang, Lanbo and Manaswala, Aamir and Yang, Lynn and Turnbull, Bradley and Zhang, Qing and Legrand, Thomas},
+title = {Managing Diversity in Airbnb Search},
+year = {2020},
+isbn = {9781450379984},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3394486.3403345},
+doi = {10.1145/3394486.3403345},
+abstract = {One of the long-standing questions in search systems is the role of diversity in results. From a product perspective, showing diverse results provides the user with more choice and should lead to an improved experience. However, this intuition is at odds with common machine learning approaches to ranking which directly optimize the relevance of each individual item without a holistic view of the result set. In this paper, we describe our journey in tackling the problem of diversity for Airbnb search, starting from heuristic based approaches and concluding with a novel deep learning solution that produces an embedding of the entire query context by leveraging Recurrent Neural Networks (RNNs). We hope our lessons learned will prove useful to others and motivate further research in this area.},
+booktitle = {Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining},
+pages = {2952–2960},
+numpages = {9},
+keywords = {deep learning, diversity, e-commerce, neural networks, recurrent neural networks, search ranking},
+location = {Virtual Event, CA, USA},
+series = {KDD '20}
+}
+
+  
+@ARTICLE{Wu2019-uk,
+  title         = "Recent Advances in Diversified Recommendation",
+  author        = "Wu, Qiong and Liu, Yong and Miao, Chunyan and Zhao, Yin and
+                   Guan, Lu and Tang, Haihong",
+  abstract      = "With the rapid development of recommender systems, accuracy
+                   is no longer the only golden criterion for evaluating
+                   whether the recommendation results are satisfying or not. In
+                   recent years, diversity has gained tremendous attention in
+                   recommender systems research, which has been recognized to
+                   be an important factor for improving user satisfaction. On
+                   the one hand, diversified recommendation helps increase the
+                   chance of answering ephemeral user needs. On the other hand,
+                   diversifying recommendation results can help the business
+                   improve product visibility and explore potential user
+                   interests. In this paper, we are going to review the recent
+                   advances in diversified recommendation. Specifically, we
+                   first review the various definitions of diversity and
+                   generate a taxonomy to shed light on how diversity have been
+                   modeled or measured in recommender systems. After that, we
+                   summarize the major optimization approaches to diversified
+                   recommendation from a taxonomic view. Last but not the
+                   least, we project into the future and point out trending
+                   research directions on this topic.",
+  month         =  may,
+  year          =  2019,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.IR",
+  eprint        = "1905.06589"
+}
+
+
+
+@ARTICLE{Carbonell2017-gi,
+  title     = "The use of {MMR}, diversity-based reranking for reordering
+               documents and producing summaries",
+  author    = "Carbonell, Jaime and Goldstein, Jade",
+  abstract  = "This paper presents a method for combining query-relevance with
+               information-novelty in the context of text retrieval and
+               summarization. The Maximal Marginal Relevance (MMR) criterion
+               strives to reduce redundancy while maintaining query relevance
+               in re-ranking retrieved documents and in selecting apprw priate
+               passages for text summarization. Preliminary results indicate
+               some benefits for MMR diversity ranking in document retrieval
+               and in single document summarization. The latter are borne out
+               by the recent results of the SUMMAC conference in the evaluation
+               of summarization systems. However, the clearest advantage is
+               demonstrated in constructing non-redundant multi-document
+               summaries, where MMR results are clearly superior to non-MMR
+               passage selection.",
+  journal   = "SIGIR Forum",
+  publisher = "Association for Computing Machinery (ACM)",
+  volume    =  51,
+  number    =  2,
+  pages     = "209--210",
+  month     =  aug,
+  year      =  1998,
+  copyright = "http://www.acm.org/publications/policies/copyright\_policy\#Background",
+  language  = "en"
+}
+
+@phdthesis{Koelle2022-lp,
+  author       = {Samson Jonathan Koelle},
+  title        = {Geometric algorithms for interpretable manifold learning},
+  school       = {University of Washington},
+  year         = {2022},
+  type         = {PhD thesis},
+  url          = {http://hdl.handle.net/1773/48559},
+  abstract     = {This thesis proposes several algorithms in the area of interpretable unsupervised learning. Chapters 3 and 4 introduce a sparse convex regression approach for identifying local diffeomorphisms from a dictionary of interpretable functions. In Chapter 3, this algorithm makes use of an embedding learned by a manifold learning algorithm, while in Chapter 4, this algorithm is applied without the use of a precomputed embedding. Chapter 5 then introduces a set of alternative algorithms that avoid issues stemming from sparse regression, characterizes the tangent space version of this algorithm as identifying isometries when available, and gives a two-stage algorithm combining this approach with the computational advantages of the algorithms in Chapters 3 and 4. Finally, Chapter 6 gives an alternate tangent space estimator based on a learned embedding, and uses this as an initial estimator to tackle the related gradient estimation problem. Together, these approaches provide a toolbox of methods for computing and associating gradient information to learn descriptive parameterizations of data manifolds.},
+  note         = {Statistics [108]},
+  file         = {Koelle_washington_0250E_23825.pdf:22.46Mb},
+}
+
+@misc{misc_wine_109,
+  author       = {Aeberhard,Stefan and Forina,M.},
+  title        = {{Wine}},
+  year         = {1991},
+  howpublished = {UCI Machine Learning Repository},
+  note         = {{DOI}: https://doi.org/10.24432/C5PC7J}
+}
+
+@misc{misc_iris_53,
+  author       = {Fisher,R. A.},
+  title        = {{Iris}},
+  year         = {1988},
+  howpublished = {UCI Machine Learning Repository},
+  note         = {{DOI}: https://doi.org/10.24432/C56C76}
+}
+
+@article{scikit-learn,
+  title={Scikit-learn: Machine Learning in {P}ython},
+  author={Pedregosa, F. and Varoquaux, G. and Gramfort, A. and Michel, V.
+          and Thirion, B. and Grisel, O. and Blondel, M. and Prettenhofer, P.
+          and Weiss, R. and Dubourg, V. and Vanderplas, J. and Passos, A. and
+          Cournapeau, D. and Brucher, M. and Perrot, M. and Duchesnay, E.},
+  journal={Journal of Machine Learning Research},
+  volume={12},
+  pages={2825--2830},
+  year={2011}
+}
+
+@techreport{Tropp04-ju,
+  title = {JUST RELAX: Convex Programming Methods for Subset Selection and Sparse Approximation},
+  author = {Joel A. Tropp},
+  year = {2004},
+  institution = {Institute for Computational Engineering and Sciences, The University of Texas at Austin},
+  type = {Technical Report},
+  number = {04-04},
+  url = {https://www.oden.utexas.edu/media/reports/2004/0404.pdf}
+}
+
+@misc{cvxpy_sparse_solution,
+  title = {Sparse Solution with CVXPY},
+  author = {{CVXPY Developers}},
+  howpublished = {\url{https://www.cvxpy.org/examples/applications/sparse_solution.html}},
+  note = {Accessed: 2024-07-11}
+}
+
+
+  
+  @article{Tropp06-sg,
+title = {Algorithms for simultaneous sparse approximation. Part II: Convex relaxation},
+journal = {Signal Processing},
+volume = {86},
+number = {3},
+pages = {589-602},
+year = {2006},
+note = {Sparse Approximations in Signal and Image Processing},
+issn = {0165-1684},
+doi = {https://doi.org/10.1016/j.sigpro.2005.05.031},
+url = {https://www.sciencedirect.com/science/article/pii/S0165168405002239},
+author = {Joel A. Tropp},
+keywords = {Combinatorial optimization, Convex relaxation, Multiple measurement vectors, Simultaneous sparse approximation},
+abstract = {A simultaneous sparse approximation problem requests a good approximation of several input signals at once using different linear combinations of the same elementary signals. At the same time, the problem balances the error in approximation against the total number of elementary signals that participate. These elementary signals typically model coherent structures in the input signals, and they are chosen from a large, linearly dependent collection. The first part of this paper presents theoretical and numerical results for a greedy pursuit algorithm, called simultaneous orthogonal matching pursuit. The second part of the paper develops another algorithmic approach called convex relaxation. This method replaces the combinatorial simultaneous sparse approximation problem with a closely related convex program that can be solved efficiently with standard mathematical programming software. The paper develops conditions under which convex relaxation computes good solutions to simultaneous sparse approximation problems.}
+}
+
+@article{Chen2006TheoreticalRO,
+  title={Theoretical Results on Sparse Representations of Multiple-Measurement Vectors},
+  author={Jie Chen and Xiaoming Huo},
+  journal={IEEE Transactions on Signal Processing},
+  year={2006},
+  volume={54},
+  pages={4634-4643},
+  url={https://api.semanticscholar.org/CorpusID:17333301}
+}
+
+@INPROCEEDINGS{Tropp05-ml,
+  author={Tropp, J.A. and Gilbert, A.C. and Strauss, M.J.},
+  booktitle={Proceedings. (ICASSP '05). IEEE International Conference on Acoustics, Speech, and Signal Processing, 2005.}, 
+  title={Simultaneous sparse approximation via greedy pursuit}, 
+  year={2005},
+  volume={5},
+  number={},
+  pages={v/721-v/724 Vol. 5},
+  keywords={Dictionaries;Sparse matrices;Matching pursuit algorithms;Optimized production technology;Mathematics;Vectors;Signal analysis;Pursuit algorithms;Approximation algorithms;Approximation error},
+  doi={10.1109/ICASSP.2005.1416405}}
+  
+  @article{Ali2018TheGL,
+  title={The Generalized Lasso Problem and Uniqueness},
+  author={Alnur Ali and Ryan J. Tibshirani},
+  journal={Electronic Journal of Statistics},
+  year={2018},
+  url={https://api.semanticscholar.org/CorpusID:51755233}
+}
+
+  @article{Tibshirani2012TheLP,
+  title={The Lasso Problem and Uniqueness},
+  author={Ryan J. Tibshirani},
+  journal={Electronic Journal of Statistics},
+  year={2012},
+  volume={7},
+  pages={1456-1490},
+  url={https://api.semanticscholar.org/CorpusID:5849668}
+}
+
+@BOOK{James2014-eg,
+  title     = "An Introduction to Statistical Learning: with Applications in
+               {R}",
+  author    = "James, Gareth and Witten, Daniela and Hastie, Trevor and
+               Tibshirani, Robert",
+  abstract  = "An Introduction to Statistical Learning provides an accessible
+               overview of the field of statistical learning, an essential
+               toolset for making sense of the vast and complex data sets that
+               have emerged in fields ranging from biology to finance to
+               marketing to astrophysics in the past twenty years. This book
+               presents some of the most important modeling and prediction
+               techniques, along with relevant applications. Topics include
+               linear regression, classification, resampling methods, shrinkage
+               approaches, tree-based methods, support vector machines,
+               clustering, and more. Color graphics and real-world examples are
+               used to illustrate the methods presented. Since the goal of this
+               textbook is to facilitate the use of these statistical learning
+               techniques by practitioners in science, industry, and other
+               fields, each chapter contains a tutorial on implementing the
+               analyses and methods presented in R, an extremely popular open
+               source statistical software platform.Two of the authors co-wrote
+               The Elements of Statistical Learning (Hastie, Tibshirani and
+               Friedman, 2nd edition 2009), a popular reference book for
+               statistics and machine learning researchers. An Introduction to
+               Statistical Learning covers many of the same topics, but at a
+               level accessible to a much broader audience. This book is
+               targeted at statisticians and non-statisticians alike who wish
+               to use cutting-edge statistical learning techniques to analyze
+               their data. The text assumes only a previous course in linear
+               regression and no knowledge of matrix algebra.",
+  publisher = "Springer New York",
+  month     =  jul,
+  year      =  2014,
+  language  = "en"
+}
+
+
+@ARTICLE{Obozinski2006-kq,
+  title    = "Multi-task feature selection",
+  author   = "Obozinski, G and Taskar, B and Jordan, Michael I",
+  abstract = "We address the problem of joint feature selection across a group
+              of related classification or regression tasks. We propose a novel
+              type of joint regularization of the model parameters in order to
+              couple feature selection across tasks. Intuitively, we extend the
+              `1 regularization for single-task estimation to the multi-task
+              setting. By penalizing the sum of `2-norms of the blocks of
+              coefficients associated with each feature across different tasks,
+              we encourage multiple predictors to have similar parameter
+              sparsity patterns. To fit parameters under this regularization,
+              we propose a blockwise boosting scheme that follows the
+              regularization path. The algorithm introduces and updates
+              simultaneously the coefficients associated with one feature in
+              all tasks. We show empirically that this approach outperforms
+              independent `1-based feature selection on several datasets.",
+  year     =  2006
+}
+
+
+@ARTICLE{Yeung2011-fg,
+  title    = "A probabilistic framework for learning task relationships in
+              multi-task learning",
+  author   = "Yeung, Dit-Yan and Zhang, Yu",
+  abstract = "For many real-world machine learning applications, labeled data
+              is costly because the data labeling process is laborious and time
+              consuming. As a consequence, only limited labeled data is
+              available for model training, leading to the so-called labeled
+              data deficiency problem. In the machine learning research
+              community, several directions have been pursued to address this
+              problem. Among these efforts, a promising direction is multi-task
+              learning which is a learning paradigm that seeks to boost the
+              generalization performance of a model on a learning task with the
+              help of some other related tasks. This learning paradigm has been
+              inspired by human learning activities in that people often apply
+              the knowledge gained from previous learning tasks to help learn a
+              new task more efficiently and effectively. Of the several
+              approaches proposed in previous research for multi-task learning,
+              a relatively less studied yet very promising approach is based on
+              automatically learning the relationships among tasks from data.
+              In this thesis, we first propose a powerful probabilistic
+              framework for multi-task learning based on the task relationship
+              learning approach. The main novelty of our framework lies in the
+              use of a matrix variate prior with parameters that model task
+              relationships. Based on this general multi-task learning
+              framework, we then propose four specific methods, namely,
+              multi-task relationship learning (MTRL), multi-task generalized t
+              process (MTGTP), multi-task high-order task relationship learning
+              (MTHOL), and probabilistic multi-task feature selection (PMTFS).
+              By utilizing a matrix variate normal distribution as a prior on
+              the model parameters of all tasks, MTRL can be formulated
+              efficiently as a convex optimization problem. On the other hand,
+              MTGTP is a Bayesian method that models the task covariance matrix
+              as a random matrix with an inverse-Wishart prior and integrates
+              it out to achieve Bayesian model averaging to improve the
+              generalization performance. With MTRL as a base, MTHOL provides a
+              generalization that learns high-order task relationships and
+              model parameters. Unlike MTRL, MTGTP and MTHOL which are for
+              standard multi-task classification or regression problems, PMTFS
+              addresses the feature selection problem under the multi-task
+              setting by incorporating the learning of task relationships.
+              Besides conducting experimental validation of the proposed
+              methods on several data sets for multi-task learning, we also
+              investigate in detail a collaborative filtering application under
+              the multi-task setting. Through both theoretical and empirical
+              studies on the several methods proposed, we show that task
+              relationship learning is a very promising approach for multi-task
+              learning and related learning problems.",
+  year     =  2011
+}
+
+
+@article{Friedman-2007-yb,
+author = {Jerome Friedman and Trevor Hastie and Holger H{\"o}fling and Robert Tibshirani},
+title = {{Pathwise coordinate optimization}},
+volume = {1},
+journal = {The Annals of Applied Statistics},
+number = {2},
+publisher = {Institute of Mathematical Statistics},
+pages = {302 -- 332},
+keywords = {Convex optimization, Coordinate descent, Lasso},
+year = {2007},
+doi = {10.1214/07-AOAS131},
+URL = {https://doi.org/10.1214/07-AOAS131}
+}
+
+
+@ARTICLE{Liu2009-yo,
+  title    = "Blockwise coordinate descent procedures for the multi-task lasso,
+              with applications to neural semantic basis discovery",
+  author   = "Liu, Han and Palatucci, Mark and Zhang, Jian",
+  abstract = "We develop a cyclical blockwise coordinate descent algorithm for
+              the multi-task Lasso that efficiently solves problems with
+              thousands of features and tasks. The main result shows that a
+              closed-form Winsorization operator can be obtained for the
+              sup-norm penalized least squares regression. This allows the
+              algorithm to find solutions to very large-scale problems far more
+              efficiently than existing methods. This result complements the
+              pioneering work of Friedman, et al. (2007) for the single-task
+              Lasso. As a case study, we use the multi-task Lasso as a variable
+              selector to discover a semantic basis for predicting human neural
+              activation. The learned solution outperforms the standard basis
+              for this task on the majority of test participants, while
+              requiring far fewer assumptions about cognitive neuroscience. We
+              demonstrate how this learned basis can yield insights into how
+              the brain represents the meanings of words.",
+  journal  = "ICML",
+  pages    = "649--656",
+  month    =  jun,
+  year     =  2009
+}
+
+
+
+% The entry below contains non-ASCII chars that could not be converted
+% to a LaTeX equivalent.
+@ARTICLE{Catalina2018-ek,
+  title    = "Revisiting {FISTA} for Lasso: Acceleration strategies over the
+              regularization path",
+  author   = "Catalina, Alejandro and Ala{\'\i}z, Carlos M and Dorronsoro,
+              Jos{\'e} R",
+  abstract = ". In this work we revisit FISTA algorithm for Lasso showing that
+              recent acceleration techniques may greatly improve its basic
+              version, resulting in a much more competitive procedure. We study
+              the contribution of the diﬀerent improvement strategies, showing
+              experimentally that the ﬁnal version becomes much faster than the
+              standard one.",
+  journal  = "Eur Symp Artif Neural Netw",
+  year     =  2018
+}
+
+
+@ARTICLE{Sun2012-vp,
+  title         = "Sparse Matrix Inversion with Scaled Lasso",
+  author        = "Sun, Tingni and Zhang, Cun-Hui",
+  abstract      = "We propose a new method of learning a sparse
+                   nonnegative-definite target matrix. Our primary example of
+                   the target matrix is the inverse of a population covariance
+                   or correlation matrix. The algorithm first estimates each
+                   column of the target matrix by the scaled Lasso and then
+                   adjusts the matrix estimator to be symmetric. The penalty
+                   level of the scaled Lasso for each column is completely
+                   determined by data via convex minimization, without using
+                   cross-validation. We prove that this scaled Lasso method
+                   guarantees the fastest proven rate of convergence in the
+                   spectrum norm under conditions of weaker form than those in
+                   the existing analyses of other $\ell_1$ regularized
+                   algorithms, and has faster guaranteed rate of convergence
+                   when the ratio of the $\ell_1$ and spectrum norms of the
+                   target inverse matrix diverges to infinity. A simulation
+                   study demonstrates the computational feasibility and superb
+                   performance of the proposed method. Our analysis also
+                   provides new performance bounds for the Lasso and scaled
+                   Lasso to guarantee higher concentration of the error at a
+                   smaller threshold level than previous analyses, and to allow
+                   the use of the union bound in column-by-column applications
+                   of the scaled Lasso without an adjustment of the penalty
+                   level. In addition, the least squares estimation after the
+                   scaled Lasso selection is considered and proven to guarantee
+                   performance bounds similar to that of the scaled Lasso.",
+  month         =  feb,
+  year          =  2012,
+  archivePrefix = "arXiv",
+  primaryClass  = "math.ST",
+  eprint        = "1202.2723"
+}
+
+
+@ARTICLE{Jones2007-uc,
+  title         = "Universal local parametrizations via heat kernels and
+                   eigenfunctions of the Laplacian",
+  author        = "Jones, Peter W and Maggioni, Mauro and Schul, Raanan",
+  abstract      = "We use heat kernels or eigenfunctions of the Laplacian to
+                   construct local coordinates on large classes of Euclidean
+                   domains and Riemannian manifolds (not necessarily smooth,
+                   e.g. with $\mathcal\{C\}^\alpha$ metric). These coordinates
+                   are bi-Lipschitz on embedded balls of the domain or
+                   manifold, with distortion constants that depend only on
+                   natural geometric properties of the domain or manifold. The
+                   proof of these results relies on estimates, from above and
+                   below, for the heat kernel and its gradient, as well as for
+                   the eigenfunctions of the Laplacian and their gradient.
+                   These estimates hold in the non-smooth category, and are
+                   stable with respect to perturbations within this category.
+                   Finally, these coordinate systems are intrinsic and
+                   efficiently computable, and are of value in applications.",
+  month         =  sep,
+  year          =  2007,
+  archivePrefix = "arXiv",
+  primaryClass  = "math.AP",
+  eprint        = "0709.1975"
+}
+
+
+@ARTICLE{Chen2019-km,
+  title    = "Selecting the independent coordinates of manifolds with large
+              aspect ratios",
+  author   = "Chen, Yu-Chia and Meil{\u a}, M",
+  abstract = "Many manifold embedding algorithms fail apparently when the data
+              manifold has a large aspect ratio (such as a long, thin strip).
+              Here, we formulate success and failure in terms of finding a
+              smooth embedding, showing also that the problem is pervasive and
+              more complex than previously recognized. Mathematically, success
+              is possible under very broad conditions, provided that embedding
+              is done by carefully selected eigenfunctions of the
+              Laplace-Beltrami operator $\Delta$. Hence, we propose a
+              bicriterial Independent Eigencoordinate Selection (IES) algorithm
+              that selects smooth embeddings with few eigenvectors. The
+              algorithm is grounded in theory, has low computational overhead,
+              and is successful on synthetic and large real data.",
+  journal  = "Adv. Neural Inf. Process. Syst.",
+  volume   = "abs/1907.01651",
+  month    =  jul,
+  year     =  2019
+}
+
+@article{tenenbaum2000ggf,
+  added-at = {2010-02-09T09:41:26.000+0100},
+  author = {Tenenbaum, J.B. and Silva, V. and Langford, J.C.},
+  biburl = {https://www.bibsonomy.org/bibtex/2c34bc69ea1d8bab2b1ba70c1733b5843/qmerigot},
+  interhash = {d98b45c2f0c37140697cdd69cb0d9c89},
+  intrahash = {c34bc69ea1d8bab2b1ba70c1733b5843},
+  journal = {Science},
+  keywords = {imported},
+  number = 5500,
+  pages = {2319--2323},
+  timestamp = {2010-02-09T09:41:29.000+0100},
+  title = {{A global geometric framework for nonlinear dimensionality reduction}},
+  volume = 290,
+  year = 2000
+}
+
+@inproceedings{reimers-2019-sentence-bert,
+    title = "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks",
+    author = "Reimers, Nils and Gurevych, Iryna",
+    booktitle = "Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing",
+    month = "11",
+    year = "2019",
+    publisher = "Association for Computational Linguistics",
+    url = "http://arxiv.org/abs/1908.10084",
+}
+
+@ARTICLE{Ghosh1996-id,
+  title     = "Computational aspects of the maximum diversity problem",
+  author    = "Ghosh, Jay B",
+  journal   = "Operations Research Letters",
+  publisher = "Elsevier BV",
+  volume    =  19,
+  number    =  4,
+  pages     = "175--181",
+  abstract  = "We address two variations of the maximum diversity problem which
+               arises when m elements are to be selected from an n-element
+               population based on inter-element distances. We study problem
+               complexity and propose randomized greedy heuristics. Performance
+               of the heuristics is tested on a limited basis.",
+  year      =  1996,
+  language  = "en"
+}
+@MISC{Hastie2016-cn,
+  title  = "Best Subset, Forward Stepwise, or Lasso?",
+  author = "Hastie, Trevor and Tibshirani, Robert and Tibshirani, Ryan",
+  year   =  2016
+}
+
+
+@ARTICLE{DAspremont2007-aq,
+  title     = "A direct formulation for sparse {PCA} using semidefinite
+               programming",
+  author    = "d'Aspremont, Alexandre and El Ghaoui, Laurent and Jordan, Michael
+               I and Lanckriet, Gert R G",
+  journal   = "SIAM Rev. Soc. Ind. Appl. Math.",
+  publisher = "Society for Industrial \& Applied Mathematics (SIAM)",
+  volume    =  49,
+  number    =  3,
+  pages     = "434--448",
+  abstract  = "Given a covariance matrix, we consider the problem of maximizing
+               the variance explained by a particular linear combination of the
+               input variables while constraining the number of nonzero
+               coefficients in this combination. This problem arises in the
+               decomposition of a covariance matrix into sparse factors or
+               sparse principal component analysis (PCA), and has wide
+               applications ranging from biology to finance. We use a
+               modification of the classical variational representation of the
+               largest eigenvalue of a symmetric matrix, where cardinality is
+               constrained, and derive a semidefinite programming-based
+               relaxation for our problem. We also discuss Nesterov's smooth
+               minimization technique applied to the semidefinite program
+               arising in the semidefinite relaxation of the sparse PCA problem.
+               The method has complexity $O(n^4 \sqrt{\log(n)}/\epsilon)$, where
+               $n$ is the size of the underlying covariance matrix and
+               $\epsilon$ is the desired absolute accuracy on the optimal value
+               of the problem.",
+  month     =  jan,
+  year      =  2007,
+  language  = "en"
+}
+
+
+@MISC{Alfonso-Cevallos-Friedrich-Eisenbrand-and-Rico-Zenklusen2016-ai,
+  title     = "Max-Sum Diversity Via Convex Programming",
+  author    = "{Alfonso Cevallos, Friedrich Eisenbrand, and Rico Zenklusen}",
+  publisher = "Schloss Dagstuhl - Leibniz-Zentrum für Informatik",
+  abstract  = "Diversity maximization is an important concept in information
+               retrieval, computational geometry and operations research.
+               Usually, it is a variant of the following problem: Given a ground
+               set, constraints, and a function f that measures diversity of a
+               subset, the task is to select a feasible subset S such that f(S)
+               is maximized. The sum-dispersion function f(S) which is the sum
+               of the pairwise distances in S, is in this context a prominent
+               diversification measure. The corresponding diversity maximization
+               is the ``max-sum'' or ``sum-sum'' diversification. Many recent
+               results deal with the design of constant-factor approximation
+               algorithms of diversification problems involving sum-dispersion
+               function under a matroid constraint. In this paper, we present a
+               PTAS for the max-sum diversity problem under a matroid constraint
+               for distances d(.,.) of negative type. Distances of negative type
+               are, for example, metric distances stemming from the l\_2 and
+               l\_1 norms, as well as the cosine or spherical, or Jaccard
+               distance which are popular similarity metrics in web and image
+               search. Our algorithm is based on techniques developed in
+               geometric algorithms like metric embeddings and convex
+               optimization. We show that one can compute a fractional solution
+               of the usually non-convex relaxation of the problem which yields
+               an upper bound on the optimum integer solution. Starting from
+               this fractional solution, we employ a deterministic rounding
+               approach which only incurs a small loss in terms of objective,
+               thus leading to a PTAS. This technique can be applied to other
+               previously studied variants of the max-sum dispersion function,
+               including combinations of diversity with linear-score
+               maximization, improving over the previous constant-factor
+               approximation algorithms.",
+  month     =  jun,
+  year      =  2016
+}
+
+
+@ARTICLE{Ashkan2015-jv,
+  title   = "Optimal Greedy Diversity for Recommendation",
+  author  = "Ashkan, Azin and Kveton, B and Berkovsky, S and Wen, Zheng",
+  journal = "Int Jt Conf Artif Intell",
+  pages   = "1742--1748",
+  month   =  jul,
+  year    =  2015
+}
+
+
+@ARTICLE{Kuo1993-zy,
+  title     = "Analyzing and modeling the maximum diversity problem by zero‐one
+               programming",
+  author    = "Kuo, Ching-Chung and Glover, Fred and Dhir, Krishna S",
+  journal   = "Decis. Sci.",
+  publisher = "Wiley",
+  volume    =  24,
+  number    =  6,
+  pages     = "1171--1185",
+  abstract  = "ABSTRACTThe problem of maximizing diversity deals with selecting
+               a set of elements from some larger collection such that the
+               selected elements exhibit the greatest variety of
+               characteristics. A new model is proposed in which the concept of
+               diversity is quantifiable and measurable. A quadratic zero‐one
+               model is formulated for diversity maximization. Based upon the
+               formulation, it is shown that the maximum diversity problem is
+               NP‐hard. Two equivalent linear integer programs are then
+               presented that offer progressively greater computational
+               efficiency. Another formulation is also introduced which involves
+               a different diversity objective. An example is given to
+               illustrate how additional considerations can be incorporated into
+               the maximum diversity model.",
+  month     =  nov,
+  year      =  1993,
+  language  = "en"
+}
+
+@ARTICLE{O-Donoghue2013-wf,
+  title         = "Conic optimization via operator splitting and homogeneous
+                   self-dual embedding",
+  author        = "O'Donoghue, Brendan and Chu, Eric and Parikh, Neal and Boyd,
+                   Stephen",
+  journal       = "arXiv [math.OC]",
+  abstract      = "We introduce a first order method for solving very large
+                   convex cone programs. The method uses an operator splitting
+                   method, the alternating directions method of multipliers, to
+                   solve the homogeneous self-dual embedding, an equivalent
+                   feasibility problem involving finding a nonzero point in the
+                   intersection of a subspace and a cone. This approach has
+                   several favorable properties. Compared to interior-point
+                   methods, first-order methods scale to very large problems, at
+                   the cost of requiring more time to reach very high accuracy.
+                   Compared to other first-order methods for cone programs, our
+                   approach finds both primal and dual solutions when available
+                   or a certificate of infeasibility or unboundedness otherwise,
+                   is parameter-free, and the per-iteration cost of the method
+                   is the same as applying a splitting method to the primal or
+                   dual alone. We discuss efficient implementation of the method
+                   in detail, including direct and indirect methods for
+                   computing projection onto the subspace, scaling the original
+                   problem data, and stopping criteria. We describe an
+                   open-source implementation, which handles the usual
+                   (symmetric) non-negative, second-order, and semidefinite
+                   cones as well as the (non-self-dual) exponential and power
+                   cones and their duals. We report numerical results that show
+                   speedups over interior-point cone solvers for large problems,
+                   and scaling to very large general cone programs.",
+  month         =  dec,
+  year          =  2013,
+  archivePrefix = "arXiv",
+  primaryClass  = "math.OC"
+}
+
+
+@INPROCEEDINGS{Mishkin2023-yt,
+  title     = "Optimal Sets and Solution Paths of {ReLU} Networks",
+  author    = "Mishkin, Aaron and Pilanci, Mert",
+  editor    = "Krause, Andreas and Brunskill, Emma and Cho, Kyunghyun and
+               Engelhardt, Barbara and Sabato, Sivan and Scarlett, Jonathan",
+  journal   = "ICML",
+  publisher = "PMLR",
+  volume    = "abs/2306.00119",
+  pages     = "24888--24924",
+  abstract  = "We develop an analytical framework to characterize the set of
+               optimal ReLU neural networks by reformulating the non-convex
+               training problem as a convex program. We show that the global
+               optima of the convex parameterization are given by a polyhedral
+               set and then extend this characterization to the optimal set of
+               the non-convex training objective. Since all stationary points of
+               the ReLU training problem can be represented as optima of
+               sub-sampled convex programs, our work provides a general
+               expression for all critical points of the non-convex objective.
+               We then leverage our results to provide an optimal pruning
+               algorithm for computing minimal networks, establish conditions
+               for the regularization path of ReLU networks to be continuous,
+               and develop sensitivity results for minimal ReLU networks.",
+  month     =  may,
+  year      =  2023
+}
+
+
+@INPROCEEDINGS{Zhu2020-vb,
+  title     = "A match pursuit based method adapted to overcomplete dictionary
+               for compressive spectral imaging",
+  author    = "Zhu, Jianchen and Zhao, Shengjie and Zhang, Rongqing",
+  booktitle = "2020 Asia-Pacific Signal and Information Processing Association
+               Annual Summit and Conference (APSIPA ASC)",
+  publisher = "IEEE",
+  pages     = "170--173",
+  abstract  = "This paper proposes to introduce greedy pursuit, a conceptually
+               simple hard thresholding pursuit algorithm called Signal Space
+               Subspace Pursuit (SSSP) for calculating spare signal
+               representations with overcomplete dictionaries whenever the
+               sensing matrix (sampling operator) satisfies the Restricted
+               Isometry Property adapted to Dictionary (D-RIP). Signal space
+               greedy method has the ability to optimally compute (near) best
+               projections that allow one to identify the most related a small
+               number of dictionary atoms of an arbitrary signal in this
+               setting. More practically, standard recovery algorithms are
+               applicable to such projections while maintaining accurate signal
+               recovery. Simulation results with a typical hyperspectral data
+               set demonstrate the superiority of the proposed approach.",
+  month     =  dec,
+  year      =  2020,
+  language  = "en"
+}
+
+
+@article{ZhangZ:04,
+	Author = {Zhenyue Zhang and Hongyuan Zha},
+	Bibsource = {DBLP, http://dblp.uni-trier.de},
+	Ee = {http://dx.doi.org/10.1137/S1064827502419154},
+	Journal = {SIAM J. Scientific Computing},
+	Number = {1},
+	Pages = {313-338},
+	Title = {Principal Manifolds and Nonlinear Dimensionality Reduction via Tangent Space Alignment},
+	Volume = {26},
+	Year = {2004}}
+	
+@ARTICLE{5895106,
+  author={Cai, T. Tony and Wang, Lie},
+  journal={IEEE Transactions on Information Theory}, 
+  title={Orthogonal Matching Pursuit for Sparse Signal Recovery With Noise}, 
+  year={2011},
+  volume={57},
+  number={7},
+  pages={4680-4688},
+  keywords={Matching pursuit algorithms;Gaussian noise;Signal processing algorithms;Algorithm design and analysis;Eigenvalues and eigenfunctions;Equations; $\ell_{1}$ minimization;compressed sensing;mutual incoherence;orthogonal matching pursuit (OMP);signal reconstruction;support recovery},
+  doi={10.1109/TIT.2011.2146090}}
+
+@inproceedings{He2023-ch,
+  title     = "Product Manifold Learning with Independent Coordinate Selection",
+  author    = "He, Jesse and Brug{\`e}re, Tristan and Mishne, Gal",
+  booktitle = "Proceedings of the 2nd Annual Workshop on Topology, Algebra, and Geometry in Machine Learning (TAG-ML) at ICML",
+  abstract  = "In many dimensionality reduction tasks, we wish to identify the
+               constituent components that explain our observations. For
+               manifold learning, this can be formalized as factoring a
+               Riemannian product manifold. Recovering this factorization,
+               however, may suffer from certain difficulties in practice,
+               especially when data is sparse or noisy, or when one factor is
+               distorted by the other. To address these limitations, we propose
+               identifying non-redundant coordinates on the product manifold
+               before applying product manifold learning to identify which
+               coordinates correspond to different factor manifolds. We
+               demonstrate our approach on both synthetic and real-world data.",
+  month     = jun,
+  year      = 2023
+}
+
+@ARTICLE{Anderson1992-fb,
+  title     = "Generalized QR factorization and its applications",
+  author    = "Anderson, E and Bai, Z and Dongarra, J",
+  journal   = "Linear Algebra Appl.",
+  publisher = "Elsevier BV",
+  volume    = "162-164",
+  pages     = "243--271",
+  month     =  feb,
+  year      =  1992,
+}
+
+@ARTICLE{Chmiela2018-at,
+  title    = "Towards exact molecular dynamics simulations with machine-learned
+              force fields",
+  author   = "Chmiela, Stefan and Sauceda, Huziel E and M{\"u}ller,
+              Klaus-Robert and Tkatchenko, Alexandre",
+  abstract = "Molecular dynamics (MD) simulations employing classical force
+              fields constitute the cornerstone of contemporary atomistic
+              modeling in chemistry, biology, and materials science. However,
+              the predictive power of these simulations is only as good as the
+              underlying interatomic potential. Classical potentials often fail
+              to faithfully capture key quantum effects in molecules and
+              materials. Here we enable the direct construction of flexible
+              molecular force fields from high-level ab initio calculations by
+              incorporating spatial and temporal physical symmetries into a
+              gradient-domain machine learning (sGDML) model in an automatic
+              data-driven way. The developed sGDML approach faithfully
+              reproduces global force fields at quantum-chemical CCSD(T) level
+              of accuracy and allows converged molecular dynamics simulations
+              with fully quantized electrons and nuclei. We present MD
+              simulations, for flexible molecules with up to a few dozen atoms
+              and provide insights into the dynamical behavior of these
+              molecules. Our approach provides the key missing ingredient for
+              achieving spectroscopic accuracy in molecular simulations.",
+  journal  = "Nat. Commun.",
+  volume   =  9,
+  number   =  1,
+  pages    = "3887",
+  month    =  sep,
+  year     =  2018,
+  language = "en"
+}
+
+@inproceedings{Mishkin2022TheSP,
+  title={The Solution Path of the Group Lasso},
+  author={Aaron Mishkin and Mert Pilanci},
+  year={2022},
+  url={https://api.semanticscholar.org/CorpusID:259504228}
+}
+
+@article{ocpb:16,
+    author       = {Brendan O'Donoghue and Eric Chu and Neal Parikh and Stephen Boyd},
+    title        = {Conic Optimization via Operator Splitting and Homogeneous Self-Dual Embedding},
+    journal      = {Journal of Optimization Theory and Applications},
+    month        = {June},
+    year         = {2016},
+    volume       = {169},
+    number       = {3},
+    pages        = {1042-1068},
+    url          = {http://stanford.edu/~boyd/papers/scs.html},
+}
+
+@article{diamond2016cvxpy,
+  author  = {Steven Diamond and Stephen Boyd},
+  title   = {{CVXPY}: {A} {P}ython-embedded modeling language for convex optimization},
+  journal = {Journal of Machine Learning Research},
+  year    = {2016},
+  volume  = {17},
+  number  = {83},
+  pages   = {1--5},
+}
+@article{agrawal2018rewriting,
+  author  = {Agrawal, Akshay and Verschueren, Robin and Diamond, Steven and Boyd, Stephen},
+  title   = {A rewriting system for convex optimization problems},
+  journal = {Journal of Control and Decision},
+  year    = {2018},
+  volume  = {5},
+  number  = {1},
+  pages   = {42--60},
+}
+
+@INPROCEEDINGS{Koelle2024-no,
+  title     = "Consistency of dictionary-based manifold learning",
+  booktitle = "Proceedings of The 27th International Conference on Artificial
+               Intelligence and Statistics",
+  author    = "Koelle, Samson J and Zhang, Hanyu and Murad, Octavian-Vlad and
+               Meila, Marina",
+  editor    = "Dasgupta, Sanjoy and Mandt, Stephan and Li, Yingzhen",
+  abstract  = "We analyze a paradigm for interpretable Manifold Learning for
+               scientific data analysis, whereby one parametrizes a manifold
+               with d smooth functions from a scientist-provided dictionary of
+               meaningful, domain-related functions. When such a
+               parametrization exists, we provide an algorithm for finding it
+               based on sparse regression in the manifold tangent bundle,
+               bypassing more standard, agnostic manifold learning algorithms.
+               We prove conditions for the existence of such parameterizations
+               in function space and the first end to end recovery results from
+               finite samples. The method is demonstrated on both synthetic
+               problems and with data from a real scientific domain.",
+  publisher = "PMLR",
+  volume    =  238,
+  pages     = "4348--4356",
+  series    = "Proceedings of Machine Learning Research",
+  year      =  2024
+}
+
+@ARTICLE{Makelov2024-bw,
+  title         = "Towards principled evaluations of sparse autoencoders for
+                   interpretability and control",
+  author        = "Makelov, Aleksandar and Lange, George and Nanda, Neel",
+  journal       = "arXiv [cs.LG]",
+  abstract      = "Disentangling model activations into meaningful features is a
+                   central problem in interpretability. However, the absence of
+                   ground-truth for these features in realistic scenarios makes
+                   validating recent approaches, such as sparse dictionary
+                   learning, elusive. To address this challenge, we propose a
+                   framework for evaluating feature dictionaries in the context
+                   of specific tasks, by comparing them against
+                   \emph{supervised} feature dictionaries. First, we demonstrate
+                   that supervised dictionaries achieve excellent approximation,
+                   control, and interpretability of model computations on the
+                   task. Second, we use the supervised dictionaries to develop
+                   and contextualize evaluations of unsupervised dictionaries
+                   along the same three axes. We apply this framework to the
+                   indirect object identification (IOI) task using GPT-2 Small,
+                   with sparse autoencoders (SAEs) trained on either the IOI or
+                   OpenWebText datasets. We find that these SAEs capture
+                   interpretable features for the IOI task, but they are less
+                   successful than supervised features in controlling the model.
+                   Finally, we observe two qualitative phenomena in SAE
+                   training: feature occlusion (where a causally relevant
+                   concept is robustly overshadowed by even slightly
+                   higher-magnitude ones in the learned features), and feature
+                   over-splitting (where binary features split into many
+                   smaller, less interpretable features). We hope that our
+                   framework will provide a useful step towards more objective
+                   and grounded evaluations of sparse dictionary learning
+                   methods.",
+  month         =  may,
+  year          =  2024,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.LG"
+}
+@inproceedings{Dick2014HowMR,
+  title={How many random restarts are enough},
+  author={Travis Dick and Eric Wong and Christoph Dann},
+  year={2014},
+  url={https://api.semanticscholar.org/CorpusID:9473630}
+}
+@book{Russell-09,
+author = {Russell, Stuart and Norvig, Peter},
+title = {Artificial Intelligence: A Modern Approach},
+year = {2009},
+isbn = {0136042597},
+publisher = {Prentice Hall Press},
+address = {USA},
+edition = {3rd},
+abstract = {The long-anticipated revision of this #1 selling book offers the most comprehensive, state of the art introduction to the theory and practice of artificial intelligence for modern applications. Intelligent Agents. Solving Problems by Searching. Informed Search Methods. Game Playing. Agents that Reason Logically. First-order Logic. Building a Knowledge Base. Inference in First-Order Logic. Logical Reasoning Systems. Practical Planning. Planning and Acting. Uncertainty. Probabilistic Reasoning Systems. Making Simple Decisions. Making Complex Decisions. Learning from Observations. Learning with Neural Networks. Reinforcement Learning. Knowledge in Learning. Agents that Communicate. Practical Communication in English. Perception. Robotics. For computer professionals, linguists, and cognitive scientists interested in artificial intelligence.}
+}
+
+
+
+@book{Cormen,
+author = {Cormen, Thomas H. and Leiserson, Charles E. and Rivest, Ronald L. and Stein, Clifford},
+title = {Introduction to Algorithms, Third Edition},
+year = {2009},
+isbn = {0262033844},
+publisher = {The MIT Press},
+edition = {3rd},
+abstract = {If you had to buy just one text on algorithms, Introduction to Algorithms is a magnificent choice. The book begins by considering the mathematical foundations of the analysis of algorithms and maintains this mathematical rigor throughout the work. The tools developed in these opening sections are then applied to sorting, data structures, graphs, and a variety of selected algorithms including computational geometry, string algorithms, parallel models of computation, fast Fourier transforms (FFTs), and more. This book's strength lies in its encyclopedic range, clear exposition, and powerful analysis. Pseudo-code explanation of the algorithms coupled with proof of their accuracy makes this book is a great resource on the basic tools used to analyze the performance of algorithms.}
+}
+
+
+
+@ARTICLE{Koelle2022-ju,
+  title    = "Manifold Coordinates with Physical Meaning",
+  author   = "Koelle, Samson J and Zhang, Hanyu and Meila, Marina and Chen,
+              Yu-Chia",
+  journal  = "J. Mach. Learn. Res.",
+  volume   =  23,
+  number   =  133,
+  pages    = "1--57",
+  year     =  2022
+}
+
+    @article{templeton2024scaling,
+       title={Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet},
+       author={Templeton, Adly and Conerly, Tom and Marcus, Jonathan and Lindsey, Jack and Bricken, Trenton and Chen, Brian and Pearce, Adam and Citro, Craig and Ameisen, Emmanuel and Jones, Andy and Cunningham, Hoagy and Turner, Nicholas L and McDougall, Callum and MacDiarmid, Monte and Freeman, C. Daniel and Sumers, Theodore R. and Rees, Edward and Batson, Joshua and Jermyn, Adam and Carter, Shan and Olah, Chris and Henighan, Tom},
+       year={2024},
+       journal={Transformer Circuits Thread},
+       url={https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html}
+    }

@@ -1,0 +1,18 @@
+\section{Introduction}
+\label{sec:introduction}
+
+Many real-world problems may be abstracted as selecting a subset of the columns of a matrix representing stochastic observations or analytically exact data.
+This paper focuses on a simple such problem.
+Given a rank $D$ matrix $ X \in \mathbb R^{D \times P}$ with $P > D$, select a square submatrix $ X_{. S}$ where subset $ S \subset [P]$ satisfies $| S| = D$ that is as orthonormal as possible.
+
+This problem arises in interpretable learning specifically because while the coordinate functions of a given feature space may have no intrinsic meaning, it is sometimes possible to generate a dictionary of interpretable features which may be considered as potential parametrizing coordinates.
+When this is the case, selection of candidate interpretable features as coordinates can take the above form.
+While implementations vary across data and algorithmic domains, identification of such coordinates generally aids mechanistic understanding, generative control, and statistical efficiency.
+
+This paper shows that an adapted version of the algorithm in \citet{Koelle2024-no} leads to a convex procedure that can improve upon greedy approaches such as those in \citet{5895106, NEURIPS2019_6a10bbd4, Kohli2021-lr, Jones2007-uc} for finding isometries.
+The insight leading to isometry pursuit is that multitask basis pursuit applied to an appropriately normalized $ X$ selects orthonormal submatrices.
+Given vectors in $\mathbb R^D$, the normalization log-symmetrizes length and favors those closer to unit length, while basis pursuit favors those which are orthogonal.
+Our results formalize this intuition within a limited setting, and show the usefulness of isometry pursuit as a trimming procedure prior to brute force search for diversification and interpretable coordinate selection.
+We also introduce a novel ground truth objective function against which we measure the success of our algorithm, and discuss the reasonableness of the trimming procedure.
+
+ \footnotetext[2]{Code is available at \url{https://anonymous.4open.science/r/isometry-pursuit-8FC4/README.md}.}
