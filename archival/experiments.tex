@@ -53,14 +53,15 @@ Tather than selecting between bourbon and scotch we evaluate a dictionary of int
 In this interpretability use case, columns denote gradients of informative features.
 We compute Jacoban matrices of putative parametrization functions and project them onto estimated tangent spaces (see \citet{Koelle2022-ju} for preprocessing details).
 Rather than selecting between data points, we are selecting between functions which parameterize the data.
-This dataset exemplifies our motivating example - the search for locally isometric embeddings - and is comparable in application to greedy Algorithm 2 in \citet{Kohli2021}.
+This dataset exemplifies our motivating example - the search for locally isometric embeddings.
 
 We also construct a small word embedding dataset.
-Inspired by the linear representation hypothesis \citep{Park2023-hq,Mikolov2013-lt } and the construction over complete dictionaries of concepts in representation space \citep{templeton2024scaling, Makelov2024-bw}, we apply isometric pursuit to prune down embeddings of concept dictionaries into their basis components.
+%Mikolov2013-lt not showing
+Inspired by the linear representation hypothesis \citep{Park2023-hq} and the construction over complete dictionaries of concepts in representation space \citep{templeton2024scaling, Makelov2024-bw}, we apply isometric pursuit to prune down embeddings of concept dictionaries into their basis components.
 As with the other datasets, we measure success primarily numerically against the ground truth objective values obtained by greedy solutions.
 Further details on this dataset are given in Section \ref{sec:word_embeddings}.
 
-\begin{table}[h!]
+\begin{table}[t]
 \tiny
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
@@ -86,7 +87,7 @@ Words & 6 & 61 & 25 & 1 & 14 ± 1.3 & 11 ± 1.3 & 14 ± 1.2 & 0.52 & 0.12 & 2.1e
 \bottomrule
 \end{tabular}
 \caption{Experimental parameters and results.
-For Iris and Wine, $\widehat P$ estimates result from random downsampling by a factor of $2$ to create $R$ replicates.
+For Iris, Wine, and Words, probability estimates $\widehat P$ result from random downsampling features $[P]$ by a factor of $2$ to create $R$ replicates, while for Ethanol, replicates correspond to individual data points.
 Distributional probabilities $\widehat P (\ell_1(X_{.\widehat{S}_{G}}) > \ell_1(X_{.\widehat{S}_{TSIP}}))$ and $\widehat P (\ell_1(X_{.\widehat{S}_{G}}) = \ell_1(X_{.\widehat{S}_{TSIP}}))$ are empirical across replicates, while asymptotic probabilities $\widehat P(\bar{\ell}_1(X_{.\widehat{S}_{G}}) > \bar{\ell}_1(X_{.\widehat{S}_{TSIP}}))$ is computed by paired two-sample T-test on  $\ell_1(X_{.\widehat S})$ and $\ell_1(X_{.\widehat S_{G}})$.
 For brevity, in this table $\widehat S := \widehat {S}_{TSIP}$.
 }
