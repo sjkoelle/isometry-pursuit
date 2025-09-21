@@ -5,24 +5,45 @@ import pandas as pd
 import numpy as np
 
 from .transformation import exponential_transformation
-from .algorithm import greedy, brute, group_basis_pursuit
+from .algorithm import (
+    greedy,
+    brute,
+    group_basis_pursuit,
+    create_convergence_log,
+)
 from .loss import isometry_loss, group_lasso_norm
 
 
-def analyze_data(X, compute_brute=False, power=1.0, limit=1e9):
+def analyze_data(
+    X,
+    compute_brute=False,
+    power=1.0,
+    limit=1e9,
+    max_steps=None,
+    log_convergence=False,
+):
     print("here")
     D, P = X.shape
     isometry_loss_power = lambda x: isometry_loss(x, power)
     group_brute_loss = lambda x: group_lasso_norm(np.linalg.inv(x))
     start_greedy = time.time()
-    output = greedy(X, isometry_loss_power, D, [])
+    output = greedy(X, isometry_loss_power, D, [], verbose=False)
 
     end_greedy = time.time()
     loss = isometry_loss_power(X[:, output])
 
     data_transformed = exponential_transformation(X, power=power)
     start_basis_pursuit = time.time()
-    beta = group_basis_pursuit(data_transformed)
+
+    # Use CVXPY implementation
+    beta, basis_pursuit_iterations = group_basis_pursuit(data_transformed)
+
+    # Create convergence log by calling group_basis_pursuit multiple times
+    if log_convergence:
+        convergence_log = create_convergence_log(data_transformed)
+    else:
+        convergence_log = None
+
     end_basis_pursuit = time.time()
     basis_pursuit_indices = np.where(np.linalg.norm(beta, axis=1))[0]
     nbp = len(basis_pursuit_indices)
@@ -75,6 +96,7 @@ def analyze_data(X, compute_brute=False, power=1.0, limit=1e9):
     print("stage two time", stage_two_time)
     print("greedy time", end_greedy - start_greedy)
     print("basis pursuit time", end_basis_pursuit - start_basis_pursuit)
+    print("basis pursuit iterations", basis_pursuit_iterations)
 
     return (
         loss,
@@ -89,10 +111,21 @@ def analyze_data(X, compute_brute=False, power=1.0, limit=1e9):
         end_greedy - start_greedy,
         two_stage_multitask,
         output,
+        basis_pursuit_iterations,
+        convergence_log,
     )
 
 
-def run_resampling_experiment(data, D, frac=0.5, R=25, compute_brute=False, power=1.0):
+def run_resampling_experiment(
+    data,
+    D,
+    frac=0.5,
+    R=25,
+    compute_brute=False,
+    power=1.0,
+    steps=None,
+    log_convergence=False,
+):
 
     losses = []
     support_cardinalities_basis_pursuit = []
@@ -104,6 +137,8 @@ def run_resampling_experiment(data, D, frac=0.5, R=25, compute_brute=False, powe
     greedy_times = []
     basis_pursuit_times = []
     stage_two_times = []
+    basis_pursuit_iterations_list = []
+    convergence_logs = []
     P = data.shape[0]
     co_occurence_matrix = np.zeros((P, P))
     greedy_co_occurence_matrix = np.zeros((P, P))
@@ -126,7 +161,14 @@ def run_resampling_experiment(data, D, frac=0.5, R=25, compute_brute=False, powe
             greedy_time,
             two_stage_multitask,
             greedy_solution,
-        ) = analyze_data(X, compute_brute=compute_brute, power=power)
+            basis_pursuit_iterations,
+            convergence_log,
+        ) = analyze_data(
+            X,
+            compute_brute=compute_brute,
+            power=power,
+            log_convergence=log_convergence,
+        )
         losses.append(loss)
         support_cardinalities_basis_pursuit.append(support_cardinality_basis_pursuit)
         two_stage_losses.append(two_stage_loss)
@@ -137,6 +179,8 @@ def run_resampling_experiment(data, D, frac=0.5, R=25, compute_brute=False, powe
         basis_pursuit_times.append(basis_pursuit_time)
         stage_two_times.append(stage_two_time)
         greedy_times.append(greedy_time)
+        basis_pursuit_iterations_list.append(basis_pursuit_iterations)
+        convergence_logs.append(convergence_log)
         from itertools import combinations
 
         co_occurences = combinations(two_stage_multitask, 2)
@@ -165,10 +209,184 @@ def run_resampling_experiment(data, D, frac=0.5, R=25, compute_brute=False, powe
             "Basis Pursuit Times": basis_pursuit_times,
             "Stage Two Times": stage_two_times,
             "Greedy Times": greedy_times,
+            "Basis Pursuit Iterations": basis_pursuit_iterations_list,
         }
     )
 
+    if log_convergence:
+        return (
+            results_df,
+            co_occurence_matrix,
+            greedy_co_occurence_matrix,
+            convergence_logs,
+        )
     return results_df, co_occurence_matrix, greedy_co_occurence_matrix
 
 
-2 + 2
+def plot_convergence(convergence_log, title="Convergence Analysis", save_path=None):
+    """
+    Plot convergence metrics (loss, sparsity, residual) over iterations.
+
+    Parameters:
+    -----------
+    convergence_log : dict
+        Dictionary containing 'iterations', 'losses', 'sparsities', 'residuals' lists
+    title : str
+        Title for the plot
+    save_path : str, optional
+        Path to save the plot
+    """
+    import matplotlib.pyplot as plt
+
+    if not convergence_log or not convergence_log["iterations"]:
+        print("No convergence data to plot")
+        return
+
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    fig.suptitle(title, fontsize=16)
+
+    # Plot 1: Loss over iterations
+    axes[0, 0].semilogx(
+        convergence_log["iterations"], convergence_log["losses"], "b-o", markersize=4
+    )
+    axes[0, 0].set_xlabel("Iterations")
+    axes[0, 0].set_ylabel("Loss (Objective Value)")
+    axes[0, 0].set_title("Loss Convergence")
+    axes[0, 0].grid(True, alpha=0.3)
+
+    # Plot 2: Sparsity over iterations
+    axes[0, 1].semilogx(
+        convergence_log["iterations"],
+        convergence_log["sparsities"],
+        "r-s",
+        markersize=4,
+    )
+    axes[0, 1].set_xlabel("Iterations")
+    axes[0, 1].set_ylabel("Sparsity (Non-zero Rows)")
+    axes[0, 1].set_title("Sparsity Evolution")
+    axes[0, 1].grid(True, alpha=0.3)
+
+    # Plot 3: Residual over iterations
+    axes[1, 0].semilogx(
+        convergence_log["iterations"], convergence_log["residuals"], "g-^", markersize=4
+    )
+    axes[1, 0].set_xlabel("Iterations")
+    axes[1, 0].set_ylabel("Constraint Residual")
+    axes[1, 0].set_title("Constraint Satisfaction")
+    axes[1, 0].grid(True, alpha=0.3)
+
+    # Plot 4: Loss vs Sparsity trade-off
+    axes[1, 1].plot(
+        convergence_log["sparsities"], convergence_log["losses"], "m-d", markersize=4
+    )
+    axes[1, 1].set_xlabel("Sparsity (Non-zero Rows)")
+    axes[1, 1].set_ylabel("Loss (Objective Value)")
+    axes[1, 1].set_title("Loss vs Sparsity Trade-off")
+    axes[1, 1].grid(True, alpha=0.3)
+
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")
+        print(f"Convergence plot saved to {save_path}")
+
+    plt.show()
+
+
+def analyze_convergence_logs(convergence_logs, save_path=None):
+    """
+    Analyze and plot convergence logs from multiple runs.
+
+    Parameters:
+    -----------
+    convergence_logs : list
+        List of convergence log dictionaries
+    save_path : str, optional
+        Path to save the analysis plot
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    if not convergence_logs or all(log is None for log in convergence_logs):
+        print("No convergence data to analyze")
+        return
+
+    # Filter out None logs
+    valid_logs = [
+        log for log in convergence_logs if log is not None and log["iterations"]
+    ]
+
+    if not valid_logs:
+        print("No valid convergence data to analyze")
+        return
+
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    fig.suptitle("Convergence Analysis Across Multiple Runs", fontsize=16)
+
+    # Plot 1: Loss convergence (all runs)
+    for i, log in enumerate(valid_logs):
+        axes[0, 0].semilogx(
+            log["iterations"], log["losses"], alpha=0.7, label=f"Run {i+1}"
+        )
+    axes[0, 0].set_xlabel("Iterations")
+    axes[0, 0].set_ylabel("Loss (Objective Value)")
+    axes[0, 0].set_title("Loss Convergence (All Runs)")
+    axes[0, 0].grid(True, alpha=0.3)
+    axes[0, 0].legend(bbox_to_anchor=(1.05, 1), loc="upper left")
+
+    # Plot 2: Sparsity evolution (all runs)
+    for i, log in enumerate(valid_logs):
+        axes[0, 1].semilogx(
+            log["iterations"], log["sparsities"], alpha=0.7, label=f"Run {i+1}"
+        )
+    axes[0, 1].set_xlabel("Iterations")
+    axes[0, 1].set_ylabel("Sparsity (Non-zero Rows)")
+    axes[0, 1].set_title("Sparsity Evolution (All Runs)")
+    axes[0, 1].grid(True, alpha=0.3)
+    axes[0, 1].legend(bbox_to_anchor=(1.05, 1), loc="upper left")
+
+    # Plot 3: Final loss distribution
+    final_losses = [log["losses"][-1] for log in valid_logs if log["losses"]]
+    axes[1, 0].hist(
+        final_losses, bins=min(10, len(final_losses)), alpha=0.7, edgecolor="black"
+    )
+    axes[1, 0].set_xlabel("Final Loss")
+    axes[1, 0].set_ylabel("Frequency")
+    axes[1, 0].set_title("Final Loss Distribution")
+    axes[1, 0].grid(True, alpha=0.3)
+
+    # Plot 4: Final sparsity distribution
+    final_sparsities = [
+        log["sparsities"][-1] for log in valid_logs if log["sparsities"]
+    ]
+    axes[1, 1].hist(
+        final_sparsities,
+        bins=min(10, len(final_sparsities)),
+        alpha=0.7,
+        edgecolor="black",
+    )
+    axes[1, 1].set_xlabel("Final Sparsity")
+    axes[1, 1].set_ylabel("Frequency")
+    axes[1, 1].set_title("Final Sparsity Distribution")
+    axes[1, 1].grid(True, alpha=0.3)
+
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")
+        print(f"Convergence analysis saved to {save_path}")
+
+    plt.show()
+
+    # Print summary statistics
+    print(f"\nConvergence Analysis Summary:")
+    print(f"Number of runs: {len(valid_logs)}")
+    print(
+        f"Average final loss: {np.mean(final_losses):.4f} ± {np.std(final_losses):.4f}"
+    )
+    print(
+        f"Average final sparsity: {np.mean(final_sparsities):.2f} ± {np.std(final_sparsities):.2f}"
+    )
+    print(
+        f"Average iterations to converge: {np.mean([len(log['iterations']) for log in valid_logs]):.1f}"
+    )

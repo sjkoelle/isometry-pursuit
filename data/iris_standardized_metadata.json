@@ -1,0 +1,18 @@
+{
+  "dataset_name": "iris",
+  "standardized": true,
+  "n_samples": 150,
+  "n_features": 4,
+  "feature_names": [
+    "sepal length (cm)",
+    "sepal width (cm)",
+    "petal length (cm)",
+    "petal width (cm)"
+  ],
+  "target_names": [
+    "setosa",
+    "versicolor",
+    "virginica"
+  ],
+  "data_file": "/Users/samsonkoelle/isometry-pursuit/data/iris_standardized.csv"
+}

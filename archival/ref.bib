@@ -45,6 +45,19 @@
   year     =  2022
 }
 
+@ARTICLE{He2012-fi,
+  title     = "On the $O(1/n)$ convergence rate of the Douglas–rachford
+               alternating direction method",
+  author    = "He, Bingsheng and Yuan, Xiaoming",
+  journal   = "SIAM J. Numer. Anal.",
+  publisher = "Society for Industrial \& Applied Mathematics (SIAM)",
+  volume    =  50,
+  number    =  2,
+  pages     = "700--709",
+  month     =  jan,
+  year      =  2012
+}
+
 
 @article{JMLR:v23:21-0420,
   author  = {Ulrike Schneider and Patrick Tardivel},
@@ -1839,6 +1852,82 @@ URL = {https://doi.org/10.1214/07-AOAS131}
   language = "en"
 }
 
+@ARTICLE{Szeghy2022-ri,
+  title         = "Structural extensions of Basis Pursuit: Guarantees on
+                   adversarial robustness",
+  author        = "Szeghy, Dávid and Aslan, Mahmoud and Fóthi, Áron and
+                   Mészáros, Balázs and Milacski, Zoltán Ádám and Lőrincz,
+                   András",
+  journal       = "arXiv [cs.LG]",
+  abstract      = "While deep neural networks are sensitive to adversarial
+                   noise, sparse coding using the Basis Pursuit (BP) method is
+                   robust against such attacks, including its multi-layer
+                   extensions. We prove that the stability theorem of BP holds
+                   upon the following generalizations: (i) the regularization
+                   procedure can be separated into disjoint groups with
+                   different weights, (ii) neurons or full layers may form
+                   groups, and (iii) the regularizer takes various generalized
+                   forms of the $\ell_1$ norm. This result provides the proof
+                   for the architectural generalizations of Cazenavette et al.
+                   (2021), including (iv) an approximation of the complete
+                   architecture as a shallow sparse coding network. Due to this
+                   approximation, we settled to experimenting with shallow
+                   networks and studied their robustness against the Iterative
+                   Fast Gradient Sign Method on a synthetic dataset and MNIST.
+                   We introduce classification based on the $\ell_2$ norms of
+                   the groups and show numerically that it can be accurate and
+                   offers considerable speedups. In this family, linear
+                   transformer shows the best performance. Based on the
+                   theoretical results and the numerical simulations, we
+                   highlight numerical matters that may improve performance
+                   further.",
+  month         =  may,
+  year          =  2022,
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.LG"
+}
+
+
+@ARTICLE{Boyd2010-jd,
+  title     = "Distributed optimization and statistical learning via the
+               alternating direction method of multipliers",
+  author    = "Boyd, Stephen",
+  journal   = "Found. Trends® Mach. Learn.",
+  publisher = "Now Publishers",
+  volume    =  3,
+  number    =  1,
+  pages     = "1--122",
+  abstract  = "Many problems of recent interest in statistics and machine
+               learning can be posed in the framework of convex optimization.
+               Due to the explosion in size and complexity of modern datasets,
+               it is increasingly important to be able to solve problems with a
+               very large number of features or training examples. As a result,
+               both the decentralized collection or storage of these datasets as
+               well as accompanying distributed solution methods are either
+               necessary or at least highly desirable. In this review, we argue
+               that the alternating direction method of multipliers is well
+               suited to distributed convex optimization, and in particular to
+               large-scale problems arising in statistics, machine learning, and
+               related areas. The method was developed in the 1970s, with roots
+               in the 1950s, and is equivalent or closely related to many other
+               algorithms, such as dual decomposition, the method of
+               multipliers, Douglas–Rachford splitting, Spingarn's method of
+               partial inverses, Dykstra's alternating projections, Bregman
+               iterative algorithms for l1 problems, proximal methods, and
+               others. After briefly surveying the theory and history of the
+               algorithm, we discuss applications to a wide variety of
+               statistical and machine learning problems of recent interest,
+               including the lasso, sparse logistic regression, basis pursuit,
+               covariance selection, support vector machines, and many others.
+               We also discuss general distributed optimization, extensions to
+               the nonconvex setting, and efficient implementation, including
+               some details on distributed MPI and Hadoop MapReduce
+               implementations.",
+  year      =  2010,
+  language  = "en"
+}
+
+
 @inproceedings{Mishkin2022TheSP,
   title={The Solution Path of the Group Lasso},
   author={Aaron Mishkin and Mert Pilanci},
@@ -1988,3 +2077,14 @@ abstract = {If you had to buy just one text on algorithms, Introduction to Algor
        journal={Transformer Circuits Thread},
        url={https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html}
     }
+
+@book{golub2013matrix,
+  title={Matrix Computations},
+  author={Golub, Gene H and Van Loan, Charles F},
+  year={2013},
+  publisher={Johns Hopkins University Press},
+  edition={4th},
+  address={Baltimore, MD},
+  pages={493},
+  url={https://math.ecnu.edu.cn/~jypan/Teaching/books/2013%20Matrix%20Computations%204th.pdf}
+}

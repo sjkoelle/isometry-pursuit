@@ -1,0 +1,15 @@
+{
+  "dataset_name": "wine",
+  "D": 6,
+  "power": 1.0,
+  "frac": 0.5,
+  "R": 5,
+  "compute_brute": false,
+  "log_convergence": false,
+  "data_shape": [
+    178,
+    6
+  ],
+  "results_file": "/Users/samsonkoelle/isometry-pursuit/results/wine_standardized_1.0_6_results.csv",
+  "co_occurrence_file": "/Users/samsonkoelle/isometry-pursuit/results/wine_standardized_1.0_6_co_occurrence.pkl"
+}

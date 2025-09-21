@@ -48,7 +48,15 @@ def box_plot(losses_1, losses_2, D, xlabels, ylabel, filename):
     plt.xticks([1, 2], xlabels, fontsize=60)  # Increased tick label font size
     plt.yticks(fontsize=50)  # Increased y-axis tick font size
     plt.yscale("symlog")
-    plt.ylim(0, 2 * data.max())
+
+    # Handle NaN/Inf values in data for ylim
+    data_max = np.nanmax(data)
+    if np.isfinite(data_max) and data_max > 0:
+        plt.ylim(0, 2 * data_max)
+    else:
+        # Fallback if all values are NaN/Inf
+        plt.ylim(0, 1)
+
     plt.ylabel(ylabel, fontsize=60)  # Increased y-axis label font size
     # Add faint lines connecting individual data points
     for left, right in zip(data[:, 0], data[:, 1]):

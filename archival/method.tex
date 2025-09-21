@@ -207,3 +207,20 @@ This method forms our practical isometry estimator, the core advantage of which 
 \end{algorithmic}
 \end{algorithm}
 
+\subsection{Computation complexity}
+
+\isometrypursuit~ is more computationally efficient than \brute~ while less so than \greedy.
+The asymptotic per-iteration complexities are the same.
+\begin{proposition}
+    \label{prop:computational_complexity}
+    The computational complexity $C_l$ in \ref{eq:brute_loss} is $\max O(D^2P)$.
+    \end{proposition}
+\begin{proposition}
+    \label{prop:computational_complexity}
+    The computational complexity of each step of Isometry Pursuit is $\max O(D^2P)$.
+    \end{proposition}
+
+The difference therefore lies in the relation of the number of iterations required to achieve a given error tolerance with \isometrypursuit~ and the exact solutions \brute and \greedy.
+The ADMM optimization method that we apply, also known as the Splitting Conic Solver, has asymptotic (in error) accuracy $\epsilon < O(\frac{1}{S})$ \citep{He2012-fi}.
+This means that the number of iterations required to achieve a given error tolerance scales inversely with the desired level of accuracy.
+We examine the effect of iteration number on the convergence to a sparse solution in Section \ref{sec:experiments}.

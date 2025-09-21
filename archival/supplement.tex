@@ -161,6 +161,79 @@ Thus, $\widehat \beta_c ( X)$ is not on the intersection of the solution polytop
 It is therefore maximally non-sparse with respect to any of the minimizing solutions.
 \end{proof}
 
+\subsubsection{Proof of Proposition \ref{prop:computational_complexity}}
+
+The three main subroutines ( \ref{eq:beta_update} - \ref{eq:nu_update}) called by ADMM determine the per iteration complexity.
+\label{proof:computational_complexity}
+\begin{proof}
+    % Recall that we optimize
+    % \begin{align}
+    % \arg \min_{\beta \in P \times D} \| \beta \|_{1,2} \; : \;I_D = w(X) \beta
+    % \end{align}
+    % The Lagrangian is
+    % \begin{align}
+    % \mathcal L(X,\beta,\nu) = \| \beta \|_{1,2} + \text{tr} (\nu^T (I_D - w(X) \beta))
+    % \end{align}
+    % where $\nu \in \mathbb R^{D \times D}$ is the Lagrange multiplier.
+    % The augmented Lagrangian is
+    % \begin{align}
+    %     \mathcal L_\rho(X,\beta,\nu) = \| \beta \|_{1,2} + \text{tr} (\nu^T (I_D - w(X) \beta)) + \frac{\rho}{2} \|I_D - w(X) \beta\|_F^2
+    % \end{align}
+    The augmented split Lagrangian minimized by ADMM is
+    \begin{align}
+    \mathcal L_{\rho,\gamma, \nu} (X,\beta,z) = \|z\|_{1,2} + \text{tr}(\nu^T (I_D - w(X) \beta)) + \rho \|I_D - w(X) \beta\|_F^2 + \gamma \|\beta - z\|_F^2
+    \end{align}
+    This minimization problem is
+    \begin{align}
+        \arg \min_{\beta,z \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta,z)
+    \end{align}
+    For a more detailed explanation of the reasons to prefer optimizing the split augmented Lagrangian over direct optimization of Equation \ref{eq:bp} see \citet{Boyd2010-jd}.
+    
+    The update rules of the ADMM algorithm used to optimize the augmented split Lagrangian are
+    \begin{align}
+    \beta^{k+1} = \arg \min_{\beta \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta,z^k) \\
+    z^{k+1} = \arg \min_{z \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta^{k+1},z) \\
+    \nu^{k+1} = \nu^k + \rho (I_D - w(X) \beta^{k+1})
+    \end{align}
+    We will analyze the computational complexity of each of these steps by rewriting the update rules according to the specifics of the isometry pursuit problem.
+
+The beta update Equation \ref{eq:beta_update} projects the solution onto the feasible set.
+\begin{align}
+    \label{eq:beta_update}
+    \beta^{k+1} &= \arg \min_{\beta \in P \times D}  \text{tr}({\nu^k}^T (I_D - w(X) \beta)) + \rho \|I_D - w(X) \beta\|_2^2 + \gamma \|\beta - z^k\|_2^2 \\
+    &= (\rho \, w(X)^T w(X) + \gamma I_D)^{-1} (\rho \, w(X)^T I_D + \gamma z^k + w(X)^T \nu^k)
+    \end{align}
+% This is accomplished through computation of the pseudo-inverse of the linear regression solution $(w(X)^T w(X))^{-1} w(X)^T I_D$.
+The computational complexity of the pseudo-inverse operation is $\max O(D^2P)$ \citep{golub2013matrixy}.
+
+%The inverse of $(w(X)^T w(X))^{-1} w(X)^T $ is well-defined and equal to its transpose. 
+%The matrix $(w(X)^T w(X))^{-1}$ projects onto the feasible set and rescales the axes by their singular values.
+%This projection moves the solution along a straight line containing the origin and the solution to the linear regression problem within the column span of $w(X)$.
+%This line intersects the feasible set at a right angle.
+%Therefore, among the feasible solutions, the solution to the linear regression problem is the one that is closest to the origin.
+%That is, it is the min-norm solution among the $l2$ minimizers.
+
+
+Subsequently, the z update Equation \ref{eq:z_update} is soft-thresholding operation onto a contracted level set $\|\|_{1,2}$ ball.
+\begin{align}
+    \label{eq:z_update}
+    z^{k+1} &= \arg \min_{z \in P \times D} \|z\|_{1,2} + \gamma \|z - \beta^{k+1}\|_2^2 \\
+    &= \begin{cases} (1 - \frac{1}{\gamma\|\beta_{j.}^{k+1}\|_2}) (\beta_{j.}^{k+1}) \; \text{if} \; \|\beta_{j.}^{k+1}\|_2 > \frac{1}{\gamma}\\
+        0 \; \text{otherwise}
+    \end{cases}
+\end{align}
+The computational complexity of this operation is $O(PD)$.
+
+Finally, the $\nu$ update Equation \ref{eq:nu_update} increases the squeezing of the $z$ and $\beta$ variables towards to each other.
+\begin{align}
+\nu^{k+1} = \nu^k + \rho (I_D - w(X) \beta^{k+1})
+\label{eq:nu_update}
+\end{align}
+In this step, the dual variable $\nu$ that controls the penalty accrued by the splitting is updated in the direction of the constraint violation.
+The computational complexity of this operation is dominated by that of the matrix multiplication $w(X) \beta^{k+1}$.
+That is, it is $O(D^2P)$.
+\end{proof}
+
 \newpage
 
 \subsection{Support cardinalities}
