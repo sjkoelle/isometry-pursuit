@@ -1,0 +1,15 @@
+{
+  "dataset_name": "iris",
+  "D": 4,
+  "power": 1.0,
+  "frac": 0.5,
+  "R": 2,
+  "compute_brute": false,
+  "log_convergence": false,
+  "data_shape": [
+    150,
+    4
+  ],
+  "results_file": "results/iris_results.csv",
+  "co_occurrence_file": "results/iris_co_occurrence.pkl"
+}

@@ -48,18 +48,33 @@ def plot_experiment_results(
         import re
 
         filename = os.path.basename(results_file)
-        # Pattern: {dataset}_standardized_{power}_{D}_results.csv
-        match = re.match(r"(.+)_standardized_([0-9.]+)_([0-9]+)_results\.csv", filename)
+        # Pattern: {dataset}_results.csv
+        match = re.match(r"(.+)_results\.csv", filename)
         if match:
+            dataset_name_from_file = match.group(1)
+            print(f"Parsed dataset name from filename: {dataset_name_from_file}")
+            # Set defaults if not provided
             if power is None:
-                power = float(match.group(2))
+                power = 1.0  # Default power
             if D is None:
-                D = int(match.group(3))
-            print(f"Parsed from filename: power={power}, D={D}")
+                # Set default D based on dataset name
+                if dataset_name_from_file == "iris":
+                    D = 4
+                elif dataset_name_from_file == "wine":
+                    D = 6
+                elif dataset_name_from_file == "word_embeddings":
+                    D = 10
+                elif dataset_name_from_file == "ethanol":
+                    D = 2
+                else:
+                    raise ValueError(
+                        f"Unknown dataset {dataset_name_from_file}, please provide D parameter"
+                    )
+            print(f"Using defaults: power={power}, D={D}")
         else:
             if D is None or power is None:
                 raise ValueError(
-                    f"Could not parse D and power from filename {filename}, and they were not provided as arguments"
+                    f"Could not parse dataset name from filename {filename}, and D/power were not provided as arguments"
                 )
 
     # Create output directory

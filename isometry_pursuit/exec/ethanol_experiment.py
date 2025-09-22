@@ -169,9 +169,7 @@ def run_ethanol_experiment(
     )
 
     # Save results
-    results_file = os.path.join(
-        output_dir, f"ethanol_standardized_{power}_{D}_results.csv"
-    )
+    results_file = os.path.join(output_dir, f"ethanol_results.csv")
     results_df.to_csv(results_file, index=False)
     print(f"Results saved to {results_file}")
 

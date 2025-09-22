@@ -9,6 +9,7 @@ pillow
 pandas
 multiprocess
 scikit-learn
+sentence-transformers
 scipy
 numpy<=1.23.0
 ipykernel

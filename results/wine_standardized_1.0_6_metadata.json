@@ -8,8 +8,8 @@
   "log_convergence": false,
   "data_shape": [
     178,
-    6
+    13
   ],
-  "results_file": "/Users/samsonkoelle/isometry-pursuit/results/wine_standardized_1.0_6_results.csv",
-  "co_occurrence_file": "/Users/samsonkoelle/isometry-pursuit/results/wine_standardized_1.0_6_co_occurrence.pkl"
+  "results_file": "results/wine_standardized_1.0_6_results.csv",
+  "co_occurrence_file": "results/wine_standardized_1.0_6_co_occurrence.pkl"
 }

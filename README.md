@@ -18,7 +18,7 @@ The easiest way to run experiments:
 # Load data
 python -m isometry_pursuit.exec.load_iris_exec --output-dir data
 python -m isometry_pursuit.exec.load_wine_exec --output-dir data --max-features 13
-python -m isometry_pursuit.exec.load_word_embeddings_exec --output-dir data --D 10
+python -m isometry_pursuit.exec.load_word_embeddings --output-dir data --D 7
 
 # Run experiments
 python -m isometry_pursuit.exec.run_experiment \
@@ -28,43 +28,57 @@ python -m isometry_pursuit.exec.run_experiment \
 
 python -m isometry_pursuit.exec.run_experiment \
     --data-file data/wine_standardized_13.csv \
-    --dataset-name wine --D 6 --R 25 \
+    --dataset-name wine --D 6 --R 5 \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/word_embeddings_standardized_10.csv \
-    --dataset-name word_embeddings --D 10 --R 25 \
+    --data-file data/word_embeddings_7.csv \
+    --dataset-name word_embeddings --D 7 --R 25 \
     --output-dir results
 
 # Special ethanol experiment (requires data download first)
 python -m isometry_pursuit.exec.ethanol_experiment \
     --data-file data/ethanol_standardized.csv \
-    --D 2 --R 100 \
+    --D 2 --R 5 \
     --output-dir results
+
+# Compare methods across multiple datasets
+python -m isometry_pursuit.exec.plot_difference_boxplot \
+    --result-files results/iris_results.csv \
+                   results/wine_results.csv \
+                   results/word_embeddings_results.csv \
+                   results/ethanol_results.csv \
+    --baseline-column "Losses" \
+    --comparison-column "Two-Stage Losses" \
+    --output-file figures/cross_dataset_comparison.png \
+    --title "Greedy vs Two-Stage Across Datasets"
+
 
 # Generate plots for each dataset
 python -m isometry_pursuit.exec.plot_results \
-    --results-file results/iris_standardized_1.0_4_results.csv \
+    --results-file results/iris_results.csv \
     --dataset-name iris \
     --output-dir figures
 
 python -m isometry_pursuit.exec.plot_results \
-    --results-file results/wine_standardized_1.0_6_results.csv \
+    --results-file results/wine_results.csv \
     --dataset-name wine \
     --output-dir figures
 
 python -m isometry_pursuit.exec.plot_results \
-    --results-file results/word_embeddings_standardized_1.0_10_results.csv \
+    --results-file results/word_embeddings_results.csv \
     --dataset-name word_embeddings \
     --output-dir figures
 
 python -m isometry_pursuit.exec.plot_results \
-    --results-file results/ethanol_standardized_1.0_2_results.csv \
+    --results-file results/ethanol_results.csv \
     --dataset-name ethanol \
     --output-dir figures
 
 # Or generate all figures at once
 scripts/generate_figures.sh
+
+
 ```
 
 ## Advanced Usage
@@ -74,7 +88,7 @@ You can also customize parameters or run individual components:
 ```bash
 # Load data with custom parameters
 python -m isometry_pursuit.exec.load_wine_exec --output-dir data --max-features 6
-python -m isometry_pursuit.exec.load_word_embeddings_exec --output-dir data --D 5
+python -m isometry_pursuit.exec.load_word_embeddings --output-dir data --D 5
 
 # Run experiments with custom replicates/parameters
 python -m isometry_pursuit.exec.run_experiment \

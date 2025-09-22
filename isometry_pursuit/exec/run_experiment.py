@@ -104,16 +104,12 @@ def run_experiment(
         convergence_logs = None
 
     # Save results
-    results_file = os.path.join(
-        output_dir, f"{dataset_name}_standardized_{power}_{D}_results.csv"
-    )
+    results_file = os.path.join(output_dir, f"{dataset_name}_results.csv")
     results_df.to_csv(results_file, index=False)
     print(f"Results saved to {results_file}")
 
     # Save co-occurrence matrices
-    co_occurrence_file = os.path.join(
-        output_dir, f"{dataset_name}_standardized_{power}_{D}_co_occurrence.pkl"
-    )
+    co_occurrence_file = os.path.join(output_dir, f"{dataset_name}_co_occurrence.pkl")
     with open(co_occurrence_file, "wb") as f:
         pickle.dump(
             {
@@ -150,9 +146,7 @@ def run_experiment(
     if convergence_logs is not None:
         metadata["convergence_file"] = convergence_file
 
-    metadata_file = os.path.join(
-        output_dir, f"{dataset_name}_standardized_{power}_{D}_metadata.json"
-    )
+    metadata_file = os.path.join(output_dir, f"{dataset_name}_metadata.json")
     with open(metadata_file, "w") as f:
         json.dump(metadata, f, indent=2)
     print(f"Metadata saved to {metadata_file}")
