@@ -22,10 +22,9 @@ def analyze_data(
     max_steps=None,
     log_convergence=False,
 ):
-    print("here")
     D, P = X.shape
-    isometry_loss_power = lambda x: isometry_loss(x, power)
-    group_brute_loss = lambda x: group_lasso_norm(np.linalg.inv(x))
+    isometry_loss_power = lambda x, indices=None: isometry_loss(x, power, indices)
+    group_brute_loss = lambda x, indices=None: group_lasso_norm(np.linalg.inv(x))
     start_greedy = time.time()
     output = greedy(X, isometry_loss_power, D, [], verbose=False)
 

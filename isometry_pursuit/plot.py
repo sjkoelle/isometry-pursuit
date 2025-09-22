@@ -28,6 +28,38 @@ def ecdf_plot(losses_1, losses_2, title, xlabel, ylabel, filename):
     plt.close()
 
 
+def difference_box_plot(losses_1, losses_2, title, xlabel, ylabel, filename):
+    """
+    Create a box plot showing the difference between two loss methods.
+    This replaces the ECDF plot functionality with a box plot.
+    """
+    # Compute difference (same as ECDF plot)
+    diff = np.asarray(losses_1) - np.asarray(losses_2)
+
+    plt.figure(figsize=(10, 7))
+
+    # Create box plot of the differences
+    box = plt.boxplot(
+        [diff], patch_artist=True, medianprops=dict(color="black", linewidth=2)
+    )
+
+    # Customize boxplot colors
+    box["boxes"][0].set_facecolor("lightblue")
+
+    # Add horizontal line at 0 (same as ECDF plot)
+    plt.axhline(0, color="black", linestyle="--", linewidth=1)
+
+    # Labeling (same as ECDF plot)
+    plt.xlabel(xlabel, fontsize=24)
+    plt.ylabel(ylabel, fontsize=24)
+    plt.xticks([1], [title], fontsize=18)
+    plt.yticks(fontsize=18)
+    plt.grid(True, which="both", linestyle="--", alpha=0.5)
+
+    plt.savefig(filename, bbox_inches="tight")
+    plt.close()
+
+
 def box_plot(losses_1, losses_2, D, xlabels, ylabel, filename):
 
     data = np.asarray([np.asarray(losses_1) - D, np.asarray(losses_2) - D]).transpose()

@@ -14,14 +14,14 @@ Thus, in diversification, $P = n$.
     % Row 1: Wine and Iris
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/wine_standardized_isometry_losses_ecdf}
+        \includegraphics[width=\textwidth]{../figures/wine_isometry_losses_ts_box.png}
         \caption{Wine}
         \label{fig:wine_isometry_losses}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/iris_standardized_isometry_losses_ecdf}
+        \includegraphics[width=\textwidth]{../figures/iris_isometry_losses_iso_box.png}
         \caption{Iris}
         \label{fig:iris_isometry_losses}
     \end{subfigure}
@@ -29,20 +29,21 @@ Thus, in diversification, $P = n$.
     \vspace{1em}
 
     % Row 2: Ethanol and Words
+    % TODO: Generate ethanol_isometry_losses_box.png
+    % \begin{subfigure}[b]{0.45\textwidth}
+    %     \centering
+    %     \includegraphics[width=\textwidth]{../figures/ethanol_isometry_losses_box}
+    %     \caption{Ethanol}
+    %     \label{fig:ethanol_isometry_losses}
+    % \end{subfigure}
+    % \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/ethanol_isometry_losses_ecdf}
-        \caption{Ethanol}
-        \label{fig:ethanol_isometry_losses}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{../figures/words_ecdf}
+        \includegraphics[width=\textwidth]{../figures/word_embeddings_isometry_losses_iso_box.png}
         \caption{Words}
         \label{fig:words_isometry_losses}
     \end{subfigure}
-    \caption{Empirical cumulative distributions of isometry losses $\ell_1(\widehat{S}_g) - \ell_1(\widehat{S}_{TSIP})$ for Wine, Iris, Ethanol, and Words datasets across $R$ replicates.
+    \caption{Empirical cumulative distributions of isometry losses $\ell_1(\widehat{S}_g) - \ell_1(\widehat{S}_{TSIP})$ for Wine, Iris, and Words datasets across $R$ replicates.
     The distributions reflect the relative $\ell_1$ losses of the supports estimated by greedy optimization on the $\ell_1$ objective is less than or equal to $\ell_1$ loss of the support estimated by \tsip.
     As shown here and detailed  in Table \ref{tab:experiments}, losses are generally lower for two-stage isometry pursuit solutions.}
     \label{fig:isometry_losses}
@@ -106,21 +107,9 @@ Generally, the ground truth loss obtained by \greedy~ optimization of $\ell_1$ i
 Table \ref{tab:experiments}  and Figure \ref{fig:support_cardinalities} detail intermediate support recovery cardinalities from \isometrypursuit.
 Isometry pursuit substantially reduced the size of the dictionary and made brute search computationally feasible.
 Wall-clock runtimes are given in Section \ref{sec:timing}.
-However, the preferable performance of two-stage isometry pursuit is not robust to different choices of $c$ on the Wine dataset in Figure \ref{fig:stacked_power_comparison}.
+However, the preferable performance of two-stage isometry pursuit is not robust to different choices of $c$ on the Wine dataset.
 These show that the preference for the two-stage isometry pursuit solution is strongest around $c=1$ and is consistent across feature truncation dimensions.
 
-\clearpage
-
-\begin{figure}[t!]
-    \centering
-    \includegraphics[width=\textwidth]{../figures/grid_power_comparison_filled.png}
-    \caption{
-        Proportions of support selection outcomes as power parameter $c$ varies, for different values of $D$ in the Wine dataset across various values of $c$.
-        The turquoise area indicates when greedy solution  $\widehat{S}_G$ outperforms $\widehat{S}_{\text{TSIP}}$, purple shows ties, and pink indicates $\widehat{S}_{\text{TSIP}}$ is better.
-        Solution at $c=10$ is not plotted for $D=6$ due to numerical overflow.
-    }
-    \label{fig:stacked_power_comparison}
-\end{figure}
 
 
 

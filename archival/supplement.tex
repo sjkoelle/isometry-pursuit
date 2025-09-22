@@ -248,7 +248,7 @@ Further investigation into the extreme failure of isometry pursuit to sparsify i
     % Wine
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/wine_cardinalities}
+        \includegraphics[width=\textwidth]{../figures/wine_cardinalities.png}
         \caption{Wine }
         \label{fig:wine_cardinalities}
     \end{subfigure}
@@ -256,7 +256,7 @@ Further investigation into the extreme failure of isometry pursuit to sparsify i
     % Iris
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/iris_cardinalities}
+        \includegraphics[width=\textwidth]{../figures/iris_cardinalities.png}
         \caption{Iris }
         \label{fig:iris_cardinalities}
     \end{subfigure}
@@ -266,7 +266,7 @@ Further investigation into the extreme failure of isometry pursuit to sparsify i
     % Ethanol
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/ethanol_cardinalities}
+        \includegraphics[width=\textwidth]{../figures/ethanol_cardinalities.png}
         \caption{Ethanol }
         \label{fig:ethanol_cardinalities}
     \end{subfigure}
@@ -274,9 +274,9 @@ Further investigation into the extreme failure of isometry pursuit to sparsify i
     % Words
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/words_cardinalities}
+        \includegraphics[width=\textwidth]{../figures/word_cardinalities.png}
         \caption{Words }
-        \label{fig:words_cardinalities}
+        \label{fig:word_cardinalities}
     \end{subfigure}
 
     \caption{Support cardinalities for each dataset after \isometrypursuit.}
@@ -302,7 +302,7 @@ Note that by Proposition \ref{prop:unitary_selection}, this would include an iso
     % Top-left plot: Iris Isometry Loss ECDF
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/iris_isometry_losses_iso_ecdf}
+        \includegraphics[width=\textwidth]{../figures/iris_isometry_losses_iso_box.png}
         \caption{Iris $\ell_1(X_{.\widehat S})$ comparison for \brute~ optimization of $\ell_1$ versus \tsip~ optimization of $\ell_1$}
         \label{fig:iris_isometry_losses_ecdf}
     \end{subfigure}
@@ -310,25 +310,25 @@ Note that by Proposition \ref{prop:unitary_selection}, this would include an iso
     % Top-right plot: Iris Multitask Loss ECDF
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/iris_isometry_losses_ts_ecdf}
+        \includegraphics[width=\textwidth]{../figures/iris_isometry_losses_ts_box.png}
         \caption{Iris $\|X_{.\widehat S}\|_{1,2}$ comparison for \brute~ optimization of $\|\|_{1,2}$ versus \tsip~ optimization of $\|\|_{1,2}$}
         \label{fig:iris_multitask_losses_ecdf}
     \end{subfigure}
 
     \vspace{0.5cm}
 
-    % Bottom-left plot: Wine Isometry Loss ECDF
+    % Bottom-left plot: Wine Isometry Loss - COMMENTED OUT (missing wine_isometry_losses_iso_box.png)
+    % \begin{subfigure}[b]{0.45\textwidth}
+    %     \centering
+    %     \includegraphics[width=\textwidth]{../figures/wine_isometry_losses_iso_box.png}
+    %     \caption{Wine $\ell_1(X_{.\widehat S})$ comparison for \brute~ optimization of $\ell_1$ versus \tsip~ optimization of $\ell_1$}
+    %     \label{fig:wine_isometry_losses_ecdf}
+    % \end{subfigure}
+    % \hfill
+    % Centered Wine Multitask Loss plot
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/wine_isometry_losses_iso_ecdf}
-        \caption{Wine $\ell_1(X_{.\widehat S})$ comparison for \brute~ optimization of $\ell_1$ versus \tsip~ optimization of $\ell_1$}
-        \label{fig:wine_isometry_losses_ecdf}
-    \end{subfigure}
-    \hfill
-    % Bottom-right plot: Wine Multitask Loss ECDF
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{../figures/wine_isometry_losses_ts_ecdf}
+        \includegraphics[width=\textwidth]{../figures/wine_isometry_losses_ts_box.png}
         \caption{Wine $\|X_{.\widehat S}\|_{1,2}$ comparison for \brute optimization of $\|\|_{1,2}$ versus \tsip~ optimization of $\|\|_{1,2}$}
         \label{fig:wine_multitask_losses_ecdf}
     \end{subfigure}

@@ -9,7 +9,12 @@ import random
 
 
 def greedy(
-    matrix, loss, target_dimension=None, selected_indices=None, random_state=None, verbose=False
+    matrix,
+    loss,
+    target_dimension=None,
+    selected_indices=None,
+    random_state=None,
+    verbose=False,
 ):
     """Matrix is d \times p dimensional"""
     if selected_indices is None:
@@ -34,7 +39,10 @@ def greedy(
                 candidate_parametrization = np.concatenate(
                     [selected_indices, [p]]
                 ).astype(int)
-                candidate_losses[p] = loss(matrix[:, candidate_parametrization])
+                candidate_losses[p] = loss(
+                    matrix[:, candidate_parametrization],
+                    indices=candidate_parametrization,
+                )
         # print(candidate_losses)
         minimum_loss = np.nanmin(candidate_losses)
         most_isometric_indices = np.where(candidate_losses == minimum_loss)[0]
@@ -43,13 +51,17 @@ def greedy(
         # print(most_isometric_index)
         selected_indices.append(most_isometric_index)
         selected_indices = greedy(
-            matrix, loss, target_dimension, selected_indices=selected_indices, verbose=verbose
+            matrix,
+            loss,
+            target_dimension,
+            selected_indices=selected_indices,
+            verbose=verbose,
         )
-    
+
     # Only print the final result when we have completed the greedy search and verbose is True
     if len(selected_indices) == target_dimension and verbose:
         print("greedy", selected_indices)
-    
+
     return selected_indices
 
 
@@ -68,7 +80,7 @@ def brute(matrix, loss, target_dimension):
     losses = []
     for parametrization in tqdm(parametrizations):
         putative_X_S = matrix[:, parametrization]
-        losses.append(loss(putative_X_S))
+        losses.append(loss(putative_X_S, indices=parametrization))
 
     selected_indices = np.asarray(losses).argmin()
     parametrizations = combinations(range(dictionary_dimension), target_dimension)

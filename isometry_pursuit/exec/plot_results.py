@@ -92,23 +92,40 @@ def plot_experiment_results(results_file, dataset_name, D, power, output_dir="fi
 
     # Plot 3: Loss distribution
     print("Creating loss distribution plot...")
+
+    # Check if we have any valid data
+    has_valid_data = False
+    for col in ["Losses", "Two-Stage Losses", "Random Two-Stage Losses"]:
+        if col in results_df.columns and len(results_df[col].dropna()) > 0:
+            has_valid_data = True
+            break
+
+    if not has_valid_data:
+        print("Skipping loss distribution plot - no valid data (all NaN values)")
+        return
+
     plt.figure(figsize=(12, 8))
 
     if "Losses" in results_df.columns:
-        plt.hist(results_df["Losses"], bins=20, alpha=0.7, label="Greedy Losses")
+        losses = results_df["Losses"].dropna()
+        if len(losses) > 0:
+            plt.hist(losses, bins=20, alpha=0.7, label="Greedy Losses")
+        else:
+            print("Skipping Greedy Losses - all NaN values")
 
     if "Two-Stage Losses" in results_df.columns:
-        plt.hist(
-            results_df["Two-Stage Losses"], bins=20, alpha=0.7, label="Two-Stage Losses"
-        )
+        two_stage_losses = results_df["Two-Stage Losses"].dropna()
+        if len(two_stage_losses) > 0:
+            plt.hist(two_stage_losses, bins=20, alpha=0.7, label="Two-Stage Losses")
+        else:
+            print("Skipping Two-Stage Losses - all NaN values")
 
     if "Random Two-Stage Losses" in results_df.columns:
-        plt.hist(
-            results_df["Random Two-Stage Losses"],
-            bins=20,
-            alpha=0.7,
-            label="Random Two-Stage Losses",
-        )
+        random_losses = results_df["Random Two-Stage Losses"].dropna()
+        if len(random_losses) > 0:
+            plt.hist(random_losses, bins=20, alpha=0.7, label="Random Two-Stage Losses")
+        else:
+            print("Skipping Random Two-Stage Losses - all NaN values")
 
     plt.xlabel("Loss Value")
     plt.ylabel("Frequency")

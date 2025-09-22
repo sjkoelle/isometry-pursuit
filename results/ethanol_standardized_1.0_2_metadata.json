@@ -1,0 +1,14 @@
+{
+  "dataset_name": "ethanol",
+  "D": 2,
+  "power": 1.0,
+  "R": 5,
+  "compute_brute": false,
+  "log_convergence": false,
+  "data_shape": [
+    5,
+    1512
+  ],
+  "results_file": "/Users/samsonkoelle/isometry-pursuit/results/ethanol_standardized_1.0_2_results.csv",
+  "seed": 1234
+}

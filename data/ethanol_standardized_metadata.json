@@ -1,0 +1,24 @@
+{
+  "dataset_name": "ethanol",
+  "standardized": true,
+  "n_samples": 5,
+  "n_features": 1512,
+  "original_n_samples": 50000,
+  "n_atoms": 9,
+  "target_dimension": 2,
+  "power": 1.0,
+  "n_neighbors": 252,
+  "selected_points": [
+    20308,
+    37706,
+    6041,
+    42143,
+    23202
+  ],
+  "data_file": "/Users/samsonkoelle/isometry-pursuit/data/ethanol_standardized.csv",
+  "config_file": "/Users/samsonkoelle/montlake/experiments/configs/ethanol_full.json",
+  "raw_data_file": "/Users/samsonkoelle/thesis_data/raw_data/ethanol.mat",
+  "positions_file": "/Users/samsonkoelle/positions.npy",
+  "indices_file": "/Users/samsonkoelle/indices.npy",
+  "angles_file": "/Users/samsonkoelle/ethanolanglesfull_0524.npy"
+}

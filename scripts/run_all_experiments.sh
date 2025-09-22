@@ -46,8 +46,14 @@ run_experiment "Wine Dataset Experiment" "$SCRIPT_DIR/wine_experiment.sh"
 # 3. Word embeddings experiment
 run_experiment "Word Embeddings Experiment" "$SCRIPT_DIR/word_embeddings_experiment.sh"
 
-# 4. Generate figures
+# 4. Ethanol experiment
+run_experiment "Ethanol Experiment" "$SCRIPT_DIR/ethanol_experiment.sh"
+
+# 5. Generate figures
 run_experiment "Figure Generation" "$SCRIPT_DIR/generate_figures.sh"
+
+# 6. Generate data visualization
+run_experiment "Data Visualization Generation" "$SCRIPT_DIR/generate_data_visualization.sh"
 
 echo "=========================================="
 echo "All Experiments Completed Successfully!"

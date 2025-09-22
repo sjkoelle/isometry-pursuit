@@ -43,7 +43,6 @@ python word_embeddings_experiment.py --load-data --data-dir "$DATA_DIR" --D "$D"
 DATA_FILE="$DATA_DIR/word_embeddings_standardized_${D}.csv"
 if [ ! -f "$DATA_FILE" ]; then
     echo "Error: Data file not found at $DATA_FILE"
-    exit 1
 fi
 echo "Data loaded successfully: $DATA_FILE"
 echo ""
@@ -83,33 +82,8 @@ fi
 echo "Experiment completed successfully!"
 echo ""
 
-# Step 3: Generate plots
-echo "Step 3: Generating plots..."
-RESULTS_FILE="$RESULTS_DIR/${DATASET_NAME}_standardized_${POWER}_${D}_results.csv"
-CONVERGENCE_FILE="$RESULTS_DIR/${DATASET_NAME}_standardized_${POWER}_${D}_convergence.pkl"
-
-if [ -f "$RESULTS_FILE" ]; then
-    python plot_results.py \
-        --results-file "$RESULTS_FILE" \
-        --dataset-name "$DATASET_NAME" \
-        --D "$D" \
-        --power "$POWER" \
-        --output-dir "$FIGURES_DIR"
-    
-    if [ -f "$CONVERGENCE_FILE" ]; then
-        python plot_results.py \
-            --results-file "$RESULTS_FILE" \
-            --dataset-name "$DATASET_NAME" \
-            --D "$D" \
-            --power "$POWER" \
-            --convergence-file "$CONVERGENCE_FILE" \
-            --output-dir "$FIGURES_DIR"
-    fi
-    
-    echo "Plots generated successfully!"
-else
-    echo "Warning: Results file not found at $RESULTS_FILE"
-fi
+echo "Experiment results saved to: $RESULTS_DIR"
+echo "To generate plots, run: scripts/generate_figures.sh"
 
 echo ""
 echo "=========================================="

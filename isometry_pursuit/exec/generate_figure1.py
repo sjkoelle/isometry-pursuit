@@ -87,7 +87,36 @@ def generate_figure1(output_dir="figures"):
     ax.grid(color="gray", linestyle="--", linewidth=0.5)
     ax.set_title(r"$l(t)$", fontsize=80)
     ax.set_ylim(0, 10)
-    ax.set_ylabel(r"$l(t)$", fontsize=60)
+    ax.set_ylabel(r"$\frac{e^{t} + e^{\frac{1}{t}}}{2e}$", fontsize=60)
+    ax.set_xlabel(r"$t$", fontsize=50)
+    ax.set_xscale("log")
+    ax.set_xlim(1e-2, 1e2)
+    ax.tick_params(labelsize=30)
+
+    plt.tight_layout()
+    fig.savefig(
+        os.path.join(output_dir, "Figure_1a_bw.png"), dpi=300, bbox_inches="tight"
+    )
+    plt.close()
+    print(f"Loss plot saved to {output_dir}/Figure_1a_bw.png")
+
+    # --- Plot the function: Basis pursuit loss interpretation ---
+    print("Creating basis pursuit loss interpretation plot...")
+    fig, ax = plt.subplots(1, 1, figsize=(14, 10))
+    ax.plot(
+        matrix_values,
+        basis_pursuit_losses,
+        color="black",
+        linewidth=2.5,
+        linestyle=line_style,
+    )
+
+    ax.axhline(0, color="black", linewidth=0.5)
+    ax.axvline(0, color="black", linewidth=0.5)
+    ax.grid(color="gray", linestyle="--", linewidth=0.5)
+    ax.set_title(r"$\|\beta\|_{1,2} \; : \; 1 = w([[t]], 1)\,\beta$", fontsize=80)
+    ax.set_ylim(0, 10)
+    ax.set_ylabel(r"$\frac{e^{t} + e^{\frac{1}{t}}}{2e}$", fontsize=60)
     ax.set_xlabel(r"$t$", fontsize=50)
     ax.set_xscale("log")
     ax.set_xlim(1e-2, 1e2)
@@ -98,7 +127,9 @@ def generate_figure1(output_dir="figures"):
         os.path.join(output_dir, "Figure_1c_bw.png"), dpi=300, bbox_inches="tight"
     )
     plt.close()
-    print(f"Loss plot saved to {output_dir}/Figure_1c_bw.png")
+    print(
+        f"Basis pursuit loss interpretation plot saved to {output_dir}/Figure_1c_bw.png"
+    )
 
     print("Figure 1 generation completed!")
 

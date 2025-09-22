@@ -16,13 +16,15 @@ The easiest way to run experiments is using the executable scripts:
 
 ```bash
 # Run all experiments
-scripts/run_all_experiments.st wenh
+scripts/run_all_experiments.sh
 
 # Or run individual experiments
 scripts/iris_experiment.sh
 scripts/wine_experiment.sh
 scripts/word_embeddings_experiment.sh
+scripts/ethanol_experiment.sh
 scripts/generate_figures.sh
+scripts/generate_data_visualization.sh
 ```
 
 ## Individual Executables
@@ -33,6 +35,13 @@ You can also run individual components:
 # Load data
 python isometry_pursuit/exec/load_iris_exec.py --output-dir data
 python isometry_pursuit/exec/load_wine_exec.py --output-dir data --max-features 13
+python isometry_pursuit/exec/load_ethanol_exec.py \
+    --config-path <path_to_config.json> \
+    --raw-data-path <path_to_ethanol.mat> \
+    --positions-path <path_to_positions.npy> \
+    --indices-path <path_to_indices.npy> \
+    --angles-path <path_to_angles.npy> \
+    --output-dir data
 
 # Run experiments
 python isometry_pursuit/exec/run_experiment.py \
@@ -44,6 +53,13 @@ python isometry_pursuit/exec/run_experiment.py \
     --R 25 \
     --output-dir results
 
+python isometry_pursuit/exec/ethanol_experiment.py \
+    --data-file data/ethanol_standardized.csv \
+    --D 2 \
+    --power 1.0 \
+    --R 100 \
+    --output-dir results
+
 # Generate plots
 python isometry_pursuit/exec/plot_results.py \
     --results-file results/iris_standardized_1.0_4_results.csv \
@@ -51,6 +67,12 @@ python isometry_pursuit/exec/plot_results.py \
     --D 4 \
     --power 1.0 \
     --output-dir figures
+
+# Generate data visualization
+python isometry_pursuit/exec/generate_data_visualization.py \
+    --output-dir figures \
+    --num-vectors 30 \
+    --seed 2
 ```
 
 ## Jupyter Notebooks (Legacy)
@@ -77,16 +99,19 @@ project_root/
 ├── data/                    # Processed datasets
 │   ├── iris_standardized.csv
 │   ├── wine_standardized_13.csv
-│   └── word_embeddings_standardized_10.csv
+│   ├── word_embeddings_standardized_10.csv
+│   └── ethanol_standardized.csv
 ├── results/                 # Experiment results
 │   ├── iris_standardized_1.0_4_results.csv
 │   ├── wine_standardized_1.0_13_results.csv
-│   └── word_embeddings_standardized_1.0_10_results.csv
+│   ├── word_embeddings_standardized_1.0_10_results.csv
+│   └── ethanol_standardized_1.0_2_results.csv
 └── figures/                 # Generated plots
     ├── Figure_1b_bw.png
     ├── Figure_1c_bw.png
     ├── iris_isometry_losses_iso_box.png
-    └── wine_isometry_losses_ts_box.png
+    ├── wine_isometry_losses_ts_box.png
+    └── ethanol_isometry_losses_box.png
 ```
 
 ## Documentation
