@@ -3,13 +3,13 @@
   "D": 4,
   "power": 1.0,
   "frac": 0.5,
-  "R": 25,
+  "R": 2,
   "compute_brute": false,
   "log_convergence": false,
   "data_shape": [
     150,
     4
   ],
-  "results_file": "/Users/samsonkoelle/isometry-pursuit/results/iris_standardized_1.0_4_results.csv",
-  "co_occurrence_file": "/Users/samsonkoelle/isometry-pursuit/results/iris_standardized_1.0_4_co_occurrence.pkl"
+  "results_file": "results/iris_standardized_1.0_4_results.csv",
+  "co_occurrence_file": "results/iris_standardized_1.0_4_co_occurrence.pkl"
 }

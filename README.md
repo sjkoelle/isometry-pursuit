@@ -12,67 +12,99 @@ pip install -e .
 
 ## Quick Start
 
-The easiest way to run experiments is using the executable scripts:
-
-```bash
-# Run all experiments
-scripts/run_all_experiments.sh
-
-# Or run individual experiments
-scripts/iris_experiment.sh
-scripts/wine_experiment.sh
-scripts/word_embeddings_experiment.sh
-scripts/ethanol_experiment.sh
-scripts/generate_figures.sh
-scripts/generate_data_visualization.sh
-```
-
-## Individual Executables
-
-You can also run individual components:
+The easiest way to run experiments:
 
 ```bash
 # Load data
-python isometry_pursuit/exec/load_iris_exec.py --output-dir data
-python isometry_pursuit/exec/load_wine_exec.py --output-dir data --max-features 13
-python isometry_pursuit/exec/load_ethanol_exec.py \
-    --config-path <path_to_config.json> \
-    --raw-data-path <path_to_ethanol.mat> \
-    --positions-path <path_to_positions.npy> \
-    --indices-path <path_to_indices.npy> \
-    --angles-path <path_to_angles.npy> \
-    --output-dir data
+python -m isometry_pursuit.exec.load_iris_exec --output-dir data
+python -m isometry_pursuit.exec.load_wine_exec --output-dir data --max-features 13
+python -m isometry_pursuit.exec.load_word_embeddings_exec --output-dir data --D 10
 
 # Run experiments
-python isometry_pursuit/exec/run_experiment.py \
+python -m isometry_pursuit.exec.run_experiment \
     --data-file data/iris_standardized.csv \
-    --dataset-name iris \
-    --D 4 \
-    --power 1.0 \
-    --frac 0.5 \
-    --R 25 \
+    --dataset-name iris --D 4 --R 5 \
     --output-dir results
 
-python isometry_pursuit/exec/ethanol_experiment.py \
+python -m isometry_pursuit.exec.run_experiment \
+    --data-file data/wine_standardized_13.csv \
+    --dataset-name wine --D 6 --R 25 \
+    --output-dir results
+
+python -m isometry_pursuit.exec.run_experiment \
+    --data-file data/word_embeddings_standardized_10.csv \
+    --dataset-name word_embeddings --D 10 --R 25 \
+    --output-dir results
+
+# Special ethanol experiment (requires data download first)
+python -m isometry_pursuit.exec.ethanol_experiment \
     --data-file data/ethanol_standardized.csv \
-    --D 2 \
-    --power 1.0 \
-    --R 100 \
+    --D 2 --R 100 \
     --output-dir results
 
-# Generate plots
-python isometry_pursuit/exec/plot_results.py \
+# Generate plots for each dataset
+python -m isometry_pursuit.exec.plot_results \
     --results-file results/iris_standardized_1.0_4_results.csv \
     --dataset-name iris \
-    --D 4 \
-    --power 1.0 \
+    --output-dir figures
+
+python -m isometry_pursuit.exec.plot_results \
+    --results-file results/wine_standardized_1.0_6_results.csv \
+    --dataset-name wine \
+    --output-dir figures
+
+python -m isometry_pursuit.exec.plot_results \
+    --results-file results/word_embeddings_standardized_1.0_10_results.csv \
+    --dataset-name word_embeddings \
+    --output-dir figures
+
+python -m isometry_pursuit.exec.plot_results \
+    --results-file results/ethanol_standardized_1.0_2_results.csv \
+    --dataset-name ethanol \
+    --output-dir figures
+
+# Or generate all figures at once
+scripts/generate_figures.sh
+```
+
+## Advanced Usage
+
+You can also customize parameters or run individual components:
+
+```bash
+# Load data with custom parameters
+python -m isometry_pursuit.exec.load_wine_exec --output-dir data --max-features 6
+python -m isometry_pursuit.exec.load_word_embeddings_exec --output-dir data --D 5
+
+# Run experiments with custom replicates/parameters
+python -m isometry_pursuit.exec.run_experiment \
+    --data-file data/iris_standardized.csv \
+    --dataset-name iris --D 4 --R 100 \
+    --compute-brute --log-convergence \
+    --output-dir results
+
+# Override defaults (power=1.0, frac=0.5) if needed
+python -m isometry_pursuit.exec.run_experiment \
+    --data-file data/iris_standardized.csv \
+    --dataset-name iris --D 4 --power 2.0 --frac 0.8 --R 50 \
+    --output-dir results
+
+# Generate plots with convergence analysis (if available)
+python -m isometry_pursuit.exec.plot_results \
+    --results-file results/iris_standardized_1.0_4_results.csv \
+    --dataset-name iris \
+    --convergence-file results/iris_standardized_1.0_4_convergence.pkl \
     --output-dir figures
 
 # Generate data visualization
-python isometry_pursuit/exec/generate_data_visualization.py \
-    --output-dir figures \
-    --num-vectors 30 \
-    --seed 2
+python -m isometry_pursuit.exec.generate_data_visualization \
+    --output-dir figures --num-vectors 30 --seed 2
+
+# For ethanol data (requires manual download and preprocessing)
+python -m isometry_pursuit.exec.load_ethanol_exec \
+    --config-path configs/ethanol/ethanol_config.json \
+    --raw-data-path data/ethanol.mat \
+    --output-dir data
 ```
 
 ## Jupyter Notebooks (Legacy)

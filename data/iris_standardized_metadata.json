@@ -14,5 +14,5 @@
     "versicolor",
     "virginica"
   ],
-  "data_file": "/Users/samsonkoelle/isometry-pursuit/data/iris_standardized.csv"
+  "data_file": "data/iris_standardized.csv"
 }

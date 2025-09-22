@@ -20,7 +20,9 @@ from isometry_pursuit.plot import box_plot, ecdf_plot
 from isometry_pursuit.experiment import plot_convergence, analyze_convergence_logs
 
 
-def plot_experiment_results(results_file, dataset_name, D, power, output_dir="figures"):
+def plot_experiment_results(
+    results_file, dataset_name, D=None, power=None, output_dir="figures"
+):
     """
     Create plots from experiment results.
 
@@ -41,54 +43,81 @@ def plot_experiment_results(results_file, dataset_name, D, power, output_dir="fi
     print(f"Loading results from {results_file}")
     results_df = pd.read_csv(results_file)
 
+    # Parse D and power from filename if not provided
+    if D is None or power is None:
+        import re
+
+        filename = os.path.basename(results_file)
+        # Pattern: {dataset}_standardized_{power}_{D}_results.csv
+        match = re.match(r"(.+)_standardized_([0-9.]+)_([0-9]+)_results\.csv", filename)
+        if match:
+            if power is None:
+                power = float(match.group(2))
+            if D is None:
+                D = int(match.group(3))
+            print(f"Parsed from filename: power={power}, D={D}")
+        else:
+            if D is None or power is None:
+                raise ValueError(
+                    f"Could not parse D and power from filename {filename}, and they were not provided as arguments"
+                )
+
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
 
-    # Plot 1: Isometry loss comparison (Brute vs Two-Stage)
+    # Plot 1: Main comparison (Greedy vs Two-Stage)
+    print("Creating main loss comparison plot (Greedy vs Two-Stage)...")
+    if "Losses" not in results_df.columns:
+        raise ValueError("Missing required column: 'Losses' (Greedy method)")
+    if "Two-Stage Losses" not in results_df.columns:
+        raise ValueError("Missing required column: 'Two-Stage Losses'")
+
+    greedy_losses = results_df["Losses"].dropna()
+    two_stage_losses = results_df["Two-Stage Losses"].dropna()
+
+    if len(greedy_losses) == 0:
+        raise ValueError(
+            f"'Losses' column contains no valid data (all NaN) for dataset {dataset_name}. This suggests the greedy method failed to run properly."
+        )
+    if len(two_stage_losses) == 0:
+        raise ValueError(
+            f"'Two-Stage Losses' column contains no valid data (all NaN) for dataset {dataset_name}. This suggests the two-stage method failed to run properly."
+        )
+
+    plot_filename = os.path.join(
+        output_dir, f"{dataset_name}_greedy_vs_twostage_box.png"
+    )
+    box_plot(
+        greedy_losses,
+        two_stage_losses,
+        D,
+        ["Greedy", "Two-Stage"],
+        r"$\ell_1(\hat{S}_{g}) - \ell_1(\hat{S}_{TSIP})$",
+        plot_filename,
+    )
+    print(f"Saved plot: {plot_filename}")
+
+    # Plot 2: Optional brute force comparison (only if data exists)
     if (
         "Brute Isometry Losses" in results_df.columns
-        and "Two-Stage Losses" in results_df.columns
+        and len(results_df["Brute Isometry Losses"].dropna()) > 0
     ):
-        # Check if we have valid data (not all NaN)
+        print("Creating brute force vs two-stage comparison plot...")
         brute_losses = results_df["Brute Isometry Losses"].dropna()
-        two_stage_losses = results_df["Two-Stage Losses"].dropna()
-
-        if len(brute_losses) > 0 and len(two_stage_losses) > 0:
-            print("Creating isometry loss comparison plot...")
-            box_plot(
-                brute_losses,
-                two_stage_losses,
-                D,
-                ["Brute Isometry", "Two-Stage"],
-                r"$\ell_1$ Loss",
-                os.path.join(output_dir, f"{dataset_name}_isometry_losses_iso_box.png"),
-            )
-        else:
-            print("Skipping isometry loss comparison plot - insufficient data")
-
-    # Plot 2: Multitask norm comparison (Brute vs Two-Stage)
-    if (
-        "Brute Losses" in results_df.columns
-        and "Greedy Multitask Norms (Two-Stage)" in results_df.columns
-    ):
-        # Check if we have valid data (not all NaN)
-        brute_losses = results_df["Brute Losses"].dropna()
-        greedy_multitask_norms = results_df[
-            "Greedy Multitask Norms (Two-Stage)"
-        ].dropna()
-
-        if len(brute_losses) > 0 and len(greedy_multitask_norms) > 0:
-            print("Creating multitask norm comparison plot...")
-            box_plot(
-                brute_losses,
-                greedy_multitask_norms,
-                D,
-                ["Brute", "Two-Stage"],
-                r"$\|w(\cdot)\|_{1,2}$ Loss",
-                os.path.join(output_dir, f"{dataset_name}_isometry_losses_ts_box.png"),
-            )
-        else:
-            print("Skipping multitask norm comparison plot - insufficient data")
+        brute_plot_filename = os.path.join(
+            output_dir, f"{dataset_name}_brute_vs_twostage_box.png"
+        )
+        box_plot(
+            brute_losses,
+            two_stage_losses,
+            D,
+            ["Brute Force", "Two-Stage"],
+            r"$\ell_1(\hat{S}_{brute}) - \ell_1(\hat{S}_{TSIP})$",
+            brute_plot_filename,
+        )
+        print(f"Saved plot: {brute_plot_filename}")
+    else:
+        print("Skipping brute force comparison - no brute force data available")
 
     # Plot 3: Loss distribution
     print("Creating loss distribution plot...")
@@ -134,12 +163,16 @@ def plot_experiment_results(results_file, dataset_name, D, power, output_dir="fi
     )
     plt.legend()
     plt.grid(True, alpha=0.3)
+    loss_dist_filename = os.path.join(
+        output_dir, f"{dataset_name}_loss_distribution.png"
+    )
     plt.savefig(
-        os.path.join(output_dir, f"{dataset_name}_loss_distribution.png"),
+        loss_dist_filename,
         bbox_inches="tight",
         dpi=300,
     )
     plt.close()
+    print(f"Saved plot: {loss_dist_filename}")
 
     # Plot 4: Time comparison
     print("Creating time comparison plot...")
@@ -164,12 +197,16 @@ def plot_experiment_results(results_file, dataset_name, D, power, output_dir="fi
         )
         plt.legend()
         plt.grid(True, alpha=0.3)
+        time_dist_filename = os.path.join(
+            output_dir, f"{dataset_name}_time_distribution.png"
+        )
         plt.savefig(
-            os.path.join(output_dir, f"{dataset_name}_time_distribution.png"),
+            time_dist_filename,
             bbox_inches="tight",
             dpi=300,
         )
         plt.close()
+        print(f"Saved plot: {time_dist_filename}")
 
     # Plot 5: Sparsity analysis
     if "Support Cardinalities (Basis Pursuit)" in results_df.columns:
@@ -194,12 +231,16 @@ def plot_experiment_results(results_file, dataset_name, D, power, output_dir="fi
         )
         plt.legend()
         plt.grid(True, alpha=0.3)
+        sparsity_filename = os.path.join(
+            output_dir, f"{dataset_name}_sparsity_analysis.png"
+        )
         plt.savefig(
-            os.path.join(output_dir, f"{dataset_name}_sparsity_analysis.png"),
+            sparsity_filename,
             bbox_inches="tight",
             dpi=300,
         )
         plt.close()
+        print(f"Saved plot: {sparsity_filename}")
 
     print(f"Plots saved to {output_dir}")
 
@@ -234,10 +275,14 @@ def plot_convergence_analysis(
 
     # Plot convergence analysis
     print("Creating convergence analysis plot...")
+    convergence_filename = os.path.join(
+        output_dir, f"{dataset_name}_convergence_analysis.png"
+    )
     analyze_convergence_logs(
         convergence_logs,
-        save_path=os.path.join(output_dir, f"{dataset_name}_convergence_analysis.png"),
+        save_path=convergence_filename,
     )
+    print(f"Saved plot: {convergence_filename}")
 
 
 def main():
@@ -246,8 +291,16 @@ def main():
         "--results-file", required=True, help="Path to results CSV file"
     )
     parser.add_argument("--dataset-name", required=True, help="Name of the dataset")
-    parser.add_argument("--D", type=int, required=True, help="Target dimension")
-    parser.add_argument("--power", type=float, required=True, help="Power parameter")
+    parser.add_argument(
+        "--D",
+        type=int,
+        help="Target dimension (auto-parsed from filename if not provided)",
+    )
+    parser.add_argument(
+        "--power",
+        type=float,
+        help="Power parameter (auto-parsed from filename if not provided)",
+    )
     parser.add_argument("--convergence-file", help="Path to convergence pickle file")
     parser.add_argument(
         "--output-dir", default="figures", help="Output directory for plots"

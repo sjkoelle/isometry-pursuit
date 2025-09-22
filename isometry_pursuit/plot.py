@@ -61,44 +61,34 @@ def difference_box_plot(losses_1, losses_2, title, xlabel, ylabel, filename):
 
 
 def box_plot(losses_1, losses_2, D, xlabels, ylabel, filename):
+    """
+    Create a box plot showing the difference between two loss methods.
+    This is the box plot equivalent of the ECDF plot functionality.
+    Note: D parameter is kept for compatibility but not used since losses
+    are now pre-processed to subtract D at the experiment level.
+    """
+    # Compute difference (same as ECDF plot)
+    diff = np.asarray(losses_1) - np.asarray(losses_2)
 
-    data = np.asarray([np.asarray(losses_1) - D, np.asarray(losses_2) - D]).transpose()
-    plt.figure(figsize=(15, 10))
+    plt.figure(figsize=(10, 7))
+
+    # Create single box plot of the differences
     box = plt.boxplot(
-        data,
-        patch_artist=True,  # For custom box colors
-        medianprops=dict(
-            color="black", linewidth=2
-        ),  # Set median line color and thickness
+        [diff], patch_artist=True, medianprops=dict(color="black", linewidth=2)
     )
 
-    # Customize boxplot colors
-    colors = ["turquoise", "pink"]
-    for patch, color in zip(box["boxes"], colors):
-        patch.set_facecolor(color)
+    # Customize boxplot color
+    box["boxes"][0].set_facecolor("lightblue")
 
-    plt.xticks([1, 2], xlabels, fontsize=60)  # Increased tick label font size
-    plt.yticks(fontsize=50)  # Increased y-axis tick font size
-    plt.yscale("symlog")
+    # Add horizontal line at 0 (same as ECDF plot)
+    plt.axhline(0, color="black", linestyle="--", linewidth=1)
 
-    # Handle NaN/Inf values in data for ylim
-    data_max = np.nanmax(data)
-    if np.isfinite(data_max) and data_max > 0:
-        plt.ylim(0, 2 * data_max)
-    else:
-        # Fallback if all values are NaN/Inf
-        plt.ylim(0, 1)
-
-    plt.ylabel(ylabel, fontsize=60)  # Increased y-axis label font size
-    # Add faint lines connecting individual data points
-    for left, right in zip(data[:, 0], data[:, 1]):
-        if right > left:
-            color = "turquoise"
-        elif left > right:
-            color = "pink"  # Red for increasing loss, blue for decreasing
-        else:
-            color = "black"
-        plt.plot([1, 2], [left, right], color=color, alpha=0.5, linewidth=2)
+    # Labeling
+    plt.xlabel(f"{xlabels[0]} - {xlabels[1]}", fontsize=24)
+    plt.ylabel(ylabel, fontsize=24)
+    plt.xticks([1], ["Difference"], fontsize=18)
+    plt.yticks(fontsize=18)
+    plt.grid(True, which="both", linestyle="--", alpha=0.5)
 
     plt.savefig(filename, bbox_inches="tight")
     plt.close()

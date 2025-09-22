@@ -196,15 +196,22 @@ def run_resampling_experiment(
                 random_indices[co[1]], random_indices[co[0]]
             ] += 1
 
+    # Subtract D from loss values to get excess loss above theoretical minimum
     results_df = pd.DataFrame(
         {
-            "Losses": losses,
+            "Losses": np.array(losses) - D,
             "Support Cardinalities (Basis Pursuit)": support_cardinalities_basis_pursuit,
-            "Two-Stage Losses": two_stage_losses,
-            "Random Two-Stage Losses": random_two_stage_losses,
+            "Two-Stage Losses": np.array(two_stage_losses) - D,
+            "Random Two-Stage Losses": np.array(random_two_stage_losses) - D,
             "Greedy Multitask Norms (Two-Stage)": greedy_multitask_norms_two_stage,
-            "Brute Isometry Losses": brute_isometry_losses,
-            "Brute Losses": brute_losses,
+            "Brute Isometry Losses": (
+                np.array(brute_isometry_losses) - D
+                if brute_isometry_losses
+                else brute_isometry_losses
+            ),
+            "Brute Losses": (
+                np.array(brute_losses) - D if brute_losses else brute_losses
+            ),
             "Basis Pursuit Times": basis_pursuit_times,
             "Stage Two Times": stage_two_times,
             "Greedy Times": greedy_times,
