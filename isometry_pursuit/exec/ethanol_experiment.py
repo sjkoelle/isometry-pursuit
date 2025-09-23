@@ -89,6 +89,8 @@ def run_ethanol_experiment(
     basis_pursuit_times = []
     greedy_times = []
     stage_two_times = []
+    two_stage_greedy_losses = []
+    two_stage_greedy_times = []
 
     print(f"Processing {R} data points...")
 
@@ -121,6 +123,8 @@ def run_ethanol_experiment(
                 greedy_solution,
                 basis_pursuit_iterations,
                 convergence_log,
+                two_stage_greedy_loss,
+                two_stage_greedy_time,
             ) = analyze_data(
                 sample_data_reshaped, compute_brute=compute_brute, power=power
             )
@@ -137,6 +141,8 @@ def run_ethanol_experiment(
             basis_pursuit_times.append(basis_pursuit_time)
             greedy_times.append(greedy_time)
             stage_two_times.append(stage_two_time)
+            two_stage_greedy_losses.append(two_stage_greedy_loss)
+            two_stage_greedy_times.append(two_stage_greedy_time)
 
         except Exception as e:
             print(f"Warning: Data point {i} failed: {e}")
@@ -151,6 +157,8 @@ def run_ethanol_experiment(
             basis_pursuit_times.append(np.nan)
             greedy_times.append(np.nan)
             stage_two_times.append(np.nan)
+            two_stage_greedy_losses.append(np.nan)
+            two_stage_greedy_times.append(np.nan)
 
     # Create results DataFrame
     results_df = pd.DataFrame(
@@ -165,6 +173,8 @@ def run_ethanol_experiment(
             "Basis Pursuit Times": basis_pursuit_times,
             "Stage Two Times": stage_two_times,
             "Greedy Times": greedy_times,
+            "Two-Stage on Greedy Losses": two_stage_greedy_losses,
+            "Two-Stage on Greedy Times": two_stage_greedy_times,
         }
     )
 

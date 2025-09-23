@@ -141,9 +141,13 @@ def plot_difference_boxplot(
     # Set labels
     plt.xlabel("Dataset", fontsize=16)
     if ylabel is None:
-        ylabel = f"{baseline_column} - {comparison_column}"
+        # Use the same LaTeX formula as in plot_results.py
+        ylabel = r"$\ell_1(\hat{S}_{g}) - \ell_1(\hat{S}_{TSIP})$"
     plt.ylabel(ylabel, fontsize=16)
     plt.title(title, fontsize=18)
+
+    # Use symlog scaling for y-axis to handle both positive and negative values
+    plt.yscale("symlog")
 
     # Rotate x-axis labels if there are many datasets
     if len(valid_datasets) > 4:

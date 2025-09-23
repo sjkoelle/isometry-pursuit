@@ -1,0 +1,15 @@
+{
+  "dataset_name": "wine",
+  "D": 6,
+  "power": 1.0,
+  "frac": 0.5,
+  "R": 25,
+  "compute_brute": false,
+  "log_convergence": false,
+  "data_shape": [
+    178,
+    6
+  ],
+  "results_file": "results/wine_results.csv",
+  "co_occurrence_file": "results/wine_co_occurrence.pkl"
+}

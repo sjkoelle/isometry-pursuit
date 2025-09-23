@@ -77,6 +77,30 @@ def analyze_data(
         greedy_multitask_norm_two_stage = np.nan
         stage_two_time = np.nan
 
+    # Two-stage on greedy (new method)
+    # First stage: Isometry pursuit (basis pursuit) -> basis_pursuit_indices
+    # Second stage: Greedy on the basis pursuit selection
+    greedy_on_bp_complexity = comb(len(basis_pursuit_indices), D)
+    print(
+        f"Two-stage on greedy complexity {greedy_on_bp_complexity} from D={D} and bp_size={len(basis_pursuit_indices)}"
+    )
+    if greedy_on_bp_complexity <= limit:
+        start_two_stage_greedy = time.time()
+        # Apply greedy algorithm to the basis pursuit selection
+        # Use original data X (not transformed) since isometry_loss_power expects original data
+        two_stage_greedy_output = basis_pursuit_indices[
+            greedy(
+                X[:, basis_pursuit_indices], isometry_loss_power, D, [], verbose=False
+            )
+        ]
+        end_two_stage_greedy = time.time()
+        two_stage_greedy_time = end_two_stage_greedy - start_two_stage_greedy
+        two_stage_greedy_loss = isometry_loss_power(X[:, two_stage_greedy_output])
+    else:
+        print("Two-stage on greedy is too computationally expensive")
+        two_stage_greedy_loss = np.nan
+        two_stage_greedy_time = np.nan
+
     if compute_brute:
         if brute_complexity > limit:
             print("Brute force is too computationally expensive")
@@ -112,6 +136,8 @@ def analyze_data(
         output,
         basis_pursuit_iterations,
         convergence_log,
+        two_stage_greedy_loss,
+        two_stage_greedy_time,
     )
 
 
@@ -138,6 +164,8 @@ def run_resampling_experiment(
     stage_two_times = []
     basis_pursuit_iterations_list = []
     convergence_logs = []
+    two_stage_greedy_losses = []
+    two_stage_greedy_times = []
     P = data.shape[0]
     co_occurence_matrix = np.zeros((P, P))
     greedy_co_occurence_matrix = np.zeros((P, P))
@@ -162,6 +190,8 @@ def run_resampling_experiment(
             greedy_solution,
             basis_pursuit_iterations,
             convergence_log,
+            two_stage_greedy_loss,
+            two_stage_greedy_time,
         ) = analyze_data(
             X,
             compute_brute=compute_brute,
@@ -180,6 +210,8 @@ def run_resampling_experiment(
         greedy_times.append(greedy_time)
         basis_pursuit_iterations_list.append(basis_pursuit_iterations)
         convergence_logs.append(convergence_log)
+        two_stage_greedy_losses.append(two_stage_greedy_loss)
+        two_stage_greedy_times.append(two_stage_greedy_time)
         from itertools import combinations
 
         co_occurences = combinations(two_stage_multitask, 2)
@@ -216,6 +248,8 @@ def run_resampling_experiment(
             "Stage Two Times": stage_two_times,
             "Greedy Times": greedy_times,
             "Basis Pursuit Iterations": basis_pursuit_iterations_list,
+            "Two-Stage on Greedy Losses": np.array(two_stage_greedy_losses) - D,
+            "Two-Stage on Greedy Times": two_stage_greedy_times,
         }
     )
 

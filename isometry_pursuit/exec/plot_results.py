@@ -228,8 +228,21 @@ def plot_experiment_results(
         print("Creating sparsity analysis plot...")
         plt.figure(figsize=(12, 8))
 
+        # Use the same purple color and styling as Figure2.ipynb example
+        garfield_purple = "#4E2A84"
+        cardinalities = results_df["Support Cardinalities (Basis Pursuit)"]
+
+        # Use proper binning like in the notebook example
+        min_val = min(cardinalities)
+        max_val = max(cardinalities)
+        bins = range(min_val, max_val + 2)
+
         plt.hist(
-            results_df["Support Cardinalities (Basis Pursuit)"], bins=20, alpha=0.7
+            cardinalities,
+            bins=bins,
+            color=garfield_purple,
+            edgecolor="white",
+            align="left",
         )
         plt.axvline(
             D,
@@ -239,13 +252,15 @@ def plot_experiment_results(
             label=f"Target Dimension (D={D})",
         )
 
-        plt.xlabel("Support Cardinality")
-        plt.ylabel("Frequency")
+        plt.xlabel(r"$|\widehat{S_{IP}}|$", fontsize=30)
+        plt.ylabel("Frequency", fontsize=24)
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=14)
+        plt.grid(axis="y", linestyle="--", alpha=0.7)
         plt.title(
             f"Basis Pursuit Sparsity - {dataset_name.upper()} Dataset (D={D}, power={power})"
         )
         plt.legend()
-        plt.grid(True, alpha=0.3)
         sparsity_filename = os.path.join(
             output_dir, f"{dataset_name}_sparsity_analysis.png"
         )

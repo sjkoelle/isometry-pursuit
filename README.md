@@ -43,6 +43,8 @@ python -m isometry_pursuit.exec.ethanol_experiment \
     --output-dir results
 
 # Compare methods across multiple datasets
+
+# Greedy vs Two-Stage (Basis Pursuit → Brute Force)
 python -m isometry_pursuit.exec.plot_difference_boxplot \
     --result-files results/iris_results.csv \
                    results/wine_results.csv \
@@ -52,6 +54,28 @@ python -m isometry_pursuit.exec.plot_difference_boxplot \
     --comparison-column "Two-Stage Losses" \
     --output-file figures/cross_dataset_comparison.png \
     --title "Greedy vs Two-Stage Across Datasets"
+
+# Greedy vs Two-Stage on Greedy (Isometry Pursuit → Greedy)
+python -m isometry_pursuit.exec.plot_difference_boxplot \
+    --result-files results/iris_results.csv \
+                   results/wine_results.csv \
+                   results/word_embeddings_results.csv \
+                   results/ethanol_results.csv \
+    --baseline-column "Losses" \
+    --comparison-column "Two-Stage on Greedy Losses" \
+    --output-file figures/greedy_vs_twostage_greedy.png \
+    --title "Greedy vs Two-Stage on Greedy Across Datasets"
+
+# Two-Stage on Greedy vs Two-Stage (Basis Pursuit → Brute Force)
+python -m isometry_pursuit.exec.plot_difference_boxplot \
+    --result-files results/iris_results.csv \
+                   results/wine_results.csv \
+                   results/word_embeddings_results.csv \
+                   results/ethanol_results.csv \
+    --baseline-column "Two-Stage on Greedy Losses" \
+    --comparison-column "Two-Stage Losses" \
+    --output-file figures/twostage_greedy_vs_twostage.png \
+    --title "Two-Stage on Greedy vs Two-Stage Across Datasets"
 
 
 # Generate plots for each dataset

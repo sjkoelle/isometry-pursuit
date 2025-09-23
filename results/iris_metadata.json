@@ -3,7 +3,7 @@
   "D": 4,
   "power": 1.0,
   "frac": 0.5,
-  "R": 2,
+  "R": 25,
   "compute_brute": false,
   "log_convergence": false,
   "data_shape": [
