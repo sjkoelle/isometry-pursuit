@@ -18,6 +18,10 @@ from sklearn.preprocessing import StandardScaler
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from isometry_pursuit.experiment import run_resampling_experiment
+from isometry_pursuit.algorithm import (
+    create_convergence_log_with_coefficients,
+    save_convergence_data,
+)
 
 
 def load_word_embeddings(output_dir="data", D=10, standardize=True):
@@ -261,12 +265,25 @@ def run_word_embeddings_experiment(
 
     # Save convergence logs if available
     if convergence_logs is not None:
-        convergence_file = os.path.join(
+        # Save in both pickle format (for compatibility) and NPZ format (for usability)
+        convergence_pkl_file = os.path.join(
             output_dir, f"word_embeddings_standardized_{power}_{D}_convergence.pkl"
         )
-        with open(convergence_file, "wb") as f:
+        with open(convergence_pkl_file, "wb") as f:
             pickle.dump(convergence_logs, f)
-        print(f"Convergence logs saved to {convergence_file}")
+        print(f"Convergence logs (pickle) saved to {convergence_pkl_file}")
+
+        # Also save in structured NPZ format for easier analysis
+        for i, log in enumerate(convergence_logs):
+            if log is not None:
+                convergence_npz_file = os.path.join(
+                    output_dir,
+                    f"word_embeddings_standardized_{power}_{D}_convergence_run_{i}.npz",
+                )
+                save_convergence_data(log, convergence_npz_file)
+        print(
+            f"Convergence logs (NPZ) saved to {output_dir}/word_embeddings_standardized_{power}_{D}_convergence_run_*.npz"
+        )
 
     return results_df
 

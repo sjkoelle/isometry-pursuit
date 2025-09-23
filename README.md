@@ -20,6 +20,15 @@ python -m isometry_pursuit.exec.load_iris_exec --output-dir data
 python -m isometry_pursuit.exec.load_wine_exec --output-dir data --max-features 13
 python -m isometry_pursuit.exec.load_word_embeddings --output-dir data --D 7
 
+# Load ethanol data (requires specific file paths)
+python -m isometry_pursuit.exec.load_ethanol_exec \
+    --config-path /Users/samsonkoelle/montlake/experiments/configs/ethanol_full.json \
+    --raw-data-path /Users/samsonkoelle/thesis_data/raw_data/ethanol.mat \
+    --positions-path /Users/samsonkoelle/positions.npy \
+    --indices-path /Users/samsonkoelle/indices.npy \
+    --angles-path /Users/samsonkoelle/ethanolanglesfull_0524.npy \
+    --output-dir data
+
 # Run experiments
 python -m isometry_pursuit.exec.run_experiment \
     --data-file data/iris_standardized.csv \
@@ -40,6 +49,27 @@ python -m isometry_pursuit.exec.run_experiment \
 python -m isometry_pursuit.exec.ethanol_experiment \
     --data-file data/ethanol_standardized.csv \
     --D 2 --R 5 \
+    --output-dir results
+
+# Run convergence analysis (separate from main experiments)
+python -m isometry_pursuit.exec.run_convergence_analysis \
+    --data-file data/iris_standardized.csv \
+    --dataset-name iris --D 4 \
+    --output-dir results
+
+python -m isometry_pursuit.exec.run_convergence_analysis \
+    --data-file data/wine_standardized_13.csv \
+    --dataset-name wine --D 6 \
+    --output-dir results
+
+python -m isometry_pursuit.exec.run_convergence_analysis \
+    --data-file data/word_embeddings_7.csv \
+    --dataset-name word_embeddings --D 7 \
+    --output-dir results
+
+python -m isometry_pursuit.exec.run_convergence_analysis \
+    --data-file data/ethanol_standardized.csv \
+    --dataset-name ethanol --D 2 \
     --output-dir results
 
 # Compare methods across multiple datasets

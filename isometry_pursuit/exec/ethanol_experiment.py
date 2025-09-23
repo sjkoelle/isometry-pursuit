@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 import numpy as np
 import pandas as pd
 from isometry_pursuit.experiment import analyze_data
+from isometry_pursuit.algorithm import save_convergence_data
 from tqdm import tqdm
 
 
@@ -91,6 +92,7 @@ def run_ethanol_experiment(
     stage_two_times = []
     two_stage_greedy_losses = []
     two_stage_greedy_times = []
+    convergence_logs = []
 
     print(f"Processing {R} data points...")
 
@@ -106,59 +108,44 @@ def run_ethanol_experiment(
         P = len(sample_data) // D
         sample_data_reshaped = sample_data.reshape(D, P)
 
-        try:
-            # Run the analysis for this sample
-            (
-                loss,
-                support_cardinality_basis_pursuit,
-                two_stage_loss,
-                random_two_stage_loss,
-                greedy_multitask_norm_two_stage,
-                brute_loss,
-                brute_isometry_loss,
-                basis_pursuit_time,
-                stage_two_time,
-                greedy_time,
-                two_stage_multitask,
-                greedy_solution,
-                basis_pursuit_iterations,
-                convergence_log,
-                two_stage_greedy_loss,
-                two_stage_greedy_time,
-            ) = analyze_data(
-                sample_data_reshaped, compute_brute=compute_brute, power=power
-            )
+        # Run the analysis for this sample
+        (
+            loss,
+            support_cardinality_basis_pursuit,
+            two_stage_loss,
+            random_two_stage_loss,
+            greedy_multitask_norm_two_stage,
+            brute_loss,
+            brute_isometry_loss,
+            basis_pursuit_time,
+            stage_two_time,
+            greedy_time,
+            two_stage_multitask,
+            greedy_solution,
+            basis_pursuit_iterations,
+            convergence_log,
+            two_stage_greedy_loss,
+            two_stage_greedy_time,
+        ) = analyze_data(
+            sample_data_reshaped,
+            compute_brute=compute_brute,
+            power=power,
+            log_convergence=log_convergence,
+        )
 
-            losses.append(loss)
-            support_cardinalities_basis_pursuit.append(
-                support_cardinality_basis_pursuit
-            )
-            two_stage_losses.append(two_stage_loss)
-            random_two_stage_losses.append(random_two_stage_loss)
-            greedy_multitask_norms_two_stage.append(greedy_multitask_norm_two_stage)
-            brute_losses.append(brute_loss)
-            brute_isometry_losses.append(brute_isometry_loss)
-            basis_pursuit_times.append(basis_pursuit_time)
-            greedy_times.append(greedy_time)
-            stage_two_times.append(stage_two_time)
-            two_stage_greedy_losses.append(two_stage_greedy_loss)
-            two_stage_greedy_times.append(two_stage_greedy_time)
-
-        except Exception as e:
-            print(f"Warning: Data point {i} failed: {e}")
-            # Add NaN values for failed data points
-            losses.append(np.nan)
-            support_cardinalities_basis_pursuit.append(np.nan)
-            two_stage_losses.append(np.nan)
-            random_two_stage_losses.append(np.nan)
-            greedy_multitask_norms_two_stage.append(np.nan)
-            brute_losses.append(np.nan)
-            brute_isometry_losses.append(np.nan)
-            basis_pursuit_times.append(np.nan)
-            greedy_times.append(np.nan)
-            stage_two_times.append(np.nan)
-            two_stage_greedy_losses.append(np.nan)
-            two_stage_greedy_times.append(np.nan)
+        losses.append(loss)
+        support_cardinalities_basis_pursuit.append(support_cardinality_basis_pursuit)
+        two_stage_losses.append(two_stage_loss)
+        random_two_stage_losses.append(random_two_stage_loss)
+        greedy_multitask_norms_two_stage.append(greedy_multitask_norm_two_stage)
+        brute_losses.append(brute_loss)
+        brute_isometry_losses.append(brute_isometry_loss)
+        basis_pursuit_times.append(basis_pursuit_time)
+        greedy_times.append(greedy_time)
+        stage_two_times.append(stage_two_time)
+        two_stage_greedy_losses.append(two_stage_greedy_loss)
+        two_stage_greedy_times.append(two_stage_greedy_time)
+        convergence_logs.append(convergence_log)
 
     # Create results DataFrame
     results_df = pd.DataFrame(
@@ -202,6 +189,28 @@ def run_ethanol_experiment(
     with open(metadata_file, "w") as f:
         json.dump(metadata, f, indent=2)
     print(f"Metadata saved to {metadata_file}")
+
+    # Save convergence logs if available
+    if any(log is not None for log in convergence_logs):
+        # Save in both pickle format (for compatibility) and NPZ format (for usability)
+        convergence_pkl_file = os.path.join(
+            output_dir, f"ethanol_standardized_{power}_{D}_convergence.pkl"
+        )
+        with open(convergence_pkl_file, "wb") as f:
+            pickle.dump(convergence_logs, f)
+        print(f"Convergence logs (pickle) saved to {convergence_pkl_file}")
+
+        # Also save in structured NPZ format for easier analysis
+        for i, log in enumerate(convergence_logs):
+            if log is not None:
+                convergence_npz_file = os.path.join(
+                    output_dir,
+                    f"ethanol_standardized_{power}_{D}_convergence_run_{i}.npz",
+                )
+                save_convergence_data(log, convergence_npz_file)
+        print(
+            f"Convergence logs (NPZ) saved to {output_dir}/ethanol_standardized_{power}_{D}_convergence_run_*.npz"
+        )
 
     return results_df
 

@@ -290,7 +290,7 @@ def load_ethanol_data(
         "angles_file": angles_path,
     }
 
-    metadata_file = os.path.join(output_dir, "ethanol_standardized_metadata.json")
+    metadata_file = os.path.join(output_dir, "ethanol_metadata.json")
     with open(metadata_file, "w") as f:
         json.dump(metadata, f, indent=2)
     print(f"Metadata saved to {metadata_file}")

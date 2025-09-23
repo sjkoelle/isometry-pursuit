@@ -10,6 +10,7 @@ from .algorithm import (
     brute,
     group_basis_pursuit,
     create_convergence_log,
+    create_convergence_log_with_coefficients,
 )
 from .loss import isometry_loss, group_lasso_norm
 
@@ -37,11 +38,10 @@ def analyze_data(
     # Use CVXPY implementation
     beta, basis_pursuit_iterations = group_basis_pursuit(data_transformed)
 
-    # Create convergence log by calling group_basis_pursuit multiple times
-    if log_convergence:
-        convergence_log = create_convergence_log(data_transformed)
-    else:
-        convergence_log = None
+    # Note: Convergence logging is not implemented for the main experiment flow
+    # since it would require calling group_basis_pursuit multiple times with different parameters
+    # For convergence analysis, use the standalone convergence logging functions
+    convergence_log = None
 
     end_basis_pursuit = time.time()
     basis_pursuit_indices = np.where(np.linalg.norm(beta, axis=1))[0]
