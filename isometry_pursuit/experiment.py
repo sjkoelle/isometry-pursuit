@@ -430,3 +430,160 @@ def analyze_convergence_logs(convergence_logs, save_path=None):
     print(
         f"Average iterations to converge: {np.mean([len(log['iterations']) for log in valid_logs]):.1f}"
     )
+
+
+def run_tensor_experiment(
+    data_tensor,
+    D,
+    R=None,
+    compute_brute=False,
+    power=1.0,
+    steps=None,
+    log_convergence=False,
+):
+    """
+    Run experiment using pre-resampled data tensor.
+
+    Parameters:
+    -----------
+    data_tensor : numpy.ndarray
+        Pre-resampled data tensor of shape (D, n_samples_per_replicate, n_replicates)
+    D : int
+        Target dimension
+    R : int, optional
+        Number of replicates to run (if None, use all available in tensor)
+    compute_brute : bool
+        Whether to compute brute force solutions
+    power : float
+        Power parameter for transformation
+    steps : int, optional
+        Maximum number of steps for optimization
+    log_convergence : bool
+        Whether to log convergence information
+
+    Returns:
+    --------
+    results_df : pandas.DataFrame
+        Results from the experiment
+    co_occurrence_matrix : np.ndarray
+        Co-occurrence matrix for two-stage solutions
+    greedy_co_occurrence_matrix : np.ndarray
+        Co-occurrence matrix for greedy solutions
+    convergence_logs : list or None
+        Convergence logs if log_convergence=True
+    """
+    import numpy as np
+    import pandas as pd
+
+    if R is None:
+        R = data_tensor.shape[2]
+    else:
+        R = min(R, data_tensor.shape[2])
+
+    losses = []
+    support_cardinalities_basis_pursuit = []
+    two_stage_losses = []
+    random_two_stage_losses = []
+    greedy_multitask_norms_two_stage = []
+    brute_isometry_losses = []
+    brute_losses = []
+    greedy_times = []
+    basis_pursuit_times = []
+    stage_two_times = []
+    basis_pursuit_iterations_list = []
+    convergence_logs = []
+    two_stage_greedy_losses = []
+    two_stage_greedy_times = []
+
+    P = data_tensor.shape[1]  # Number of samples per replicate
+    co_occurence_matrix = np.zeros((P, P))
+    greedy_co_occurence_matrix = np.zeros((P, P))
+
+    for i in range(R):
+        # Extract data for this replicate
+        X = data_tensor[:, :, i]
+
+        (
+            loss,
+            support_cardinality_basis_pursuit,
+            two_stage_loss,
+            random_two_stage_loss,
+            greedy_multitask_norm_two_stage,
+            brute_loss,
+            brute_isometry_loss,
+            basis_pursuit_time,
+            stage_two_time,
+            greedy_time,
+            two_stage_multitask,
+            greedy_solution,
+            basis_pursuit_iterations,
+            convergence_log,
+            two_stage_greedy_loss,
+            two_stage_greedy_time,
+        ) = analyze_data(
+            X,
+            compute_brute=compute_brute,
+            power=power,
+            log_convergence=log_convergence,
+        )
+
+        losses.append(loss)
+        support_cardinalities_basis_pursuit.append(support_cardinality_basis_pursuit)
+        two_stage_losses.append(two_stage_loss)
+        greedy_multitask_norms_two_stage.append(greedy_multitask_norm_two_stage)
+        random_two_stage_losses.append(random_two_stage_loss)
+        brute_losses.append(brute_loss)
+        brute_isometry_losses.append(brute_isometry_loss)
+        greedy_times.append(greedy_time)
+        basis_pursuit_times.append(basis_pursuit_time)
+        stage_two_times.append(stage_two_time)
+        basis_pursuit_iterations_list.append(basis_pursuit_iterations)
+        convergence_logs.append(convergence_log)
+        two_stage_greedy_losses.append(two_stage_greedy_loss)
+        two_stage_greedy_times.append(two_stage_greedy_time)
+
+        # Update co-occurrence matrices
+        if two_stage_multitask is not None:
+            support_indices = np.where(
+                np.linalg.norm(two_stage_multitask, axis=1) > 1e-6
+            )[0]
+            for idx in support_indices:
+                for jdx in support_indices:
+                    co_occurence_matrix[idx, jdx] += 1
+
+        if greedy_solution is not None:
+            support_indices = np.where(np.linalg.norm(greedy_solution, axis=1) > 1e-6)[
+                0
+            ]
+            for idx in support_indices:
+                for jdx in support_indices:
+                    greedy_co_occurence_matrix[idx, jdx] += 1
+
+    # Create results DataFrame
+    results_data = {
+        "loss": losses,
+        "support_cardinality_basis_pursuit": support_cardinalities_basis_pursuit,
+        "two_stage_loss": two_stage_losses,
+        "random_two_stage_loss": random_two_stage_losses,
+        "greedy_multitask_norm_two_stage": greedy_multitask_norms_two_stage,
+        "brute_loss": brute_losses,
+        "brute_isometry_loss": brute_isometry_losses,
+        "greedy_time": greedy_times,
+        "basis_pursuit_time": basis_pursuit_times,
+        "stage_two_time": stage_two_times,
+        "basis_pursuit_iterations": basis_pursuit_iterations_list,
+        "two_stage_greedy_loss": two_stage_greedy_losses,
+        "two_stage_greedy_time": two_stage_greedy_times,
+    }
+
+    results_df = pd.DataFrame(results_data)
+
+    if log_convergence:
+        return (
+            results_df,
+            co_occurence_matrix,
+            greedy_co_occurence_matrix,
+            convergence_logs,
+        )
+    else:
+        return results_df, co_occurence_matrix, greedy_co_occurence_matrix

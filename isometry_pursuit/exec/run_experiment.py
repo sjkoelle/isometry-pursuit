@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 import numpy as np
 import pandas as pd
-from isometry_pursuit.experiment import run_resampling_experiment
+from isometry_pursuit.experiment import run_resampling_experiment, run_tensor_experiment
 
 
 def run_experiment(
@@ -161,7 +161,11 @@ def run_experiment(
 
 def main():
     parser = argparse.ArgumentParser(description="Run isometry pursuit experiment")
-    parser.add_argument("--data-file", required=True, help="Path to data file (CSV)")
+    parser.add_argument(
+        "--data-file",
+        required=True,
+        help="Path to data file (CSV for ethanol, .npy tensor for others)",
+    )
     parser.add_argument("--dataset-name", required=True, help="Name of the dataset")
     parser.add_argument("--D", type=int, required=True, help="Target dimension")
     parser.add_argument("--power", type=float, default=1.0, help="Power parameter")
@@ -181,22 +185,114 @@ def main():
 
     # Load data
     print(f"Loading data from {args.data_file}")
-    data = pd.read_csv(args.data_file)
 
-    # Run experiment
-    results_df, co_occurrence_matrix, greedy_co_occurrence_matrix, convergence_logs = (
-        run_experiment(
-            data=data,
-            dataset_name=args.dataset_name,
-            D=args.D,
-            power=args.power,
-            frac=args.frac,
-            R=args.R,
-            compute_brute=args.compute_brute,
-            log_convergence=args.log_convergence,
-            output_dir=args.output_dir,
-        )
+    # For non-ethanol datasets, load the resampled data tensor directly
+    if args.dataset_name != "ethanol":
+        if args.data_file.endswith(".npy"):
+            print(f"Loading resampled data tensor from {args.data_file}")
+            data_tensor = np.load(args.data_file)
+            print(f"Data tensor shape: {data_tensor.shape}")
+
+            # Run experiment using tensor
+            if args.log_convergence:
+                (
+                    results_df,
+                    co_occurrence_matrix,
+                    greedy_co_occurrence_matrix,
+                    convergence_logs,
+                ) = run_tensor_experiment(
+                    data_tensor=data_tensor,
+                    D=args.D,
+                    R=args.R,
+                    compute_brute=args.compute_brute,
+                    power=args.power,
+                    log_convergence=args.log_convergence,
+                )
+            else:
+                results_df, co_occurrence_matrix, greedy_co_occurrence_matrix = (
+                    run_tensor_experiment(
+                        data_tensor=data_tensor,
+                        D=args.D,
+                        R=args.R,
+                        compute_brute=args.compute_brute,
+                        power=args.power,
+                        log_convergence=args.log_convergence,
+                    )
+                )
+                convergence_logs = None
+        else:
+            print(f"Error: For non-ethanol datasets, please provide a .npy tensor file")
+            print(f"Expected file ending with .npy, got: {args.data_file}")
+            return
+    else:
+        # For ethanol, load CSV as before
+        data = pd.read_csv(args.data_file)
+
+        # Run experiment using traditional resampling
+        if args.log_convergence:
+            (
+                results_df,
+                co_occurrence_matrix,
+                greedy_co_occurrence_matrix,
+                convergence_logs,
+            ) = run_experiment(
+                data=data,
+                dataset_name=args.dataset_name,
+                D=args.D,
+                power=args.power,
+                frac=args.frac,
+                R=args.R,
+                compute_brute=args.compute_brute,
+                log_convergence=args.log_convergence,
+                output_dir=args.output_dir,
+            )
+        else:
+            results_df, co_occurrence_matrix, greedy_co_occurrence_matrix = (
+                run_experiment(
+                    data=data,
+                    dataset_name=args.dataset_name,
+                    D=args.D,
+                    power=args.power,
+                    frac=args.frac,
+                    R=args.R,
+                    compute_brute=args.compute_brute,
+                    log_convergence=args.log_convergence,
+                    output_dir=args.output_dir,
+                )
+            )
+            convergence_logs = None
+
+    # Save results (common for both tensor and traditional experiments)
+    os.makedirs(args.output_dir, exist_ok=True)
+
+    # Save results
+    results_file = os.path.join(args.output_dir, f"{args.dataset_name}_results.csv")
+    results_df.to_csv(results_file, index=False)
+    print(f"Results saved to {results_file}")
+
+    # Save co-occurrence matrices
+    co_occurrence_file = os.path.join(
+        args.output_dir, f"{args.dataset_name}_co_occurrence.pkl"
     )
+    with open(co_occurrence_file, "wb") as f:
+        pickle.dump(
+            {
+                "co_occurrence_matrix": co_occurrence_matrix,
+                "greedy_co_occurrence_matrix": greedy_co_occurrence_matrix,
+            },
+            f,
+        )
+    print(f"Co-occurrence matrices saved to {co_occurrence_file}")
+
+    # Save convergence logs if available
+    if convergence_logs is not None:
+        convergence_file = os.path.join(
+            args.output_dir,
+            f"{args.dataset_name}_standardized_{args.power}_{args.D}_convergence.pkl",
+        )
+        with open(convergence_file, "wb") as f:
+            pickle.dump(convergence_logs, f)
+        print(f"Convergence logs saved to {convergence_file}")
 
     print("Experiment completed successfully!")
     print(f"Results shape: {results_df.shape}")

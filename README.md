@@ -29,20 +29,20 @@ python -m isometry_pursuit.exec.load_ethanol_exec \
     --angles-path /Users/samsonkoelle/ethanolanglesfull_0524.npy \
     --output-dir data
 
-# Run experiments
+# Run experiments (using resampled data tensors)
 python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/iris_standardized.csv \
-    --dataset-name iris --D 4 --R 5 \
+    --data-file data/iris_standardized_resampled_tensor.npy \
+    --dataset-name iris --D 4 \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/wine_standardized_13.csv \
-    --dataset-name wine --D 6 --R 5 \
+    --data-file data/wine_standardized_13_resampled_tensor.npy \
+    --dataset-name wine --D 6 \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/word_embeddings_7.csv \
-    --dataset-name word_embeddings --D 7 --R 25 \
+    --data-file data/word_embeddings_standardized_7_resampled_tensor.npy \
+    --dataset-name word_embeddings --D 7 \
     --output-dir results
 
 # Special ethanol experiment (requires data download first)
@@ -53,18 +53,20 @@ python -m isometry_pursuit.exec.ethanol_experiment \
 
 # Run convergence analysis (separate from main experiments)
 python -m isometry_pursuit.exec.run_convergence_analysis \
-    --data-file data/iris_standardized.csv \
+    --data-file data/iris_standardized_resampled_tensor.npy \
     --dataset-name iris --D 4 \
+    --n-replicates 10 \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_convergence_analysis \
-    --data-file data/wine_standardized_13.csv \
+    --data-file data/wine_standardized_13_resampled_tensor.npy \
     --dataset-name wine --D 6 \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_convergence_analysis \
-    --data-file data/word_embeddings_7.csv \
+    --data-file data/word_embeddings_standardized_7_resampled_tensor.npy \
     --dataset-name word_embeddings --D 7 \
+    --n-replicates 10 \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_convergence_analysis \

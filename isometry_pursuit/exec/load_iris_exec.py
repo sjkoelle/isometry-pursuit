@@ -16,9 +16,9 @@ from sklearn.preprocessing import StandardScaler
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
-def load_iris_data(output_dir="data", standardize=True):
+def load_iris_data(output_dir="data", standardize=True, n_replicates=25, frac=0.5):
     """
-    Load and preprocess Iris dataset.
+    Load and preprocess Iris dataset with resampling.
 
     Parameters:
     -----------
@@ -26,11 +26,17 @@ def load_iris_data(output_dir="data", standardize=True):
         Directory to save the processed data
     standardize : bool
         Whether to standardize the data
+    n_replicates : int
+        Number of resampling replicates to generate
+    frac : float
+        Fraction of data to use in each resampling
 
     Returns:
     --------
+    data_tensor : numpy.ndarray
+        Resampled data tensor of shape (D, n_samples_per_replicate, n_replicates)
     data : pandas.DataFrame
-        Processed Iris data
+        Original processed Iris data
     D : int
         Number of features (dimension)
     P : int
@@ -91,7 +97,26 @@ def load_iris_data(output_dir="data", standardize=True):
         json.dump(metadata, f, indent=2)
     print(f"Metadata saved to {metadata_file}")
 
-    return data, D_iris, P_iris
+    # Generate resampled data tensor
+    print(f"Generating {n_replicates} resampled replicates with frac={frac}...")
+    n_samples_per_replicate = int(P_iris * frac)
+    data_tensor = np.zeros((D_iris, n_samples_per_replicate, n_replicates))
+
+    for i in range(n_replicates):
+        np.random.seed(i)
+        random_indices = np.random.choice(
+            range(P_iris), n_samples_per_replicate, replace=False
+        )
+        data_tensor[:, :, i] = data.to_numpy()[random_indices].T
+
+    print(f"Generated data tensor shape: {data_tensor.shape}")
+
+    # Save resampled data tensor
+    tensor_file = os.path.join(output_dir, f"{data_name}_resampled_tensor.npy")
+    np.save(tensor_file, data_tensor)
+    print(f"Resampled data tensor saved to {tensor_file}")
+
+    return data_tensor, data, D_iris, P_iris
 
 
 def main():
@@ -106,12 +131,13 @@ def main():
     args = parser.parse_args()
 
     # Load data
-    data, D, P = load_iris_data(
+    data_tensor, data, D, P = load_iris_data(
         output_dir=args.output_dir, standardize=not args.no_standardize
     )
 
     print(f"Loaded Iris dataset: {P} samples, {D} features")
-    print(f"Data shape: {data.shape}")
+    print(f"Original data shape: {data.shape}")
+    print(f"Resampled tensor shape: {data_tensor.shape}")
 
 
 if __name__ == "__main__":

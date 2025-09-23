@@ -398,20 +398,9 @@ def plot_coefficient_convergence(convergence_data, save_path=None, max_features=
     # Determine which features are non-zero at the final iteration
     final_norms = valid_norms[-1, :]
 
-    # Use relative threshold: features with norm < 1% of max norm are considered "zero"
-    max_norm = final_norms.max()
-    relative_threshold = max_norm * 0.01
-
-    non_zero_features = final_norms > relative_threshold
-
-    # Debug: print some info about the norms
-    print(f"Number of features: {len(final_norms)}")
-    print(f"Max final norm: {max_norm:.2e}")
-    print(f"Relative threshold: {relative_threshold:.2e}")
-    print(f"Non-zero features: {non_zero_features.sum()}")
-    print(f"Zero features: {(~non_zero_features).sum()}")
-    print(f"Min final norm: {final_norms.min():.2e}")
-    print(f"Max final norm: {final_norms.max():.2e}")
+    # Use threshold 10e-5 for better visualization
+    threshold = 10e-5
+    non_zero_features = final_norms > threshold
 
     # Limit number of features for readability if requested
     if max_features is not None and P > max_features:
@@ -574,6 +563,10 @@ def plot_convergence_summary(convergence_data, save_path=None):
     valid_residuals = residuals[valid_mask]
     valid_norms = coefficient_norms[valid_mask]
 
+    # Recalculate sparsity using the same threshold as coefficient convergence plot
+    threshold = 10e-5
+    recalculated_sparsities = np.sum(valid_norms > threshold, axis=1)
+
     if len(valid_iterations) == 0:
         print("No valid convergence data to plot")
         return
@@ -588,8 +581,8 @@ def plot_convergence_summary(convergence_data, save_path=None):
     axes[0, 0].set_title("Loss Convergence")
     axes[0, 0].grid(True, alpha=0.3)
 
-    # Plot 2: Sparsity over iterations
-    axes[0, 1].semilogx(valid_iterations, valid_sparsities, "r-s", markersize=4)
+    # Plot 2: Sparsity over iterations (recalculated with consistent threshold)
+    axes[0, 1].semilogx(valid_iterations, recalculated_sparsities, "r-s", markersize=4)
     axes[0, 1].set_xlabel("Iterations")
     axes[0, 1].set_ylabel("Sparsity (Non-zero Rows)")
     axes[0, 1].set_title("Sparsity Evolution")
@@ -638,6 +631,104 @@ def plot_convergence_summary(convergence_data, save_path=None):
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches="tight")
         print(f"Convergence summary plot saved to {save_path}")
+        plt.close()  # Close the figure to free memory
+    else:
+        plt.show()
+
+
+def plot_sparsity_convergence_boxplot(convergence_logs, save_path=None):
+    """
+    Plot sparsity convergence as boxplots across replicates.
+
+    Parameters:
+    -----------
+    convergence_logs : list
+        List of convergence data dictionaries from multiple replicates
+    save_path : str, optional
+        Path to save the plot
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    if not convergence_logs or all(log is None for log in convergence_logs):
+        print("No valid convergence logs to plot")
+        return
+
+    # Extract sparsity data from all replicates
+    all_sparsities = []
+    all_iterations = []
+    threshold = 10e-5  # Use same threshold as other plots
+
+    for log in convergence_logs:
+        if log is not None and "coefficient_norms" in log and "iterations" in log:
+            coefficient_norms = log["coefficient_norms"]
+            iterations = np.array(log["iterations"])
+            sparsities = np.array(log["sparsities"])
+
+            # Filter out failed iterations (sparsities = -1)
+            valid_mask = sparsities >= 0
+            valid_norms = coefficient_norms[valid_mask]
+            valid_iterations = iterations[valid_mask]
+
+            if len(valid_norms) > 0:
+                # Recalculate sparsity using consistent threshold
+                recalculated_sparsities = np.sum(valid_norms > threshold, axis=1)
+                all_sparsities.append(recalculated_sparsities)
+                all_iterations.append(valid_iterations)
+
+    if not all_sparsities:
+        print("No valid sparsity data to plot")
+        return
+
+    # Find common iteration points
+    all_unique_iterations = set()
+    for iterations in all_iterations:
+        all_unique_iterations.update(iterations)
+    common_iterations = sorted(list(all_unique_iterations))
+
+    # Organize data by iteration point
+    iteration_data = {}
+    for i, iterations in enumerate(all_iterations):
+        sparsities = all_sparsities[i]
+        for iter_val, sparsity in zip(iterations, sparsities):
+            if iter_val not in iteration_data:
+                iteration_data[iter_val] = []
+            iteration_data[iter_val].append(sparsity)
+
+    # Prepare data for boxplot
+    boxplot_data = []
+    boxplot_labels = []
+
+    for iter_val in common_iterations:
+        if iter_val in iteration_data and len(iteration_data[iter_val]) > 0:
+            boxplot_data.append(iteration_data[iter_val])
+            boxplot_labels.append(str(iter_val))
+
+    if not boxplot_data:
+        print("No data to plot")
+        return
+
+    # Create the plot
+    plt.figure(figsize=(12, 8))
+
+    # Create boxplot
+    bp = plt.boxplot(boxplot_data, labels=boxplot_labels, patch_artist=True)
+
+    # Color the boxes
+    for patch in bp["boxes"]:
+        patch.set_facecolor("#4E2A84")  # Garfield purple
+        patch.set_alpha(0.7)
+
+    plt.xlabel("Iterations", fontsize=14)
+    plt.ylabel("Sparsity (Number of Non-zero Features)", fontsize=14)
+    plt.title("Sparsity Convergence Across Replicates", fontsize=16)
+    plt.grid(True, alpha=0.3)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")
+        print(f"Sparsity convergence boxplot saved to {save_path}")
         plt.close()  # Close the figure to free memory
     else:
         plt.show()

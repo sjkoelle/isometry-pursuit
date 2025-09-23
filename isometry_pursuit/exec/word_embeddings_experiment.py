@@ -24,9 +24,11 @@ from isometry_pursuit.algorithm import (
 )
 
 
-def load_word_embeddings(output_dir="data", D=10, standardize=True):
+def load_word_embeddings(
+    output_dir="data", D=10, standardize=True, n_replicates=25, frac=0.5
+):
     """
-    Load and preprocess word embeddings.
+    Load and preprocess word embeddings with resampling.
 
     Parameters:
     -----------
@@ -36,11 +38,17 @@ def load_word_embeddings(output_dir="data", D=10, standardize=True):
         Target dimension for PCA
     standardize : bool
         Whether to standardize the data
+    n_replicates : int
+        Number of resampling replicates to generate
+    frac : float
+        Fraction of data to use in each resampling
 
     Returns:
     --------
+    data_tensor : numpy.ndarray
+        Resampled data tensor of shape (D, n_samples_per_replicate, n_replicates)
     data : pandas.DataFrame
-        Processed word embeddings data
+        Original processed word embeddings data
     D : int
         Number of features (dimension)
     P : int
@@ -164,7 +172,26 @@ def load_word_embeddings(output_dir="data", D=10, standardize=True):
         json.dump(metadata, f, indent=2)
     print(f"Metadata saved to {metadata_file}")
 
-    return embeds, D, len(words)
+    # Generate resampled data tensor
+    print(f"Generating {n_replicates} resampled replicates with frac={frac}...")
+    n_samples_per_replicate = int(len(words) * frac)
+    data_tensor = np.zeros((D, n_samples_per_replicate, n_replicates))
+
+    for i in range(n_replicates):
+        np.random.seed(i)
+        random_indices = np.random.choice(
+            range(len(words)), n_samples_per_replicate, replace=False
+        )
+        data_tensor[:, :, i] = embeds.to_numpy()[random_indices].T
+
+    print(f"Generated data tensor shape: {data_tensor.shape}")
+
+    # Save resampled data tensor
+    tensor_file = os.path.join(output_dir, f"{data_name}_{D}_resampled_tensor.npy")
+    np.save(tensor_file, data_tensor)
+    print(f"Resampled data tensor saved to {tensor_file}")
+
+    return data_tensor, embeds, D, len(words)
 
 
 def run_word_embeddings_experiment(
@@ -314,7 +341,7 @@ def main():
 
     # Load data if requested
     if args.load_data:
-        data, D, P = load_word_embeddings(
+        data_tensor, data, D, P = load_word_embeddings(
             output_dir=args.data_dir, D=args.D, standardize=True
         )
     else:
