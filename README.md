@@ -45,10 +45,9 @@ python -m isometry_pursuit.exec.run_experiment \
     --dataset-name word_embeddings --D 7 \
     --output-dir results
 
-# Special ethanol experiment (requires data download first)
-python -m isometry_pursuit.exec.ethanol_experiment \
-    --data-file data/ethanol_standardized.csv \
-    --D 2 --R 5 \
+python -m isometry_pursuit.exec.run_experiment \
+    --data-file data/ethanol_standardized_resampled_tensor.npy \
+    --dataset-name ethanol --D 2 \
     --output-dir results
 
 # Run convergence analysis (separate from main experiments)
@@ -70,7 +69,7 @@ python -m isometry_pursuit.exec.run_convergence_analysis \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_convergence_analysis \
-    --data-file data/ethanol_standardized.csv \
+    --data-file data/ethanol_standardized_resampled_tensor.npy \
     --dataset-name ethanol --D 2 \
     --output-dir results
 

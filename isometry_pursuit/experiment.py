@@ -435,7 +435,6 @@ def analyze_convergence_logs(convergence_logs, save_path=None):
 def run_tensor_experiment(
     data_tensor,
     D,
-    R=None,
     compute_brute=False,
     power=1.0,
     steps=None,
@@ -450,8 +449,6 @@ def run_tensor_experiment(
         Pre-resampled data tensor of shape (D, n_samples_per_replicate, n_replicates)
     D : int
         Target dimension
-    R : int, optional
-        Number of replicates to run (if None, use all available in tensor)
     compute_brute : bool
         Whether to compute brute force solutions
     power : float
@@ -475,10 +472,7 @@ def run_tensor_experiment(
     import numpy as np
     import pandas as pd
 
-    if R is None:
-        R = data_tensor.shape[2]
-    else:
-        R = min(R, data_tensor.shape[2])
+    R = data_tensor.shape[2]  # Use all available replicates
 
     losses = []
     support_cardinalities_basis_pursuit = []
@@ -544,19 +538,15 @@ def run_tensor_experiment(
 
         # Update co-occurrence matrices
         if two_stage_multitask is not None:
-            support_indices = np.where(
-                np.linalg.norm(two_stage_multitask, axis=1) > 1e-6
-            )[0]
-            for idx in support_indices:
-                for jdx in support_indices:
+            # two_stage_multitask is an array of indices, not a coefficient matrix
+            for idx in two_stage_multitask:
+                for jdx in two_stage_multitask:
                     co_occurence_matrix[idx, jdx] += 1
 
         if greedy_solution is not None:
-            support_indices = np.where(np.linalg.norm(greedy_solution, axis=1) > 1e-6)[
-                0
-            ]
-            for idx in support_indices:
-                for jdx in support_indices:
+            # greedy_solution is an array of indices, not a coefficient matrix
+            for idx in greedy_solution:
+                for jdx in greedy_solution:
                     greedy_co_occurence_matrix[idx, jdx] += 1
 
     # Create results DataFrame

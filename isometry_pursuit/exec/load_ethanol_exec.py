@@ -295,7 +295,23 @@ def load_ethanol_data(
         json.dump(metadata, f, indent=2)
     print(f"Metadata saved to {metadata_file}")
 
-    return data_df, dimension * p, nsel
+    # Generate ethanol data tensor (each replicate is a different data point)
+    print(f"Generating ethanol data tensor...")
+    n_replicates = len(data_df)
+    data_tensor = np.zeros((dimension * p, nsel, n_replicates))
+
+    for i in range(n_replicates):
+        sample_data = data_df.iloc[i].values
+        data_tensor[:, :, i] = sample_data.reshape(dimension * p, nsel)
+
+    print(f"Generated ethanol data tensor shape: {data_tensor.shape}")
+
+    # Save ethanol data tensor
+    tensor_file = os.path.join(output_dir, "ethanol_standardized_resampled_tensor.npy")
+    np.save(tensor_file, data_tensor)
+    print(f"Ethanol data tensor saved to {tensor_file}")
+
+    return data_tensor, data_df, dimension * p, nsel
 
 
 def main():
@@ -347,7 +363,7 @@ def main():
             sys.exit(1)
 
     # Load data
-    data, D, P = load_ethanol_data(
+    data_tensor, data, D, P = load_ethanol_data(
         config_path=args.config_path,
         raw_data_path=args.raw_data_path,
         positions_path=args.positions_path,
@@ -362,7 +378,8 @@ def main():
     )
 
     print(f"Loaded Ethanol dataset: {P} samples, {D} features")
-    print(f"Data shape: {data.shape}")
+    print(f"Original data shape: {data.shape}")
+    print(f"Data tensor shape: {data_tensor.shape}")
 
 
 if __name__ == "__main__":
