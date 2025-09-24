@@ -18,11 +18,6 @@ from isometry_pursuit.algorithm import (
     save_convergence_data,
     load_convergence_data,
 )
-from isometry_pursuit.exec.plot_results import (
-    plot_coefficient_convergence,
-    plot_coefficient_convergence_heatmap,
-    plot_sparsity_convergence_boxplot,
-)
 
 
 def run_convergence_analysis_script(
@@ -30,7 +25,7 @@ def run_convergence_analysis_script(
     dataset_name,
     power=1.0,
     iteration_points=None,
-    output_dir="figures",
+    output_dir="results",
     n_replicates=10,
 ):
     """
@@ -90,35 +85,12 @@ def run_convergence_analysis_script(
     with open(all_convergence_file, "wb") as f:
         pickle.dump(convergence_logs, f)
 
-    # Generate plots
-    print("Generating convergence plots...")
-
-    # Sparsity convergence boxplot across replicates
-    plot_sparsity_convergence_boxplot(
-        convergence_logs,
-        save_path=os.path.join(
-            output_dir, f"{dataset_name}_sparsity_convergence_boxplot.png"
-        ),
-    )
-
-    # Individual plots for the first replicate
-    first_replicate = convergence_logs[0]
-
-    # Coefficient convergence plot
-    plot_coefficient_convergence(
-        first_replicate,
-        save_path=os.path.join(
-            output_dir, f"{dataset_name}_coefficient_convergence.png"
-        ),
-        max_features=20,
-    )
-
     print(f"Convergence analysis completed!")
     print(
         f"Individual replicate data saved to: {output_dir}/{dataset_name}_convergence_replicate_*.npz"
     )
     print(f"All replicates data saved to: {all_convergence_file}")
-    print(f"Plots saved to: {output_dir}/{dataset_name}_convergence_*.png")
+    print(f"Use plot_convergence_analysis.py to generate plots from this data")
 
 
 def main():
@@ -137,7 +109,7 @@ def main():
         default=[1, 10, 100, 1000, 10000],
         help="Iteration points to test",
     )
-    parser.add_argument("--output-dir", default="figures", help="Output directory")
+    parser.add_argument("--output-dir", default="results", help="Output directory")
     parser.add_argument(
         "--n-replicates", type=int, default=10, help="Number of replicates to run"
     )

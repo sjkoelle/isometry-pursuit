@@ -52,25 +52,50 @@ python -m isometry_pursuit.exec.run_experiment \
     --output-dir results
 
 # # Run convergence analysis (separate from main experiments)
+# Step 1: Generate convergence data
 python -m isometry_pursuit.exec.run_convergence_analysis \
     --data-file data/iris/iris_standardized_resampled_tensor.npy \
     --dataset-name iris \
     --n-replicates 10 \
-    --output-dir figures
+    --output-dir results
 
 python -m isometry_pursuit.exec.run_convergence_analysis \
     --data-file data/wine_6/wine_standardized_resampled_tensor.npy \
     --dataset-name wine \
-    --output-dir figures
+    --n-replicates 10 \
+    --output-dir results
 
 python -m isometry_pursuit.exec.run_convergence_analysis \
     --data-file data/words/word_embeddings_standardized_resampled_tensor.npy \
     --dataset-name word_embeddings \
     --n-replicates 10 \
-    --output-dir figures
+    --n-replicates 10 \
+    --output-dir results
 
 python -m isometry_pursuit.exec.run_convergence_analysis \
     --data-file data/ethanol/ethanol_tensor.npy \
+    --dataset-name ethanol \
+    --n-replicates 10 \
+    --output-dir results
+
+# Step 2: Generate convergence plots
+python -m isometry_pursuit.exec.plot_convergence_analysis \
+    --convergence-file results/iris_convergence_all_replicates.pkl \
+    --dataset-name iris \
+    --output-dir figures
+
+python -m isometry_pursuit.exec.plot_convergence_analysis \
+    --convergence-file results/wine_convergence_all_replicates.pkl \
+    --dataset-name wine \
+    --output-dir figures
+
+python -m isometry_pursuit.exec.plot_convergence_analysis \
+    --convergence-file results/word_embeddings_convergence_all_replicates.pkl \
+    --dataset-name word_embeddings \
+    --output-dir figures
+
+python -m isometry_pursuit.exec.plot_convergence_analysis \
+    --convergence-file results/ethanol_convergence_all_replicates.pkl \
     --dataset-name ethanol \
     --output-dir figures
 
