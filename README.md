@@ -18,7 +18,7 @@ The easiest way to run experiments:
 # Load data
 python -m isometry_pursuit.exec.load_iris_exec --output-dir data/iris
 python -m isometry_pursuit.exec.load_wine_exec --output-dir data/wine_6 --D 6  # Sample 6 features per replicate
-python -m isometry_pursuit.exec.load_word_embeddings --output-dir data/word_7 --D 7  # Sample 7 features per replicate
+python -m isometry_pursuit.exec.load_word_embeddings --output-dir data/words
 
 # Load ethanol data (requires specific file paths)
 python -m isometry_pursuit.exec.load_ethanol_exec \
@@ -27,52 +27,52 @@ python -m isometry_pursuit.exec.load_ethanol_exec \
     --positions-path /Users/samsonkoelle/positions.npy \
     --indices-path /Users/samsonkoelle/indices.npy \
     --angles-path /Users/samsonkoelle/ethanolanglesfull_0524.npy \
-    --output-dir data
+    --output-dir data/ethanol
 
 # Run experiments (using resampled data tensors)
 # Note: D is automatically extracted from tensor shape
 python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/iris_standardized_resampled_tensor.npy \
+    --data-file data/iris/iris_standardized_resampled_tensor.npy \
     --dataset-name iris \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/wine_standardized_resampled_tensor.npy \
+    --data-file data/wine_6/wine_standardized_resampled_tensor.npy \
     --dataset-name wine \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/word_embeddings_standardized_7_resampled_tensor.npy \
+    --data-file data/words/word_embeddings_standardized_resampled_tensor.npy \
     --dataset-name word_embeddings \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/ethanol_normalized_resampled_tensor.npy \
+    --data-file data/ethanol/ethanol_tensor.npy \
     --dataset-name ethanol \
     --output-dir results
 
-# Run convergence analysis (separate from main experiments)
-python -m isometry_pursuit.exec.run_convergence_analysis \
-    --data-file data/iris_standardized_resampled_tensor.npy \
-    --dataset-name iris \
-    --n-replicates 10 \
-    --output-dir results
+# # Run convergence analysis (separate from main experiments)
+# python -m isometry_pursuit.exec.run_convergence_analysis \
+#     --data-file data/iris_standardized_resampled_tensor.npy \
+#     --dataset-name iris \
+#     --n-replicates 10 \
+#     --output-dir results
 
-python -m isometry_pursuit.exec.run_convergence_analysis \
-    --data-file data/wine_standardized_13_resampled_tensor.npy \
-    --dataset-name wine \
-    --output-dir results
+# python -m isometry_pursuit.exec.run_convergence_analysis \
+#     --data-file data/wine_standardized_13_resampled_tensor.npy \
+#     --dataset-name wine \
+#     --output-dir results
 
-python -m isometry_pursuit.exec.run_convergence_analysis \
-    --data-file data/word_embeddings_standardized_7_resampled_tensor.npy \
-    --dataset-name word_embeddings \
-    --n-replicates 10 \
-    --output-dir results
+# python -m isometry_pursuit.exec.run_convergence_analysis \
+#     --data-file data/word_embeddings_standardized_7_resampled_tensor.npy \
+#     --dataset-name word_embeddings \
+#     --n-replicates 10 \
+#     --output-dir results
 
-python -m isometry_pursuit.exec.run_convergence_analysis \
-    --data-file data/ethanol_normalized_resampled_tensor.npy \
-    --dataset-name ethanol \
-    --output-dir results
+# python -m isometry_pursuit.exec.run_convergence_analysis \
+#     --data-file data/ethanol_tensor.npy \
+#     --dataset-name ethanol \
+#     --output-dir results
 
 # Compare methods across multiple datasets
 
@@ -82,8 +82,8 @@ python -m isometry_pursuit.exec.plot_difference_boxplot \
                    results/wine_results.csv \
                    results/word_embeddings_results.csv \
                    results/ethanol_results.csv \
-    --baseline-column "Losses" \
-    --comparison-column "Two-Stage Losses" \
+    --baseline-column "loss" \
+    --comparison-column "two_stage_loss" \
     --output-file figures/cross_dataset_comparison.png \
     --title "Greedy vs Two-Stage Across Datasets"
 
@@ -93,8 +93,8 @@ python -m isometry_pursuit.exec.plot_difference_boxplot \
                    results/wine_results.csv \
                    results/word_embeddings_results.csv \
                    results/ethanol_results.csv \
-    --baseline-column "Losses" \
-    --comparison-column "Two-Stage on Greedy Losses" \
+    --baseline-column "loss" \
+    --comparison-column "two_stage_greedy_loss" \
     --output-file figures/greedy_vs_twostage_greedy.png \
     --title "Greedy vs Two-Stage on Greedy Across Datasets"
 
@@ -104,8 +104,8 @@ python -m isometry_pursuit.exec.plot_difference_boxplot \
                    results/wine_results.csv \
                    results/word_embeddings_results.csv \
                    results/ethanol_results.csv \
-    --baseline-column "Two-Stage on Greedy Losses" \
-    --comparison-column "Two-Stage Losses" \
+    --baseline-column "two_stage_greedy_loss" \
+    --comparison-column "two_stage_loss" \
     --output-file figures/twostage_greedy_vs_twostage.png \
     --title "Two-Stage on Greedy vs Two-Stage Across Datasets"
 
@@ -131,8 +131,6 @@ python -m isometry_pursuit.exec.plot_results \
     --dataset-name ethanol \
     --output-dir figures
 
-# Or generate all figures at once
-scripts/generate_figures.sh
 
 
 ```

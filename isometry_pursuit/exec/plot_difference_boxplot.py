@@ -118,47 +118,21 @@ def plot_difference_boxplot(
     if len(differences) == 1:
         print("Warning: Only one dataset has valid data, creating single box plot")
 
-    # Create the plot
-    plt.figure(figsize=(max(8, len(valid_datasets) * 2), 8))
-
-    # Create box plot
-    box = plt.boxplot(
-        differences,
-        patch_artist=True,
-        medianprops=dict(color="black", linewidth=2),
-        labels=valid_datasets,
-    )
-
-    # Customize boxplot colors
-    colors = plt.cm.Set3(np.linspace(0, 1, len(differences)))
-    for patch, color in zip(box["boxes"], colors):
-        patch.set_facecolor(color)
-        patch.set_alpha(0.7)
-
-    # Add horizontal line at 0
-    plt.axhline(0, color="black", linestyle="--", linewidth=1, alpha=0.7)
-
-    # Set labels
-    plt.xlabel("Dataset", fontsize=16)
+    # Create the plot using the box_plot function
     if ylabel is None:
         # Use the same LaTeX formula as in plot_results.py
         ylabel = r"$\ell_1(\hat{S}_{g}) - \ell_1(\hat{S}_{TSIP})$"
-    plt.ylabel(ylabel, fontsize=16)
-    plt.title(title, fontsize=18)
 
-    # Use symlog scaling for y-axis to handle both positive and negative values
-    plt.yscale("symlog")
-
-    # Rotate x-axis labels if there are many datasets
-    if len(valid_datasets) > 4:
-        plt.xticks(rotation=45, ha="right")
-
-    plt.grid(True, which="both", linestyle="--", alpha=0.5)
-    plt.tight_layout()
-
-    # Save plot
-    plt.savefig(output_file, bbox_inches="tight", dpi=300)
-    plt.close()
+    box_plot(
+        data_list=differences,
+        labels=valid_datasets,
+        title=title,
+        xlabel="Dataset",
+        ylabel=ylabel,
+        filename=output_file,
+        figsize=(max(8, len(valid_datasets) * 2), 8),
+        show_zero_line=True,
+    )
 
     print(f"Saved plot: {output_file}")
     print(f"Compared {len(valid_datasets)} datasets: {', '.join(valid_datasets)}")
@@ -176,13 +150,13 @@ def main():
     )
     parser.add_argument(
         "--baseline-column",
-        default="Losses",
-        help="Name of baseline method column (default: 'Losses')",
+        default="loss",
+        help="Name of baseline method column (default: 'loss')",
     )
     parser.add_argument(
         "--comparison-column",
-        default="Two-Stage Losses",
-        help="Name of comparison method column (default: 'Two-Stage Losses')",
+        default="two_stage_loss",
+        help="Name of comparison method column (default: 'two_stage_loss')",
     )
     parser.add_argument(
         "--dataset-names",

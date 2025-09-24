@@ -24,7 +24,6 @@ from isometry_pursuit.atomic_geometry import (
     get_atoms4_full,
     get_atoms_4,
 )
-from isometry_pursuit.transformation import exponential_transformation
 from isometry_pursuit.manifold import local_pca
 import itertools
 
@@ -247,8 +246,7 @@ def load_ethanol_data(
     dg_M = np.zeros((nsel, dimension, p))
     for i, sp in enumerate(tqdm(selected_points, desc="Computing tangent spaces")):
         tangent_bases = local_pca(data, sp, n_neighbors, dimension)
-        dg_x_normalized = exponential_transformation(dg_x[i], power)
-        dg_M[i] = np.einsum("b p, b d -> d p", dg_x_normalized, tangent_bases)
+        dg_M[i] = np.einsum("b p, b d -> d p", dg_x[i], tangent_bases)
 
     # Convert to DataFrame format for compatibility with run_experiment.py
     # Each row represents one experiment run with the projected data
@@ -295,19 +293,21 @@ def load_ethanol_data(
         json.dump(metadata, f, indent=2)
     print(f"Metadata saved to {metadata_file}")
 
-    # Generate ethanol data tensor (each replicate is a different data point)
+    # Generate ethanol data tensor
     print(f"Generating ethanol data tensor...")
-    n_replicates = len(data_df)
-    data_tensor = np.zeros((dimension * p, nsel, n_replicates))
+    # The data_df has nsel rows (one per selected point) and dimension*p columns
+    # We want a tensor of shape (dimension, p, nsel) where nsel are the replicates
+    data_tensor = np.zeros((dimension, p, nsel))
 
-    for i in range(n_replicates):
-        sample_data = data_df.iloc[i].values
-        data_tensor[:, :, i] = sample_data.reshape(dimension * p, nsel)
+    # Reshape each row from (dimension * p,) to (dimension, p)
+    for i in range(nsel):
+        sample_data = data_df.iloc[i].values  # Shape: (dimension * p,)
+        data_tensor[:, :, i] = sample_data.reshape(dimension, p)
 
     print(f"Generated ethanol data tensor shape: {data_tensor.shape}")
 
     # Save ethanol data tensor
-    tensor_file = os.path.join(output_dir, "ethanol_normalized_resampled_tensor.npy")
+    tensor_file = os.path.join(output_dir, "ethanol_tensor.npy")
     np.save(tensor_file, data_tensor)
     print(f"Ethanol data tensor saved to {tensor_file}")
 

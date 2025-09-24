@@ -62,6 +62,84 @@ def difference_box_plot(losses_1, losses_2, title, xlabel, ylabel, filename):
     plt.close()
 
 
+def box_plot(
+    data_list,
+    labels=None,
+    title="Box Plot",
+    xlabel="Dataset",
+    ylabel="Value",
+    filename="boxplot.png",
+    figsize=(10, 7),
+    colors=None,
+    show_zero_line=False,
+):
+    """
+    Create a box plot for multiple datasets.
+
+    Parameters:
+    -----------
+    data_list : list
+        List of arrays, each containing data for one dataset
+    labels : list, optional
+        Labels for each dataset
+    title : str
+        Plot title
+    xlabel : str
+        X-axis label
+    ylabel : str
+        Y-axis label
+    filename : str
+        Output filename
+    figsize : tuple
+        Figure size
+    colors : list, optional
+        Colors for each box
+    show_zero_line : bool
+        Whether to show a horizontal line at zero
+    """
+    plt.figure(figsize=figsize)
+
+    # Create box plot
+    box = plt.boxplot(
+        data_list,
+        patch_artist=True,
+        medianprops=dict(color="black", linewidth=2),
+        labels=labels,
+    )
+
+    # Set colors
+    if colors is None:
+        colors = plt.cm.Set3(np.linspace(0, 1, len(data_list)))
+
+    for patch, color in zip(box["boxes"], colors):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.7)
+
+    # Add horizontal line at zero if requested
+    if show_zero_line:
+        plt.axhline(0, color="black", linestyle="--", linewidth=1, alpha=0.7)
+
+    # Set labels
+    plt.xlabel(xlabel, fontsize=16)
+    plt.ylabel(ylabel, fontsize=16)
+    plt.title(title, fontsize=18)
+
+    # Use symlog scaling for y-axis if there might be both positive and negative values
+    if show_zero_line:
+        plt.yscale("symlog")
+
+    # Rotate x-axis labels if there are many datasets
+    if labels and len(labels) > 4:
+        plt.xticks(rotation=45, ha="right")
+
+    plt.grid(True, which="both", linestyle="--", alpha=0.5)
+    plt.tight_layout()
+
+    # Save plot
+    plt.savefig(filename, bbox_inches="tight", dpi=300)
+    plt.close()
+
+
 def plot_convergence(convergence_log, title="Convergence Analysis", save_path=None):
     """
     Plot convergence metrics (loss, sparsity, residual) over iterations.

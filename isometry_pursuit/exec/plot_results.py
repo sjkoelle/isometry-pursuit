@@ -27,7 +27,7 @@ from isometry_pursuit.algorithm import (
 
 
 def plot_experiment_results(
-    results_file, dataset_name, D=None, power=None, output_dir="figures"
+    results_file, dataset_name, power=None, output_dir="figures"
 ):
     """
     Create plots from experiment results.
@@ -38,8 +38,6 @@ def plot_experiment_results(
         Path to results CSV file
     dataset_name : str
         Name of the dataset
-    D : int
-        Target dimension
     power : float
         Power parameter used
     output_dir : str
@@ -49,8 +47,8 @@ def plot_experiment_results(
     print(f"Loading results from {results_file}")
     results_df = pd.read_csv(results_file)
 
-    # Parse D and power from filename if not provided
-    if D is None or power is None:
+    # Parse power from filename if not provided
+    if power is None:
         import re
 
         filename = os.path.basename(results_file)
@@ -59,29 +57,13 @@ def plot_experiment_results(
         if match:
             dataset_name_from_file = match.group(1)
             print(f"Parsed dataset name from filename: {dataset_name_from_file}")
-            # Set defaults if not provided
-            if power is None:
-                power = 1.0  # Default power
-            if D is None:
-                # Set default D based on dataset name
-                if dataset_name_from_file == "iris":
-                    D = 4
-                elif dataset_name_from_file == "wine":
-                    D = 6
-                elif dataset_name_from_file == "word_embeddings":
-                    D = 10
-                elif dataset_name_from_file == "ethanol":
-                    D = 2
-                else:
-                    raise ValueError(
-                        f"Unknown dataset {dataset_name_from_file}, please provide D parameter"
-                    )
-            print(f"Using defaults: power={power}, D={D}")
+            # Set default power if not provided
+            power = 1.0  # Default power
+            print(f"Using default power: {power}")
         else:
-            if D is None or power is None:
-                raise ValueError(
-                    f"Could not parse dataset name from filename {filename}, and D/power were not provided as arguments"
-                )
+            raise ValueError(
+                f"Could not parse dataset name from filename {filename}, and power was not provided as argument"
+            )
 
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
@@ -214,9 +196,7 @@ def plot_experiment_results(
 
         plt.xlabel("Time (seconds)")
         plt.ylabel("Frequency")
-        plt.title(
-            f"Time Distribution - {dataset_name.upper()} Dataset (D={D}, power={power})"
-        )
+        plt.title(f"Time Distribution - {dataset_name.upper()} Dataset (power={power})")
         plt.legend()
         plt.grid(True, alpha=0.3)
         time_dist_filename = os.path.join(
@@ -251,13 +231,6 @@ def plot_experiment_results(
             edgecolor="white",
             align="left",
         )
-        plt.axvline(
-            D,
-            color="red",
-            linestyle="--",
-            linewidth=2,
-            label=f"Target Dimension (D={D})",
-        )
 
         plt.xlabel(r"$|\widehat{S_{IP}}|$", fontsize=30)
         plt.ylabel("Frequency", fontsize=24)
@@ -265,7 +238,7 @@ def plot_experiment_results(
         plt.yticks(fontsize=14)
         plt.grid(axis="y", linestyle="--", alpha=0.7)
         plt.title(
-            f"Basis Pursuit Sparsity - {dataset_name.upper()} Dataset (D={D}, power={power})"
+            f"Basis Pursuit Sparsity - {dataset_name.upper()} Dataset (power={power})"
         )
         plt.legend()
         sparsity_filename = os.path.join(
@@ -283,7 +256,7 @@ def plot_experiment_results(
 
 
 def plot_convergence_analysis(
-    convergence_file, dataset_name, D, power, output_dir="figures"
+    convergence_file, dataset_name, power, output_dir="figures"
 ):
     """
     Create convergence analysis plots.
@@ -294,8 +267,6 @@ def plot_convergence_analysis(
         Path to convergence pickle file
     dataset_name : str
         Name of the dataset
-    D : int
-        Target dimension
     power : float
         Power parameter used
     output_dir : str
@@ -329,11 +300,6 @@ def main():
     )
     parser.add_argument("--dataset-name", required=True, help="Name of the dataset")
     parser.add_argument(
-        "--D",
-        type=int,
-        help="Target dimension (auto-parsed from filename if not provided)",
-    )
-    parser.add_argument(
         "--power",
         type=float,
         help="Power parameter (auto-parsed from filename if not provided)",
@@ -349,7 +315,6 @@ def main():
     plot_experiment_results(
         results_file=args.results_file,
         dataset_name=args.dataset_name,
-        D=args.D,
         power=args.power,
         output_dir=args.output_dir,
     )
@@ -359,7 +324,6 @@ def main():
         plot_convergence_analysis(
             convergence_file=args.convergence_file,
             dataset_name=args.dataset_name,
-            D=args.D,
             power=args.power,
             output_dir=args.output_dir,
         )

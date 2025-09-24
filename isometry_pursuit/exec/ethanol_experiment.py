@@ -150,18 +150,18 @@ def run_ethanol_experiment(
     # Create results DataFrame
     results_df = pd.DataFrame(
         {
-            "Losses": losses,
-            "Support Cardinalities (Basis Pursuit)": support_cardinalities_basis_pursuit,
-            "Two-Stage Losses": two_stage_losses,
-            "Random Two-Stage Losses": random_two_stage_losses,
-            "Greedy Multitask Norms (Two-Stage)": greedy_multitask_norms_two_stage,
-            "Brute Isometry Losses": brute_isometry_losses,
-            "Brute Losses": brute_losses,
-            "Basis Pursuit Times": basis_pursuit_times,
-            "Stage Two Times": stage_two_times,
-            "Greedy Times": greedy_times,
-            "Two-Stage on Greedy Losses": two_stage_greedy_losses,
-            "Two-Stage on Greedy Times": two_stage_greedy_times,
+            "loss": losses,
+            "support_cardinality_basis_pursuit": support_cardinalities_basis_pursuit,
+            "two_stage_loss": two_stage_losses,
+            "random_two_stage_loss": random_two_stage_losses,
+            "greedy_multitask_norm_two_stage": greedy_multitask_norms_two_stage,
+            "brute_isometry_loss": brute_isometry_losses,
+            "brute_loss": brute_losses,
+            "basis_pursuit_time": basis_pursuit_times,
+            "stage_two_time": stage_two_times,
+            "greedy_time": greedy_times,
+            "two_stage_greedy_loss": two_stage_greedy_losses,
+            "two_stage_greedy_time": two_stage_greedy_times,
         }
     )
 

@@ -11,9 +11,33 @@ from sklearn.preprocessing import StandardScaler
 import argparse
 
 
-def load_word_embeddings_notebook(output_dir="data", D=10):
+def load_word_embeddings_notebook(
+    output_dir="data", standardize=True, n_replicates=25, frac=0.5
+):
     """
-    Load word embeddings exactly as in the notebook.
+    Load word embeddings exactly as in the notebook with resampling.
+
+    Parameters:
+    -----------
+    output_dir : str
+        Directory to save the processed data
+    standardize : bool
+        Whether to standardize the data
+    n_replicates : int
+        Number of resampling replicates to generate
+    frac : float
+        Fraction of data to use in each resampling
+
+    Returns:
+    --------
+    data_tensor : numpy.ndarray
+        Resampled data tensor of shape (D, n_samples_per_replicate, n_replicates)
+    data : pandas.DataFrame
+        Original processed word embeddings data
+    D : int
+        Number of features (dimension)
+    P : int
+        Number of samples
     """
     # Set environment variables for reproducibility
     os.environ["OMP_NUM_THREADS"] = "1"
@@ -60,8 +84,7 @@ def load_word_embeddings_notebook(output_dir="data", D=10):
         ("warm", "cold"),
     ]
 
-    # Take only the first D pairs
-    pairs = pairs[:D]
+    # Use all available pairs
 
     coords = np.zeros((len(words), len(pairs)))
     for dim, (cls_pos, cls_neg) in enumerate(pairs):
@@ -75,7 +98,6 @@ def load_word_embeddings_notebook(output_dir="data", D=10):
         coords[:, dim] = X_std @ w
 
     axes = ["gender", "status", "age", "domain", "wealth", "location", "warmth"]
-    axes = axes[:D]  # Take only the first D axes
     centroid_embedding = pd.DataFrame(coords, index=words, columns=axes)
 
     # Apply StandardScaler (exactly from notebook)
@@ -94,45 +116,108 @@ def load_word_embeddings_notebook(output_dir="data", D=10):
     print(f"Created {len(axes)}-dimensional embedding: {embeds.shape}")
     print(f"Axes: {axes}")
 
+    # Get basic info
+    P_words, D_words = embeds.shape
+    print(f"Word embeddings dataset: {P_words} samples, {D_words} features")
+
+    # Apply standardization if requested
+    if standardize:
+        print("Standardizing data...")
+        scaler = StandardScaler()
+        embeds_standardized = pd.DataFrame(
+            data=scaler.fit_transform(embeds), columns=embeds.columns
+        )
+
+        # Verify standardization (should be sqrt(P))
+        norms = np.linalg.norm(embeds_standardized, axis=0)
+        print(f"Column norms after standardization: {norms}")
+
+        data = embeds_standardized
+        data_name = "word_embeddings_standardized"
+    else:
+        data = embeds
+        data_name = "word_embeddings"
+
     # -------------------- SAVE DATA --------------------
     os.makedirs(output_dir, exist_ok=True)
 
     # Save the embedding data (without word names as indices for compatibility)
-    output_file = os.path.join(output_dir, f"word_embeddings_{D}.csv")
-    embeds.reset_index(drop=True).to_csv(output_file, index=False)
+    output_file = os.path.join(output_dir, f"{data_name}.csv")
+    data.reset_index(drop=True).to_csv(output_file, index=False)
     print(f"Saved word embeddings to: {output_file}")
 
     # Save metadata
     metadata = {
         "dataset": "word_embeddings",
-        "D": D,
+        "standardized": standardize,
+        "D": D_words,
         "n_words": len(words),
         "n_categories": len(word_categories),
         "axes": axes,
         "word_categories": word_categories,
         "model": "all-MiniLM-L6-v2",
         "method": "notebook_replication",
+        "data_file": output_file,
     }
 
     import json
 
-    metadata_file = os.path.join(output_dir, f"word_embeddings_{D}_metadata.json")
+    metadata_file = os.path.join(output_dir, f"{data_name}_metadata.json")
     with open(metadata_file, "w") as f:
         json.dump(metadata, f, indent=2)
     print(f"Saved metadata to: {metadata_file}")
 
-    return output_file, metadata_file
+    # Generate resampled data tensor
+    print(f"Generating {n_replicates} resampled replicates with frac={frac}...")
+    n_samples_per_replicate = int(P_words * frac)
+    data_tensor = np.zeros((D_words, n_samples_per_replicate, n_replicates))
+
+    for i in range(n_replicates):
+        np.random.seed(i)
+        random_indices = np.random.choice(
+            range(P_words), n_samples_per_replicate, replace=False
+        )
+        data_tensor[:, :, i] = data.to_numpy()[random_indices].T
+
+    print(f"Generated data tensor shape: {data_tensor.shape}")
+
+    # Save resampled data tensor
+    tensor_file = os.path.join(output_dir, f"{data_name}_resampled_tensor.npy")
+    np.save(tensor_file, data_tensor)
+    print(f"Resampled data tensor saved to {tensor_file}")
+
+    return data_tensor, data, D_words, P_words
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Load word embeddings exactly as in notebook"
+        description="Load word embeddings exactly as in notebook with resampling"
     )
     parser.add_argument("--output-dir", default="data", help="Output directory")
-    parser.add_argument("--D", type=int, default=10, help="Target dimension")
+    parser.add_argument(
+        "--standardize", action="store_true", default=True, help="Standardize the data"
+    )
+    parser.add_argument(
+        "--n-replicates", type=int, default=25, help="Number of resampling replicates"
+    )
+    parser.add_argument(
+        "--frac",
+        type=float,
+        default=0.5,
+        help="Fraction of data to use in each resampling",
+    )
 
     args = parser.parse_args()
 
-    output_file, metadata_file = load_word_embeddings_notebook(args.output_dir, args.D)
+    data_tensor, data, D, P = load_word_embeddings_notebook(
+        output_dir=args.output_dir,
+        standardize=args.standardize,
+        n_replicates=args.n_replicates,
+        frac=args.frac,
+    )
     print(f"\nData loading complete!")
-    print(f"Use this file for experiments: {output_file}")
+    print(f"Generated resampled tensor: {data_tensor.shape}")
+    print(f"Original data shape: {data.shape}")
+    print(
+        f"Use the tensor file for experiments: {args.output_dir}/word_embeddings_standardized_resampled_tensor.npy"
+    )

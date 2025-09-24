@@ -1,1 +1,0 @@
-generate_all_figures.sh
