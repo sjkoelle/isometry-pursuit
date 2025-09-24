@@ -52,27 +52,27 @@ python -m isometry_pursuit.exec.run_experiment \
     --output-dir results
 
 # # Run convergence analysis (separate from main experiments)
-# python -m isometry_pursuit.exec.run_convergence_analysis \
-#     --data-file data/iris_standardized_resampled_tensor.npy \
-#     --dataset-name iris \
-#     --n-replicates 10 \
-#     --output-dir results
+python -m isometry_pursuit.exec.run_convergence_analysis \
+    --data-file data/iris/iris_standardized_resampled_tensor.npy \
+    --dataset-name iris \
+    --n-replicates 10 \
+    --output-dir figures
 
-# python -m isometry_pursuit.exec.run_convergence_analysis \
-#     --data-file data/wine_standardized_13_resampled_tensor.npy \
-#     --dataset-name wine \
-#     --output-dir results
+python -m isometry_pursuit.exec.run_convergence_analysis \
+    --data-file data/wine_6/wine_standardized_resampled_tensor.npy \
+    --dataset-name wine \
+    --output-dir figures
 
-# python -m isometry_pursuit.exec.run_convergence_analysis \
-#     --data-file data/word_embeddings_standardized_7_resampled_tensor.npy \
-#     --dataset-name word_embeddings \
-#     --n-replicates 10 \
-#     --output-dir results
+python -m isometry_pursuit.exec.run_convergence_analysis \
+    --data-file data/words/word_embeddings_standardized_resampled_tensor.npy \
+    --dataset-name word_embeddings \
+    --n-replicates 10 \
+    --output-dir figures
 
-# python -m isometry_pursuit.exec.run_convergence_analysis \
-#     --data-file data/ethanol_tensor.npy \
-#     --dataset-name ethanol \
-#     --output-dir results
+python -m isometry_pursuit.exec.run_convergence_analysis \
+    --data-file data/ethanol/ethanol_tensor.npy \
+    --dataset-name ethanol \
+    --output-dir figures
 
 # Compare methods across multiple datasets
 
@@ -130,9 +130,6 @@ python -m isometry_pursuit.exec.plot_results \
     --results-file results/ethanol_results.csv \
     --dataset-name ethanol \
     --output-dir figures
-
-
-
 ```
 
 ## Data

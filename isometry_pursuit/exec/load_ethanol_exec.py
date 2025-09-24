@@ -92,7 +92,7 @@ def load_ethanol_data(
     indices_path,
     angles_path,
     output_dir="data",
-    nsel=5,
+    nsel=25,
     dimension=2,
     power=1.0,
     n_neighbors=252,

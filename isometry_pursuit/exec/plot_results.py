@@ -388,9 +388,9 @@ def plot_coefficient_convergence(convergence_data, save_path=None, max_features=
             alpha = 0.8
             linewidth = 2.0
         else:
-            # Zero features: gray
-            color = "gray"
-            alpha = 0.4
+            # Zero features: light gray
+            color = "lightgray"
+            alpha = 0.6
             linewidth = 1.0
 
         plt.semilogx(
@@ -401,9 +401,10 @@ def plot_coefficient_convergence(convergence_data, save_path=None, max_features=
             linewidth=linewidth,
         )
 
-    plt.xlabel("Iterations (log scale)", fontsize=14)
-    plt.ylabel("Coefficient Norm ||β[i,:]||", fontsize=14)
-    plt.title("Coefficient Norm Convergence", fontsize=16)
+    plt.xlabel("Iterations (log scale)", fontsize=16)
+    plt.ylabel("Coefficient Norm ||β[i,:]||", fontsize=16)
+    plt.title("Coefficient Norm Convergence", fontsize=20, fontweight="bold")
+    plt.yscale("symlog")
     plt.grid(True, alpha=0.3)
 
     # Add custom legend for color coding
@@ -421,9 +422,9 @@ def plot_coefficient_convergence(convergence_data, save_path=None, max_features=
         Line2D(
             [0],
             [0],
-            color="gray",
+            color="lightgray",
             linewidth=1,
-            alpha=0.4,
+            alpha=0.6,
             label="Unselected features (zero at final)",
         ),
     ]
@@ -680,14 +681,22 @@ def plot_sparsity_convergence_boxplot(convergence_logs, save_path=None):
     # Create boxplot
     bp = plt.boxplot(boxplot_data, labels=boxplot_labels, patch_artist=True)
 
-    # Color the boxes
+    # Color the boxes in grayscale
     for patch in bp["boxes"]:
-        patch.set_facecolor("#4E2A84")  # Garfield purple
+        patch.set_facecolor("lightgray")
         patch.set_alpha(0.7)
+        patch.set_edgecolor("black")
+        patch.set_linewidth(1.0)
 
-    plt.xlabel("Iterations", fontsize=14)
-    plt.ylabel("Sparsity (Number of Non-zero Features)", fontsize=14)
-    plt.title("Sparsity Convergence Across Replicates", fontsize=16)
+    # Also update median lines to be black
+    for median in bp["medians"]:
+        median.set_color("black")
+        median.set_linewidth(2)
+
+    plt.xlabel("Iterations", fontsize=16)
+    plt.ylabel(r"$|\widehat{S}| / P$", fontsize=16)
+    plt.title("Sparsity Convergence Across Replicates", fontsize=20, fontweight="bold")
+    plt.yscale("symlog")
     plt.grid(True, alpha=0.3)
     plt.xticks(rotation=45)
     plt.tight_layout()

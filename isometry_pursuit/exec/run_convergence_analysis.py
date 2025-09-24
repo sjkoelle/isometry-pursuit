@@ -21,7 +21,6 @@ from isometry_pursuit.algorithm import (
 from isometry_pursuit.exec.plot_results import (
     plot_coefficient_convergence,
     plot_coefficient_convergence_heatmap,
-    plot_convergence_summary,
     plot_sparsity_convergence_boxplot,
 )
 
@@ -31,7 +30,7 @@ def run_convergence_analysis_script(
     dataset_name,
     power=1.0,
     iteration_points=None,
-    output_dir="results",
+    output_dir="figures",
     n_replicates=10,
 ):
     """
@@ -114,12 +113,6 @@ def run_convergence_analysis_script(
         max_features=20,
     )
 
-    # Summary plot
-    plot_convergence_summary(
-        first_replicate,
-        save_path=os.path.join(output_dir, f"{dataset_name}_convergence_summary.png"),
-    )
-
     print(f"Convergence analysis completed!")
     print(
         f"Individual replicate data saved to: {output_dir}/{dataset_name}_convergence_replicate_*.npz"
@@ -144,7 +137,7 @@ def main():
         default=[1, 10, 100, 1000, 10000],
         help="Iteration points to test",
     )
-    parser.add_argument("--output-dir", default="results", help="Output directory")
+    parser.add_argument("--output-dir", default="figures", help="Output directory")
     parser.add_argument(
         "--n-replicates", type=int, default=10, help="Number of replicates to run"
     )
