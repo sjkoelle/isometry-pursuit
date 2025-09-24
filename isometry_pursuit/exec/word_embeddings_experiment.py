@@ -25,7 +25,7 @@ from isometry_pursuit.algorithm import (
 
 
 def load_word_embeddings(
-    output_dir="data", D=10, standardize=True, n_replicates=25, frac=0.5
+    output_dir="data", D=7, standardize=True, n_replicates=25, frac=0.5
 ):
     """
     Load and preprocess word embeddings with resampling.
@@ -35,7 +35,7 @@ def load_word_embeddings(
     output_dir : str
         Directory to save the processed data
     D : int
-        Target dimension for PCA
+        Target dimension for PCA and number of features to sample for each replicate (default: 7)
     standardize : bool
         Whether to standardize the data
     n_replicates : int
@@ -135,22 +135,12 @@ def load_word_embeddings(
         )
         data_name = "word_embeddings"
 
-    # Apply PCA to reduce dimensionality
-    print(f"Applying PCA to reduce to {D} dimensions...")
-    pca = PCA(n_components=D)
-    embeds = pd.DataFrame(
-        pca.fit_transform(data.transpose()), columns=[f"pc_{i}" for i in range(D)]
-    )
-
-    print(f"Final embedding shape: {embeds.shape}")
-    print(f"PCA explained variance ratio: {pca.explained_variance_ratio_[:5]}...")
-
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
 
-    # Save data
+    # Save original data (before PCA)
     output_file = os.path.join(output_dir, f"{data_name}_{D}.csv")
-    embeds.to_csv(output_file, index=False)
+    data.to_csv(output_file, index=False)
     print(f"Data saved to {output_file}")
 
     # Save metadata
@@ -160,10 +150,9 @@ def load_word_embeddings(
         "n_words": len(words),
         "n_categories": len(word_categories),
         "original_dim": features.shape[1],
-        "pca_dim": D,
+        "sampled_dim": D,
         "words": words,
         "categories": word_categories,
-        "pca_explained_variance_ratio": pca.explained_variance_ratio_.tolist(),
         "data_file": output_file,
     }
 
@@ -172,17 +161,30 @@ def load_word_embeddings(
         json.dump(metadata, f, indent=2)
     print(f"Metadata saved to {metadata_file}")
 
-    # Generate resampled data tensor
+    # Generate resampled data tensor with feature sampling
     print(f"Generating {n_replicates} resampled replicates with frac={frac}...")
+    print(
+        f"Sampling {D} features for each replicate from {features.shape[1]} available features"
+    )
     n_samples_per_replicate = int(len(words) * frac)
     data_tensor = np.zeros((D, n_samples_per_replicate, n_replicates))
 
     for i in range(n_replicates):
         np.random.seed(i)
-        random_indices = np.random.choice(
+        # Sample rows (words)
+        random_row_indices = np.random.choice(
             range(len(words)), n_samples_per_replicate, replace=False
         )
-        data_tensor[:, :, i] = embeds.to_numpy()[random_indices].T
+        # Sample columns (features)
+        random_col_indices = np.random.choice(
+            range(features.shape[1]), D, replace=False
+        )
+        # Get the sampled data
+        sampled_data = data.to_numpy()[random_row_indices][:, random_col_indices]
+        # Apply PCA to the sampled features
+        pca = PCA(n_components=D)
+        pca_data = pca.fit_transform(sampled_data)
+        data_tensor[:, :, i] = pca_data.T
 
     print(f"Generated data tensor shape: {data_tensor.shape}")
 
@@ -190,6 +192,18 @@ def load_word_embeddings(
     tensor_file = os.path.join(output_dir, f"{data_name}_{D}_resampled_tensor.npy")
     np.save(tensor_file, data_tensor)
     print(f"Resampled data tensor saved to {tensor_file}")
+
+    # Create a representative embedding for return (using first replicate's PCA)
+    np.random.seed(0)
+    random_row_indices = np.random.choice(
+        range(len(words)), n_samples_per_replicate, replace=False
+    )
+    random_col_indices = np.random.choice(range(features.shape[1]), D, replace=False)
+    sampled_data = data.to_numpy()[random_row_indices][:, random_col_indices]
+    pca = PCA(n_components=D)
+    embeds = pd.DataFrame(
+        pca.fit_transform(sampled_data), columns=[f"pc_{i}" for i in range(D)]
+    )
 
     return data_tensor, embeds, D, len(words)
 

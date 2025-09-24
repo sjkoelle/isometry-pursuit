@@ -16,9 +16,9 @@ The easiest way to run experiments:
 
 ```bash
 # Load data
-python -m isometry_pursuit.exec.load_iris_exec --output-dir data
-python -m isometry_pursuit.exec.load_wine_exec --output-dir data
-python -m isometry_pursuit.exec.load_word_embeddings --output-dir data
+python -m isometry_pursuit.exec.load_iris_exec --output-dir data/iris
+python -m isometry_pursuit.exec.load_wine_exec --output-dir data/wine_6 --D 6  # Sample 6 features per replicate
+python -m isometry_pursuit.exec.load_word_embeddings --output-dir data/word_7 --D 7  # Sample 7 features per replicate
 
 # Load ethanol data (requires specific file paths)
 python -m isometry_pursuit.exec.load_ethanol_exec \
@@ -138,5 +138,12 @@ scripts/generate_figures.sh
 ```
 
 ## Data
+
+### Dataset Parameters
+
+- **Iris**: Uses all 4 features (no feature sampling)
+- **Wine**: Samples D=6 features for each replicate from 13 available features
+- **Word Embeddings**: Samples D=7 features for each replicate from high-dimensional embeddings, then applies PCA
+- **Ethanol**: Uses all available features (no feature sampling)
 
 The ethanol data is available at `https://drive.google.com/file/d/1CvVOIXokjfTT0AtyeXSZMlojnfL3AcUL/view?usp=drive_link`.

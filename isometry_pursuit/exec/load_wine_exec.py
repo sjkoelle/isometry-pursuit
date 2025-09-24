@@ -17,7 +17,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
 def load_wine_data(
-    output_dir="data", standardize=True, max_features=None, n_replicates=25, frac=0.5
+    output_dir="data",
+    standardize=True,
+    max_features=None,
+    n_replicates=25,
+    frac=0.5,
+    D=6,
 ):
     """
     Load and preprocess Wine dataset with resampling.
@@ -34,6 +39,8 @@ def load_wine_data(
         Number of resampling replicates to generate
     frac : float
         Fraction of data to use in each resampling
+    D : int
+        Number of features to sample for each replicate (default: 6)
 
     Returns:
     --------
@@ -114,15 +121,21 @@ def load_wine_data(
 
     # Generate resampled data tensor
     print(f"Generating {n_replicates} resampled replicates with frac={frac}...")
+    print(f"Sampling {D} features for each replicate from {D_wine} available features")
     n_samples_per_replicate = int(P_wine * frac)
-    data_tensor = np.zeros((D_wine, n_samples_per_replicate, n_replicates))
+    data_tensor = np.zeros((D, n_samples_per_replicate, n_replicates))
 
     for i in range(n_replicates):
         np.random.seed(i)
-        random_indices = np.random.choice(
+        # Sample rows (samples)
+        random_row_indices = np.random.choice(
             range(P_wine), n_samples_per_replicate, replace=False
         )
-        data_tensor[:, :, i] = data.to_numpy()[random_indices].T
+        # Sample columns (features)
+        random_col_indices = np.random.choice(range(D_wine), D, replace=False)
+        # Get the sampled data and transpose to get shape (D, n_samples_per_replicate)
+        sampled_data = data.to_numpy()[random_row_indices][:, random_col_indices]
+        data_tensor[:, :, i] = sampled_data.T
 
     print(f"Generated data tensor shape: {data_tensor.shape}")
 
@@ -131,7 +144,7 @@ def load_wine_data(
     np.save(tensor_file, data_tensor)
     print(f"Resampled data tensor saved to {tensor_file}")
 
-    return data_tensor, data, D_wine, P_wine
+    return data_tensor, data, D, P_wine
 
 
 def main():
@@ -145,6 +158,12 @@ def main():
     parser.add_argument(
         "--max-features", type=int, help="Maximum number of features to use"
     )
+    parser.add_argument(
+        "--D",
+        type=int,
+        default=6,
+        help="Number of features to sample for each replicate (default: 6)",
+    )
 
     args = parser.parse_args()
 
@@ -153,6 +172,7 @@ def main():
         output_dir=args.output_dir,
         standardize=not args.no_standardize,
         max_features=args.max_features,
+        D=args.D,
     )
 
     print(f"Loaded Wine dataset: {P} samples, {D} features")
