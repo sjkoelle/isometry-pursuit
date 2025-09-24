@@ -307,7 +307,7 @@ def load_ethanol_data(
     print(f"Generated ethanol data tensor shape: {data_tensor.shape}")
 
     # Save ethanol data tensor
-    tensor_file = os.path.join(output_dir, "ethanol_standardized_resampled_tensor.npy")
+    tensor_file = os.path.join(output_dir, "ethanol_normalized_resampled_tensor.npy")
     np.save(tensor_file, data_tensor)
     print(f"Ethanol data tensor saved to {tensor_file}")
 

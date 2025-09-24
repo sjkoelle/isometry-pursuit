@@ -29,7 +29,6 @@ from isometry_pursuit.exec.plot_results import (
 def run_convergence_analysis_script(
     data_file,
     dataset_name,
-    D,
     power=1.0,
     iteration_points=None,
     output_dir="results",
@@ -44,8 +43,6 @@ def run_convergence_analysis_script(
         Path to the data CSV file
     dataset_name : str
         Name of the dataset
-    D : int
-        Target dimension
     power : float
         Power parameter for transformation
     iteration_points : list, optional
@@ -139,7 +136,6 @@ def main():
         help="Path to data tensor file (.npy)",
     )
     parser.add_argument("--dataset-name", required=True, help="Name of the dataset")
-    parser.add_argument("--D", type=int, required=True, help="Target dimension")
     parser.add_argument("--power", type=float, default=1.0, help="Power parameter")
     parser.add_argument(
         "--iteration-points",
@@ -162,7 +158,6 @@ def main():
     run_convergence_analysis_script(
         data_file=args.data_file,
         dataset_name=args.dataset_name,
-        D=args.D,
         power=args.power,
         iteration_points=args.iteration_points,
         output_dir=args.output_dir,

@@ -17,7 +17,8 @@ import matplotlib.pyplot as plt
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from isometry_pursuit.plot import box_plot, ecdf_plot
-from isometry_pursuit.experiment import plot_convergence, analyze_convergence_logs
+from isometry_pursuit.plot import plot_convergence
+from isometry_pursuit.experiment import analyze_convergence_logs
 from isometry_pursuit.algorithm import (
     create_convergence_log_with_coefficients,
     save_convergence_data,

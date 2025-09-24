@@ -17,7 +17,7 @@ from sklearn.preprocessing import StandardScaler
 # Add parent directory to path to import isometry_pursuit modules
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from isometry_pursuit.experiment import run_resampling_experiment
+from isometry_pursuit.experiment import run_tensor_experiment
 from isometry_pursuit.algorithm import (
     create_convergence_log_with_coefficients,
     save_convergence_data,
@@ -239,29 +239,23 @@ def run_word_embeddings_experiment(
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
 
-    # Run the experiment
+    # Run the experiment using tensor
     if log_convergence:
         (
             results_df,
             co_occurrence_matrix,
             greedy_co_occurrence_matrix,
             convergence_logs,
-        ) = run_resampling_experiment(
-            data,
-            D,
-            frac=frac,
-            R=R,
+        ) = run_tensor_experiment(
+            data_tensor=data_tensor,
             power=power,
             compute_brute=compute_brute,
             log_convergence=log_convergence,
         )
     else:
         results_df, co_occurrence_matrix, greedy_co_occurrence_matrix = (
-            run_resampling_experiment(
-                data,
-                D,
-                frac=frac,
-                R=R,
+            run_tensor_experiment(
+                data_tensor=data_tensor,
                 power=power,
                 compute_brute=compute_brute,
                 log_convergence=log_convergence,

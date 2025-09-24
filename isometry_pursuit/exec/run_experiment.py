@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 import numpy as np
 import pandas as pd
-from isometry_pursuit.experiment import run_resampling_experiment, run_tensor_experiment
+from isometry_pursuit.experiment import run_tensor_experiment
 
 
 def main():
@@ -27,7 +27,11 @@ def main():
         help="Path to data tensor file (.npy)",
     )
     parser.add_argument("--dataset-name", required=True, help="Name of the dataset")
-    parser.add_argument("--D", type=int, required=True, help="Target dimension")
+    parser.add_argument(
+        "--D",
+        type=int,
+        help="Target dimension (optional, will be extracted from tensor if not provided)",
+    )
     parser.add_argument("--power", type=float, default=1.0, help="Power parameter")
     parser.add_argument(
         "--compute-brute", action="store_true", help="Compute brute force solutions"
@@ -48,6 +52,17 @@ def main():
         data_tensor = np.load(args.data_file)
         print(f"Data tensor shape: {data_tensor.shape}")
 
+        # Validate tensor dimension if D is provided
+        if args.D is not None:
+            if data_tensor.shape[0] != args.D:
+                print(
+                    f"Error: Tensor dimension {data_tensor.shape[0]} does not match provided D={args.D}"
+                )
+                return
+            print(f"Tensor dimension validated: D={args.D}")
+        else:
+            print(f"Using tensor dimension: D={data_tensor.shape[0]}")
+
         # Run experiment using tensor
         if args.log_convergence:
             (
@@ -57,7 +72,6 @@ def main():
                 convergence_logs,
             ) = run_tensor_experiment(
                 data_tensor=data_tensor,
-                D=args.D,
                 compute_brute=args.compute_brute,
                 power=args.power,
                 log_convergence=args.log_convergence,
@@ -66,7 +80,6 @@ def main():
             results_df, co_occurrence_matrix, greedy_co_occurrence_matrix = (
                 run_tensor_experiment(
                     data_tensor=data_tensor,
-                    D=args.D,
                     compute_brute=args.compute_brute,
                     power=args.power,
                     log_convergence=args.log_convergence,

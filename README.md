@@ -17,7 +17,7 @@ The easiest way to run experiments:
 ```bash
 # Load data
 python -m isometry_pursuit.exec.load_iris_exec --output-dir data
-python -m isometry_pursuit.exec.load_wine_exec --output-dir data --max-features 13
+python -m isometry_pursuit.exec.load_wine_exec --output-dir data
 python -m isometry_pursuit.exec.load_word_embeddings --output-dir data --D 7
 
 # Load ethanol data (requires specific file paths)
@@ -30,47 +30,48 @@ python -m isometry_pursuit.exec.load_ethanol_exec \
     --output-dir data
 
 # Run experiments (using resampled data tensors)
+# Note: D is automatically extracted from tensor shape
 python -m isometry_pursuit.exec.run_experiment \
     --data-file data/iris_standardized_resampled_tensor.npy \
-    --dataset-name iris --D 4 \
+    --dataset-name iris \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_experiment \
     --data-file data/wine_standardized_13_resampled_tensor.npy \
-    --dataset-name wine --D 6 \
+    --dataset-name wine \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_experiment \
     --data-file data/word_embeddings_standardized_7_resampled_tensor.npy \
-    --dataset-name word_embeddings --D 7 \
+    --dataset-name word_embeddings \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/ethanol_standardized_resampled_tensor.npy \
-    --dataset-name ethanol --D 2 \
+    --data-file data/ethanol_normalized_resampled_tensor.npy \
+    --dataset-name ethanol \
     --output-dir results
 
 # Run convergence analysis (separate from main experiments)
 python -m isometry_pursuit.exec.run_convergence_analysis \
     --data-file data/iris_standardized_resampled_tensor.npy \
-    --dataset-name iris --D 4 \
+    --dataset-name iris \
     --n-replicates 10 \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_convergence_analysis \
     --data-file data/wine_standardized_13_resampled_tensor.npy \
-    --dataset-name wine --D 6 \
+    --dataset-name wine \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_convergence_analysis \
     --data-file data/word_embeddings_standardized_7_resampled_tensor.npy \
-    --dataset-name word_embeddings --D 7 \
+    --dataset-name word_embeddings \
     --n-replicates 10 \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_convergence_analysis \
-    --data-file data/ethanol_standardized_resampled_tensor.npy \
-    --dataset-name ethanol --D 2 \
+    --data-file data/ethanol_normalized_resampled_tensor.npy \
+    --dataset-name ethanol \
     --output-dir results
 
 # Compare methods across multiple datasets
@@ -136,88 +137,6 @@ scripts/generate_figures.sh
 
 ```
 
-## Advanced Usage
-
-You can also customize parameters or run individual components:
-
-```bash
-# Load data with custom parameters
-python -m isometry_pursuit.exec.load_wine_exec --output-dir data --max-features 6
-python -m isometry_pursuit.exec.load_word_embeddings --output-dir data --D 5
-
-# Run experiments with custom replicates/parameters
-python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/iris_standardized.csv \
-    --dataset-name iris --D 4 --R 100 \
-    --compute-brute --log-convergence \
-    --output-dir results
-
-# Override defaults (power=1.0, frac=0.5) if needed
-python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/iris_standardized.csv \
-    --dataset-name iris --D 4 --power 2.0 --frac 0.8 --R 50 \
-    --output-dir results
-
-# Generate plots with convergence analysis (if available)
-python -m isometry_pursuit.exec.plot_results \
-    --results-file results/iris_standardized_1.0_4_results.csv \
-    --dataset-name iris \
-    --convergence-file results/iris_standardized_1.0_4_convergence.pkl \
-    --output-dir figures
-
-# Generate data visualization
-python -m isometry_pursuit.exec.generate_data_visualization \
-    --output-dir figures --num-vectors 30 --seed 2
-
-# For ethanol data (requires manual download and preprocessing)
-python -m isometry_pursuit.exec.load_ethanol_exec \
-    --config-path configs/ethanol/ethanol_config.json \
-    --raw-data-path data/ethanol.mat \
-    --output-dir data
-```
-
-## Jupyter Notebooks (Legacy)
-
-The original Jupyter notebooks are still available in the `experiments/` directory:
-
-- `experiments/super_simple_example.ipynb` - Basic example
-- `experiments/IrisWine.ipynb` - Iris and Wine dataset experiments
-- `experiments/word_embeddings.ipynb` - Word embeddings experiments
-- `experiments/Ethanol.ipynb` - Ethanol dataset experiments
-- `experiments/Figure1.ipynb` - Figure 1 generation
-- `experiments/Figure2.ipynb` - Figure 2 generation
-
-**Note**: The executable scripts provide the same functionality as the notebooks and are recommended for reproducibility.
-
 ## Data
 
 The ethanol data is available at `https://drive.google.com/file/d/1CvVOIXokjfTT0AtyeXSZMlojnfL3AcUL/view?usp=drive_link`.
-
-## Output Structure
-
-```
-project_root/
-├── data/                    # Processed datasets
-│   ├── iris_standardized.csv
-│   ├── wine_standardized_13.csv
-│   ├── word_embeddings_standardized_10.csv
-│   └── ethanol_standardized.csv
-├── results/                 # Experiment results
-│   ├── iris_standardized_1.0_4_results.csv
-│   ├── wine_standardized_1.0_13_results.csv
-│   ├── word_embeddings_standardized_1.0_10_results.csv
-│   └── ethanol_standardized_1.0_2_results.csv
-└── figures/                 # Generated plots
-    ├── Figure_1b_bw.png
-    ├── Figure_1c_bw.png
-    ├── iris_isometry_losses_iso_box.png
-    ├── wine_isometry_losses_ts_box.png
-    └── ethanol_isometry_losses_box.png
-```
-
-## Documentation
-
-For detailed usage instructions, see:
-
-- `isometry_pursuit/` - Core package modules
-- `scripts/` - Executable shell scripts

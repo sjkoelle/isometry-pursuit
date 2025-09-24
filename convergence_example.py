@@ -7,9 +7,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from isometry_pursuit.experiment import (
     run_resampling_experiment,
-    plot_convergence,
     analyze_convergence_logs,
 )
+from isometry_pursuit.plot import plot_convergence
 from isometry_pursuit.algorithm import (
     group_basis_pursuit,
     create_convergence_log,

@@ -92,3 +92,71 @@ def box_plot(losses_1, losses_2, D, xlabels, ylabel, filename):
 
     plt.savefig(filename, bbox_inches="tight")
     plt.close()
+
+
+def plot_convergence(convergence_log, title="Convergence Analysis", save_path=None):
+    """
+    Plot convergence metrics (loss, sparsity, residual) over iterations.
+
+    Parameters:
+    -----------
+    convergence_log : dict
+        Dictionary containing 'iterations', 'losses', 'sparsities', 'residuals' lists
+    title : str
+        Title for the plot
+    save_path : str, optional
+        Path to save the plot
+    """
+    if not convergence_log or not convergence_log["iterations"]:
+        print("No convergence data to plot")
+        return
+
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    fig.suptitle(title, fontsize=16)
+
+    # Plot 1: Loss over iterations
+    axes[0, 0].semilogx(
+        convergence_log["iterations"], convergence_log["losses"], "b-o", markersize=4
+    )
+    axes[0, 0].set_xlabel("Iterations")
+    axes[0, 0].set_ylabel("Loss (Objective Value)")
+    axes[0, 0].set_title("Loss Convergence")
+    axes[0, 0].grid(True, alpha=0.3)
+
+    # Plot 2: Sparsity over iterations
+    axes[0, 1].semilogx(
+        convergence_log["iterations"],
+        convergence_log["sparsities"],
+        "r-s",
+        markersize=4,
+    )
+    axes[0, 1].set_xlabel("Iterations")
+    axes[0, 1].set_ylabel("Sparsity (Non-zero Rows)")
+    axes[0, 1].set_title("Sparsity Evolution")
+    axes[0, 1].grid(True, alpha=0.3)
+
+    # Plot 3: Residual over iterations
+    axes[1, 0].semilogx(
+        convergence_log["iterations"], convergence_log["residuals"], "g-^", markersize=4
+    )
+    axes[1, 0].set_xlabel("Iterations")
+    axes[1, 0].set_ylabel("Constraint Residual")
+    axes[1, 0].set_title("Constraint Satisfaction")
+    axes[1, 0].grid(True, alpha=0.3)
+
+    # Plot 4: Loss vs Sparsity trade-off
+    axes[1, 1].plot(
+        convergence_log["sparsities"], convergence_log["losses"], "m-d", markersize=4
+    )
+    axes[1, 1].set_xlabel("Sparsity (Non-zero Rows)")
+    axes[1, 1].set_ylabel("Loss (Objective Value)")
+    axes[1, 1].set_title("Loss vs Sparsity Trade-off")
+    axes[1, 1].grid(True, alpha=0.3)
+
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")
+        print(f"Convergence plot saved to {save_path}")
+
+    plt.show()
