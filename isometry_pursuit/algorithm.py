@@ -72,9 +72,6 @@ def greedy(
 def brute(matrix, loss, target_dimension):
 
     dictionary_dimension = matrix.shape[1]
-    print(
-        f"Computing brute force solution for dictionary dimension {dictionary_dimension} and target_dimension {target_dimension}"
-    )
     parametrizations = combinations(range(dictionary_dimension), target_dimension)
 
     losses = []

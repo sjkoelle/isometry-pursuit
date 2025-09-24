@@ -19,7 +19,7 @@ def analyze_data(
     X,
     compute_brute=False,
     power=1.0,
-    limit=1e9,
+    limit=1e6,
     max_steps=None,
     log_convergence=False,
 ):
@@ -48,6 +48,7 @@ def analyze_data(
     nbp = len(basis_pursuit_indices)
     brute_complexity = comb(nbp, D)
     print(f"Brute force complexity {brute_complexity} from D={D} and nbp={nbp}")
+
     if brute_complexity <= limit:
         start_two_stage = time.time()
         two_stage_output = basis_pursuit_indices[
@@ -76,13 +77,14 @@ def analyze_data(
         random_two_stage_loss = np.nan
         greedy_multitask_norm_two_stage = np.nan
         stage_two_time = np.nan
+        two_stage_multitask = None
 
-    # Two-stage on greedy (new method)
+    # Greedy on isometry pursuit (new method)
     # First stage: Isometry pursuit (basis pursuit) -> basis_pursuit_indices
     # Second stage: Greedy on the basis pursuit selection
-    greedy_on_bp_complexity = comb(len(basis_pursuit_indices), D)
+    greedy_on_bp_complexity = len(basis_pursuit_indices) * D
     print(
-        f"Two-stage on greedy complexity {greedy_on_bp_complexity} from D={D} and bp_size={len(basis_pursuit_indices)}"
+        f"Greedy on isometry pursuit complexity {greedy_on_bp_complexity} from D={D} and bp_size={len(basis_pursuit_indices)}"
     )
     if greedy_on_bp_complexity <= limit:
         start_two_stage_greedy = time.time()
@@ -97,7 +99,7 @@ def analyze_data(
         two_stage_greedy_time = end_two_stage_greedy - start_two_stage_greedy
         two_stage_greedy_loss = isometry_loss_power(X[:, two_stage_greedy_output])
     else:
-        print("Two-stage on greedy is too computationally expensive")
+        print("Greedy on isometry pursuit is too computationally expensive")
         two_stage_greedy_loss = np.nan
         two_stage_greedy_time = np.nan
 
@@ -115,11 +117,6 @@ def analyze_data(
     else:
         brute_loss = np.nan
         brute_isometry_loss = np.nan
-
-    print("stage two time", stage_two_time)
-    print("greedy time", end_greedy - start_greedy)
-    print("basis pursuit time", end_basis_pursuit - start_basis_pursuit)
-    print("basis pursuit iterations", basis_pursuit_iterations)
 
     return (
         loss,

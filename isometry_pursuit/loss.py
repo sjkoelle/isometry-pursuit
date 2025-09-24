@@ -11,10 +11,6 @@ def isometry_loss(matrix: np.ndarray, power=1, indices=None) -> float:
     # Check for rank deficiency - if any singular values are too small, skip this matrix
     min_singular_value = np.min(singular_values)
     if min_singular_value < 1e-10:  # Threshold for numerical rank deficiency
-        if indices is not None:
-            print(f"Rank deficiency overflow, matrix not selected (indices: {indices})")
-        else:
-            print("Rank deficiency overflow, matrix not selected")
         return float(
             "inf"
         )  # Return infinity to indicate this matrix should not be selected
@@ -31,12 +27,6 @@ def isometry_loss(matrix: np.ndarray, power=1, indices=None) -> float:
         # Check if we got any overflow warnings
         for warning in w:
             if "overflow" in str(warning.message).lower():
-                if indices is not None:
-                    print(
-                        f"Rank deficiency overflow, matrix not selected (indices: {indices})"
-                    )
-                else:
-                    print("Rank deficiency overflow, matrix not selected")
                 return float(
                     "inf"
                 )  # Return infinity to indicate this matrix should not be selected

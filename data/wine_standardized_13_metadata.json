@@ -24,5 +24,5 @@
     "class_1",
     "class_2"
   ],
-  "data_file": "/Users/samsonkoelle/isometry-pursuit/data/wine_standardized_13.csv"
+  "data_file": "data/wine_standardized_13.csv"
 }

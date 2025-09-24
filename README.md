@@ -18,7 +18,7 @@ The easiest way to run experiments:
 # Load data
 python -m isometry_pursuit.exec.load_iris_exec --output-dir data
 python -m isometry_pursuit.exec.load_wine_exec --output-dir data
-python -m isometry_pursuit.exec.load_word_embeddings --output-dir data --D 7
+python -m isometry_pursuit.exec.load_word_embeddings --output-dir data
 
 # Load ethanol data (requires specific file paths)
 python -m isometry_pursuit.exec.load_ethanol_exec \
@@ -37,7 +37,7 @@ python -m isometry_pursuit.exec.run_experiment \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/wine_standardized_13_resampled_tensor.npy \
+    --data-file data/wine_standardized_resampled_tensor.npy \
     --dataset-name wine \
     --output-dir results
 

@@ -1,19 +1,16 @@
 {
   "dataset": "word_embeddings",
   "D": 10,
-  "n_words": 80,
-  "n_categories": 16,
+  "n_words": 61,
+  "n_categories": 14,
   "axes": [
-    "axis_1",
-    "axis_2",
-    "axis_3",
-    "axis_4",
-    "axis_5",
-    "axis_6",
-    "axis_7",
-    "axis_8",
-    "axis_9",
-    "axis_10"
+    "gender",
+    "status",
+    "age",
+    "domain",
+    "wealth",
+    "location",
+    "warmth"
   ],
   "word_categories": {
     "man": [
@@ -30,103 +27,80 @@
       "madam",
       "gal"
     ],
-    "queen": [
-      "queen",
-      "dowager",
-      "consort",
-      "rani",
-      "empress"
-    ],
-    "king": [
-      "king",
-      "monarch",
+    "regent": [
+      "regent",
       "sovereign",
+      "monarch",
       "emperor",
       "pharaoh"
     ],
-    "prince": [
-      "prince",
-      "heir",
-      "crown prince",
-      "royal",
-      "noble"
-    ],
-    "princess": [
-      "princess",
-      "heiress",
-      "royal",
-      "noble",
-      "duchess"
-    ],
-    "regent": [
-      "ruler",
-      "leader",
-      "sovereign",
-      "monarch",
-      "governor"
-    ],
     "slave": [
       "slave",
-      "servant",
-      "serf",
-      "bondsman",
-      "thrall"
+      "wench"
     ],
     "young": [
       "young",
-      "youth",
-      "juvenile",
-      "adolescent",
-      "teen"
+      "kid"
     ],
     "old": [
       "old",
-      "elderly",
-      "aged",
-      "senior",
-      "ancient"
+      "elderly"
+    ],
+    "warrior": [
+      "warrior",
+      "soldier",
+      "knight",
+      "fighter",
+      "mercenary"
+    ],
+    "scholar": [
+      "scholar",
+      "academic",
+      "professor",
+      "intellectual",
+      "scientist"
     ],
     "rich": [
       "rich",
       "wealthy",
       "affluent",
-      "prosperous",
-      "opulent"
+      "millionaire",
+      "tycoon"
     ],
     "poor": [
       "poor",
-      "penniless",
-      "destitute",
       "impoverished",
-      "needy"
+      "broke",
+      "destitute",
+      "beggar"
     ],
-    "home": [
-      "home",
-      "house",
-      "dwelling",
-      "residence",
-      "abode"
+    "urban": [
+      "urban",
+      "city",
+      "metropolitan",
+      "cosmopolitan",
+      "downtown"
     ],
-    "away": [
-      "away",
-      "distant",
-      "remote",
-      "far",
-      "abroad"
+    "rural": [
+      "rural",
+      "village",
+      "countryside",
+      "agrarian",
+      "pastoral"
     ],
     "warm": [
       "warm",
       "friendly",
       "kind",
-      "gentle",
-      "caring"
+      "loving",
+      "affectionate"
     ],
     "cold": [
       "cold",
-      "distant",
       "aloof",
-      "unfriendly",
-      "harsh"
+      "harsh",
+      "distant",
+      "indifferent"
     ]
   },
   "model": "all-MiniLM-L6-v2",

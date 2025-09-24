@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 # Add parent directory to path to import isometry_pursuit modules
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from isometry_pursuit.plot import box_plot, ecdf_plot
+from isometry_pursuit.plot import difference_box_plot, ecdf_plot
 from isometry_pursuit.plot import plot_convergence
 from isometry_pursuit.experiment import analyze_convergence_logs
 from isometry_pursuit.algorithm import (
@@ -88,112 +88,113 @@ def plot_experiment_results(
 
     # Plot 1: Main comparison (Greedy vs Two-Stage)
     print("Creating main loss comparison plot (Greedy vs Two-Stage)...")
-    if "Losses" not in results_df.columns:
-        raise ValueError("Missing required column: 'Losses' (Greedy method)")
-    if "Two-Stage Losses" not in results_df.columns:
-        raise ValueError("Missing required column: 'Two-Stage Losses'")
+    if "loss" not in results_df.columns:
+        raise ValueError("Missing required column: 'loss' (Greedy method)")
+    if "two_stage_loss" not in results_df.columns:
+        raise ValueError("Missing required column: 'two_stage_loss'")
 
-    greedy_losses = results_df["Losses"].dropna()
-    two_stage_losses = results_df["Two-Stage Losses"].dropna()
+    # Filter to only include replicates where both methods have valid results
+    valid_mask = ~(results_df["loss"].isna() | results_df["two_stage_loss"].isna())
 
-    if len(greedy_losses) == 0:
+    if valid_mask.sum() == 0:
         raise ValueError(
-            f"'Losses' column contains no valid data (all NaN) for dataset {dataset_name}. This suggests the greedy method failed to run properly."
+            f"No valid data found where both greedy and two-stage methods have results for dataset {dataset_name}."
         )
-    if len(two_stage_losses) == 0:
-        raise ValueError(
-            f"'Two-Stage Losses' column contains no valid data (all NaN) for dataset {dataset_name}. This suggests the two-stage method failed to run properly."
-        )
+
+    greedy_losses = results_df.loc[valid_mask, "loss"]
+    two_stage_losses = results_df.loc[valid_mask, "two_stage_loss"]
+
+    print(
+        f"Using {len(greedy_losses)} replicates where both methods have valid results"
+    )
 
     plot_filename = os.path.join(
         output_dir, f"{dataset_name}_greedy_vs_twostage_box.png"
     )
-    box_plot(
+    difference_box_plot(
         greedy_losses,
         two_stage_losses,
-        D,
-        ["Greedy", "Two-Stage"],
+        "Difference",
+        "Greedy - Two-Stage",
         r"$\ell_1(\hat{S}_{g}) - \ell_1(\hat{S}_{TSIP})$",
         plot_filename,
     )
     print(f"Saved plot: {plot_filename}")
 
     # Plot 2: Optional brute force comparison (only if data exists)
-    if (
-        "Brute Isometry Losses" in results_df.columns
-        and len(results_df["Brute Isometry Losses"].dropna()) > 0
-    ):
-        print("Creating brute force vs two-stage comparison plot...")
-        brute_losses = results_df["Brute Isometry Losses"].dropna()
-        brute_plot_filename = os.path.join(
-            output_dir, f"{dataset_name}_brute_vs_twostage_box.png"
+    if "brute_isometry_loss" in results_df.columns:
+        # Filter to only include replicates where both brute force and two-stage methods have valid results
+        brute_valid_mask = ~(
+            results_df["brute_isometry_loss"].isna()
+            | results_df["two_stage_loss"].isna()
         )
-        box_plot(
-            brute_losses,
-            two_stage_losses,
-            D,
-            ["Brute Force", "Two-Stage"],
-            r"$\ell_1(\hat{S}_{brute}) - \ell_1(\hat{S}_{TSIP})$",
-            brute_plot_filename,
-        )
-        print(f"Saved plot: {brute_plot_filename}")
+
+        if brute_valid_mask.sum() > 0:
+            print("Creating brute force vs two-stage comparison plot...")
+            brute_losses = results_df.loc[brute_valid_mask, "brute_isometry_loss"]
+            brute_two_stage_losses = results_df.loc[brute_valid_mask, "two_stage_loss"]
+            print(
+                f"Using {len(brute_losses)} replicates where both brute force and two-stage methods have valid results"
+            )
+
+            brute_plot_filename = os.path.join(
+                output_dir, f"{dataset_name}_brute_vs_twostage_box.png"
+            )
+            difference_box_plot(
+                brute_losses,
+                brute_two_stage_losses,
+                "Difference",
+                "Brute Force - Two-Stage",
+                r"$\ell_1(\hat{S}_{brute}) - \ell_1(\hat{S}_{TSIP})$",
+                brute_plot_filename,
+            )
+            print(f"Saved plot: {brute_plot_filename}")
+        else:
+            print(
+                "Skipping brute force comparison - no valid data where both methods have results"
+            )
     else:
         print("Skipping brute force comparison - no brute force data available")
 
-    # Plot 3: Loss distribution
-    print("Creating loss distribution plot...")
+    # Plot 3: Two-stage greedy vs Greedy comparison
+    if "two_stage_greedy_loss" in results_df.columns:
+        # Filter to only include replicates where both two-stage greedy and regular greedy methods have valid results
+        two_stage_greedy_valid_mask = ~(
+            results_df["two_stage_greedy_loss"].isna() | results_df["loss"].isna()
+        )
 
-    # Check if we have any valid data
-    has_valid_data = False
-    for col in ["Losses", "Two-Stage Losses", "Random Two-Stage Losses"]:
-        if col in results_df.columns and len(results_df[col].dropna()) > 0:
-            has_valid_data = True
-            break
+        if two_stage_greedy_valid_mask.sum() > 0:
+            print("Creating two-stage greedy vs greedy comparison plot...")
+            two_stage_greedy_losses = results_df.loc[
+                two_stage_greedy_valid_mask, "two_stage_greedy_loss"
+            ]
+            greedy_losses_for_comparison = results_df.loc[
+                two_stage_greedy_valid_mask, "loss"
+            ]
+            print(
+                f"Using {len(two_stage_greedy_losses)} replicates where both two-stage greedy and greedy methods have valid results"
+            )
 
-    if not has_valid_data:
-        print("Skipping loss distribution plot - no valid data (all NaN values)")
-        return
-
-    plt.figure(figsize=(12, 8))
-
-    if "Losses" in results_df.columns:
-        losses = results_df["Losses"].dropna()
-        if len(losses) > 0:
-            plt.hist(losses, bins=20, alpha=0.7, label="Greedy Losses")
+            two_stage_greedy_plot_filename = os.path.join(
+                output_dir, f"{dataset_name}_twostage_greedy_vs_greedy_box.png"
+            )
+            difference_box_plot(
+                two_stage_greedy_losses,
+                greedy_losses_for_comparison,
+                "Difference",
+                "Two-Stage Greedy - Greedy",
+                r"$\ell_1(\hat{S}_{TSG}) - \ell_1(\hat{S}_{G})$",
+                two_stage_greedy_plot_filename,
+            )
+            print(f"Saved plot: {two_stage_greedy_plot_filename}")
         else:
-            print("Skipping Greedy Losses - all NaN values")
-
-    if "Two-Stage Losses" in results_df.columns:
-        two_stage_losses = results_df["Two-Stage Losses"].dropna()
-        if len(two_stage_losses) > 0:
-            plt.hist(two_stage_losses, bins=20, alpha=0.7, label="Two-Stage Losses")
-        else:
-            print("Skipping Two-Stage Losses - all NaN values")
-
-    if "Random Two-Stage Losses" in results_df.columns:
-        random_losses = results_df["Random Two-Stage Losses"].dropna()
-        if len(random_losses) > 0:
-            plt.hist(random_losses, bins=20, alpha=0.7, label="Random Two-Stage Losses")
-        else:
-            print("Skipping Random Two-Stage Losses - all NaN values")
-
-    plt.xlabel("Loss Value")
-    plt.ylabel("Frequency")
-    plt.title(
-        f"Loss Distribution - {dataset_name.upper()} Dataset (D={D}, power={power})"
-    )
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    loss_dist_filename = os.path.join(
-        output_dir, f"{dataset_name}_loss_distribution.png"
-    )
-    plt.savefig(
-        loss_dist_filename,
-        bbox_inches="tight",
-        dpi=300,
-    )
-    plt.close()
-    print(f"Saved plot: {loss_dist_filename}")
+            print(
+                "Skipping two-stage greedy comparison - no valid data where both methods have results"
+            )
+    else:
+        print(
+            "Skipping two-stage greedy comparison - no two-stage greedy data available"
+        )
 
     # Plot 4: Time comparison
     print("Creating time comparison plot...")
@@ -229,14 +230,14 @@ def plot_experiment_results(
         plt.close()
         print(f"Saved plot: {time_dist_filename}")
 
-    # Plot 5: Sparsity analysis
-    if "Support Cardinalities (Basis Pursuit)" in results_df.columns:
+    # Plot 4: Sparsity analysis
+    if "support_cardinality_basis_pursuit" in results_df.columns:
         print("Creating sparsity analysis plot...")
         plt.figure(figsize=(12, 8))
 
         # Use the same purple color and styling as Figure2.ipynb example
         garfield_purple = "#4E2A84"
-        cardinalities = results_df["Support Cardinalities (Basis Pursuit)"]
+        cardinalities = results_df["support_cardinality_basis_pursuit"]
 
         # Use proper binning like in the notebook example
         min_val = min(cardinalities)

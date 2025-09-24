@@ -127,7 +127,7 @@ def load_wine_data(
     print(f"Generated data tensor shape: {data_tensor.shape}")
 
     # Save resampled data tensor
-    tensor_file = os.path.join(output_dir, f"{data_name}_{D_wine}_resampled_tensor.npy")
+    tensor_file = os.path.join(output_dir, f"{data_name}_resampled_tensor.npy")
     np.save(tensor_file, data_tensor)
     print(f"Resampled data tensor saved to {tensor_file}")
 

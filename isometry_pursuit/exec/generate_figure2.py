@@ -15,7 +15,7 @@ import numpy as np
 # Add parent directory to path to import isometry_pursuit modules
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from isometry_pursuit.plot import box_plot, difference_box_plot
+from isometry_pursuit.plot import difference_box_plot
 
 
 def generate_cardinality_plots(results_dir="results", output_dir="figures"):
@@ -181,11 +181,11 @@ def generate_figure2(results_dir="results", output_dir="figures"):
                 )
             else:
                 print("Creating isometry loss comparison plot...")
-                box_plot(
+                difference_box_plot(
                     results_df["Brute Isometry Losses"],
                     results_df["Two-Stage Losses"],
-                    D,
-                    ["Brute Isometry", "Two-Stage"],
+                    "Difference",
+                    "Brute Isometry - Two-Stage",
                     r"$\ell_1$ Loss",
                     os.path.join(
                         output_dir, f"{dataset_name}_isometry_losses_iso_box.png"
@@ -197,11 +197,11 @@ def generate_figure2(results_dir="results", output_dir="figures"):
             and "Greedy Multitask Norms (Two-Stage)" in results_df.columns
         ):
             print("Creating multitask norm comparison plot...")
-            box_plot(
+            difference_box_plot(
                 results_df["Brute Losses"],
                 results_df["Greedy Multitask Norms (Two-Stage)"],
-                D,
-                ["Brute", "Two-Stage"],
+                "Difference",
+                "Brute - Two-Stage",
                 r"$\|w(\cdot)\|_{1,2}$ Loss",
                 os.path.join(output_dir, f"{dataset_name}_isometry_losses_ts_box.png"),
             )

@@ -35,7 +35,6 @@ def difference_box_plot(losses_1, losses_2, title, xlabel, ylabel, filename):
     """
     # Compute difference (same as ECDF plot)
     diff = np.asarray(losses_1) - np.asarray(losses_2)
-
     plt.figure(figsize=(10, 7))
 
     # Create box plot of the differences
@@ -56,39 +55,8 @@ def difference_box_plot(losses_1, losses_2, title, xlabel, ylabel, filename):
     plt.yticks(fontsize=18)
     plt.grid(True, which="both", linestyle="--", alpha=0.5)
 
-    plt.savefig(filename, bbox_inches="tight")
-    plt.close()
-
-
-def box_plot(losses_1, losses_2, D, xlabels, ylabel, filename):
-    """
-    Create a box plot showing the difference between two loss methods.
-    This is the box plot equivalent of the ECDF plot functionality.
-    Note: D parameter is kept for compatibility but not used since losses
-    are now pre-processed to subtract D at the experiment level.
-    """
-    # Compute difference (same as ECDF plot)
-    diff = np.asarray(losses_1) - np.asarray(losses_2)
-
-    plt.figure(figsize=(10, 7))
-
-    # Create single box plot of the differences
-    box = plt.boxplot(
-        [diff], patch_artist=True, medianprops=dict(color="black", linewidth=2)
-    )
-
-    # Customize boxplot color
-    box["boxes"][0].set_facecolor("lightblue")
-
-    # Add horizontal line at 0 (same as ECDF plot)
-    plt.axhline(0, color="black", linestyle="--", linewidth=1)
-
-    # Labeling
-    plt.xlabel(f"{xlabels[0]} - {xlabels[1]}", fontsize=24)
-    plt.ylabel(ylabel, fontsize=24)
-    plt.xticks([1], ["Difference"], fontsize=18)
-    plt.yticks(fontsize=18)
-    plt.grid(True, which="both", linestyle="--", alpha=0.5)
+    # Use symlog scaling for y-axis to handle both positive and negative values
+    plt.yscale("symlog")
 
     plt.savefig(filename, bbox_inches="tight")
     plt.close()
