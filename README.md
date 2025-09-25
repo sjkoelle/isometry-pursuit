@@ -12,6 +12,16 @@ pip install -e .
 
 ## Quick Start
 
+### Generate Figure 1
+
+```bash
+# Generate Figure 1 plots (data visualization, selection, and normalization)
+python -m isometry_pursuit.exec.generate_data_visualization --output-dir figures
+
+# Generate Figure 1 plots (transformation and loss functions)
+python -m isometry_pursuit.exec.generate_figure1 --output-dir figures
+```
+
 The easiest way to run experiments:
 
 ```bash

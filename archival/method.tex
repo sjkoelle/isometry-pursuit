@@ -42,7 +42,7 @@ We therefore introduce an alternative ground truth objective that satisfies the 
 
 This ground truth objective is
 \begin{align}
-l_{c}: \mathbb R^{D \times P} &\to \mathbb R^{+} \\
+\ell_{c}: \mathbb R^{D \times P} &\to \mathbb R^{+} \\
 X &\mapsto \sum_{d = 1}^D g(\sigma_d( X), c)
 \end{align}
 where $\sigma_d ( X)$ is the $d$-th singular value of $ X$ and
@@ -52,7 +52,7 @@ t,c &\mapsto \frac{e^{t^c} + e^{t^{-c}}}{2e}.
 \end{align}
 By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell_c$ is uniquely maximized by orthonormal matrices.
 Moreover, $g$ is convex, and $\ell_c( X^{-1}) = \ell_c( X)$ when $X$ is invertible.
-Figure \ref{fig:gt_loss} gives a graph of $l_c$ when $D=1$.
+Figure \ref{fig:gt_loss} gives a graph of $\ell_c$ when $D=1$.
 
 
 
@@ -63,9 +63,9 @@ Figure \ref{fig:gt_loss} gives a graph of $l_c$ when $D=1$.
 Our ground truth objective is therefore the best subset selection problem
 \begin{align}
 \label{prog:ground_truth}
-\arg \min_{ S \in \binom{[P]}{d}} l_c ( X_{. S}).
+\arg \min_{ S \in \binom{[P]}{d}} \ell_c ( X_{. S}).
 \end{align}
-Regardless of the convexity of $l_c$, brute combinatorial search over $[P]$ is inherently non-convex.
+Regardless of the convexity of $\ell_c$, brute combinatorial search over $[P]$ is inherently non-convex.
 This motivates our alternative formulation.
 
 \subsection{Normalization}
@@ -139,19 +139,19 @@ $X =
 results from the rotation invariance Proposition \ref{prop:unitary_selection}, but more subtle examples exist.
 We therefore define
 \begin{align}
-\widehat \beta^{l_2}_{MLP} (X,Y) = \arg \min \|\beta\|_F : \beta \in \mathcal \beta_{MBP} (X, Y) .
+\widehat \beta^{\ell_2}_{MLP} (X,Y) = \arg \min \|\beta\|_F : \beta \in \mathcal \beta_{MBP} (X, Y) .
 \end{align}
-By the strong convexity of the $l_2$ norm, $\widehat \beta^{l_2}_{MLP} (X,Y)$ is well defined.
+By the strong convexity of the $\ell_2$ norm, $\widehat \beta^{\ell_2}_{MLP} (X,Y)$ is well defined.
 
 This implicit regularization assumption is reasonable.
 % Mishkin2023-yt is broken
-For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum $l_2$ norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf}  assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
+For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum $\ell_2$ norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf}  assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
 Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) \citep{O-Donoghue2013-wf} stably estimates the min-norm solution when initialized at $0$, but besides a brief exploration in Section \ref{sec:deep_dive} we leave theoretical and experimental proof of this feature of the feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our eventual proposition.
 
 Isometry pursuit is then given by
 \begin{align}
 \label{prog:isometry_pursuit}
-\widehat \beta_c ( X) := \widehat \beta_{MBP}^{l_2} ( w(X,c), I_D )
+\widehat \beta_c ( X) := \widehat \beta_{MBP}^{\ell_2} ( w(X,c), I_D )
 \end{align}
 where $I_D$ is the $D$ dimensional identity matrix and recovered functions are the indices of the dictionary elements with non-zero coefficients.
 That is, they are given by $S(\beta)$ where
@@ -163,7 +163,7 @@ S: \mathbb{R}^{P \times D} &\to \binom{[P]}{D} \\
 \caption{\isometrypursuit(Matrix ${X} \in \mathbb{R}^{D \times P}$, scaling constant $c$)}
 \begin{algorithmic}[1]
 \STATE {Normalize} $X_c = w({X},c)$
-\STATE {Optimize} $\widehat \beta = \widehat \beta_{MBP}^{l_2} (X_c, I_D)$
+\STATE {Optimize} $\widehat \beta = \widehat \beta_{MBP}^{\ell_2} (X_c, I_D)$
 \STATE {\bf Output} $\widehat{S} = S (\widehat \beta)$
 \end{algorithmic}
 \end{algorithm}
@@ -190,7 +190,7 @@ Then $S \subseteq \widehat \beta_c ( X)$.
 Proofs of these propositions are given in Section \ref{sec:proofs}, with corresponding experimental results in Section \ref{sec:experiments}.
 The proof mostly relies on the KKT conditions \citep{Hastie2015-qa} being used to verify that an isometric subset yields a corresponding basis pursuit solution for an appropriate normalized matrix.
 This is a formalization of our intuition that longer and more orthogonal vectors will minimize loss.
-We then apply a simple argument to show that the $l_2$ minimizing solution is the least sparse solution, which means that it contains the isometry solution, should it exist.
+We then apply a simple argument to show that the $\ell_2$ minimizing solution is the least sparse solution, which means that it contains the isometry solution, should it exist.
 
 \subsection{Two-stage isometry pursuit}
 
@@ -202,7 +202,7 @@ This method forms our practical isometry estimator, the core advantage of which 
 \caption{\tsip(Matrix ${X} \in \mathbb{R}^{D \times P}$, scaling constant $c$)}
 \begin{algorithmic}[1]
 \STATE $\widehat{S}_{IP} = \text{\isometrypursuit}( X, c)$
-\STATE $\widehat{S} = \text {\brute}({X}_{.\widehat{S}_{IP}}, l_c)$
+\STATE $\widehat{S} = \text {\brute}({X}_{.\widehat{S}_{IP}}, \ell_c)$
 \STATE {\bf Output} $\widehat{S}$
 \end{algorithmic}
 \end{algorithm}
@@ -213,7 +213,7 @@ This method forms our practical isometry estimator, the core advantage of which 
 The asymptotic per-iteration complexities are the same.
 \begin{proposition}
     \label{prop:computational_complexity}
-    The computational complexity $C_l$ in \ref{eq:brute_loss} is $\max O(D^2P)$.
+    The computational complexity $C_\ell$ in \ref{eq:brute_loss} is $\max O(D^2P)$.
     \end{proposition}
 \begin{proposition}
     \label{prop:computational_complexity}
