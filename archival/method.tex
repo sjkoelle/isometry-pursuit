@@ -42,6 +42,7 @@ We therefore introduce an alternative ground truth objective that satisfies the 
 
 This ground truth objective is
 \begin{align}
+\label{eq:gt_loss}
 \ell: \mathbb R^{D \times P} &\to \mathbb R^{+} \\
 X &\mapsto \sum_{d = 1}^D g(\sigma_d( X))
 \end{align}
@@ -63,9 +64,9 @@ Figure \ref{fig:gt_loss} gives a graph of $\ell$ when $D=1$.
 Our ground truth objective is therefore the best subset selection problem
 \begin{align}
 \label{prog:ground_truth}
-\arg \min_{ S \in \binom{[P]}{d}} \ell_c ( X_{. S}).
+\arg \min_{ S \in \binom{[P]}{d}} \ell( X_{. S}).
 \end{align}
-Regardless of the convexity of $\ell_c$, brute combinatorial search over $[P]$ is inherently non-convex.
+Regardless of the convexity of $\ell $, brute combinatorial search over $[P]$ is inherently non-convex.
 This motivates our alternative formulation.
 
 \subsection{Normalization}
@@ -126,27 +127,21 @@ Given a matrix $Y \in \mathbb R^{D \times D}$, the multitask basis pursuit solut
 \widehat {\mathcal {\beta}}_{MBP} (X, Y)  := \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \;Y =  X \beta.
 \end{align}
 
-Note that multitask basis pursuit solution is not unique under more relaxed conditions than for standard basis pursuit.
-Recall that, given a design matrix $X$, there exists a response variable $y$ such that the lasso admits a non-unique solution if and only if the rowspan of the design matrix $X$ contains a sufficient codimension edge of the $p$ dimensional hypercube \citep{Schneider2022-hi}.
-This condition generalizes the previously introduced general position condition - that affinely independent columns of the design matrix guarantee non-uniqueness.
-However, for Isometry Pursuit, non-unique solutions may occur even when this condition is satisfied.
-A simple example -
-$X =
-\begin{bmatrix}
-1 & 0 & \frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2}  \\
-0 & 1 & \frac{\sqrt{2}}{2} & \frac{-\sqrt{2}}{2}  
-\end{bmatrix}$
-results from the rotation invariance Proposition \ref{prop:unitary_selection}, but more subtle examples exist.
+The multitask basis pursuit solution is often not unique.
+See \citet{Schneider2022-hi} for more details on uniqueness of basis pursuit solutions, for which the uniqueness condition is less strict than in the multitask case.
 We therefore define
 \begin{align}
-\widehat \beta^{\ell_2}_{MLP} (X,Y) = \arg \min \|\beta\|_F : \beta \in \mathcal \beta_{MBP} (X, Y) .
+\widehat \beta^{\ell_2}_{MLP} (X,Y) := \arg \min \|\beta\|_F : \beta \in \mathcal \beta_{MBP} (X, Y) .
 \end{align}
 By the strong convexity of the $\ell_2$ norm, $\widehat \beta^{\ell_2}_{MLP} (X,Y)$ is well defined.
+% 
+% Given a design matrix $X$, there exists a response variable $y$ such that basis pursuit admits a non-unique solution if and only if the rowspan of the design matrix $X$ contains a sufficient codimension edge of the $p$ dimensional hypercube \citep{Schneider2022-hi}.
+% For multitask basis pursuit non-unique solutions may occur even when this condition is satisfied.
 
-This implicit regularization assumption is reasonable.
+% This implicit regularization assumption is reasonable.
 % Mishkin2023-yt is broken
-For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum $\ell_2$ norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf}  assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
-Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) \citep{O-Donoghue2013-wf} stably estimates the min-norm solution when initialized at $0$, but besides a brief exploration in Section \ref{sec:deep_dive} we leave theoretical and experimental proof of this feature of the feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our eventual proposition.
+% For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum $\ell_2$ norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf}  assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
+% Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) \citep{O-Donoghue2013-wf} stably estimates the min-norm solution when initialized at $0$, but besides a brief exploration in Section \ref{sec:deep_dive} we leave theoretical and experimental proof of this feature of the feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our eventual proposition.
 
 Isometry pursuit is then given by
 \begin{align}
@@ -183,7 +178,7 @@ It is also essential for showing the following main theoretical result.
 When a rank $D$ orthonormal column-submatrix $X_{.S}$ exists, the output of Program \ref{prog:isometry_pursuit} will contain $S$.
 \begin{proposition}
 Let $X \in \mathbb R^{D \times P}$ have a rank $D$ orthonormal column submatrix $X_{.S}$.
-Then $S \subseteq \widehat \beta_c ( X)$.
+Then $S \subseteq \widehat \beta ( X)$.
 \label{prop:unitary_selection}
 \end{proposition}
 
@@ -195,8 +190,9 @@ We then apply a simple argument to show that the $\ell_2$ minimizing solution is
 \subsection{Two-stage isometry pursuit}
 
 Proposition \ref{prop:unitary_selection} suggests the following algorithm, which first uses the convex \isometrypursuit~ algorithm to prune the $P$ candidate features and then applies brute search upon the reduced feature set.
-Similar two-stage approaches are standard in the Lasso literature \cite{Hesterberg2008-iy, Koelle2022-ju}, and Proposition \ref{prop:unitary_selection} puts them on relatively strong footing in our application, since this approach is guaranteed to select an isometric submatrix should one exist.
-This method forms our practical isometry estimator, the core advantage of which over purely brute search is a substantially reduced feature set.
+The proposition says that this approach is guaranteed to select an isometric submatrix should one exist.
+The two-stage approach is standard in the Lasso literature \citep{Meinshausen2007-ey, Hesterberg2008-iy, Koelle2022-ju}, and Proposition \ref{prop:unitary_selection} justifies it in our application.
+This method forms our practical isometry estimator, the core advantage of which over purely brute search is a substantially improved computational complexity.
 
 \begin{algorithm}[H]
 \caption{\tsip(Matrix ${X} \in \mathbb{R}^{D \times P}$)}
@@ -209,18 +205,20 @@ This method forms our practical isometry estimator, the core advantage of which 
 
 \subsection{Computation complexity}
 
-\isometrypursuit~ is more computationally efficient than \brute~ while less so than \greedy.
-The asymptotic per-iteration complexities are the same.
+\isometrypursuit~ is more computationally efficient than \brute~ search for the minimizer of $\ell$.
+Interestingly, their asymptotic per-iteration complexities are the same.
 \begin{proposition}
     \label{prop:computational_complexity}
-    The computational complexity $C_\ell$ in \ref{eq:brute_loss} is $\max O(D^2P)$.
-    \end{proposition}
+    The computational complexity $C_\ell$ of \ref{eq:gt_loss} is $ O(D^2P)$.
+\end{proposition}
+The above proposition follows immediately from the computational complexity of singular value decomposition \citep{Liang2016-qb}.
+The per-iteration complexity of \isometrypursuit~ is also limited by the computational complexity of singular value decomposition, albeit in the more intricate manner described in Section \ref{proof:computational_complexity}.
 \begin{proposition}
-    \label{prop:computational_complexity}
-    The computational complexity of each step of Isometry Pursuit is $\max O(D^2P)$.
-    \end{proposition}
+\label{prop:computational_complexity}
+The computational complexity of each step of Isometry Pursuit is $O(D^2P)$.
+\end{proposition}
 
-The difference therefore lies in the relation of the number of iterations required to achieve a given error tolerance with \isometrypursuit~ and the exact solutions \brute and \greedy.
-The ADMM optimization method that we apply, also known as the Splitting Conic Solver, has asymptotic (in error) accuracy $\epsilon < O(\frac{1}{S})$ \citep{He2012-fi}.
+The difference therefore lies in the relation of the number of iterations required to achieve a given error tolerance with \isometrypursuit~ and \brute.
+The ADMM optimization method that we apply, also known as the Splitting Conic Solver, has asymptotic (in error) accuracy $\epsilon < O(\frac{1}{\mathcal S})$, where $\mathcal S$ is the number of iterations \citep{He2012-fi}.
 This means that the number of iterations required to achieve a given error tolerance scales inversely with the desired level of accuracy.
 We examine the effect of iteration number on the convergence to a sparse solution in Section \ref{sec:experiments}.
