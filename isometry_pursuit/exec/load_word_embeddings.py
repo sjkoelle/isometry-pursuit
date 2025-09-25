@@ -11,9 +11,7 @@ from sklearn.preprocessing import StandardScaler
 import argparse
 
 
-def load_word_embeddings_notebook(
-    output_dir="data", standardize=True, n_replicates=25, frac=0.5
-):
+def load_word_embeddings_notebook(output_dir="data", n_replicates=25, frac=0.5):
     """
     Load word embeddings exactly as in the notebook with resampling.
 
@@ -101,8 +99,8 @@ def load_word_embeddings_notebook(
     centroid_embedding = pd.DataFrame(coords, index=words, columns=axes)
 
     # Apply StandardScaler (exactly from notebook)
-    centroid_embedding = StandardScaler().fit_transform(centroid_embedding)
-    centroid_embedding = pd.DataFrame(centroid_embedding, columns=axes, index=words)
+    # centroid_embedding = StandardScaler().fit_transform(centroid_embedding)
+    # centroid_embedding = pd.DataFrame(centroid_embedding, columns=axes, index=words)
 
     # -------------------- CATEGORY LABEL (exactly from notebook) --------------------
     category_of = {w: cat for cat, vocab in word_categories.items() for w in vocab}
@@ -120,23 +118,18 @@ def load_word_embeddings_notebook(
     P_words, D_words = embeds.shape
     print(f"Word embeddings dataset: {P_words} samples, {D_words} features")
 
-    # Apply standardization if requested
-    if standardize:
-        print("Standardizing data...")
-        scaler = StandardScaler()
-        embeds_standardized = pd.DataFrame(
-            data=scaler.fit_transform(embeds), columns=embeds.columns
-        )
+    print("Standardizing data...")
+    scaler = StandardScaler()
+    embeds_standardized = pd.DataFrame(
+        data=scaler.fit_transform(embeds), columns=embeds.columns
+    )
 
-        # Verify standardization (should be sqrt(P))
-        norms = np.linalg.norm(embeds_standardized, axis=0)
-        print(f"Column norms after standardization: {norms}")
+    # Verify standardization (should be sqrt(P))
+    norms = np.linalg.norm(embeds_standardized, axis=0)
+    print(f"Column norms after standardization: {norms}")
 
-        data = embeds_standardized
-        data_name = "word_embeddings_standardized"
-    else:
-        data = embeds
-        data_name = "word_embeddings"
+    data = embeds_standardized
+    data_name = "word_embeddings_standardized"
 
     # -------------------- SAVE DATA --------------------
     os.makedirs(output_dir, exist_ok=True)
@@ -149,7 +142,6 @@ def load_word_embeddings_notebook(
     # Save metadata
     metadata = {
         "dataset": "word_embeddings",
-        "standardized": standardize,
         "D": D_words,
         "n_words": len(words),
         "n_categories": len(word_categories),
@@ -195,9 +187,6 @@ if __name__ == "__main__":
     )
     parser.add_argument("--output-dir", default="data", help="Output directory")
     parser.add_argument(
-        "--standardize", action="store_true", default=True, help="Standardize the data"
-    )
-    parser.add_argument(
         "--n-replicates", type=int, default=25, help="Number of resampling replicates"
     )
     parser.add_argument(
@@ -211,7 +200,6 @@ if __name__ == "__main__":
 
     data_tensor, data, D, P = load_word_embeddings_notebook(
         output_dir=args.output_dir,
-        standardize=args.standardize,
         n_replicates=args.n_replicates,
         frac=args.frac,
     )
