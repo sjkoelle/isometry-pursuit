@@ -18,7 +18,6 @@ The easiest way to run experiments:
 # Load data
 python -m isometry_pursuit.exec.load_iris_exec --output-dir data/iris
 python -m isometry_pursuit.exec.load_wine_exec --output-dir data/wine_6 --D 6  # Sample 6 features per replicate
-python -m isometry_pursuit.exec.load_word_embeddings --output-dir data/words
 
 # Load ethanol data (requires specific file paths)
 python -m isometry_pursuit.exec.load_ethanol_exec \
@@ -41,10 +40,6 @@ python -m isometry_pursuit.exec.run_experiment \
     --dataset-name wine \
     --output-dir results
 
-python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/words/word_embeddings_standardized_resampled_tensor.npy \
-    --dataset-name word_embeddings \
-    --output-dir results
 
 python -m isometry_pursuit.exec.run_experiment \
     --data-file data/ethanol/ethanol_tensor.npy \
@@ -65,12 +60,6 @@ python -m isometry_pursuit.exec.run_convergence_analysis \
     --n-replicates 10 \
     --output-dir results
 
-python -m isometry_pursuit.exec.run_convergence_analysis \
-    --data-file data/words/word_embeddings_standardized_resampled_tensor.npy \
-    --dataset-name word_embeddings \
-    --n-replicates 10 \
-    --n-replicates 10 \
-    --output-dir results
 
 python -m isometry_pursuit.exec.run_convergence_analysis \
     --data-file data/ethanol/ethanol_tensor.npy \
@@ -89,10 +78,6 @@ python -m isometry_pursuit.exec.plot_convergence_analysis \
     --dataset-name wine \
     --output-dir figures
 
-python -m isometry_pursuit.exec.plot_convergence_analysis \
-    --convergence-file results/word_embeddings_convergence_all_replicates.pkl \
-    --dataset-name word_embeddings \
-    --output-dir figures
 
 python -m isometry_pursuit.exec.plot_convergence_analysis \
     --convergence-file results/ethanol_convergence_all_replicates.pkl \
@@ -105,7 +90,6 @@ python -m isometry_pursuit.exec.plot_convergence_analysis \
 python -m isometry_pursuit.exec.plot_difference_boxplot \
     --result-files results/iris_results.csv \
                    results/wine_results.csv \
-                   results/word_embeddings_results.csv \
                    results/ethanol_results.csv \
     --baseline-column "loss" \
     --comparison-column "two_stage_loss" \
@@ -116,7 +100,6 @@ python -m isometry_pursuit.exec.plot_difference_boxplot \
 python -m isometry_pursuit.exec.plot_difference_boxplot \
     --result-files results/iris_results.csv \
                    results/wine_results.csv \
-                   results/word_embeddings_results.csv \
                    results/ethanol_results.csv \
     --baseline-column "loss" \
     --comparison-column "two_stage_greedy_loss" \
@@ -127,7 +110,6 @@ python -m isometry_pursuit.exec.plot_difference_boxplot \
 python -m isometry_pursuit.exec.plot_difference_boxplot \
     --result-files results/iris_results.csv \
                    results/wine_results.csv \
-                   results/word_embeddings_results.csv \
                    results/ethanol_results.csv \
     --baseline-column "two_stage_greedy_loss" \
     --comparison-column "two_stage_loss" \
@@ -146,10 +128,6 @@ python -m isometry_pursuit.exec.plot_results \
     --dataset-name wine \
     --output-dir figures
 
-python -m isometry_pursuit.exec.plot_results \
-    --results-file results/word_embeddings_results.csv \
-    --dataset-name word_embeddings \
-    --output-dir figures
 
 python -m isometry_pursuit.exec.plot_results \
     --results-file results/ethanol_results.csv \
@@ -163,7 +141,6 @@ python -m isometry_pursuit.exec.plot_results \
 
 - **Iris**: Uses all 4 features (no feature sampling)
 - **Wine**: Samples D=6 features for each replicate from 13 available features
-- **Word Embeddings**: Samples D=7 features for each replicate from high-dimensional embeddings, then applies PCA
 - **Ethanol**: Uses all available features (no feature sampling)
 
 The ethanol data is available at `https://drive.google.com/file/d/1CvVOIXokjfTT0AtyeXSZMlojnfL3AcUL/view?usp=drive_link`.
