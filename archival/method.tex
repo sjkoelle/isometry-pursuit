@@ -18,7 +18,7 @@
 \caption{\ref{fig:data} Raw data $X$ represented as column-vectors.
  \ref{fig:selection} An isometric subset - the identification of which is our objective.
  \ref{fig:normalization} The vectors after normalization so that vectors of length $1$ maintain longest length.
- \ref{fig:gt_loss} Our ground truth loss function for different values of $c$ in the one-dimensional case $D = 1$
+ \ref{fig:gt_loss} Our ground truth loss function in the one-dimensional case $D = 1$
  \ref{fig:normalized_length} Normalized length used to rescale Figure \ref{fig:data} to get vectors in Figure \ref{fig:normalization}.
  \ref{fig:bp_loss} Basis pursuit loss. 
 This loss is equivalent to that shown in Figure \ref{fig:gt_loss} in the one-dimensional case.
@@ -42,17 +42,17 @@ We therefore introduce an alternative ground truth objective that satisfies the 
 
 This ground truth objective is
 \begin{align}
-\ell_{c}: \mathbb R^{D \times P} &\to \mathbb R^{+} \\
-X &\mapsto \sum_{d = 1}^D g(\sigma_d( X), c)
+\ell: \mathbb R^{D \times P} &\to \mathbb R^{+} \\
+X &\mapsto \sum_{d = 1}^D g(\sigma_d( X))
 \end{align}
 where $\sigma_d ( X)$ is the $d$-th singular value of $ X$ and
 \begin{align}
-g: \mathbb R^+ \times \mathbb R^+ &\to \mathbb R^+ \\
-t,c &\mapsto \frac{e^{t^c} + e^{t^{-c}}}{2e}.
+g: \mathbb R^+ &\to \mathbb R^+ \\
+t &\mapsto \frac{e^{t} + e^{t^{-1}}}{2e}.
 \end{align}
-By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell_c$ is uniquely maximized by orthonormal matrices.
-Moreover, $g$ is convex, and $\ell_c( X^{-1}) = \ell_c( X)$ when $X$ is invertible.
-Figure \ref{fig:gt_loss} gives a graph of $\ell_c$ when $D=1$.
+By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell$ is uniquely maximized by orthonormal matrices.
+Moreover, $g$ is convex, and $\ell( X^{-1}) = \ell( X)$ when $X$ is invertible.
+Figure \ref{fig:gt_loss} gives a graph of $\ell$ when $D=1$.
 
 
 
@@ -95,10 +95,10 @@ w: \mathbb R^{D \times P}  &\to \mathbb R^D \\
  X_{.p} &\mapsto n( X_{.p}) \; \forall \; p \in [P].
 \end{align}
 
-Given $c > 0$, we choose $q$ as follows.
+We choose $q$ as follows.
 \begin{align}
-q_c: \mathbb R^D  &\to \mathbb R^+ \\
-v  &\mapsto \frac{e^{\|v\|_2^c} + e^{\|v\|_2^{-c}}}{2e}.
+q: \mathbb R^D  &\to \mathbb R^+ \\
+v  &\mapsto \frac{e^{\|v\|_2} + e^{\|v\|_2^{-1}}}{2e}.
 \label{eq:normalization}
 \end{align}
 
@@ -106,14 +106,14 @@ Besides satisfying the conditions in Definition \ref{def:symmetric_normalization
 First, $q$ is convex.
 Second, it grows asymptotically log-linearly.
 Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp \citep{Boyd2004-ql} replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon exponentiation.
-Finally, the parameter $c$ grants control over the width of the basin, which may be useful for avoiding numerical issues arising close to $0$ and $\infty$.
+This normalization provides good numerical properties for avoiding issues arising close to $0$ and $\infty$.
 We plot this normalization function in Figure \ref{fig:normalized_length} and its effect on our example data in Figure \ref{fig:normalization}.
 
 
 
 \subsection{Isometry pursuit}
 
-Isometry pursuit is the application of multitask basis pursuit to the normalized design matrix $w(X, c)$ to identify submatrices of $ X$ that are as orthonormal as possible.
+Isometry pursuit is the application of multitask basis pursuit to the normalized design matrix $w(X)$ to identify submatrices of $ X$ that are as orthonormal as possible.
 Define the multitask basis pursuit penalty 
 \begin{align}
 \label{eq:bp}
@@ -151,7 +151,7 @@ Empirically, the Splitting Conic Solver type method (which is itself a variant o
 Isometry pursuit is then given by
 \begin{align}
 \label{prog:isometry_pursuit}
-\widehat \beta_c ( X) := \widehat \beta_{MBP}^{\ell_2} ( w(X,c), I_D )
+\widehat \beta ( X) := \widehat \beta_{MBP}^{\ell_2} ( w(X), I_D )
 \end{align}
 where $I_D$ is the $D$ dimensional identity matrix and recovered functions are the indices of the dictionary elements with non-zero coefficients.
 That is, they are given by $S(\beta)$ where
@@ -160,10 +160,10 @@ S: \mathbb{R}^{P \times D} &\to \binom{[P]}{D} \\
 \beta &\mapsto \left\{ p \in [P] :  \|\beta_{p.}\| > 0 \right\}.
 \end{align}
 \begin{algorithm}[H]
-\caption{\isometrypursuit(Matrix ${X} \in \mathbb{R}^{D \times P}$, scaling constant $c$)}
+\caption{\isometrypursuit(Matrix ${X} \in \mathbb{R}^{D \times P}$)}
 \begin{algorithmic}[1]
-\STATE {Normalize} $X_c = w({X},c)$
-\STATE {Optimize} $\widehat \beta = \widehat \beta_{MBP}^{\ell_2} (X_c, I_D)$
+\STATE {Normalize} $X' = w({X})$
+\STATE {Optimize} $\widehat \beta = \widehat \beta_{MBP}^{\ell_2} (X', I_D)$
 \STATE {\bf Output} $\widehat{S} = S (\widehat \beta)$
 \end{algorithmic}
 \end{algorithm}
@@ -199,10 +199,10 @@ Similar two-stage approaches are standard in the Lasso literature \cite{Hesterbe
 This method forms our practical isometry estimator, the core advantage of which over purely brute search is a substantially reduced feature set.
 
 \begin{algorithm}[H]
-\caption{\tsip(Matrix ${X} \in \mathbb{R}^{D \times P}$, scaling constant $c$)}
+\caption{\tsip(Matrix ${X} \in \mathbb{R}^{D \times P}$)}
 \begin{algorithmic}[1]
-\STATE $\widehat{S}_{IP} = \text{\isometrypursuit}( X, c)$
-\STATE $\widehat{S} = \text {\brute}({X}_{.\widehat{S}_{IP}}, \ell_c)$
+\STATE $\widehat{S}_{IP} = \text{\isometrypursuit}( X)$
+\STATE $\widehat{S} = \text {\brute}({X}_{.\widehat{S}_{IP}}, \ell)$
 \STATE {\bf Output} $\widehat{S}$
 \end{algorithmic}
 \end{algorithm}

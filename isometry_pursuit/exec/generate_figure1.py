@@ -51,18 +51,18 @@ def generate_figure1(output_dir="figures"):
 
     # --- Plot the function: Length ---
     print("Creating length transformation plot...")
-    fig, ax = plt.subplots(1, 1, figsize=(14, 10))
+    fig, ax = plt.subplots(1, 1, figsize=(12, 10))
     ax.plot(matrix_values, lengths, color="black", linewidth=2.5, linestyle=line_style)
 
     ax.axhline(0, color="black", linewidth=0.5)
     ax.axvline(0, color="black", linewidth=0.5)
     ax.grid(color="gray", linestyle="--", linewidth=0.5)
-    ax.set_title(r"$q([t])$", fontsize=80)
+    ax.set_title(r"$q(t)$", fontsize=80)
     ax.set_ylabel(r"$\frac{2e}{e^{t} + e^{\frac{1}{t}}}$", fontsize=60)
     ax.set_xlabel(r"$t$", fontsize=50)
     ax.set_xscale("log")
     ax.set_xlim(1e-2, 1e2)
-    ax.tick_params(labelsize=30)
+    ax.tick_params(labelsize=30, which="both")
 
     plt.tight_layout()
     fig.savefig(
@@ -73,7 +73,7 @@ def generate_figure1(output_dir="figures"):
 
     # --- Plot the function: Loss ---
     print("Creating loss function plot...")
-    fig, ax = plt.subplots(1, 1, figsize=(14, 10))
+    fig, ax = plt.subplots(1, 1, figsize=(12, 10))
     ax.plot(
         matrix_values,
         basis_pursuit_losses,
@@ -85,13 +85,13 @@ def generate_figure1(output_dir="figures"):
     ax.axhline(0, color="black", linewidth=0.5)
     ax.axvline(0, color="black", linewidth=0.5)
     ax.grid(color="gray", linestyle="--", linewidth=0.5)
-    ax.set_title(r"$l(t)$", fontsize=80)
+    ax.set_title(r"$\ell(t)$", fontsize=80)
     ax.set_ylim(0, 10)
-    ax.set_ylabel(r"$\frac{e^{t} + e^{\frac{1}{t}}}{2e}$", fontsize=60)
+    ax.set_ylabel(r"$\frac{e^{t} + e^{\frac{1}{t}}}{2e} - 1$", fontsize=60)
     ax.set_xlabel(r"$t$", fontsize=50)
     ax.set_xscale("log")
     ax.set_xlim(1e-2, 1e2)
-    ax.tick_params(labelsize=30)
+    ax.tick_params(labelsize=30, which="both")
 
     plt.tight_layout()
     fig.savefig(
@@ -102,7 +102,7 @@ def generate_figure1(output_dir="figures"):
 
     # --- Plot the function: Basis pursuit loss interpretation ---
     print("Creating basis pursuit loss interpretation plot...")
-    fig, ax = plt.subplots(1, 1, figsize=(14, 10))
+    fig, ax = plt.subplots(1, 1, figsize=(12, 10))
     ax.plot(
         matrix_values,
         basis_pursuit_losses,
@@ -114,13 +114,13 @@ def generate_figure1(output_dir="figures"):
     ax.axhline(0, color="black", linewidth=0.5)
     ax.axvline(0, color="black", linewidth=0.5)
     ax.grid(color="gray", linestyle="--", linewidth=0.5)
-    ax.set_title(r"$\|\beta\|_{1,2} \; : \; 1 = w([[t]], 1)\,\beta$", fontsize=80)
+    ax.set_title(r"$\|\beta\|_{1,2} \; : \; 1 = w(t)\,\beta$", fontsize=80)
     ax.set_ylim(0, 10)
     ax.set_ylabel(r"$\frac{e^{t} + e^{\frac{1}{t}}}{2e}$", fontsize=60)
     ax.set_xlabel(r"$t$", fontsize=50)
     ax.set_xscale("log")
     ax.set_xlim(1e-2, 1e2)
-    ax.tick_params(labelsize=30)
+    ax.tick_params(labelsize=30, which="both")
 
     plt.tight_layout()
     fig.savefig(

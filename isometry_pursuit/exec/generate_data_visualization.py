@@ -75,8 +75,8 @@ def generate_data_visualization(output_dir="figures", num_vectors=30, seed=2):
     start_x = np.append(start_x, [0, 0])
     start_y = np.append(start_y, [0, 0])
 
-    xlim = max([np.abs(end_x.min()), end_x.max(), np.abs(end_y.min()), end_y.max()])
-    ylim = xlim
+    xlim = 2
+    ylim = 2
 
     # Define a bright Miami-inspired color gradient
     miami_cmap = LinearSegmentedColormap.from_list(
@@ -85,7 +85,7 @@ def generate_data_visualization(output_dir="figures", num_vectors=30, seed=2):
     colors = miami_cmap(np.linspace(0, 1, len(end_x)))
 
     # Create a figure
-    fig, ax = plt.subplots(figsize=(8, 8))
+    fig, ax = plt.subplots(figsize=(10, 10))
 
     # Plot each vector
     for i in range(len(end_x)):
@@ -105,12 +105,18 @@ def generate_data_visualization(output_dir="figures", num_vectors=30, seed=2):
     plt.xlim(-xlim, xlim)
     plt.ylim(-ylim, ylim)
 
+    # Set custom tick locations and labels
+    tick_positions = [-1, 0, 1]
+    plt.xticks(tick_positions)
+    plt.yticks(tick_positions)
+    ax.tick_params(labelsize=30)
+
     # Add a custom arrow in the legend
     arrow_for_legend = mpatches.FancyArrow(0, 0, 1, 0, color="black")
     plt.legend(
         handles=[arrow_for_legend],
         labels=[r"$X_{.p}$"],
-        fontsize=20,
+        fontsize=40,
         frameon=False,
         handler_map={mpatches.FancyArrow: HandlerArrow()},
         loc="upper left",
@@ -168,8 +174,8 @@ def generate_selection_visualization(output_dir="figures", num_vectors=30, seed=
     start_x = np.append(start_x, [0, 0])
     start_y = np.append(start_y, [0, 0])
 
-    xlim = max([np.abs(end_x.min()), end_x.max(), np.abs(end_y.min()), end_y.max()])
-    ylim = xlim
+    xlim = 2
+    ylim = 2
 
     # Define a bright Miami-inspired color gradient
     miami_cmap = LinearSegmentedColormap.from_list(
@@ -178,7 +184,7 @@ def generate_selection_visualization(output_dir="figures", num_vectors=30, seed=
     colors = miami_cmap(np.linspace(0, 1, len(end_x)))
 
     # Create a figure
-    fig, ax = plt.subplots(figsize=(8, 8))
+    fig, ax = plt.subplots(figsize=(10, 10))
 
     # Plot random vectors with faint colors
     for i in range(num_vectors):
@@ -216,22 +222,28 @@ def generate_selection_visualization(output_dir="figures", num_vectors=30, seed=
     symbol_x = [corner_x, corner_x + x2 * symbol_scale, x2 * symbol_scale]
     symbol_y = [corner_y, corner_y + y2 * symbol_scale, y2 * symbol_scale]
 
-    plt.plot(symbol_x, symbol_y, color="black", linewidth=2)
+    plt.plot(symbol_x, symbol_y, color="black", linewidth=2.5)
 
     # Add a dotted black circle with radius 1
     from matplotlib.patches import Circle
 
     circle = Circle(
-        (0, 0), 1, color="black", linestyle="dotted", fill=False, linewidth=1.5
+        (0, 0), 1, color="black", linestyle="dotted", fill=False, linewidth=2.5
     )
     ax.add_artist(circle)
 
     # Add a small line and label "r = 1" on the x-axis
-    ax.text(1.05, 0.05, "r = 1", fontsize=20, color="black", ha="left", va="bottom")
+    ax.text(1.05, 0.05, "r = 1", fontsize=40, color="black", ha="left", va="bottom")
 
     # Set axis limits
     plt.xlim(-xlim, xlim)
     plt.ylim(-ylim, ylim)
+
+    # Set custom tick locations and labels
+    tick_positions = [-1, 0, 1]
+    plt.xticks(tick_positions)
+    plt.yticks(tick_positions)
+    ax.tick_params(labelsize=30)
 
     # Create a dummy dotted circle for the legend
     dotted_circle = Circle((0, 0), radius=1.2, edgecolor="black", facecolor="none")
@@ -263,7 +275,7 @@ def generate_selection_visualization(output_dir="figures", num_vectors=30, seed=
     # Add the legend with the custom handler
     plt.legend(
         handles=[dotted_circle],
-        fontsize=30,
+        fontsize=40,
         frameon=False,
         labels=[r"$X_{.S}$ isometric"],
         handler_map={Circle: HandlerDottedCircle()},
@@ -331,8 +343,8 @@ def generate_normalization_visualization(output_dir="figures", num_vectors=30, s
     start_x = np.append(start_x, [0, 0])
     start_y = np.append(start_y, [0, 0])
 
-    xlim = max([np.abs(end_x.min()), end_x.max(), np.abs(end_y.min()), end_y.max()])
-    ylim = xlim
+    xlim = 2
+    ylim = 2
 
     # Define a bright Miami-inspired color gradient
     miami_cmap = LinearSegmentedColormap.from_list(
@@ -341,7 +353,7 @@ def generate_normalization_visualization(output_dir="figures", num_vectors=30, s
     colors = miami_cmap(np.linspace(0, 1, len(end_x)))
 
     # Create a figure
-    fig, ax = plt.subplots(figsize=(8, 8))
+    fig, ax = plt.subplots(figsize=(10, 10))
 
     # Plot random vectors with faint colors
     for i in range(num_vectors):
@@ -379,22 +391,28 @@ def generate_normalization_visualization(output_dir="figures", num_vectors=30, s
     symbol_x = [corner_x, corner_x + x2 * symbol_scale, x2 * symbol_scale]
     symbol_y = [corner_y, corner_y + y2 * symbol_scale, y2 * symbol_scale]
 
-    plt.plot(symbol_x, symbol_y, color="black", linewidth=2)
+    plt.plot(symbol_x, symbol_y, color="black", linewidth=2.5)
 
     # Add a dotted black circle with radius 1
     from matplotlib.patches import Circle
 
     circle = Circle(
-        (0, 0), 1, color="black", linestyle="dotted", fill=False, linewidth=1.5
+        (0, 0), 1, color="black", linestyle="dotted", fill=False, linewidth=2.5
     )
     ax.add_artist(circle)
 
     # Add a small line and label "r = 1" on the x-axis
-    ax.text(1.05, 0.05, "r = 1", fontsize=20, color="black", ha="left", va="bottom")
+    ax.text(1.05, 0.05, "r = 1", fontsize=40, color="black", ha="left", va="bottom")
 
     # Set axis limits
     plt.xlim(-xlim, xlim)
     plt.ylim(-ylim, ylim)
+
+    # Set custom tick locations and labels
+    tick_positions = [-1, 0, 1]
+    plt.xticks(tick_positions)
+    plt.yticks(tick_positions)
+    ax.tick_params(labelsize=30)
 
     # Create a dummy dotted circle for the legend
     dotted_circle = Circle((0, 0), radius=1.2, edgecolor="black", facecolor="none")
@@ -426,7 +444,7 @@ def generate_normalization_visualization(output_dir="figures", num_vectors=30, s
     # Add the legend with the custom handler
     plt.legend(
         handles=[dotted_circle],
-        fontsize=30,
+        fontsize=40,
         frameon=False,
         labels=[r"$X_{.S}$ isometric"],
         handler_map={Circle: HandlerDottedCircle()},
