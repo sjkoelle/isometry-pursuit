@@ -219,6 +219,7 @@ The computational complexity of each step of Isometry Pursuit is $O(D^2P)$.
 \end{proposition}
 
 The difference therefore lies in the relation of the number of iterations required to achieve a given error tolerance with \isometrypursuit~ and \brute.
-The ADMM optimization method that we apply, also known as the Splitting Conic Solver, has asymptotic (in error) accuracy $\epsilon < O(\frac{1}{\mathcal S})$, where $\mathcal S$ is the number of iterations \citep{He2012-fi}.
+To optimize, we use the SCS interior point solver \citep{ocpb:16} from CVXPY \citep{diamond2016cvxpy, agrawal2018rewriting}, which is able to push sparse values arbitrarily close to 0 \citep{cvxpy_sparse_solution}.
+SCS (aka ADMM) has asymptotic (in error) accuracy $\epsilon < O(\frac{1}{\mathcal S})$, where $\mathcal S$ is the number of iterations \citep{He2012-fi}.
 This means that the number of iterations required to achieve a given error tolerance scales inversely with the desired level of accuracy.
 We examine the effect of iteration number on the convergence to a sparse solution in Section \ref{sec:experiments}.
