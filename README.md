@@ -28,6 +28,7 @@ The easiest way to run experiments:
 # Load data
 python -m isometry_pursuit.exec.load_iris_exec --output-dir data/iris
 python -m isometry_pursuit.exec.load_wine_exec --output-dir data/wine_6 --D 6  # Sample 6 features per replicate
+python -m isometry_pursuit.exec.load_wine_exec --output-dir data/wine --R 1 # Use all 13 features
 
 # Load ethanol data (requires specific file paths)
 python -m isometry_pursuit.exec.load_ethanol_exec \
@@ -38,43 +39,56 @@ python -m isometry_pursuit.exec.load_ethanol_exec \
     --angles-path /Users/samsonkoelle/ethanolanglesfull_0524.npy \
     --output-dir data/ethanol
 
-# Run experiments (using resampled data tensors)
-# Note: D is automatically extracted from tensor shape
-python -m isometry_pursuit.exec.run_experiment \
+# Run isometry pursuit (basis pursuit) experiments (using resampled data tensors)
+# Note: --D specifies target sparsity (number of features to select) and triggers line search
+# Experiments now generate coefficient matrices for separate plotting analysis
+python -m isometry_pursuit.exec.run_isometry_pursuit \
     --data-file data/iris/iris_standardized_resampled_tensor.npy \
     --dataset-name iris \
     --output-dir results
 
-python -m isometry_pursuit.exec.run_experiment \
-    --data-file data/wine_6/wine_standardized_resampled_tensor.npy \
+python -m isometry_pursuit.exec.run_isometry_pursuit \
+    --data-file data/wine/wine_standardized_resampled_tensor.npy \
     --dataset-name wine \
     --output-dir results
 
-
-python -m isometry_pursuit.exec.run_experiment \
+python -m isometry_pursuit.exec.run_isometry_pursuit \
     --data-file data/ethanol/ethanol_tensor.npy \
     --dataset-name ethanol \
     --output-dir results
+
+# Run isometry pursuit with target sparsity (triggers line search for optimal constraint violation)
+python -m isometry_pursuit.exec.run_isometry_pursuit \
+    --data-file data/wine/wine_standardized_resampled_tensor.npy \
+    --dataset-name wine \
+    --output-dir results
+
+# Run greedy algorithm experiments
+python -m isometry_pursuit.exec.run_greedy \
+    --data-file data/wine/wine_standardized_resampled_tensor.npy \
+    --dataset-name wine \
+    --output-dir results
+
 
 # # Run convergence analysis (separate from main experiments)
 # Step 1: Generate convergence data
 python -m isometry_pursuit.exec.run_convergence_analysis \
     --data-file data/iris/iris_standardized_resampled_tensor.npy \
     --dataset-name iris \
-    --n-replicates 10 \
+    --n-replicates 25 \
     --output-dir results
 
 python -m isometry_pursuit.exec.run_convergence_analysis \
     --data-file data/wine_6/wine_standardized_resampled_tensor.npy \
     --dataset-name wine \
-    --n-replicates 10 \
+    --n-replicates 25 \
     --output-dir results
 
 
 python -m isometry_pursuit.exec.run_convergence_analysis \
     --data-file data/ethanol/ethanol_tensor.npy \
     --dataset-name ethanol \
-    --n-replicates 10 \
+    --n-replicates 25 \
     --output-dir results
 
 # Step 2: Generate convergence plots
@@ -96,6 +110,14 @@ python -m isometry_pursuit.exec.plot_convergence_analysis \
 
 # Compare methods across multiple datasets
 
+# Combined sparsity convergence across all datasets
+python -m isometry_pursuit.exec.plot_combined_sparsity_convergence \
+  --convergence-file results/iris_convergence_all_replicates.pkl \
+  --convergence-file results/wine_convergence_all_replicates.pkl \
+  --convergence-file results/ethanol_convergence_all_replicates.pkl \
+  --output-file figures/combined_sparsity_convergence_boxplot.png \
+  --title "Sparsity Convergence Across Datasets"
+
 # Greedy vs Two-Stage (Basis Pursuit → Brute Force)
 python -m isometry_pursuit.exec.plot_difference_boxplot \
     --result-files results/iris_results.csv \
@@ -105,45 +127,33 @@ python -m isometry_pursuit.exec.plot_difference_boxplot \
     --comparison-column "two_stage_loss" \
     --output-file figures/cross_dataset_comparison.png \
     --title "Greedy vs Two-Stage Across Datasets"
-
-# Greedy vs Two-Stage on Greedy (Isometry Pursuit → Greedy)
-python -m isometry_pursuit.exec.plot_difference_boxplot \
-    --result-files results/iris_results.csv \
-                   results/wine_results.csv \
-                   results/ethanol_results.csv \
-    --baseline-column "loss" \
-    --comparison-column "two_stage_greedy_loss" \
-    --output-file figures/greedy_vs_twostage_greedy.png \
-    --title "Greedy vs Two-Stage on Greedy Across Datasets"
-
-# Two-Stage on Greedy vs Two-Stage (Basis Pursuit → Brute Force)
-python -m isometry_pursuit.exec.plot_difference_boxplot \
-    --result-files results/iris_results.csv \
-                   results/wine_results.csv \
-                   results/ethanol_results.csv \
-    --baseline-column "two_stage_greedy_loss" \
-    --comparison-column "two_stage_loss" \
-    --output-file figures/twostage_greedy_vs_twostage.png \
-    --title "Two-Stage on Greedy vs Two-Stage Across Datasets"
-
-
-# Generate plots for each dataset
-python -m isometry_pursuit.exec.plot_results \
-    --results-file results/iris_results.csv \
-    --dataset-name iris \
-    --output-dir figures
-
-python -m isometry_pursuit.exec.plot_results \
-    --results-file results/wine_results.csv \
-    --dataset-name wine \
-    --output-dir figures
-
-
-python -m isometry_pursuit.exec.plot_results \
-    --results-file results/ethanol_results.csv \
-    --dataset-name ethanol \
-    --output-dir figures
 ```
+
+## Output Files
+
+The `run_isometry_pursuit` command generates several output files:
+
+### Standard Results
+
+- **`{dataset_name}_results.csv`**: Main results with metrics for each replicate
+
+### Coefficient Matrices (NEW)
+
+- **`{dataset_name}_coefficient_matrices.pkl`**: Coefficient matrices for each replicate and constraint violation
+  - Structure: `{replicate_idx: {constraint_violation: coefficient_matrix}}`
+  - Dimensions: `(number_of_features, D)` for each coefficient matrix
+  - Use this file to plot regularization paths and analyze coefficient convergence
+
+### Convergence Analysis (if requested)
+
+- **`{dataset_name}_standardized_{power}_{D}_convergence.pkl`**: Convergence logs for detailed analysis
+
+The `run_greedy` command generates:
+
+### Greedy Results
+
+- **`{dataset_name}_greedy_results.csv`**: Greedy algorithm results with metrics for each replicate
+- **`{dataset_name}_greedy_solutions.pkl`**: Greedy feature selection solutions for each replicate
 
 ## Data
 

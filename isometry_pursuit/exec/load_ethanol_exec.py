@@ -332,7 +332,9 @@ def main():
     parser.add_argument(
         "--output-dir", default="data", help="Output directory for processed data"
     )
-    parser.add_argument("--nsel", type=int, default=5, help="Number of selected points")
+    parser.add_argument(
+        "--nsel", type=int, default=25, help="Number of selected points"
+    )
     parser.add_argument("--dimension", type=int, default=2, help="Target dimension")
     parser.add_argument(
         "--power", type=float, default=1.0, help="Power parameter for transformation"

@@ -255,6 +255,134 @@ def plot_experiment_results(
     print(f"Plots saved to {output_dir}")
 
 
+def plot_pickle_results(pickle_file, dataset_name, power=None, output_dir="figures"):
+    """
+    Create plots from pickle convergence files.
+
+    Parameters:
+    -----------
+    pickle_file : str
+        Path to convergence pickle file (e.g., results/ethanol_convergence_all_replicates.pkl)
+    dataset_name : str
+        Name of the dataset
+    power : float, optional
+        Power parameter used (auto-parsed from filename if not provided)
+    output_dir : str
+        Directory to save plots
+    """
+
+    print(f"Loading convergence data from {pickle_file}")
+
+    with open(pickle_file, "rb") as f:
+        convergence_logs = pickle.load(f)
+
+    # Parse power from filename if not provided
+    if power is None:
+        import re
+
+        filename = os.path.basename(pickle_file)
+        # Pattern: {dataset}_convergence_all_replicates.pkl
+        match = re.match(r"(.+)_convergence_all_replicates\.pkl", filename)
+        if match:
+            dataset_name_from_file = match.group(1)
+            print(f"Parsed dataset name from filename: {dataset_name_from_file}")
+            # Set default power if not provided
+            power = 1.0  # Default power
+            print(f"Using default power: {power}")
+        else:
+            print(
+                f"Could not parse dataset name from filename {filename}, using provided name: {dataset_name}"
+            )
+            power = 1.0
+
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Plot 1: Convergence analysis
+    print("Creating convergence analysis plot...")
+    convergence_filename = os.path.join(
+        output_dir, f"{dataset_name}_convergence_analysis.png"
+    )
+    analyze_convergence_logs(
+        convergence_logs,
+        save_path=convergence_filename,
+    )
+    print(f"Saved plot: {convergence_filename}")
+
+    # Plot 2: Sparsity convergence boxplot
+    print("Creating sparsity convergence boxplot...")
+    sparsity_boxplot_filename = os.path.join(
+        output_dir, f"{dataset_name}_sparsity_convergence_boxplot.png"
+    )
+    plot_sparsity_convergence_boxplot(
+        convergence_logs,
+        save_path=sparsity_boxplot_filename,
+    )
+    print(f"Saved plot: {sparsity_boxplot_filename}")
+
+    # Plot 3: Coefficient convergence (if data is available)
+    print("Creating coefficient convergence plots...")
+    if (
+        convergence_logs
+        and len(convergence_logs) > 0
+        and convergence_logs[0] is not None
+    ):
+        # Use the first valid log for coefficient analysis
+        first_log = None
+        for log in convergence_logs:
+            if log is not None and "coefficient_norms" in log:
+                first_log = log
+                break
+
+        if first_log is not None:
+            # Create coefficient convergence log format
+            convergence_data = {
+                "coefficient_norms": first_log["coefficient_norms"],
+                "iterations": first_log["iterations"],
+                "sparsities": first_log["sparsities"],
+                "losses": first_log.get("losses", []),
+                "residuals": first_log.get("residuals", []),
+                "matrix_shape": first_log.get("matrix_shape", (0, 0)),
+            }
+
+            # Plot coefficient convergence
+            coeff_filename = os.path.join(
+                output_dir, f"{dataset_name}_coefficient_convergence.png"
+            )
+            plot_coefficient_convergence(
+                convergence_data,
+                save_path=coeff_filename,
+                max_features=20,  # Limit for readability
+            )
+            print(f"Saved plot: {coeff_filename}")
+
+            # Plot coefficient convergence heatmap
+            heatmap_filename = os.path.join(
+                output_dir, f"{dataset_name}_coefficient_heatmap.png"
+            )
+            plot_coefficient_convergence_heatmap(
+                convergence_data,
+                save_path=heatmap_filename,
+            )
+            print(f"Saved plot: {heatmap_filename}")
+
+            # Plot convergence summary
+            summary_filename = os.path.join(
+                output_dir, f"{dataset_name}_convergence_summary.png"
+            )
+            plot_convergence_summary(
+                convergence_data,
+                save_path=summary_filename,
+            )
+            print(f"Saved plot: {summary_filename}")
+        else:
+            print("No valid convergence data found for coefficient analysis")
+    else:
+        print("No convergence logs available for coefficient analysis")
+
+    print(f"All pickle plots saved to {output_dir}")
+
+
 def plot_convergence_analysis(
     convergence_file, dataset_name, power, output_dir="figures"
 ):
@@ -296,9 +424,11 @@ def plot_convergence_analysis(
 def main():
     parser = argparse.ArgumentParser(description="Plot experiment results")
     parser.add_argument(
-        "--results-file", required=True, help="Path to results CSV file"
+        "--results-file", help="Path to results CSV file or pickle file"
     )
-    parser.add_argument("--dataset-name", required=True, help="Name of the dataset")
+    parser.add_argument(
+        "--dataset-name", help="Name of the dataset (auto-parsed if not provided)"
+    )
     parser.add_argument(
         "--power",
         type=float,
@@ -311,16 +441,61 @@ def main():
 
     args = parser.parse_args()
 
-    # Plot main results
-    plot_experiment_results(
-        results_file=args.results_file,
-        dataset_name=args.dataset_name,
-        power=args.power,
-        output_dir=args.output_dir,
-    )
+    # Determine file type and route accordingly
+    if args.results_file:
+        file_extension = os.path.splitext(args.results_file)[1].lower()
 
-    # Plot convergence analysis if available
+        if file_extension == ".pkl":
+            # Handle pickle files
+            print("Detected pickle file, using pickle plotting function...")
+
+            # Auto-parse dataset name if not provided
+            dataset_name = args.dataset_name
+            if not dataset_name:
+                import re
+
+                filename = os.path.basename(args.results_file)
+                # Pattern: {dataset}_convergence_all_replicates.pkl
+                match = re.match(r"(.+)_convergence_all_replicates\.pkl", filename)
+                if match:
+                    dataset_name = match.group(1)
+                    print(f"Auto-parsed dataset name: {dataset_name}")
+                else:
+                    # Fallback: use filename without extension
+                    dataset_name = os.path.splitext(filename)[0]
+                    print(f"Using filename as dataset name: {dataset_name}")
+
+            plot_pickle_results(
+                pickle_file=args.results_file,
+                dataset_name=dataset_name,
+                power=args.power,
+                output_dir=args.output_dir,
+            )
+
+        elif file_extension == ".csv":
+            # Handle CSV files
+            print("Detected CSV file, using CSV plotting function...")
+
+            if not args.dataset_name:
+                raise ValueError("Dataset name is required for CSV files")
+
+            plot_experiment_results(
+                results_file=args.results_file,
+                dataset_name=args.dataset_name,
+                power=args.power,
+                output_dir=args.output_dir,
+            )
+        else:
+            raise ValueError(
+                f"Unsupported file type: {file_extension}. Supported types: .csv, .pkl"
+            )
+    else:
+        raise ValueError("No results file provided")
+
+    # Plot convergence analysis if available (for CSV files)
     if args.convergence_file and os.path.exists(args.convergence_file):
+        if not args.dataset_name:
+            raise ValueError("Dataset name is required for convergence analysis")
         plot_convergence_analysis(
             convergence_file=args.convergence_file,
             dataset_name=args.dataset_name,

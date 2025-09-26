@@ -2,6 +2,60 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def get_dataset_color_mapping(dataset_names):
+    """
+    Create a consistent color mapping for datasets across all plotting functions.
+
+    Parameters:
+    -----------
+    dataset_names : list
+        List of dataset names
+
+    Returns:
+    --------
+    dict
+        Dictionary mapping dataset names to colors
+    """
+    # Standardize dataset names to ensure consistent mapping
+    standardized_names = []
+    for name in dataset_names:
+        # Remove common suffixes to standardize names
+        standardized = (
+            name.replace("_standardized", "")
+            .replace("_results", "")
+            .replace("_convergence_all_replicates", "")
+        )
+        standardized_names.append(standardized)
+
+    # Get unique standardized names in a consistent order
+    unique_standardized = sorted(list(set(standardized_names)))
+
+    # Create color mapping
+    default_colors = (
+        plt.rcParams["axes.prop_cycle"]
+        .by_key()
+        .get("color", ["C0", "C1", "C2", "C3", "C4", "C5"])
+    )
+
+    # Map each standardized name to a color
+    standardized_to_color = {
+        name: default_colors[i % len(default_colors)]
+        for i, name in enumerate(unique_standardized)
+    }
+
+    # Map original names to colors based on their standardized version
+    color_mapping = {}
+    for original_name in dataset_names:
+        standardized = (
+            original_name.replace("_standardized", "")
+            .replace("_results", "")
+            .replace("_convergence_all_replicates", "")
+        )
+        color_mapping[original_name] = standardized_to_color[standardized]
+
+    return color_mapping
+
+
 def ecdf_plot(losses_1, losses_2, title, xlabel, ylabel, filename):
     # Compute difference and subtract D baseline
     diff = np.asarray(losses_1) - np.asarray(losses_2)
@@ -72,6 +126,7 @@ def box_plot(
     figsize=(10, 7),
     colors=None,
     show_zero_line=False,
+    use_consistent_colors=True,
 ):
     """
     Create a box plot for multiple datasets.
@@ -109,20 +164,36 @@ def box_plot(
 
     # Set colors
     if colors is None:
-        colors = plt.cm.Set3(np.linspace(0, 1, len(data_list)))
+        if use_consistent_colors and labels:
+            # Use consistent color mapping based on dataset names
+            color_mapping = get_dataset_color_mapping(labels)
+            colors = [color_mapping[label] for label in labels]
+        else:
+            # Fallback to default color cycling
+            default_colors = (
+                plt.rcParams["axes.prop_cycle"]
+                .by_key()
+                .get("color", ["C0", "C1", "C2", "C3", "C4", "C5"])
+            )
+            # Cycle through colors if we have more datasets than default colors
+            colors = [
+                default_colors[i % len(default_colors)] for i in range(len(data_list))
+            ]
 
     for patch, color in zip(box["boxes"], colors):
         patch.set_facecolor(color)
         patch.set_alpha(0.7)
+        patch.set_edgecolor(color)  # Make edge color match fill color
+        patch.set_linewidth(1.5)
 
     # Add horizontal line at zero if requested
     if show_zero_line:
         plt.axhline(0, color="black", linestyle="--", linewidth=1, alpha=0.7)
 
     # Set labels
-    plt.xlabel(xlabel, fontsize=16)
-    plt.ylabel(ylabel, fontsize=16)
-    plt.title(title, fontsize=18)
+    plt.xlabel(xlabel, fontsize=24)
+    plt.ylabel(ylabel, fontsize=24)
+    plt.title(title, fontsize=28, fontweight="bold", pad=20)
 
     # Use symlog scaling for y-axis if there might be both positive and negative values
     if show_zero_line:
@@ -130,7 +201,10 @@ def box_plot(
 
     # Rotate x-axis labels if there are many datasets
     if labels and len(labels) > 4:
-        plt.xticks(rotation=45, ha="right")
+        plt.xticks(rotation=45, ha="right", fontsize=20)
+    else:
+        plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
 
     plt.grid(True, which="both", linestyle="--", alpha=0.5)
     plt.tight_layout()

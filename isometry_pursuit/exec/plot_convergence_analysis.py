@@ -16,6 +16,107 @@ from isometry_pursuit.exec.plot_results import (
     plot_coefficient_convergence,
     plot_sparsity_convergence_boxplot,
 )
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def plot_support_cardinality_histogram(
+    convergence_logs, save_path=None, threshold=1e-4
+):
+    """
+    Plot histogram of support cardinality at the highest iteration number across all replicates.
+    Shows the raw number of features with non-zero coefficients.
+
+    Parameters:
+    -----------
+    convergence_logs : list
+        List of convergence data dictionaries from multiple replicates
+    save_path : str, optional
+        Path to save the plot
+    threshold : float
+        Threshold for determining non-zero coefficients
+    """
+    if not convergence_logs or all(log is None for log in convergence_logs):
+        print("No valid convergence logs to plot")
+        return
+
+    # Extract raw cardinality data at highest iteration from all replicates
+    final_cardinalities = []
+
+    for log in convergence_logs:
+        if log is not None and "coefficient_norms" in log and "iterations" in log:
+            coefficient_norms = log["coefficient_norms"]
+            iterations = np.array(log["iterations"])
+            sparsities = np.array(log["sparsities"])
+
+            # Filter out failed iterations (sparsities = -1)
+            valid_mask = sparsities >= 0
+            valid_norms = coefficient_norms[valid_mask]
+            valid_iterations = iterations[valid_mask]
+
+            if len(valid_norms) > 0:
+                # Get the coefficient norms at the highest iteration (last valid iteration)
+                final_norms = valid_norms[-1]
+
+                # Calculate raw cardinality (number of features with non-zero coefficients)
+                cardinality = np.sum(final_norms > threshold)
+                final_cardinalities.append(cardinality)
+
+    if not final_cardinalities:
+        print("No valid cardinality data to plot")
+        return
+
+    # Create histogram
+    plt.figure(figsize=(10, 6))
+
+    # Use the same purple color as other sparsity plots
+    garfield_purple = "#4E2A84"
+
+    # Create proper binning for integer cardinality values
+    min_val = min(final_cardinalities)
+    max_val = max(final_cardinalities)
+    bins = range(min_val, max_val + 2)
+
+    plt.hist(
+        final_cardinalities,
+        bins=bins,
+        color=garfield_purple,
+        edgecolor="white",
+        align="left",
+        alpha=0.8,
+    )
+
+    plt.xlabel(
+        r"$|\widehat{S}|$ (Number of Features with Non-zero Coefficients)", fontsize=16
+    )
+    plt.ylabel("Frequency", fontsize=16)
+    plt.title(
+        "Support Cardinality at Highest Iteration", fontsize=18, fontweight="bold"
+    )
+    plt.grid(axis="y", linestyle="--", alpha=0.7)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+
+    # Add statistics text
+    mean_cardinality = np.mean(final_cardinalities)
+    std_cardinality = np.std(final_cardinalities)
+    plt.text(
+        0.02,
+        0.98,
+        f"Mean: {mean_cardinality:.1f}\nStd: {std_cardinality:.1f}\nN: {len(final_cardinalities)}",
+        transform=plt.gca().transAxes,
+        verticalalignment="top",
+        bbox=dict(boxstyle="round", facecolor="white", alpha=0.8),
+    )
+
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")
+        print(f"Support cardinality histogram saved to {save_path}")
+        plt.close()
+    else:
+        plt.show()
 
 
 def plot_convergence_analysis_script(
@@ -61,6 +162,14 @@ def plot_convergence_analysis_script(
         convergence_logs,
         save_path=os.path.join(
             output_dir, f"{dataset_name}_sparsity_convergence_boxplot.png"
+        ),
+    )
+
+    # Support cardinality histogram at highest iteration
+    plot_support_cardinality_histogram(
+        convergence_logs,
+        save_path=os.path.join(
+            output_dir, f"{dataset_name}_support_cardinality_histogram.png"
         ),
     )
 

@@ -89,6 +89,7 @@ def group_basis_pursuit(
     eps=1e-12,
     threshold=1e-6,
     steps=None,
+    constraint_violation=0.0,
 ):
     assert not (steps and eps)
 
@@ -96,7 +97,12 @@ def group_basis_pursuit(
         D, P = matrix.shape
         beta = cp.Variable((P, D))  # could initialize with lasso?
         objective = cp.Minimize(cp.sum(cp.norm(beta, axis=1)))
-        constraints = [matrix @ beta == np.identity(D)]
+        if constraint_violation == 0.0:
+            constraints = [matrix @ beta == np.identity(D)]
+        else:
+            constraints = [
+                cp.norm(matrix @ beta - np.identity(D), "fro") <= constraint_violation
+            ]
         problem = cp.Problem(objective, constraints)
         scs_opts = {"eps": eps}
         output = problem.solve(solver=cp.SCS, **scs_opts)
@@ -118,7 +124,12 @@ def group_basis_pursuit(
         D, P = matrix.shape
         beta = cp.Variable((P, D))
         objective = cp.Minimize(cp.sum(cp.norm(beta, axis=1)))
-        constraints = [matrix @ beta == np.identity(D)]
+        if constraint_violation == 0.0:
+            constraints = [matrix @ beta == np.identity(D)]
+        else:
+            constraints = [
+                cp.norm(matrix @ beta - np.identity(D), "fro") <= constraint_violation
+            ]
         problem = cp.Problem(objective, constraints)
         scs_opts = {"max_iters": steps}
         output = problem.solve(solver=cp.SCS, **scs_opts)
@@ -173,7 +184,9 @@ def create_convergence_log(matrix, threshold=1e-6, iteration_points=None):
     for iter_count in iteration_points:
         try:
             # Call group_basis_pursuit with specific iteration limit
-            beta, _ = group_basis_pursuit(matrix, threshold=threshold, steps=iter_count)
+            beta, _ = group_basis_pursuit(
+                matrix, threshold=threshold, steps=iter_count, constraint_violation=0.0
+            )
 
             if beta is not None:
                 # Calculate metrics
@@ -251,7 +264,11 @@ def create_convergence_log_with_coefficients(
             # Call group_basis_pursuit with specific iteration limit
             # Use threshold instead of eps when steps is specified
             beta, _ = group_basis_pursuit(
-                matrix, threshold=threshold, steps=iter_count, eps=None
+                matrix,
+                threshold=threshold,
+                steps=iter_count,
+                eps=None,
+                constraint_violation=0.0,
             )
 
             if beta is not None:

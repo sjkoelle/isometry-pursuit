@@ -14,6 +14,8 @@ from .algorithm import (
 )
 from .loss import isometry_loss, group_lasso_norm
 
+THRESHOLD = 1e-4
+
 
 def analyze_data(
     X,
@@ -22,8 +24,10 @@ def analyze_data(
     limit=1e6,
     max_steps=None,
     log_convergence=False,
+    constraint_violation=0.0,
 ):
     D, P = X.shape
+
     isometry_loss_power = lambda x, indices=None: isometry_loss(x, power, indices)
     group_brute_loss = lambda x, indices=None: group_lasso_norm(np.linalg.inv(x))
     start_greedy = time.time()
@@ -33,10 +37,18 @@ def analyze_data(
     loss = isometry_loss_power(X[:, output])
 
     data_transformed = exponential_transformation(X, power=power)
+    # concatenate data_transformed with an identity matrix of shape (D, D)
+    data_transformed = np.concatenate([data_transformed, np.identity(D)], axis=1)
+    X = np.concatenate([X, np.identity(D)], axis=1)
+    # breakpoint()
+    P = D + P
+    print(np.linalg.svd(data_transformed, compute_uv=False))
     start_basis_pursuit = time.time()
 
     # Use CVXPY implementation
-    beta, basis_pursuit_iterations = group_basis_pursuit(data_transformed)
+    beta, basis_pursuit_iterations = group_basis_pursuit(
+        data_transformed, constraint_violation=constraint_violation
+    )
 
     # Note: Convergence logging is not implemented for the main experiment flow
     # since it would require calling group_basis_pursuit multiple times with different parameters
@@ -44,10 +56,20 @@ def analyze_data(
     convergence_log = None
 
     end_basis_pursuit = time.time()
-    basis_pursuit_indices = np.where(np.linalg.norm(beta, axis=1))[0]
+    basis_pursuit_indices = np.where(np.linalg.norm(beta, axis=1) > THRESHOLD)[0]
     nbp = len(basis_pursuit_indices)
     brute_complexity = comb(nbp, D)
     print(f"Brute force complexity {brute_complexity} from D={D} and nbp={nbp}")
+
+    # Calculate loss when basis pursuit achieves exactly D cardinality (no second stage needed)
+    if nbp == D:
+        # Basis pursuit selected exactly D features, so we can use them directly
+        # breakpoint()
+        d_cardinality_loss = isometry_loss_power(X[:, basis_pursuit_indices])
+        print(f"Basis pursuit achieved D cardinality! Loss: {d_cardinality_loss:.4f}")
+    else:
+        d_cardinality_loss = np.nan
+        print(f"Basis pursuit selected {nbp} features (target: {D})")
 
     if brute_complexity <= limit:
         start_two_stage = time.time()
@@ -83,9 +105,7 @@ def analyze_data(
     # First stage: Isometry pursuit (basis pursuit) -> basis_pursuit_indices
     # Second stage: Greedy on the basis pursuit selection
     greedy_on_bp_complexity = len(basis_pursuit_indices) * D
-    print(
-        f"Greedy on isometry pursuit complexity {greedy_on_bp_complexity} from D={D} and bp_size={len(basis_pursuit_indices)}"
-    )
+
     if greedy_on_bp_complexity <= limit:
         start_two_stage_greedy = time.time()
         # Apply greedy algorithm to the basis pursuit selection
@@ -135,6 +155,8 @@ def analyze_data(
         convergence_log,
         two_stage_greedy_loss,
         two_stage_greedy_time,
+        d_cardinality_loss,
+        beta,  # Coefficient matrix from basis pursuit
     )
 
 
@@ -243,6 +265,7 @@ def run_tensor_experiment(
     power=1.0,
     steps=None,
     log_convergence=False,
+    constraint_violation=0.0,
 ):
     """
     Run experiment using pre-resampled data tensor.
@@ -291,6 +314,9 @@ def run_tensor_experiment(
     convergence_logs = []
     two_stage_greedy_losses = []
     two_stage_greedy_times = []
+    d_cardinality_losses = []
+    greedy_d_cardinality_deltas = []
+    coefficient_matrices = []
 
     P = data_tensor.shape[1]  # Number of samples per replicate
     co_occurence_matrix = np.zeros((P, P))
@@ -317,12 +343,16 @@ def run_tensor_experiment(
             convergence_log,
             two_stage_greedy_loss,
             two_stage_greedy_time,
+            d_cardinality_loss,
+            beta_matrix,
         ) = analyze_data(
             X,
             compute_brute=compute_brute,
             power=power,
             log_convergence=log_convergence,
+            constraint_violation=constraint_violation,
         )
+        print("greedy loss", loss)
 
         losses.append(loss)
         support_cardinalities_basis_pursuit.append(support_cardinality_basis_pursuit)
@@ -338,6 +368,9 @@ def run_tensor_experiment(
         convergence_logs.append(convergence_log)
         two_stage_greedy_losses.append(two_stage_greedy_loss)
         two_stage_greedy_times.append(two_stage_greedy_time)
+        d_cardinality_losses.append(d_cardinality_loss)
+        greedy_d_cardinality_deltas.append(greedy_d_cardinality_delta)
+        coefficient_matrices.append(beta_matrix)
 
         # Update co-occurrence matrices
         if two_stage_multitask is not None:
@@ -367,6 +400,8 @@ def run_tensor_experiment(
         "basis_pursuit_iterations": basis_pursuit_iterations_list,
         "two_stage_greedy_loss": two_stage_greedy_losses,
         "two_stage_greedy_time": two_stage_greedy_times,
+        "d_cardinality_loss": d_cardinality_losses,
+        "greedy_d_cardinality_delta": greedy_d_cardinality_deltas,
     }
 
     results_df = pd.DataFrame(results_data)
@@ -377,6 +412,12 @@ def run_tensor_experiment(
             co_occurence_matrix,
             greedy_co_occurence_matrix,
             convergence_logs,
+            coefficient_matrices,
         )
     else:
-        return results_df, co_occurence_matrix, greedy_co_occurence_matrix
+        return (
+            results_df,
+            co_occurence_matrix,
+            greedy_co_occurence_matrix,
+            coefficient_matrices,
+        )

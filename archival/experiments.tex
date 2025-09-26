@@ -12,7 +12,7 @@ For the Wine dataset, even \brute~ on $\widehat {S}_{IP}$ is prohibitive in $D=1
 %add description of words
 \begin{figure}[t]
    \centering
-    % Row 1: Wine and Iris
+    % Row 1: Loss improvement and sparsity convergence
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/cross_dataset_comparison.png}
@@ -20,6 +20,12 @@ For the Wine dataset, even \brute~ on $\widehat {S}_{IP}$ is prohibitive in $D=1
         \label{fig:improvement_comparison}
     \end{subfigure}
     \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/combined_sparsity_convergence_boxplot.png}
+        \caption{Sparsity convergence across datasets}
+        \label{fig:sparsity_convergence}
+    \end{subfigure}
     \caption{Difference in isometry losses $\ell(\widehat{S}_g) - \ell(\widehat{S}_{TSIP})$ for Wine, Iris, and Ethanol datasets.
     The distributions reflect the relative losses of the supports estimated by greedy optimization on the $\ell$ objective is less than or equal to $\ell$ loss of the support estimated by \tsip.
     As shown here and detailed in Table \ref{tab:experiments}, losses are generally lower for two-stage isometry pursuit solutions.}
@@ -37,9 +43,9 @@ This dataset exemplifies our motivating example - the search for locally isometr
 \begin{table}[t]
 \tiny
 \centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
 \toprule
-Name & $D$ & $P$ & $R$ & $c$ & $\ell(X_{.\widehat{S}_{G}})$ & $|\widehat{S}|$ & $\ell(X_{.\widehat{S}})$ &
+Name & $D$ & $P$ & $R$ & $\ell(X_{.\widehat{S}_{G}})$ & $|\widehat{S}|$ & $\ell(X_{.\widehat{S}})$ &
 \begin{tabular}{c}
 $\widehat P (\ell(X_{.\widehat{S}_{G}}) >$ \\
 $\ell(X_{.\widehat{S}}))$
@@ -53,9 +59,9 @@ $\widehat P(\bar{\ell}_1(X_{.\widehat{S}_{G}}) >$ \\
 $\bar{\ell}_1(X_{.\widehat{S}}))$
 \end{tabular} \\
 \midrule
-Iris & 4 & 75 & 25 & 1 & 14 ± 7.3 & 6.7 ± 1 & 6.9 ± 1.4 & 0.96 & 0 & 2.4e-05 \\
-Wine & 6 & 89 & 25 & 1 & 7.7 ± 0.33 & 13 ± 1.5 & 7.6 ± 0.29 & 0.64 & 0.16 & 6.3e-04 \\
-Ethanol & 2 & 756 & 100 & 1 & 2.6 ± 0.3 & 90 ± 1.7e+02 & 2.5 ± 0.2 & 0.66 & 0.17 & 2.1e-05 \\
+Iris & 4 & 75 & 25  & 14 ± 7.3 & 6.7 ± 1 & 6.9 ± 1.4 & 0.96 & 0 & 2.4e-05 \\
+Wine & 6 & 89 & 25  & 7.7 ± 0.33 & 13 ± 1.5 & 7.6 ± 0.29 & 0.64 & 0.16 & 6.3e-04 \\
+Ethanol & 2 & 756 & 25 & 2.6 ± 0.3 & 90 ± 1.7e+02 & 2.5 ± 0.2 & 0.66 & 0.17 & 2.1e-05 \\
 \bottomrule
 \end{tabular}
 \caption{Experimental parameters and results.
@@ -72,4 +78,3 @@ Generally, the ground truth loss obtained by \greedy~ optimization of $\ell$ is 
 Table \ref{tab:experiments}  and Figure \ref{fig:support_cardinalities} detail intermediate support recovery cardinalities from \isometrypursuit.
 Isometry pursuit substantially reduced the size of the dictionary and made brute search computationally feasible.
 Wall-clock runtimes are given in Section \ref{sec:timing}.
-These show that the preference for the two-stage isometry pursuit solution is strongest around $c=1$ and is consistent across feature truncation dimensions.

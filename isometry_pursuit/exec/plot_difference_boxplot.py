@@ -26,6 +26,7 @@ def plot_difference_boxplot(
     output_file="difference_boxplot.png",
     title="Method Comparison Across Datasets",
     ylabel=None,
+    cardinality_column="Support Cardinalities (Basis Pursuit)",
 ):
     """
     Create a box plot comparing two methods across multiple datasets.
@@ -35,9 +36,9 @@ def plot_difference_boxplot(
     result_files : list
         List of paths to results CSV files
     baseline_column : str
-        Name of the baseline method column (e.g., "Losses" for greedy)
+        Name of the baseline method column (e.g., "loss" for greedy)
     comparison_column : str
-        Name of the comparison method column (e.g., "Two-Stage Losses")
+        Name of the comparison method column (e.g., "two_stage_loss")
     dataset_names : list, optional
         Names for datasets (auto-parsed from filenames if not provided)
     output_file : str
@@ -46,6 +47,8 @@ def plot_difference_boxplot(
         Plot title
     ylabel : str, optional
         Y-axis label (auto-generated if not provided)
+    cardinality_column : str, optional
+        Name of the cardinality column in CSV files (default: "Support Cardinalities (Basis Pursuit)")
     """
 
     if len(result_files) < 2:
@@ -118,6 +121,74 @@ def plot_difference_boxplot(
     if len(differences) == 1:
         print("Warning: Only one dataset has valid data, creating single box plot")
 
+    # Log detailed statistics for each dataset
+    print("\n" + "="*60)
+    print("DETAILED STATISTICS SUMMARY")
+    print("="*60)
+    
+    from scipy.stats import ttest_rel
+    
+    # Helper for 2 significant figures
+    def sigfig(x, n=2):
+        return f"{x:.{n}g}"
+    
+    for i, (dataset_name, diff) in enumerate(zip(valid_datasets, differences)):
+        # Reload the data to get original values for t-test
+        result_file = result_files[i]
+        df = pd.read_csv(result_file)
+        baseline_data = df[baseline_column].dropna()
+        comparison_data = df[comparison_column].dropna()
+        
+        # Calculate statistics
+        mean_diff = np.mean(diff)
+        std_diff = np.std(diff)
+        n_samples = len(diff)
+        
+        # Calculate probability estimates
+        prob_greater = np.mean(diff > 0)  # P(baseline > comparison)
+        prob_equal = np.mean(diff == 0)  # P(baseline = comparison)
+
+        # Calculate support cardinality statistics from CSV data
+        mean_cardinality = std_cardinality = np.nan
+        
+        # Check if cardinality column exists in the CSV
+        if cardinality_column in df.columns:
+            cardinality_data = df[cardinality_column].dropna()
+            if len(cardinality_data) > 0:
+                mean_cardinality = np.mean(cardinality_data)
+                std_cardinality = np.std(cardinality_data)
+            else:
+                print(f"  Warning: No valid cardinality data found in {cardinality_column}")
+        else:
+            print(f"  Warning: {cardinality_column} column not found in {result_file}")
+
+        # Calculate paired t-test p-value
+        try:
+            t_stat, p_value = ttest_rel(baseline_data, comparison_data)
+        except Exception as e:
+            print(f"Warning: Could not compute t-test for {dataset_name}: {e}")
+            p_value = np.nan
+
+        # Log statistics in table format
+        print(f"\n{dataset_name}:")
+        print(f"  Sample size (R): {n_samples}")
+        print(
+            f"  {baseline_column}: {sigfig(np.mean(baseline_data))} ± {sigfig(np.std(baseline_data))}"
+        )
+        print(
+            f"  {comparison_column}: {sigfig(np.mean(comparison_data))} ± {sigfig(np.std(comparison_data))}"
+        )
+        if not np.isnan(mean_cardinality):
+            print(
+                f"  Support Cardinality (|Ŝ|): {sigfig(mean_cardinality)} ± {sigfig(std_cardinality)}"
+            )
+        print(f"  Mean difference: {sigfig(mean_diff)} ± {sigfig(std_diff)}")
+        print(f"  P({baseline_column} > {comparison_column}): {sigfig(prob_greater)}")
+        print(f"  P({baseline_column} = {comparison_column}): {sigfig(prob_equal)}")
+        print(f"  Paired t-test p-value: {p_value:.1e}")
+
+    print("=" * 60)
+
     # Create the plot using the box_plot function
     if ylabel is None:
         # Use the same LaTeX formula as in plot_results.py
@@ -130,7 +201,7 @@ def plot_difference_boxplot(
         xlabel="Dataset",
         ylabel=ylabel,
         filename=output_file,
-        figsize=(max(8, len(valid_datasets) * 2), 8),
+        figsize=(12, 7),  # Match the sparsity convergence plot size
         show_zero_line=True,
     )
 
@@ -146,17 +217,17 @@ def main():
         "--result-files",
         nargs="+",
         required=True,
-        help="List of result CSV files to compare",
+        help="List of results CSV files to compare",
     )
     parser.add_argument(
         "--baseline-column",
-        default="loss",
-        help="Name of baseline method column (default: 'loss')",
+        required=True,
+        help="Name of the baseline method column (e.g., 'loss' for greedy)",
     )
     parser.add_argument(
         "--comparison-column",
-        default="two_stage_loss",
-        help="Name of comparison method column (default: 'two_stage_loss')",
+        required=True,
+        help="Name of the comparison method column (e.g., 'two_stage_loss')",
     )
     parser.add_argument(
         "--dataset-names",
@@ -174,6 +245,11 @@ def main():
     parser.add_argument(
         "--ylabel", help="Y-axis label (auto-generated if not provided)"
     )
+    parser.add_argument(
+        "--cardinality-column",
+        default="Support Cardinalities (Basis Pursuit)",
+        help="Name of the cardinality column in CSV files",
+    )
 
     args = parser.parse_args()
 
@@ -185,6 +261,7 @@ def main():
         output_file=args.output_file,
         title=args.title,
         ylabel=args.ylabel,
+        cardinality_column=args.cardinality_column,
     )
 
 

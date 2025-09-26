@@ -22,7 +22,7 @@ def load_wine_data(
     max_features=None,
     n_replicates=25,
     frac=0.5,
-    D=6,
+    D=None,
 ):
     """
     Load and preprocess Wine dataset with resampling.
@@ -39,8 +39,8 @@ def load_wine_data(
         Number of resampling replicates to generate
     frac : float
         Fraction of data to use in each resampling
-    D : int
-        Number of features to sample for each replicate (default: 6)
+    D : int, optional
+        Number of features to sample for each replicate (default: None, use all features)
 
     Returns:
     --------
@@ -68,6 +68,10 @@ def load_wine_data(
         print(f"Using first {D_wine} features")
     else:
         D_wine = D_wine_full
+
+    # Set D to use all features if not specified
+    if D is None:
+        D = D_wine
 
     # Create DataFrame with selected features
     wine_df = pd.DataFrame(
@@ -121,7 +125,12 @@ def load_wine_data(
 
     # Generate resampled data tensor
     print(f"Generating {n_replicates} resampled replicates with frac={frac}...")
-    print(f"Sampling {D} features for each replicate from {D_wine} available features")
+    if D == D_wine:
+        print(f"Using all {D} features for each replicate")
+    else:
+        print(
+            f"Sampling {D} features for each replicate from {D_wine} available features"
+        )
     n_samples_per_replicate = int(P_wine * frac)
     data_tensor = np.zeros((D, n_samples_per_replicate, n_replicates))
 
@@ -131,10 +140,16 @@ def load_wine_data(
         random_row_indices = np.random.choice(
             range(P_wine), n_samples_per_replicate, replace=False
         )
-        # Sample columns (features)
-        random_col_indices = np.random.choice(range(D_wine), D, replace=False)
-        # Get the sampled data and transpose to get shape (D, n_samples_per_replicate)
-        sampled_data = data.to_numpy()[random_row_indices][:, random_col_indices]
+
+        if D == D_wine:
+            # Use all features (no feature sampling)
+            sampled_data = data.to_numpy()[random_row_indices]
+        else:
+            # Sample columns (features)
+            random_col_indices = np.random.choice(range(D_wine), D, replace=False)
+            sampled_data = data.to_numpy()[random_row_indices][:, random_col_indices]
+
+        # Transpose to get shape (D, n_samples_per_replicate)
         data_tensor[:, :, i] = sampled_data.T
 
     print(f"Generated data tensor shape: {data_tensor.shape}")
@@ -161,8 +176,14 @@ def main():
     parser.add_argument(
         "--D",
         type=int,
-        default=6,
-        help="Number of features to sample for each replicate (default: 6)",
+        default=None,
+        help="Number of features to sample for each replicate (default: None, use all features)",
+    )
+    parser.add_argument(
+        "--R",
+        type=int,
+        default=25,
+        help="Number of replicates to generate (default: 25)",
     )
 
     args = parser.parse_args()
@@ -172,6 +193,7 @@ def main():
         output_dir=args.output_dir,
         standardize=not args.no_standardize,
         max_features=args.max_features,
+        n_replicates=args.R,
         D=args.D,
     )
 
