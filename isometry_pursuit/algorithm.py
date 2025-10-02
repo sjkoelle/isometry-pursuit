@@ -65,8 +65,108 @@ def greedy(
     return selected_indices
 
 
-# else:
-#     return None
+from .transformation import exponential_transformation
+
+THRESHOLD = 1e-4
+
+
+def line_search_for_cardinality(
+    X,
+    target_cardinality,
+    power=1.0,
+    max_iterations=20,
+    initial_violation=2.0,
+):
+    """
+    Perform line search to find constraint violation that achieves target support cardinality.
+
+    Parameters:
+    -----------
+    X : numpy.ndarray
+        Data matrix for the experiment
+    target_cardinality : int
+        Target number of features to select
+    power : float
+        Power parameter for transformation
+    max_iterations : int
+        Maximum number of line search iterations
+    initial_bounds : tuple
+        Initial bounds for constraint violation search
+    Returns:
+    --------
+    best_violation : float
+        Best constraint violation found
+    best_cardinality : int
+        Actual cardinality achieved
+    best_result : dict
+        Results from the best experiment
+    """
+    # Binary search bounds
+    best_violation = None
+    best_cardinality = None
+    best_result = None
+    constraint_violation = initial_violation
+    lower_bound = 0.0
+    upper_bound = None
+    for iteration in range(max_iterations):
+        # Test midpoint
+
+        # Run isometry pursuit with current constraint violation
+        result = isometry_pursuit(
+            X,
+            power=power,
+            constraint_violation=constraint_violation,
+        )
+
+        # Calculate actual cardinality
+        actual_cardinality = len(result["basis_pursuit_indices"])
+        cardinality_violation = actual_cardinality - target_cardinality
+        print(
+            f"Iteration {iteration + 1}, Cardinality {actual_cardinality}, Cardinality violation {cardinality_violation}, Constraint violation {constraint_violation}"
+        )
+        # Check if we've found exact target cardinality
+
+        if cardinality_violation == 0:
+            return constraint_violation, actual_cardinality, result
+
+        # Update search bounds based on cardinality direction
+        if cardinality_violation > 0:
+            lower_bound = constraint_violation
+            if upper_bound is None:
+                constraint_violation = constraint_violation * 2
+            else:
+                constraint_violation = (constraint_violation + upper_bound) / 2
+        else:
+            upper_bound = constraint_violation
+            constraint_violation = (constraint_violation + lower_bound) / 2
+
+    return None, None, None
+
+
+def isometry_pursuit(
+    X,
+    power=1.0,
+    limit=1e6,
+    max_steps=None,
+    log_convergence=False,
+    constraint_violation=0.0,
+):
+    D, P = X.shape
+    data_transformed = exponential_transformation(X, power=power)
+    # Use CVXPY implementation
+    beta, basis_pursuit_iterations = group_basis_pursuit(
+        data_transformed, constraint_violation=constraint_violation
+    )
+    # Note: Convergence logging is not implemented for the main experiment flow
+    # since it would require calling group_basis_pursuit multiple times with different parameters
+    # For convergence analysis, use the standalone convergence logging functions
+    basis_pursuit_indices = np.where(np.linalg.norm(beta, axis=1) > THRESHOLD)[0]
+
+    return {
+        "beta": beta,
+        "basis_pursuit_indices": basis_pursuit_indices,
+        "basis_pursuit_iterations": basis_pursuit_iterations,
+    }
 
 
 def brute(matrix, loss, target_dimension):

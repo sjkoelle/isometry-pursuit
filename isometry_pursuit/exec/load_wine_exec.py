@@ -4,16 +4,12 @@ Data loader for Wine dataset experiments.
 Loads and preprocesses the Wine dataset for isometry pursuit experiments.
 """
 
-import argparse
-import sys
+import click
 import os
 import pandas as pd
 import numpy as np
 from sklearn.datasets import load_wine
 from sklearn.preprocessing import StandardScaler
-
-# Add parent directory to path to import isometry_pursuit modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
 def load_wine_data(
@@ -162,39 +158,40 @@ def load_wine_data(
     return data_tensor, data, D, P_wine
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Load and preprocess Wine dataset")
-    parser.add_argument(
-        "--output-dir", default="data", help="Output directory for processed data"
-    )
-    parser.add_argument(
-        "--no-standardize", action="store_true", help="Skip standardization"
-    )
-    parser.add_argument(
-        "--max-features", type=int, help="Maximum number of features to use"
-    )
-    parser.add_argument(
-        "--D",
-        type=int,
-        default=None,
-        help="Number of features to sample for each replicate (default: None, use all features)",
-    )
-    parser.add_argument(
-        "--R",
-        type=int,
-        default=25,
-        help="Number of replicates to generate (default: 25)",
-    )
-
-    args = parser.parse_args()
+@click.command()
+@click.option(
+    "--output-dir", default="data", help="Output directory for processed data"
+)
+@click.option("--no-standardize", is_flag=True, help="Skip standardization")
+@click.option("--max-features", type=int, help="Maximum number of features to use")
+@click.option(
+    "--D",
+    type=int,
+    default=None,
+    help="Number of features to sample for each replicate (default: None, use all features)",
+)
+@click.option(
+    "--R",
+    type=int,
+    default=25,
+    help="Number of replicates to generate (default: 25)",
+)
+def main(
+    output_dir,
+    no_standardize,
+    max_features,
+    d,
+    r,
+):
+    """Load and preprocess Wine dataset"""
 
     # Load data
     data_tensor, data, D, P = load_wine_data(
-        output_dir=args.output_dir,
-        standardize=not args.no_standardize,
-        max_features=args.max_features,
-        n_replicates=args.R,
-        D=args.D,
+        output_dir=output_dir,
+        standardize=not no_standardize,
+        max_features=max_features,
+        n_replicates=r,
+        D=d,
     )
 
     print(f"Loaded Wine dataset: {P} samples, {D} features")
