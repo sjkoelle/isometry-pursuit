@@ -38,7 +38,8 @@ def main(
     data_tensor = np.load(data_file)
 
     # Extract first replicate as 2D matrix
-    X = data_tensor[:, :, 0]
+    # New format: (n_replicates, D, n_samples) -> (D, n_samples)
+    X = data_tensor[0, :, :]
     if target_cardinality is None:
         target_cardinality = X.shape[0]
     # Run line search

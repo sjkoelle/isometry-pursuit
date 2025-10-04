@@ -38,7 +38,8 @@ def main(
     data_tensor = np.load(data_file)
 
     # Extract first replicate as 2D matrix
-    X = data_tensor[:, :, 0]
+    # New format: (n_replicates, D, n_samples) -> (D, n_samples)
+    X = data_tensor[0, :, :]
 
     # Run isometry pursuit
     result = isometry_pursuit(
@@ -55,9 +56,7 @@ def main(
     np.save(indices_file, result["basis_pursuit_indices"])
 
     # Print summary
-    print(f"Results saved to {output_dir}")
-    print(f"Selected {len(result['basis_pursuit_indices'])} features")
-    print(f"Constraint violation: {constraint_violation}")
+    print(f"Selected {result['basis_pursuit_indices']} features")
 
 
 if __name__ == "__main__":
