@@ -74,8 +74,8 @@ def line_search_for_cardinality(
     X,
     target_cardinality,
     power=1.0,
-    max_iterations=20,
-    initial_violation=2.0,
+    max_iterations=100,
+    initial_violation=None,
 ):
     """
     Perform line search to find constraint violation that achieves target support cardinality.
@@ -105,29 +105,34 @@ def line_search_for_cardinality(
     best_violation = None
     best_cardinality = None
     best_result = None
-    constraint_violation = initial_violation
+    constraint_violation = (
+        initial_violation if initial_violation is not None else X.shape[0]
+    )
     lower_bound = 0.0
     upper_bound = None
     for iteration in range(max_iterations):
         # Test midpoint
 
         # Run isometry pursuit with current constraint violation
-        result = isometry_pursuit(
-            X,
-            power=power,
-            constraint_violation=constraint_violation,
-        )
-
-        # Calculate actual cardinality
-        actual_cardinality = len(result["basis_pursuit_indices"])
-        cardinality_violation = actual_cardinality - target_cardinality
+        try:
+            result = isometry_pursuit(
+                X,
+                power=power,
+                constraint_violation=constraint_violation,
+            )  # Calculate actual cardinality
+            actual_cardinality = len(result["basis_pursuit_indices"])
+            cardinality_violation = actual_cardinality - target_cardinality
+        except Exception as e:
+            cardinality_violation = np.inf
+            actual_cardinality = None
         print(
             f"Iteration {iteration + 1}, Cardinality {actual_cardinality}, Cardinality violation {cardinality_violation}, Constraint violation {constraint_violation}"
         )
         # Check if we've found exact target cardinality
 
         if cardinality_violation == 0:
-            return constraint_violation, actual_cardinality, result
+            print(result["basis_pursuit_indices"])
+            return actual_cardinality, result
 
         # Update search bounds based on cardinality direction
         if cardinality_violation > 0:
@@ -140,7 +145,7 @@ def line_search_for_cardinality(
             upper_bound = constraint_violation
             constraint_violation = (constraint_violation + lower_bound) / 2
 
-    return None, None, None
+    raise ValueError("No solution found")
 
 
 def isometry_pursuit(

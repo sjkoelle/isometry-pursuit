@@ -19,7 +19,7 @@ pip install -e .
 python -m isometry_pursuit.exec.load_wine_exec --output-dir data/wine --R 1
 python -m isometry_pursuit.exec.generate_orthogonal_data \
     --output-dir data/orthogonal \
-    --matrix-specs "[(2,1),(3,1)]" \
+    --matrix-specs "[(2,1),(1,1)]" \
     --R 1 \
     --B 3
 ```

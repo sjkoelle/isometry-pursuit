@@ -43,7 +43,7 @@ def main(
     if target_cardinality is None:
         target_cardinality = X.shape[0]
     # Run line search
-    best_violation, best_cardinality, result = line_search_for_cardinality(
+    best_cardinality, result = line_search_for_cardinality(
         X,
         target_cardinality=target_cardinality,
     )
@@ -60,7 +60,7 @@ def main(
     print(f"Line search completed successfully!")
     print(f"Target cardinality: {target_cardinality}")
     print(f"Achieved cardinality: {best_cardinality}")
-    print(f"Optimal constraint violation: {best_violation:.6f}")
+
     print(f"Results saved to {output_dir}")
 
 
