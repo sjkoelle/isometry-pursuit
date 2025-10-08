@@ -59,7 +59,11 @@ def generate_orthogonal_data(
 
         for i in range(count):
             # Generate random dim x dim orthogonal matrix
-            Q_dim = ortho_group.rvs(dim)
+            if dim == 1:
+                # For 1D case, orthogonal matrix is just ±1
+                Q_dim = np.array([[np.random.choice([-1, 1])]])
+            else:
+                Q_dim = ortho_group.rvs(dim)
 
             # Embed in embedding_dim-dimensional space (pad with zeros)
             Q_embedded = np.zeros((embedding_dim, dim))

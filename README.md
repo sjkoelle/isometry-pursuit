@@ -19,9 +19,9 @@ pip install -e .
 python -m isometry_pursuit.exec.load_wine_exec --output-dir data/wine --R 1
 python -m isometry_pursuit.exec.generate_orthogonal_data \
     --output-dir data/orthogonal \
-    --matrix-specs "[(2,1),(1,1)]" \
+    --matrix-specs "[(2,1),(1,10)]" \
     --R 1 \
-    --B 3
+    --B 2
 ```
 
 ### Run Isometry Pursuit
@@ -36,7 +36,7 @@ python -m isometry_pursuit.exec.run_isometry_pursuit \
 python -m isometry_pursuit.exec.run_isometry_pursuit \
     --data-file data/orthogonal/orthogonal_data_tensor.npy \
     --output-dir results/o_fixed \
-    --constraint-violation 0.
+    --constraint-violation 1.41
 
 ```
 
@@ -50,7 +50,7 @@ python -m isometry_pursuit.exec.run_line_search_for_cardinality \
 
 python -m isometry_pursuit.exec.run_line_search_for_cardinality \
     --data-file data/orthogonal/orthogonal_data_tensor.npy \
-    --output-dir results/orthogonal_line_search --target-cardinality 3
+    --output-dir results/orthogonal_line_search --target-cardinality 2
 
 # Compute isometry loss of selected support
 python -m isometry_pursuit.exec.compute_isometry_loss \
