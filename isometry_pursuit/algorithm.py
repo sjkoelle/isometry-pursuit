@@ -198,57 +198,38 @@ def group_basis_pursuit(
 ):
     assert not (steps and eps)
 
+    D, P = matrix.shape
+    beta = cp.Variable((P, D))  # could initialize with lasso?
+    objective = cp.Minimize(cp.sum(cp.norm(beta, axis=1)))
+    if constraint_violation == 0.0:
+        constraints = [matrix @ beta == np.identity(D)]
+    else:
+        constraints = [
+            # cp.norm(matrix @ beta - np.identity(D), "fro")
+            cp.sum_squares(matrix @ beta - np.identity(D))
+            <= constraint_violation
+        ]
+    problem = cp.Problem(objective, constraints)
+
+    # Set SCS options based on whether steps is specified
     if steps is None:
-        D, P = matrix.shape
-        beta = cp.Variable((P, D))  # could initialize with lasso?
-        objective = cp.Minimize(cp.sum(cp.norm(beta, axis=1)))
-        if constraint_violation == 0.0:
-            constraints = [matrix @ beta == np.identity(D)]
-        else:
-            constraints = [
-                cp.norm(matrix @ beta - np.identity(D), "fro") <= constraint_violation
-            ]
-        problem = cp.Problem(objective, constraints)
         scs_opts = {"eps": eps}
-        output = problem.solve(solver=cp.SCS, **scs_opts)
-        if output is np.inf:
-            raise ValueError("No solution found")
-        beta_optimized = beta.value
-        beta_sparse = beta_optimized.copy()
-        beta_sparse[np.abs(beta_sparse) < threshold] = 0
-
-        # Get iteration count from solver info
-        iterations = (
-            problem.solver_stats.num_iters
-            if hasattr(problem.solver_stats, "num_iters")
-            else None
-        )
-
-    # assert entire rows are 0 or raise warning
-    if steps is not None:
-        D, P = matrix.shape
-        beta = cp.Variable((P, D))
-        objective = cp.Minimize(cp.sum(cp.norm(beta, axis=1)))
-        if constraint_violation == 0.0:
-            constraints = [matrix @ beta == np.identity(D)]
-        else:
-            constraints = [
-                cp.norm(matrix @ beta - np.identity(D), "fro") <= constraint_violation
-            ]
-        problem = cp.Problem(objective, constraints)
+    else:
         scs_opts = {"max_iters": steps}
-        output = problem.solve(solver=cp.SCS, **scs_opts)
-        if output is np.inf:
-            raise ValueError("No solution found")
-        beta_optimized = beta.value
-        beta_sparse = beta_optimized.copy()
-        beta_sparse[np.abs(beta_sparse) < threshold] = 0
-        # Get iteration count from solver info
-        iterations = (
-            problem.solver_stats.num_iters
-            if hasattr(problem.solver_stats, "num_iters")
-            else None
-        )
+
+    output = problem.solve(solver=cp.SCS, **scs_opts)
+    if output is np.inf:
+        raise ValueError("No solution found")
+    beta_optimized = beta.value
+    beta_sparse = beta_optimized.copy()
+    beta_sparse[np.abs(beta_sparse) < threshold] = 0
+
+    # Get iteration count from solver info
+    iterations = (
+        problem.solver_stats.num_iters
+        if hasattr(problem.solver_stats, "num_iters")
+        else None
+    )
 
     return beta_sparse, iterations
 

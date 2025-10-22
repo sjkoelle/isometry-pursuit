@@ -19,9 +19,9 @@ pip install -e .
 python -m isometry_pursuit.exec.load_wine_exec --output-dir data/wine --R 1
 python -m isometry_pursuit.exec.generate_orthogonal_data \
     --output-dir data/orthogonal \
-    --matrix-specs "[(2,1),(1,10)]" \
+    --matrix-specs "[(2,1),(1,1)]" \
     --R 1 \
-    --B 2
+    --B 3
 ```
 
 ### Run Isometry Pursuit
@@ -31,7 +31,7 @@ python -m isometry_pursuit.exec.generate_orthogonal_data \
 python -m isometry_pursuit.exec.run_isometry_pursuit \
     --data-file data/wine/wine_standardized_resampled_tensor.npy \
     --output-dir results/wine_fixed \
-    --constraint-violation 0.1
+    --constraint-violation 0.
 
 python -m isometry_pursuit.exec.run_isometry_pursuit \
     --data-file data/orthogonal/orthogonal_data_tensor.npy \
