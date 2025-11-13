@@ -1,8 +1,5 @@
 import numpy as np
-<<<<<<< HEAD
-=======
 import warnings
->>>>>>> origin/experiment
 
 
 # NOTE (Sam): why not use the exponential transformation after fitting the coefficients?
@@ -21,16 +18,6 @@ def exponential_transformation(X, power=1):
     normalized_X = X / norms[np.newaxis, :]
 
     norms = norms**power
-<<<<<<< HEAD
-    # print(norms)
-    # # Compute the logarithm of the norms
-    # log_norms = np.log(norms)
-
-    # # Compute the exponential of the negative absolute value of the log norms
-    # exp_values = np.exp(-np.abs(log_norms))
-
-    exp_values = ((np.exp(norms) + np.exp(norms ** (-1))) ** (-1)) * 2 * np.e
-=======
 
     # Log relevant arguments when overflow occurs
     with warnings.catch_warnings(record=True) as w:
@@ -54,7 +41,6 @@ def exponential_transformation(X, power=1):
                 )
                 print(f"X shape: {X.shape}, power: {power}")
                 break
->>>>>>> origin/experiment
     # (np.exp(t) + np.exp(t**(-1)))**(-1) * (2*math.e)
     # Normalize columns of X
 
