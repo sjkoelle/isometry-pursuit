@@ -10,6 +10,6 @@ pandas
 multiprocess
 scikit-learn
 scipy
-numpy<=1.23.0
+numpy>=1.23.0
 ipykernel
 # pyLDLE2

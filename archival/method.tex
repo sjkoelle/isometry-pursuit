@@ -207,3 +207,52 @@ This method forms our practical isometry estimator, the core advantage of which 
 \end{algorithmic}
 \end{algorithm}
 
+\subsection{Non-uniqueness}
+
+There exist Isometry Pursuit solutions of minimum norm that are not isometries.
+We can derive a simple example by considering the following matrix $X$.
+\begin{bmatrix}
+1 & \frac{1}{2} & \frac{-1}{2} \\
+0 & \frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2}
+\end{bmatrix}
+Clearly, there exists a solution solely in terms of the second and third columns, but by the Proposition in THESIS, this solution does not achieve the optimum value associated with an isometry.
+However, it turns out that by adding in the first feature, we can achieve this optimum.
+Given the symmetry of the second and third columns around the y axis, let's assume that their loadings with respect to the second column of the target matrix (the $D$ dimensional identity) are the same.
+Clearly, they will both then have value of $\frac{1}{\sqrt{3}}$.
+The question then becomes, what should the values of the first column in the loading matrix $\beta$ be?
+
+We can answer this question with a simple differential equation.
+Let $b$ denote the constraint violation $1 - X_{1.} \beta_{.1}$.
+Then
+\begin{align}
+    \frac{\partial b}{\partial \beta_{11}} = \frac{\partial b}{\partial\beta_{21}} \\
+    &= \frac{1}{2}
+\end{align}
+\end{align}
+On the other hand, due to the value of $\frac{1}{\sqrt{3}}$ already assumed for the second loading of the second and third features,
+\begin{align}
+    \frac{\partial l}{\partial \beta_{11}} &= \frac{\partial l}{\partial\beta_{21}} \\
+    &= \frac{\partial }{\partial x}{\sqrt{\frac{1}{3} + x^2}} \\
+    &= \frac{1}{2}(\frac{1}{3} + x^2)^{-\frac{1}{2}}(2x) \\
+    &= \frac{x}{\sqrt{\frac{1}{3} + x^2}}.
+\end{align}
+This means that the tradeoff
+\begin{align}
+    \frac{\partial l}{\partial b} = \frac{1}{2x}\sqrt{\frac{1}{3} + x^2}.\
+\end{align}
+In contrast, $\frac{\partial l}{\partial \beta_{11}} = 1$ and similarly for its constraint violation.
+Solving for the equilibrium, we get
+\begin{align}
+    \frac{1}{2x}\sqrt{\frac{1}{3} + x^2} = 1 \\
+    \frac{1}{3} + x^2 = 4x^2 \\
+    \frac{1}{3} = 3x^2 \\
+    x = \frac{1}{\sqrt{3}}.
+\end{align}
+This leads to a value for $l$ of 
+\begin{align}
+    \sqrt{\frac{1}{3} + \frac{1}{9}} + \sqrt{\frac{1}{3} + \frac{1}{9}} + \frac{2}{3} \\
+    &=\sqrt{\frac{4}{9}} + \sqrt{\frac{4}{9}} + \frac{2}{3} \\
+    &=\frac{2}{3} + \frac{2}{3} + \frac{2}{3} 
+\end{align}
+Remarkable!
+
