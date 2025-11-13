@@ -8,7 +8,7 @@ from .algorithm import (
     brute,
     group_basis_pursuit,
     isometry_pursuit,
-    line_search_constraint_violation_for_cardinality,
+    line_search_for_cardinality,
 )
 from .loss import isometry_loss, group_lasso_norm
 
@@ -60,11 +60,9 @@ def run_tensor_experiment(
 
         if use_line_search and target_cardinality is not None:
             # Use line search to find optimal constraint violation
-            best_violation, best_cardinality, result = (
-                line_search_constraint_violation_for_cardinality(
-                    X,
-                    target_cardinality=target_cardinality,
-                )
+            best_violation, best_cardinality, result = line_search_for_cardinality(
+                X,
+                target_cardinality=target_cardinality,
             )
             constraint_violations.append(best_violation)
             cardinalities.append(best_cardinality)

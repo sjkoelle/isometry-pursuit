@@ -159,7 +159,7 @@ def isometry_pursuit(
     D, P = X.shape
     data_transformed = exponential_transformation(X, power=power)
     # Use CVXPY implementation
-    beta, basis_pursuit_iterations = group_basis_pursuit(
+    beta, basis_pursuit_iterations, objective_value = group_basis_pursuit(
         data_transformed, constraint_violation=constraint_violation
     )
     # Note: Convergence logging is not implemented for the main experiment flow
@@ -171,7 +171,93 @@ def isometry_pursuit(
         "beta": beta,
         "basis_pursuit_indices": basis_pursuit_indices,
         "basis_pursuit_iterations": basis_pursuit_iterations,
+        "objective_value": objective_value,
     }
+
+
+def isometry_pursuit_leave_one_out(X, power=1.0, constraint_violation=0.0):
+    """
+    Perform greedy leave-one-out analysis on isometry pursuit results.
+
+    Parameters:
+    -----------
+    X : numpy.ndarray
+        Data matrix of shape (D, P)
+    power : float
+        Power parameter for transformation (default: 1.0)
+    constraint_violation : float
+        Constraint violation tolerance (default: 0.0)
+
+    Returns:
+    --------
+    dict
+        Dictionary containing:
+        - "losses": list of objective values at each step
+        - "selected_indices": final subset of features after greedy removal
+    """
+    D, P = X.shape  # Extract dimensions from input matrix
+
+    # Run initial isometry pursuit on full matrix
+    initial_result = isometry_pursuit(
+        X, power=power, constraint_violation=constraint_violation
+    )
+
+    # Handle edge case: if no features selected initially
+    if len(initial_result["basis_pursuit_indices"]) == 0:
+        return {
+            "losses": [initial_result["objective_value"]],
+            "selected_indices": np.array([]),
+        }
+
+    # Initialize tracking
+    current_indices = initial_result["basis_pursuit_indices"].copy()
+    losses = [initial_result["objective_value"]]
+
+    results = {}
+    # Greedy removal loop - continue until len(current_indices) = D
+    while len(current_indices) > D:
+        print(current_indices)
+        trial_losses = []
+        trial_features = []
+
+        for i, feature in enumerate(current_indices):
+            print(f"Removing feature {feature}")
+
+            # Create subset by removing current feature
+            trial_indices = np.delete(current_indices, i)
+            # Subset X to trial indices
+
+            X_trial = X[:, trial_indices]
+            trial_result = isometry_pursuit(
+                X_trial, power=power, constraint_violation=constraint_violation
+            )
+            # Record the objective value for this trial
+            print(trial_result["objective_value"])
+            print(len(trial_result["basis_pursuit_indices"]))
+
+            results[frozenset(trial_result["basis_pursuit_indices"])] = trial_result[
+                "objective_value"
+            ]
+            trial_losses.append(trial_result["objective_value"])
+            trial_features.append(feature)
+
+        # # Check if any trials succeeded
+        # if len(trial_losses) == 0:
+        #     # No valid trials, stop greedy removal
+        #     break
+
+        # Find the feature whose removal gives the lowest loss
+        best_trial_idx = np.argmin(trial_losses)
+        best_loss = trial_losses[best_trial_idx]
+        best_feature = trial_features[best_trial_idx]
+
+        # Remove the feature and continue
+        current_indices = np.delete(
+            current_indices, np.where(current_indices == best_feature)[0][0]
+        )
+        losses.append(best_loss)
+
+    return {"losses": losses, "selected_indices": current_indices}
 
 
 def brute(matrix, loss, target_dimension):
@@ -231,7 +317,10 @@ def group_basis_pursuit(
         else None
     )
 
-    return beta_sparse, iterations
+    # Calculate objective function value (sum of L2 norms of rows)
+    objective_value = np.sum(np.linalg.norm(beta_sparse, axis=1))
+
+    return beta_sparse, iterations, objective_value
 
 
 def create_convergence_log(matrix, threshold=1e-6, iteration_points=None):
@@ -270,7 +359,7 @@ def create_convergence_log(matrix, threshold=1e-6, iteration_points=None):
     for iter_count in iteration_points:
         try:
             # Call group_basis_pursuit with specific iteration limit
-            beta, _ = group_basis_pursuit(
+            beta, _, _ = group_basis_pursuit(
                 matrix, threshold=threshold, steps=iter_count, constraint_violation=0.0
             )
 
@@ -349,7 +438,7 @@ def create_convergence_log_with_coefficients(
         try:
             # Call group_basis_pursuit with specific iteration limit
             # Use threshold instead of eps when steps is specified
-            beta, _ = group_basis_pursuit(
+            beta, _, _ = group_basis_pursuit(
                 matrix,
                 threshold=threshold,
                 steps=iter_count,
