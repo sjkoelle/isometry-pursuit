@@ -1,27 +1,12 @@
 import numpy as np
-<<<<<<< HEAD
-
-
-def isometry_loss(matrix: np.ndarray, power=1) -> float:
-=======
 import warnings
 
 
 def isometry_loss(matrix: np.ndarray, power=1, indices=None) -> float:
->>>>>>> origin/experiment
     """is it a norm?"""
     singular_values = np.linalg.svd(
         matrix, compute_uv=False
     )  # no 0s since we are in full rankistan
-<<<<<<< HEAD
-    singular_values = singular_values**power
-    # print(singular_values)
-    # output = np.linalg.norm(np.log(singular_values)) ** 2
-    # (np.exp(t) + np.exp(1/t) )/ (2 * math.e)
-    output = np.sum(
-        (np.exp(singular_values) + np.exp(singular_values ** (-1))) / (2 * np.e)
-    )
-=======
 
     # Check for rank deficiency - if any singular values are too small, skip this matrix
     min_singular_value = np.min(singular_values)
@@ -46,7 +31,6 @@ def isometry_loss(matrix: np.ndarray, power=1, indices=None) -> float:
                     "inf"
                 )  # Return infinity to indicate this matrix should not be selected
 
->>>>>>> origin/experiment
     return output
 
 
