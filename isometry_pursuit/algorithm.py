@@ -9,12 +9,6 @@ import random
 
 
 def greedy(
-<<<<<<< HEAD
-    matrix, loss, target_dimension=None, selected_indices=None, random_state=None
-):
-    """Matrix is d \times p dimensional"""
-    print("greedy", selected_indices)
-=======
     matrix,
     loss,
     target_dimension=None,
@@ -23,7 +17,6 @@ def greedy(
     verbose=False,
 ):
     """Matrix is d \times p dimensional"""
->>>>>>> origin/experiment
     if selected_indices is None:
         selected_indices = []
     if random_state is not None:
@@ -46,14 +39,10 @@ def greedy(
                 candidate_parametrization = np.concatenate(
                     [selected_indices, [p]]
                 ).astype(int)
-<<<<<<< HEAD
-                candidate_losses[p] = loss(matrix[:, candidate_parametrization])
-=======
                 candidate_losses[p] = loss(
                     matrix[:, candidate_parametrization],
                     indices=candidate_parametrization,
                 )
->>>>>>> origin/experiment
         # print(candidate_losses)
         minimum_loss = np.nanmin(candidate_losses)
         most_isometric_indices = np.where(candidate_losses == minimum_loss)[0]
@@ -62,16 +51,6 @@ def greedy(
         # print(most_isometric_index)
         selected_indices.append(most_isometric_index)
         selected_indices = greedy(
-<<<<<<< HEAD
-            matrix, loss, target_dimension, selected_indices=selected_indices
-        )
-    # print("done", selected_indices)
-    return selected_indices
-
-
-# else:
-#     return None
-=======
             matrix,
             loss,
             target_dimension,
@@ -279,28 +258,17 @@ def isometry_pursuit_leave_one_out(X, power=1.0, constraint_violation=0.0):
         losses.append(best_loss)
 
     return {"losses": losses, "selected_indices": current_indices}
->>>>>>> origin/experiment
 
 
 def brute(matrix, loss, target_dimension):
 
     dictionary_dimension = matrix.shape[1]
-<<<<<<< HEAD
-    print(
-        f"Computing brute force solution for dictionary dimension {dictionary_dimension} and target_dimension {target_dimension}"
-    )
-=======
->>>>>>> origin/experiment
     parametrizations = combinations(range(dictionary_dimension), target_dimension)
 
     losses = []
     for parametrization in tqdm(parametrizations):
         putative_X_S = matrix[:, parametrization]
-<<<<<<< HEAD
-        losses.append(loss(putative_X_S))
-=======
         losses.append(loss(putative_X_S, indices=parametrization))
->>>>>>> origin/experiment
 
     selected_indices = np.asarray(losses).argmin()
     parametrizations = combinations(range(dictionary_dimension), target_dimension)
@@ -311,15 +279,6 @@ def group_basis_pursuit(
     matrix,
     eps=1e-12,
     threshold=1e-6,
-<<<<<<< HEAD
-):
-    D, P = matrix.shape
-    beta = cp.Variable((P, D))  # could initialize with lasso?
-    objective = cp.Minimize(cp.sum(cp.norm(beta, axis=1)))
-    constraints = [matrix @ beta == np.identity(D)]
-    problem = cp.Problem(objective, constraints)
-    scs_opts = {"eps": eps}
-=======
     steps=None,
     constraint_violation=0.0,
 ):
@@ -344,17 +303,12 @@ def group_basis_pursuit(
     else:
         scs_opts = {"max_iters": steps}
 
->>>>>>> origin/experiment
     output = problem.solve(solver=cp.SCS, **scs_opts)
     if output is np.inf:
         raise ValueError("No solution found")
     beta_optimized = beta.value
     beta_sparse = beta_optimized.copy()
     beta_sparse[np.abs(beta_sparse) < threshold] = 0
-<<<<<<< HEAD
-    # assert entire rows are 0 or raise warning
-    return beta_sparse
-=======
 
     # Get iteration count from solver info
     iterations = (
@@ -590,7 +544,6 @@ def load_convergence_data(filepath):
         "matrix_shape": tuple(data["matrix_shape"]),
         "iteration_points": data["iteration_points"].tolist(),
     }
->>>>>>> origin/experiment
 
 
 def group_lasso(matrix, lambda_):
