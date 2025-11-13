@@ -1,0 +1,28 @@
+{
+  "dataset_name": "wine",
+  "standardized": true,
+  "n_samples": 178,
+  "n_features": 13,
+  "n_features_available": 13,
+  "feature_names": [
+    "alcohol",
+    "malic_acid",
+    "ash",
+    "alcalinity_of_ash",
+    "magnesium",
+    "total_phenols",
+    "flavanoids",
+    "nonflavanoid_phenols",
+    "proanthocyanins",
+    "color_intensity",
+    "hue",
+    "od280/od315_of_diluted_wines",
+    "proline"
+  ],
+  "target_names": [
+    "class_0",
+    "class_1",
+    "class_2"
+  ],
+  "data_file": "data/wine_standardized_13.csv"
+}

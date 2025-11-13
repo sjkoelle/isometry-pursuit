@@ -1,0 +1,79 @@
+{
+  "dataset_name": "word_embeddings",
+  "standardized": true,
+  "n_words": 21,
+  "n_categories": 6,
+  "original_dim": 21,
+  "pca_dim": 10,
+  "words": [
+    "man",
+    "male",
+    "guy",
+    "gentleman",
+    "sir",
+    "woman",
+    "female",
+    "lady",
+    "madam",
+    "gal",
+    "regent",
+    "sovereign",
+    "monarch",
+    "emperor",
+    "pharaoh",
+    "slave",
+    "wench",
+    "young",
+    "kid",
+    "old",
+    "elder"
+  ],
+  "categories": {
+    "man": [
+      "man",
+      "male",
+      "guy",
+      "gentleman",
+      "sir"
+    ],
+    "woman": [
+      "woman",
+      "female",
+      "lady",
+      "madam",
+      "gal"
+    ],
+    "regent": [
+      "regent",
+      "sovereign",
+      "monarch",
+      "emperor",
+      "pharaoh"
+    ],
+    "slave": [
+      "slave",
+      "wench"
+    ],
+    "young": [
+      "young",
+      "kid"
+    ],
+    "old": [
+      "old",
+      "elder"
+    ]
+  },
+  "pca_explained_variance_ratio": [
+    0.1719674301995447,
+    0.12185079891937675,
+    0.09719496632948171,
+    0.07475746086283888,
+    0.06425724927676388,
+    0.06038368587483579,
+    0.05181625717280617,
+    0.04881060895805037,
+    0.04823976331697432,
+    0.041269601472727874
+  ],
+  "data_file": "/Users/samsonkoelle/isometry-pursuit/data/word_embeddings_standardized_10.csv"
+}

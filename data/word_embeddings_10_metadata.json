@@ -1,0 +1,108 @@
+{
+  "dataset": "word_embeddings",
+  "D": 10,
+  "n_words": 61,
+  "n_categories": 14,
+  "axes": [
+    "gender",
+    "status",
+    "age",
+    "domain",
+    "wealth",
+    "location",
+    "warmth"
+  ],
+  "word_categories": {
+    "man": [
+      "man",
+      "male",
+      "guy",
+      "gentleman",
+      "sir"
+    ],
+    "woman": [
+      "woman",
+      "female",
+      "lady",
+      "madam",
+      "gal"
+    ],
+    "regent": [
+      "regent",
+      "sovereign",
+      "monarch",
+      "emperor",
+      "pharaoh"
+    ],
+    "slave": [
+      "slave",
+      "wench"
+    ],
+    "young": [
+      "young",
+      "kid"
+    ],
+    "old": [
+      "old",
+      "elderly"
+    ],
+    "warrior": [
+      "warrior",
+      "soldier",
+      "knight",
+      "fighter",
+      "mercenary"
+    ],
+    "scholar": [
+      "scholar",
+      "academic",
+      "professor",
+      "intellectual",
+      "scientist"
+    ],
+    "rich": [
+      "rich",
+      "wealthy",
+      "affluent",
+      "millionaire",
+      "tycoon"
+    ],
+    "poor": [
+      "poor",
+      "impoverished",
+      "broke",
+      "destitute",
+      "beggar"
+    ],
+    "urban": [
+      "urban",
+      "city",
+      "metropolitan",
+      "cosmopolitan",
+      "downtown"
+    ],
+    "rural": [
+      "rural",
+      "village",
+      "countryside",
+      "agrarian",
+      "pastoral"
+    ],
+    "warm": [
+      "warm",
+      "friendly",
+      "kind",
+      "loving",
+      "affectionate"
+    ],
+    "cold": [
+      "cold",
+      "aloof",
+      "harsh",
+      "distant",
+      "indifferent"
+    ]
+  },
+  "model": "all-MiniLM-L6-v2",
+  "method": "notebook_replication"
+}

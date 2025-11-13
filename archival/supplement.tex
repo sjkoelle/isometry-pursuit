@@ -83,12 +83,20 @@ We then show that this implies that the resultant loss is unchanged by unitary t
 \subsubsection{Proof of Proposition \ref{prop:unitary_selection}}
 \label{proof:unitary_selection}
 
+<<<<<<< HEAD
 In this proof we first show that the orthonormal submatrix $X_{.S}$ is contained within the set $\widehat { \mathcal \beta}_{MBP} (w(X,c), I_D)$.
+=======
+In this proof we first show that the orthonormal submatrix $X_{.S}$ is contained within the set $\widehat { \mathcal \beta}_{MBP} (w(X), I_D)$.
+>>>>>>> origin/experiment
 
 \begin{proposition}
 \label{prop:kkt}
 Let $X_{.S}$ be a rank $D$ orthonormal submatrix of $X$.
+<<<<<<< HEAD
 Then $S \in S(\beta) : \beta \in \widehat{ \mathcal \beta}_{MBP} (w(X,c), I_D))$.
+=======
+Then $S \in S(\beta) : \beta \in \widehat{ \mathcal \beta}_{MBP} (w(X), I_D))$.
+>>>>>>> origin/experiment
  \end{proposition}
  
  \begin{proof}
@@ -100,14 +108,23 @@ Then $S \in S(\beta) : \beta \in \widehat{ \mathcal \beta}_{MBP} (w(X,c), I_D))$
 Recall that the KKT conditions for a convex optimization problem are a set of conditions on an element of the domain of the optimization algorithm that, if satisfied, certify that the element is a solution.
 To write out the KKT conditions, we define the Lagrangian
 \begin{align}
+<<<<<<< HEAD
 \mathcal L(X,\beta,\nu) = \|\beta\|_{1,2} + \nu^T (I_D - w(X,c) \beta)
+=======
+\mathcal L(X,\beta,\nu) = \|\beta\|_{1,2} + \nu^T (I_D - w(X) \beta)
+>>>>>>> origin/experiment
 \end{align}
 where $\nu \in \mathbb R^{D\times D}$ is the dual variable.
 
 The KKT conditions are then
 \begin{itemize}
+<<<<<<< HEAD
 \item Primal feasibility: $w(X, c) \beta = I_D$
 \item Stationarity: there exists a dual variable $\nu$ such that $0 \in \partial \|\beta\|_{1,2} - w(X, c)^T \nu$  where $\partial$ is the subdifferential operator.
+=======
+\item Primal feasibility: $w(X) \beta = I_D$
+\item Stationarity: there exists a dual variable $\nu$ such that $0 \in \partial \|\beta\|_{1,2} - w(X)^T \nu$  where $\partial$ is the subdifferential operator.
+>>>>>>> origin/experiment
 \end{itemize}
 where dual feasibility and complementary slackness are ignorable by virtue of the absence of inequality constraints.
 
@@ -120,7 +137,11 @@ For stationarity, recall that
 Then, by the definition of subdifferential
 \begin{align}
 \partial \|\beta\|_{1,2} = \begin{bmatrix}
+<<<<<<< HEAD
 I_D
+=======
+I_D \\
+>>>>>>> origin/experiment
 v_{d+1} \\
 \dotsc \\
 v_P
@@ -132,27 +153,42 @@ We therefore must show that there exists a $\nu$ that satisfies
 \begin{align}
 \begin{bmatrix}
 I_D \\
+<<<<<<< HEAD
 w(X_{-S},c)^T
+=======
+w(X_{-S})^T
+>>>>>>> origin/experiment
 \end{bmatrix}\nu  = \begin{bmatrix}
 I_D \\
 V_{-S}
 \end{bmatrix}.
 \end{align}
+<<<<<<< HEAD
 At this point we can see that in fact $I_D$ is an appropriate choice of $\nu$ since normalization by $w$ leads to vectors satisfying $\|w(X,c\|_2 \leq 1$.
 
 Since for this $\beta$, $S(\beta) = S$, we have shown that $S$ is the support of a solution to $\beta_{MBP} (w(X,c), I_D)$.
+=======
+At this point we can see that in fact $I_D$ is an appropriate choice of $\nu$ since normalization by $w$ leads to vectors satisfying $\|w(X)\|_2 \leq 1$.
+
+Since for this $\beta$, $S(\beta) = S$, we have shown that $S$ is the support of a solution to $\beta_{MBP} (w(X), I_D)$.
+>>>>>>> origin/experiment
 \end{proof}
 
 The next part of the proof handles the presence of non-unique solutions.
 
 \begin{proposition}
 \label{prop:support_containment}
+<<<<<<< HEAD
 $S(\widehat \beta_c ( X)) = \cup \; S(\beta) \; : \;  \beta \in  \mathcal \beta_{MBP} (w(X,c), I_D)$
+=======
+$S(\widehat \beta ( X)) = \cup \; S(\beta) \; : \;  \beta \in  \mathcal \beta_{MBP} (w(X), I_D)$
+>>>>>>> origin/experiment
  \end{proposition}
 
 \begin{proof}
 The proposition follows from geometric properties of the solution set.
 We ignore the case for singleton solutions, for which the proposition is self-evident.
+<<<<<<< HEAD
 Recall that $\widehat \beta_c ( X) := \widehat \beta_{MBP}^{l_2} ( w(X,c), I_D ) =  \arg \min_{\beta \in \mathbb R^{P \times D} } \|\beta\|_F : \beta \in \widehat {\mathcal \beta}_{MBP}(X, I_D)  $.
 By definition of $\widehat {\mathcal \beta}_{MBP} (X, I_D) $, $\|\beta_{p.} \|_2 : \beta \in  \widehat { \mathcal \beta}_{MBP} (X, I_D) $ is an affine linear subspace of $\mathbb R^{P}.$
 The projection of the vector of minimum $l_2$ distance from the origin to a affine space intersects that space perpendicularly.
@@ -161,6 +197,69 @@ Thus, $\widehat \beta_c ( X)$ is not on the intersection of the solution polytop
 It is therefore maximally non-sparse with respect to any of the minimizing solutions.
 \end{proof}
 
+=======
+Recall that $\widehat \beta ( X) := \widehat \beta_{MBP}^{\ell_2} ( w(X), I_D ) =  \arg \min_{\beta \in \mathbb R^{P \times D} } \|\beta\|_F : \beta \in \widehat {\mathcal \beta}_{MBP}(X, I_D)  $.
+By definition of $\widehat {\mathcal \beta}_{MBP} (X, I_D) $, $\|\beta_{p.} \|_2 : \beta \in  \widehat { \mathcal \beta}_{MBP} (X, I_D) $ is an affine linear subspace of $\mathbb R^{P}.$
+The projection of the vector of minimum $\ell_2$ distance from the origin to a affine space intersects that space perpendicularly.
+However, for all $\|\beta_{.p}\|_2$ such that $\beta$ is on the intersection of this affine space with the coordinate hyperplanes formed by fixing any choices of $\|\beta_{.p}\|_2 = 0$, this vector doesn't intersect this space perpendicularly.
+Thus, $\widehat \beta ( X)$ is not on the intersection of the solution polytope $ \widehat {\mathcal \beta}_{MBP} (w(X), I_D)$ with the coordinate hyperplanes.
+It is therefore maximally non-sparse with respect to any of the minimizing solutions.
+\end{proof}
+
+\subsubsection{Proof of Proposition \ref{prop:computational_complexity}}
+\label{proof:computational_complexity}
+
+
+\begin{proof}
+    The augmented split Lagrangian minimized by ADMM is
+    \begin{align}
+    \mathcal L_{\rho,\gamma, \nu} (X,\beta,z) = \|z\|_{1,2} + \text{tr}(\nu^T (I_D - w(X) \beta)) + \rho \|I_D - w(X) \beta\|_F^2 + \gamma \|\beta - z\|_F^2
+    \end{align}
+    This minimization problem is
+    \begin{align}
+        \arg \min_{\beta,z \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta,z)
+    \end{align}
+    For a more detailed explanation of the reasons to prefer optimizing the split augmented Lagrangian over direct optimization of Equation \ref{eq:bp} see \citet{Boyd2010-jd}.
+    
+    The three main subroutines ( \ref{eq:beta_update} - \ref{eq:nu_update}) called by ADMM determine the per iteration complexity.
+    The update rules of the ADMM algorithm used to optimize the augmented split Lagrangian are
+    \begin{align}
+    \beta^{k+1} = \arg \min_{\beta \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta,z^k) \\
+    z^{k+1} = \arg \min_{z \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta^{k+1},z) \\
+    \nu^{k+1} = \nu^k + \rho (I_D - w(X) \beta^{k+1})
+    \end{align}
+    We will analyze the computational complexity of each of these steps by rewriting the update rules according to the specifics of the isometry pursuit problem.
+
+The beta update Equation \ref{eq:beta_update} projects the solution onto the feasible set.
+\begin{align}
+    \label{eq:beta_update}
+    \beta^{k+1} &= \arg \min_{\beta \in P \times D}  \text{tr}({\nu^k}^T (I_D - w(X) \beta)) + \rho \|I_D - w(X) \beta\|_2^2 + \gamma \|\beta - z^k\|_2^2 \\
+    &= (\rho \, w(X)^T w(X) + \gamma I_D)^{-1} (\rho \, w(X)^T I_D + \gamma z^k + w(X)^T \nu^k)
+    \end{align}
+% This is accomplished through computation of the pseudo-inverse of the linear regression solution $(w(X)^T w(X))^{-1} w(X)^T I_D$.
+The computational complexity of this computation is dominated by the inverse - that is, $O(D^2P)$.
+
+Subsequently, the z update Equation \ref{eq:z_update} is soft-thresholding operation onto a contracted level set $\|\|_{1,2}$ ball.
+\begin{align}
+    \label{eq:z_update}
+    z^{k+1} &= \arg \min_{z \in P \times D} \|z\|_{1,2} + \gamma \|z - \beta^{k+1}\|_2^2 \\
+    &= \begin{cases} (1 - \frac{1}{\gamma\|\beta_{j.}^{k+1}\|_2}) (\beta_{j.}^{k+1}) \; \text{if} \; \|\beta_{j.}^{k+1}\|_2 > \frac{1}{\gamma}\\
+        0 \; \text{otherwise}
+    \end{cases}
+\end{align}
+The computational complexity of this operation is $O(PD)$.
+
+Finally, the $\nu$ update Equation \ref{eq:nu_update} increases the squeezing of the $z$ and $\beta$ variables towards to each other.
+\begin{align}
+\nu^{k+1} = \nu^k + \rho (I_D - w(X) \beta^{k+1})
+\label{eq:nu_update}
+\end{align}
+In this step, the dual variable $\nu$ that controls the penalty accrued by the splitting is updated in the direction of the constraint violation.
+The computational complexity of this operation is dominated by that of the matrix multiplication $w(X) \beta^{k+1}$.
+That is, it is $O(D^2P)$.
+\end{proof}
+
+>>>>>>> origin/experiment
 \newpage
 
 \subsection{Support cardinalities}
@@ -173,14 +272,21 @@ Further investigation into the extreme failure of isometry pursuit to sparsify i
 \begin{figure}[t]
     \centering
     % Wine
+<<<<<<< HEAD
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/wine_cardinalities}
+=======
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/wine_cardinalities.png}
+>>>>>>> origin/experiment
         \caption{Wine }
         \label{fig:wine_cardinalities}
     \end{subfigure}
     \hfill
     % Iris
+<<<<<<< HEAD
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/iris_cardinalities}
@@ -205,11 +311,28 @@ Further investigation into the extreme failure of isometry pursuit to sparsify i
         \caption{Words }
         \label{fig:words_cardinalities}
     \end{subfigure}
+=======
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/iris_cardinalities.png}
+        \caption{Iris }
+        \label{fig:iris_cardinalities}
+    \end{subfigure}
+    \hfill
+    % Ethanol
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../figures/ethanol_cardinalities.png}
+        \caption{Ethanol }
+        \label{fig:ethanol_cardinalities}
+    \end{subfigure}
+>>>>>>> origin/experiment
 
     \caption{Support cardinalities for each dataset after \isometrypursuit.}
     \label{fig:support_cardinalities}
 \end{figure}
 
+<<<<<<< HEAD
 
 \newpage
 
@@ -326,6 +449,10 @@ While we do not provide any quantitative evaluation beyond those in Section \ref
 \end{figure}
 
 
+=======
+\newpage
+
+>>>>>>> origin/experiment
 \subsection{Timing}
 \label{sec:timing}
 
@@ -342,7 +469,10 @@ Name & IP & 2nd stage & Greedy \\
 Iris & 1.24 ± 0.02 & 0.00 ± 0.00 & 0.02 ± 0.00 \\
 Wine & 2.32 ± 0.17 & 0.13 ± 0.12 & 0.03 ± 0.00 \\
 Ethanol & 8.38 ± 0.57 & 0.55 ± 1.08 & 0.07 ± 0.01 \\
+<<<<<<< HEAD
 Words & 0.98 ± 0.20 & 0.03 ± 0.02 & 0.01 ± 0.00 \\
+=======
+>>>>>>> origin/experiment
 \bottomrule
 \end{tabular}
 \caption{Algorithm runtimes in seconds across replicates.}

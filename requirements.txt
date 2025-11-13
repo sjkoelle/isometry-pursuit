@@ -9,7 +9,15 @@ pillow
 pandas
 multiprocess
 scikit-learn
+<<<<<<< HEAD
 scipy
 numpy>=1.23.0
 ipykernel
+=======
+sentence-transformers
+scipy
+numpy<=1.23.0
+ipykernel
+click
+>>>>>>> origin/experiment
 # pyLDLE2

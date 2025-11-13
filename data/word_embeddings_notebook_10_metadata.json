@@ -1,0 +1,133 @@
+{
+  "dataset": "word_embeddings_notebook",
+  "D": 10,
+  "n_words": 80,
+  "n_categories": 16,
+  "axes": [
+    "axis_1",
+    "axis_2",
+    "axis_3",
+    "axis_4",
+    "axis_5",
+    "axis_6",
+    "axis_7",
+    "axis_8",
+    "axis_9",
+    "axis_10"
+  ],
+  "word_categories": {
+    "man": [
+      "man",
+      "male",
+      "guy",
+      "gentleman",
+      "sir"
+    ],
+    "woman": [
+      "woman",
+      "female",
+      "lady",
+      "madam",
+      "gal"
+    ],
+    "queen": [
+      "queen",
+      "dowager",
+      "consort",
+      "rani",
+      "empress"
+    ],
+    "king": [
+      "king",
+      "monarch",
+      "sovereign",
+      "emperor",
+      "pharaoh"
+    ],
+    "prince": [
+      "prince",
+      "heir",
+      "crown prince",
+      "royal",
+      "noble"
+    ],
+    "princess": [
+      "princess",
+      "heiress",
+      "royal",
+      "noble",
+      "duchess"
+    ],
+    "regent": [
+      "ruler",
+      "leader",
+      "sovereign",
+      "monarch",
+      "governor"
+    ],
+    "slave": [
+      "slave",
+      "servant",
+      "serf",
+      "bondsman",
+      "thrall"
+    ],
+    "young": [
+      "young",
+      "youth",
+      "juvenile",
+      "adolescent",
+      "teen"
+    ],
+    "old": [
+      "old",
+      "elderly",
+      "aged",
+      "senior",
+      "ancient"
+    ],
+    "rich": [
+      "rich",
+      "wealthy",
+      "affluent",
+      "prosperous",
+      "opulent"
+    ],
+    "poor": [
+      "poor",
+      "penniless",
+      "destitute",
+      "impoverished",
+      "needy"
+    ],
+    "home": [
+      "home",
+      "house",
+      "dwelling",
+      "residence",
+      "abode"
+    ],
+    "away": [
+      "away",
+      "distant",
+      "remote",
+      "far",
+      "abroad"
+    ],
+    "warm": [
+      "warm",
+      "friendly",
+      "kind",
+      "gentle",
+      "caring"
+    ],
+    "cold": [
+      "cold",
+      "distant",
+      "aloof",
+      "unfriendly",
+      "harsh"
+    ]
+  },
+  "method": "synthetic_centroid_based"
+}

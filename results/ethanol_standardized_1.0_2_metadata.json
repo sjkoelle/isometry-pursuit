@@ -1,0 +1,14 @@
+{
+  "dataset_name": "ethanol",
+  "D": 2,
+  "power": 1.0,
+  "R": 5,
+  "compute_brute": false,
+  "log_convergence": false,
+  "data_shape": [
+    5,
+    1512
+  ],
+  "results_file": "results/ethanol_results.csv",
+  "seed": 1234
+}

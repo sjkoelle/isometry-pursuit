@@ -1,0 +1,21 @@
+{
+  "dataset_name": "wine",
+  "standardized": true,
+  "n_samples": 178,
+  "n_features": 6,
+  "n_features_available": 13,
+  "feature_names": [
+    "alcohol",
+    "malic_acid",
+    "ash",
+    "alcalinity_of_ash",
+    "magnesium",
+    "total_phenols"
+  ],
+  "target_names": [
+    "class_0",
+    "class_1",
+    "class_2"
+  ],
+  "data_file": "/Users/samsonkoelle/isometry-pursuit/data/wine_standardized_6.csv"
+}
