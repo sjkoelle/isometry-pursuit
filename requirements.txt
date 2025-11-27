@@ -7,7 +7,6 @@ umap-learn
 matplotlib
 pillow
 pandas
-multiprocesisometry_pursuit/loss.pys
 scikit-learn
 sentence-transformers
 scipy

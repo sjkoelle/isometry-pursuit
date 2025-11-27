@@ -1,3 +1,4 @@
+*.vscode
 .synctex
 data/*
 results/
