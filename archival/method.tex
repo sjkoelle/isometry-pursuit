@@ -28,7 +28,7 @@ This loss is equivalent to that shown in Figure \ref{fig:gt_loss} in the one-dim
 
 \section{Method}
 
-We apply the group lasso paradigm used to select independent dictionary elements in \citet{Koelle2022-ju, Koelle2024-no} to the more specific problem of selecting pointwise isometries from a dictionary.
+We apply the multitask basis pursuit paradigm used to select independent dictionary elements in \citet{Koelle2022-ju, Koelle2024-no} to the more specific problem of selecting pointwise isometries from a dictionary.
 We first define a ground truth objective computable via brute and greedy algorithms that is uniquely minimized by orthonormal matrices.
 We then define the combination of normalization and multitask basis pursuit that approximates this ground truth loss function.
 We finally give a brute post-processing method for ensuring that the solution is $D$ sparse, and provide a theoretical result that the two stage approach will always result in recovery of an isometric solution from the dictionary, should one exist.
@@ -138,10 +138,10 @@ By the strong convexity of the $\ell_2$ norm, $\widehat \beta^{\ell_2}_{MLP} (X,
 % Given a design matrix $X$, there exists a response variable $y$ such that basis pursuit admits a non-unique solution if and only if the rowspan of the design matrix $X$ contains a sufficient codimension edge of the $p$ dimensional hypercube \citep{Schneider2022-hi}.
 % For multitask basis pursuit non-unique solutions may occur even when this condition is satisfied.
 
-% This implicit regularization assumption is reasonable.
+This implicit regularization assumption is reasonable.
 % Mishkin2023-yt is broken
-% For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum $\ell_2$ norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf}  assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
-% Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) \citep{O-Donoghue2013-wf} stably estimates the min-norm solution when initialized at $0$, but besides a brief exploration in Section \ref{sec:deep_dive} we leave theoretical and experimental proof of this feature of the feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our eventual proposition.
+For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum $\ell_2$ norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf}  assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
+Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) \citep{O-Donoghue2013-wf} stably estimates the min-norm solution when initialized at $0$, but besides a brief exploration in Section \ref{sec:deep_dive} we leave theoretical and experimental proof of this feature of the feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our eventual proposition.
 
 Isometry pursuit is then given by
 \begin{align}
@@ -205,15 +205,25 @@ This method forms our practical isometry estimator, the core advantage of which 
 
 \subsection{Non-uniqueness}
 
-There exist Isometry Pursuit solutions of minimum norm that are not isometries.
-We can derive a simple example by considering the following \textit{Mercedes-Benz frame} matrix $X$.
-\begin{bmatrix}
+The isometric solution is optimum among cardinality $D$ solutions.
+\begin{proposition}
+\label{prop:D_min}
+\ell (X_S) = D , |S| = D \Leftrightarrow X_S X_S^T = I_D
+\end{proposition}
+However, there exist Isometry Pursuit solutions of minimum norm that are not isometries.
+For example, \textit{Mercedes-Benz frame} matrix $X$ achieves minimium norm.
+\begin{proposition}
+\label{prop:the_benzito}
+Let $X_{S} = \begin{bmatrix}
 1 & \frac{1}{2} & \frac{-1}{2} \\
 0 & \frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2}
-\end{bmatrix}
-Clearly, there exists a solution solely in terms of the second and third columns, but by the Proposition in THESIS, this solution does not achieve the optimum value associated with an isometry.
-However, it turns out that by adding in the first feature, we can achieve this optimum.
-Given the symmetry of the second and third columns around the y axis, let's assume that their loadings with respect to the second column of the target matrix (the $D$ dimensional identity) are the same.
+\end{bmatrix}$.
+Then $\ell (X_S) = D$.
+\end{proposition}
+
+\begin{proof}
+Given the symmetry of the second and third columns around the y axis, the loss will not change regardless of whether we upweight one or downweight the other, these changes necessarily being in conjunction.
+We therefore assume that their loadings with respect to the second column of the target matrix (the $D$ dimensional identity) are the same.
 Clearly, they will both then have value of $\frac{1}{\sqrt{3}}$.
 The question then becomes, what should the values of the first column in the loading matrix $\beta$ be?
 
@@ -250,9 +260,23 @@ This leads to a value for $l$ of
     &=\sqrt{\frac{4}{9}} + \sqrt{\frac{4}{9}} + \frac{2}{3} \\
     &=\frac{2}{3} + \frac{2}{3} + \frac{2}{3} 
 \end{align}
-Remarkable!
+\end{proof}
 
 The Mercedes-Benz frame is an example of a tight frame - a frame whose non-zero singular values are equal.
+It looks like there are not tight frames satisfying this equation.
+
+6 in four comes from reusing a central axis.  We knock the loading down on the main axis by 1/3 each time.
+\begin{align}
+\label{prop:the_benzito}
+Let $X_{S} = \begin{bmatrix}
+\frac{1}{2} & \frac{-1}{2} \\
+\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} \\
+0 \\
+0 \\
+0 \\
+0 
+\end{bmatrix}$.
+\end{align}
 
 \subsection{Computation complexity}
 
