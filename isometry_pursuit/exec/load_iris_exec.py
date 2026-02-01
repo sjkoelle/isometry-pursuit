@@ -5,15 +5,11 @@ Loads and preprocesses the Iris dataset for isometry pursuit experiments.
 """
 
 import argparse
-import sys
 import os
 import pandas as pd
 import numpy as np
 from sklearn.datasets import load_iris
 from sklearn.preprocessing import StandardScaler
-
-# Add parent directory to path to import isometry_pursuit modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
 def load_iris_data(output_dir="data", standardize=True, n_replicates=25, frac=0.5):

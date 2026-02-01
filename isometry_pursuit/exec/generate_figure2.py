@@ -5,15 +5,11 @@ This script creates box plots comparing brute force vs two-stage methods.
 """
 
 import argparse
-import sys
 import os
 import pandas as pd
 import json
 import matplotlib.pyplot as plt
 import numpy as np
-
-# Add parent directory to path to import isometry_pursuit modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from isometry_pursuit.plot import difference_box_plot
 

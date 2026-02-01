@@ -222,6 +222,7 @@ Then $\ell (X_S) = D$.
 \end{proposition}
 
 \begin{proof}
+
 Given the symmetry of the second and third columns around the y axis, the loss will not change regardless of whether we upweight one or downweight the other, these changes necessarily being in conjunction.
 We therefore assume that their loadings with respect to the second column of the target matrix (the $D$ dimensional identity) are the same.
 Clearly, they will both then have value of $\frac{1}{\sqrt{3}}$.
@@ -229,6 +230,7 @@ The question then becomes, what should the values of the first column in the loa
 
 We can answer this question with a simple differential equation.
 Let $b$ denote the constraint violation $1 - X_{1.} \beta_{.1}$.
+
 Then
 \begin{align}
     \frac{\partial b}{\partial \beta_{11}} = \frac{\partial b}{\partial\beta_{21}} \\
@@ -269,12 +271,10 @@ It looks like there are not tight frames satisfying this equation.
 \begin{align}
 \label{prop:the_benzito}
 Let $X_{S} = \begin{bmatrix}
-\frac{1}{2} & \frac{-1}{2} \\
-\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} \\
-0 \\
-0 \\
-0 \\
-0 
+\frac{1}{2} & \frac{-1}{2} & \frac{1}{2} & \frac{-1}{2}  & \frac{1}{2} & \frac{-1}{2} \\
+\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} &0 & 0 \\
+0 & 0 &\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2}  & 0& 0\\
+0& 0 0 & 0 &\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} \\
 \end{bmatrix}$.
 \end{align}
 

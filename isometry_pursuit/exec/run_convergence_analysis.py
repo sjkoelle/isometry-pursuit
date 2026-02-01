@@ -5,13 +5,9 @@ This script runs convergence logging independently of the main experiments.
 """
 
 import argparse
-import sys
 import os
 import pandas as pd
 import numpy as np
-
-# Add parent directory to path to import isometry_pursuit modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from isometry_pursuit.algorithm import (
     create_convergence_log_with_coefficients,

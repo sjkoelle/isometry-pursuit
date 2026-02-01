@@ -5,14 +5,10 @@ This script creates the plots showing the exponential transformation and loss fu
 """
 
 import argparse
-import sys
 import os
 import numpy as np
 import matplotlib.pyplot as plt
 from einops import rearrange
-
-# Add parent directory to path to import isometry_pursuit modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from isometry_pursuit.transformation import exponential_transformation
 from isometry_pursuit.loss import isometry_loss

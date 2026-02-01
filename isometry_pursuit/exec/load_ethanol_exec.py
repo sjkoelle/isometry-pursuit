@@ -15,9 +15,6 @@ from pathlib import Path
 import scipy.io
 from tqdm import tqdm
 
-# Add parent directory to path to import isometry_pursuit modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-
 from isometry_pursuit.vendor import HParams
 from isometry_pursuit.atomic_geometry import (
     get_atoms3_full,

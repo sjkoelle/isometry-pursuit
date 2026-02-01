@@ -5,14 +5,10 @@ This script runs greedy feature selection experiments on data tensors or existin
 """
 
 import argparse
-import sys
 import os
 import pickle
 import json
 from pathlib import Path
-
-# Add parent directory to path to import isometry_pursuit modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 import numpy as np
 import pandas as pd

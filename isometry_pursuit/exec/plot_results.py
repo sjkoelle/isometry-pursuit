@@ -5,16 +5,12 @@ Creates various plots from experiment results.
 """
 
 import argparse
-import sys
 import os
 import pickle
 import json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
-# Add parent directory to path to import isometry_pursuit modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from isometry_pursuit.plot import difference_box_plot, ecdf_plot
 from isometry_pursuit.plot import plot_convergence

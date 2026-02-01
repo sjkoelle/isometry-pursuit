@@ -6,16 +6,12 @@ This replaces the super_simple_example.ipynb notebook functionality.
 
 import argparse
 import os
-import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.patches import FancyArrow
 from matplotlib.legend_handler import HandlerPatch
-
-# Add parent directory to path to import isometry_pursuit modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
 class HandlerArrow(HandlerPatch):

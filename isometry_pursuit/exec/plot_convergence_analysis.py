@@ -5,12 +5,8 @@ This script generates plots from convergence data saved by run_convergence_analy
 """
 
 import argparse
-import sys
 import os
 import pickle
-
-# Add parent directory to path to import isometry_pursuit modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from isometry_pursuit.exec.plot_results import (
     plot_coefficient_convergence,
