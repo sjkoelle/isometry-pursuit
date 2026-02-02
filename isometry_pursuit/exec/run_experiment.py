@@ -199,7 +199,11 @@ def main():
         required=True,
         help="Path to data tensor file (.npy)",
     )
-    parser.add_argument("--dataset-name", required=True, help="Name of the dataset")
+    parser.add_argument(
+        "--output-path",
+        required=True,
+        help="Path for output results CSV",
+    )
     parser.add_argument(
         "--D",
         type=int,
@@ -218,14 +222,11 @@ def main():
         default=0.0,
         help="Constraint violation tolerance for group basis pursuit (default: 0.0)",
     )
-    parser.add_argument(
-        "--try-multiple-violations",
-        action="store_true",
-        help="Try multiple constraint violation values when D is not provided",
-    )
-    parser.add_argument("--output-dir", default="results", help="Output directory")
 
     args = parser.parse_args()
+
+    output_dir = str(Path(args.output_path).parent) or "."
+    dataset_name = Path(args.data_file).stem
 
     # Load data
     print(f"Loading data from {args.data_file}")
@@ -368,18 +369,18 @@ def main():
         return
 
     # Save results (common for both tensor and traditional experiments)
-    os.makedirs(args.output_dir, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
 
     # Save results
-    results_file = os.path.join(args.output_dir, f"{args.dataset_name}_results.csv")
+    results_file = args.output_path
     results_df.to_csv(results_file, index=False)
     print(f"Results saved to {results_file}")
 
     # Save convergence logs if available
     if convergence_logs is not None:
         convergence_file = os.path.join(
-            args.output_dir,
-            f"{args.dataset_name}_standardized_{args.power}_{args.D}_convergence.pkl",
+            output_dir,
+            f"{dataset_name}_standardized_{args.power}_{args.D}_convergence.pkl",
         )
         with open(convergence_file, "wb") as f:
             pickle.dump(convergence_logs, f)
@@ -408,8 +409,8 @@ def main():
             }
 
         coefficient_file = os.path.join(
-            args.output_dir,
-            f"{args.dataset_name}_coefficient_matrices.pkl",
+            output_dir,
+            f"{dataset_name}_coefficient_matrices.pkl",
         )
         with open(coefficient_file, "wb") as f:
             pickle.dump(coefficient_results, f)

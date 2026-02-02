@@ -208,21 +208,29 @@ This method forms our practical isometry estimator, the core advantage of which 
 The isometric solution is optimum among cardinality $D$ solutions.
 \begin{proposition}
 \label{prop:D_min}
-\ell (X_S) = D , |S| = D \Leftrightarrow X_S X_S^T = I_D
+$\ell (X_S) = D , |S| = D \Leftrightarrow X_S X_S^T = I_D$
 \end{proposition}
 However, there exist Isometry Pursuit solutions of minimum norm that are not isometries.
 For example, \textit{Mercedes-Benz frame} matrix $X$ achieves minimium norm.
 \begin{proposition}
 \label{prop:the_benzito}
 Let $X_{S} = \begin{bmatrix}
-1 & \frac{1}{2} & \frac{-1}{2} \\
-0 & \frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2}
+0 & \frac{\sqrt{3}}{2}  &  - \frac{\sqrt{3}}{2}\\
+1 & -\frac{1}{2} & -\frac{1}{2} 
 \end{bmatrix}$.
 Then $\ell (X_S) = D$.
 \end{proposition}
 
 \begin{proof}
 
+\begin{align}
+    \beta = 
+    \begin{bmatrix}
+    0 & \frac{2}{3} \\
+    \frac{1}{\sqrt{3}}  & - \frac{1}{3} \\
+    - \frac{1}{\sqrt{3}} & - \frac{1}{3}
+    \end{bmatrix}
+\end{align}
 Given the symmetry of the second and third columns around the y axis, the loss will not change regardless of whether we upweight one or downweight the other, these changes necessarily being in conjunction.
 We therefore assume that their loadings with respect to the second column of the target matrix (the $D$ dimensional identity) are the same.
 Clearly, they will both then have value of $\frac{1}{\sqrt{3}}$.
@@ -235,7 +243,6 @@ Then
 \begin{align}
     \frac{\partial b}{\partial \beta_{11}} = \frac{\partial b}{\partial\beta_{21}} \\
     &= \frac{1}{2}
-\end{align}
 \end{align}
 On the other hand, due to the value of $\frac{1}{\sqrt{3}}$ already assumed for the second loading of the second and third features,
 \begin{align}
@@ -270,12 +277,12 @@ It looks like there are not tight frames satisfying this equation.
 6 in four comes from reusing a central axis.  We knock the loading down on the main axis by 1/3 each time.
 \begin{align}
 \label{prop:the_benzito}
-Let $X_{S} = \begin{bmatrix}
+X_{S} = \begin{bmatrix}
 \frac{1}{2} & \frac{-1}{2} & \frac{1}{2} & \frac{-1}{2}  & \frac{1}{2} & \frac{-1}{2} \\
 \frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} &0 & 0 \\
 0 & 0 &\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2}  & 0& 0\\
 0& 0 0 & 0 &\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} \\
-\end{bmatrix}$.
+\end{bmatrix}.
 \end{align}
 
 \subsection{Computation complexity}

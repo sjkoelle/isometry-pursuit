@@ -1,106 +1,69 @@
-# Isometry pursuit
+# Isometry Pursuit
+
+Convex recovery of orthonormal column-submatrices via multitask basis pursuit with symmetric normalization.
 
 ## Installation
 
-```md
-git clone https://github.com/sjkoelle/isometry-pursuit.git
+```bash
 pip install -e .
 ```
 
-## Experiments
+## Run experiments
 
-In jupyter, open
+### 1. Prepare data
 
-```md
-experiments/super_simple_example.ipynb
-experiments/IrisWine.ipynb
-experiments/word_embeddings.ipynb
-experiments/Ethanol.ipynb
-expiriments/Figure1.ipynb
-experiments/Figure2.ipynb
+```bash
+# Wine
+python -m isometry_pursuit.exec.load_wine_exec --output-dir data --R 25
+
+# Iris
+python -m isometry_pursuit.exec.load_iris_exec --output-dir data --R 25
 ```
 
 The ethanol data is available at `https://drive.google.com/file/d/1CvVOIXokjfTT0AtyeXSZMlojnfL3AcUL/view?usp=drive_link`.
-# Isometry Pursuit
-
-A Python package for isometry pursuit experiments with command-line interfaces.
-
-## Installation
 
 ```bash
-git clone https://github.com/sjkoelle/isometry-pursuit.git
-cd isometry-pursuit
-pip install -e .
+# Ethanol (requires downloaded data)
+python -m isometry_pursuit.exec.load_ethanol_exec \
+    --config-path data/ethanol_config.json \
+    --raw-data-path data/ethanol.mat \
+    --positions-path data/positions.npy \
+    --indices-path data/indices.npy \
+    --angles-path data/angles.npy \
+    --output-dir data
 ```
 
-## Quick Start
-
-### Load Wine Data
+### 2. Run experiments
 
 ```bash
-# Load wine data
-python -m isometry_pursuit.exec.load_wine_exec --output-dir data/wine --R 1
-python -m isometry_pursuit.exec.generate_orthogonal_data \
-    --output-dir data/orthogonal \
-    --matrix-specs "[(2,1),(1,1)]" \
-    --R 1 \
-    --B 3
+# Wine (D=6)
+python -m isometry_pursuit.exec.run_experiment \
+    --data-file data/wine_standardized_resampled_tensor.npy \
+    --output-path results/wine_results.csv \
+    --D 6 --compute-brute
+
+# Iris (D=4)
+python -m isometry_pursuit.exec.run_experiment \
+    --data-file data/iris_standardized_resampled_tensor.npy \
+    --output-path results/iris_results.csv \
+    --D 4 --compute-brute
+
+# Ethanol
+python -m isometry_pursuit.exec.run_experiment \
+    --data-file data/ethanol_tensor.npy \
+    --output-path results/ethanol_results.csv \
+    --compute-brute
 ```
 
-### Run Isometry Pursuit
+## Generate figures
 
 ```bash
-# Run isometry pursuit with fixed constraint violation
-python -m isometry_pursuit.exec.run_isometry_pursuit \
-    --data-file data/wine/wine_standardized_resampled_tensor.npy \
-    --output-dir results/wine_fixed \
-    --constraint-violation 0.
+# Figure 1: example (data, selection, normalization)
+python -m isometry_pursuit.exec.generate_figure_1_example --output-dir figures
 
-python -m isometry_pursuit.exec.run_isometry_pursuit \
-    --data-file data/orthogonal/orthogonal_data_tensor.npy \
-    --output-dir results/o_fixed \
-    --constraint-violation 1.41
+# Figure 1: method (transformation and loss functions)
+python -m isometry_pursuit.exec.generate_figure_1_method --output-dir figures
 
+# Figure 2: box plots (requires experiment results)
+python -m isometry_pursuit.exec.generate_figure2 --results-dir results --output-dir figures
 ```
-
-### Run Line Search for Target Cardinality
-
-```bash
-# Find constraint violation that achieves target cardinality of 6
-python -m isometry_pursuit.exec.run_line_search_for_cardinality \
-    --data-file data/wine/wine_standardized_resampled_tensor.npy \
-    --output-dir results/wine_line_search
-
-python -m isometry_pursuit.exec.run_line_search_for_cardinality \
-    --data-file data/orthogonal/orthogonal_data_tensor.npy \
-    --output-dir results/orthogonal_line_search --target-cardinality 2
-
-# Compute isometry loss of selected support
-python -m isometry_pursuit.exec.compute_isometry_loss \
-    --coefficient-matrix results/orthogonal_line_search/coefficient_matrix.npy \
-    --selected-indices results/orthogonal_line_search/selected_indices.npy \
-    --power 1.0 \
-    --D 10 \
-    --output-file results/orthogonal_line_search/isometry_loss.npy
-```
-
-## Output Files
-
-### Isometry Pursuit Results
-
-- **`coefficient_matrix.npy`**: The coefficient matrix from isometry pursuit
-- **`selected_indices.npy`**: Indices of selected features
-
-### Line Search Results
-
-- **`coefficient_matrix.npy`**: The coefficient matrix from the optimal constraint violation
-- **`selected_indices.npy`**: Indices of selected features
-- **`line_search_result.pkl`**: Complete line search results including:
-  - `best_violation`: Optimal constraint violation found
-  - `best_cardinality`: Actual cardinality achieved
-  - `target_cardinality`: Target cardinality requested
-  - `result`: Full isometry pursuit result
-
-## Wine Dataset
-
-The wine dataset contains 13 features for experiments.

@@ -123,12 +123,18 @@ def main():
     parser.add_argument(
         "--no-standardize", action="store_true", help="Skip standardization"
     )
+    parser.add_argument(
+        "--R",
+        type=int,
+        default=25,
+        help="Number of replicates to generate (default: 25)",
+    )
 
     args = parser.parse_args()
 
     # Load data
     data_tensor, data, D, P = load_iris_data(
-        output_dir=args.output_dir, standardize=not args.no_standardize
+        output_dir=args.output_dir, standardize=not args.no_standardize, n_replicates=args.R
     )
 
     print(f"Loaded Iris dataset: {P} samples, {D} features")
