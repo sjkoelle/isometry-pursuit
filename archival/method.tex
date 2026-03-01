@@ -111,7 +111,6 @@ This normalization provides good numerical properties for avoiding issues arisin
 We plot this normalization function in Figure \ref{fig:normalized_length} and its effect on our example data in Figure \ref{fig:normalization}.
 
 
-
 \subsection{Isometry pursuit}
 
 Isometry pursuit is the application of multitask basis pursuit to the normalized design matrix $w(X)$ to identify submatrices of $ X$ that are as orthonormal as possible.
@@ -212,78 +211,27 @@ $\ell (X_S) = D , |S| = D \Leftrightarrow X_S X_S^T = I_D$
 \end{proposition}
 However, there exist Isometry Pursuit solutions of minimum norm that are not isometries.
 For example, \textit{Mercedes-Benz frame} matrix $X$ achieves minimium norm.
-\begin{proposition}
+\begin{example}
+    Let $D = 2, P = 3$.
 \label{prop:the_benzito}
-Let $X_{S} = \begin{bmatrix}
+Let 
+$X_{S} = \begin{bmatrix}
 0 & \frac{\sqrt{3}}{2}  &  - \frac{\sqrt{3}}{2}\\
 1 & -\frac{1}{2} & -\frac{1}{2} 
-\end{bmatrix}$.
-Then $\ell (X_S) = D$.
-\end{proposition}
-
-\begin{proof}
-
-\begin{align}
+\end{bmatrix},
     \beta = 
     \begin{bmatrix}
     0 & \frac{2}{3} \\
     \frac{1}{\sqrt{3}}  & - \frac{1}{3} \\
     - \frac{1}{\sqrt{3}} & - \frac{1}{3}
-    \end{bmatrix}
-\end{align}
-Given the symmetry of the second and third columns around the y axis, the loss will not change regardless of whether we upweight one or downweight the other, these changes necessarily being in conjunction.
-We therefore assume that their loadings with respect to the second column of the target matrix (the $D$ dimensional identity) are the same.
-Clearly, they will both then have value of $\frac{1}{\sqrt{3}}$.
-The question then becomes, what should the values of the first column in the loading matrix $\beta$ be?
+    \end{bmatrix}$
+Then $X \beta = I_D$ and $\|\beta\|_{1,2} = \frac{2}{3} + \frac{2}{3} + \frac{2}{3} = 2 = D$.
+Since the identity matrix is a solution regardless of $X_{-S}$, this is a non-isometric minimum loss solution.
+\end{example}
 
-We can answer this question with a simple differential equation.
-Let $b$ denote the constraint violation $1 - X_{1.} \beta_{.1}$.
-
-Then
-\begin{align}
-    \frac{\partial b}{\partial \beta_{11}} = \frac{\partial b}{\partial\beta_{21}} \\
-    &= \frac{1}{2}
-\end{align}
-On the other hand, due to the value of $\frac{1}{\sqrt{3}}$ already assumed for the second loading of the second and third features,
-\begin{align}
-    \frac{\partial l}{\partial \beta_{11}} &= \frac{\partial l}{\partial\beta_{21}} \\
-    &= \frac{\partial }{\partial x}{\sqrt{\frac{1}{3} + x^2}} \\
-    &= \frac{1}{2}(\frac{1}{3} + x^2)^{-\frac{1}{2}}(2x) \\
-    &= \frac{x}{\sqrt{\frac{1}{3} + x^2}}.
-\end{align}
-This means that the tradeoff
-\begin{align}
-    \frac{\partial l}{\partial b} = \frac{1}{2x}\sqrt{\frac{1}{3} + x^2}.\
-\end{align}
-In contrast, $\frac{\partial l}{\partial \beta_{11}} = 1$ and similarly for its constraint violation.
-Solving for the equilibrium, we get
-\begin{align}
-    \frac{1}{2x}\sqrt{\frac{1}{3} + x^2} = 1 \\
-    \frac{1}{3} + x^2 = 4x^2 \\
-    \frac{1}{3} = 3x^2 \\
-    x = \frac{1}{\sqrt{3}}.
-\end{align}
-This leads to a value for $l$ of 
-\begin{align}
-    \sqrt{\frac{1}{3} + \frac{1}{9}} + \sqrt{\frac{1}{3} + \frac{1}{9}} + \frac{2}{3} \\
-    &=\sqrt{\frac{4}{9}} + \sqrt{\frac{4}{9}} + \frac{2}{3} \\
-    &=\frac{2}{3} + \frac{2}{3} + \frac{2}{3} 
-\end{align}
-\end{proof}
-
+The upshot of this example is that \isometrypursuit~ can select solutions that are relatively non-isometric.
 The Mercedes-Benz frame is an example of a tight frame - a frame whose non-zero singular values are equal.
-It looks like there are not tight frames satisfying this equation.
-
-6 in four comes from reusing a central axis.  We knock the loading down on the main axis by 1/3 each time.
-\begin{align}
-\label{prop:the_benzito}
-X_{S} = \begin{bmatrix}
-\frac{1}{2} & \frac{-1}{2} & \frac{1}{2} & \frac{-1}{2}  & \frac{1}{2} & \frac{-1}{2} \\
-\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} &0 & 0 \\
-0 & 0 &\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2}  & 0& 0\\
-0& 0 0 & 0 &\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} \\
-\end{bmatrix}.
-\end{align}
+While there are non-tight frames that have minimizing solutions, we do not here resolve whether there exist tight frames with unit norm columns that have minimum norm solutions.
 
 \subsection{Computation complexity}
 

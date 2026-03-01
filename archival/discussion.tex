@@ -2,37 +2,27 @@
 \label{sec:discussion}
 
 We have shown that multitask basis pursuit can help select isometric submatrices from appropriately normalized wide matrices.
-This approach - isometry pursuit - is a convex alternative to greedy methods for selection of orthonormalized features from within a dictionary.
-Isometry pursuit can be applied to diversification and geometrically-faithful coordinate estimation.
-Our experiments exemplify these applications, but more can be done.
-
-One potential application is diversification in recommendation systems \citep{Carbonell2017-gi, Wu2019-uk, Langchain} and other retrieval systems such as in RAG \citep{Gao2023-cn, Pickett2024-ad, In2024-um, Weiss2024-xm, Vectara}.
-This is particularly relevant as maximum cosine similarity used in retrieval corresponds to the first coefficient of the Lasso regularization path \citep{Koelle2022-ju}.
-Compared with the greedy algorithms used in diversification \citep{Carbonell1998-ji, Barioni, Drosou, Qin2012-ok, KUNAVER2017154, Guo-shengbo, Abdool,Yu2016AGA,  Huang2024-wr, Pickett2024-ad, 5895106, Zhu2020-vb}, the convex reformulation may add speed and convergence to a global minima.
-However, we note that the standard max-sum diversity formulation that seeks to identify datapoints that are as far apart as possible is substantially different from the notion of diversity selected for by isometry pursuit \citep{Kuo1993-zy, Ghosh1996-id, Alfonso-Cevallos-Friedrich-Eisenbrand-and-Rico-Zenklusen2016-ai, Ashkan2015-jv}.
-
-The comparison of greedy \citep{Mallat93-wi, Mallat, Pati-93, Tropp05-ml} and convex \citep{Chen2001-hh, Tropp06-sg,Chen2006TheoreticalRO} basis pursuit formulations has a rich history, and theoretical understanding of the behavior of this approximation is evolving.
-For example, that the solution of a lasso problem can sometimes be a non-singleton set is well-known \citep{Osborne2000OnTL, DOSSAL2012117, Chrtien2011OnTG, Tibshirani2012TheLP, Ewald2017OnTD, Ali2018TheGL, Schneider2020-qt, Mishkin2022TheSP,Dupuis2019TheGO,Debarre2020OnTU,Everink2024TheGA}, but Isometry Pursuit can generate non-unique solutions even when the design matrix satisfies general position.
-The nature of the approximation to the $\ell_0$ solution for isometry pursuit is also different than for standard Lasso theory.
-The main theoretical question of isometry pursuit is how well the minimizer of a convex loss approximates the singular value loss, rather than how well the convex loss performs in statistical estimation.
-
-Algorithmic variants of interest include the multitask lasso \citep{ Hastie2015-qa} extension of our estimator, as well as characterization of $D$ function selection within $\mathbb R^B$.
-Tangent-space specific variants have been studied in more detail in \citet{Koelle2022-ju, Koelle2024-no} with additional grouping across datapoints, and a corresponding variant of the isometry theorem that missed non-uniqueness was claimed in \citet{Koelle2022-lp}.
-Comparison of our loss with curvature - whose presence prohibits $D$ element isometry - could also prove fertile, as could application of convex matrix inversion via multitask basis pursuit.
 This approach - \isometrypursuit~ - is a convex alternative to greedy methods for selection of orthonormalized features from within a dictionary.
 Isometry pursuit can be applied to diversification and geometrically-faithful coordinate estimation.
-Our experiments exemplify these applications, but more can be done.
+Our results exemplify these applications, but more can be done.
 
-A principal drawback of \isometrypursuit~ is its reliance on the second stage of coordinate selection to complete the estimation process.
-$D$-sparse selection is sometimes computationally infeasible using \brute~ (e.g. for Wine when $D=13$).
-Moreover, we often may want to select some orthonormal subset of dimension much less than $D$.
-This is a particularly attractive idea for diversification in recommendation \citep{Carbonell2017-gi, Wu2019-uk, Langchain} and retrieval \citep{Gao2023-cn, Pickett2024-ad, In2024-um, Weiss2024-xm, Vectara}.
-An avenue for solving this issue is the multitask Lasso \citep{ Hastie2015-qa} extension of our estimator.
+On the theoretical side, a critical unresolved question is the relation of the brute force and \isometrypursuit~ minimizers.
+Essentially, there are two things that can go wrong.
+First, \isometrypursuit~ may trim insufficiently for brute force search to be computationally feasible.
+Second, the recovered support may not contain the true minimizer.
+While we have ruled out the second problem in the case where an isometric solution does exist, in practice we often see greedy recovery defeat \isometrypursuit.
+Characterization of support recovery here is somewhat different from existing analysis of greedy \citep{Mallat93-wi, Mallat, Pati-93, Tropp05-ml} and convex \citep{Chen2001-hh, Tropp06-sg,Chen2006TheoreticalRO} basis pursuit formulations.
+Partly, this is because we use the $\ell_1$ minimizer to distinguish between $\ell_0$ optima rather than to identify them. 
+Also, \isometrypursuit~ can generate non-unique solutions even when the design matrix satisfies general position, which is not true for the univariate formulation \citep{Osborne2000OnTL, DOSSAL2012117, Chrtien2011OnTG, Tibshirani2012TheLP, Ewald2017OnTD, Ali2018TheGL, Schneider2020-qt, Mishkin2022TheSP,Dupuis2019TheGO,Debarre2020OnTU,Everink2024TheGA}, but 
+
+The principal algorithmic variant of interest is the combination of the multitask lasso \citep{ Hastie2015-qa} extension of our estimator with $D$ function selection within $\mathbb R^B$.
+First, introducing a Lasso penalty may ameliorate \isometrypursuit's reliance on the second stage of coordinate selection to complete the estimation process.
 Using the Lasso penalty, we can smoothly move between the multitask basis pursuit solution and more sparse solutions \citep{Mishkin2022-yf}.
-This is particularly relevant as maximum cosine similarity used in retrieval corresponds to the first coefficient of the Lasso regularization path \citep{Koelle2022-ju}.
-However, the standard max-sum diversity formulation that seeks to identify datapoints that are as far apart as possible is substantially different from the notion of diversity selected for by \isometrypursuit~ \citep{Kuo1993-zy, Ghosh1996-id, Alfonso-Cevallos-Friedrich-Eisenbrand-and-Rico-Zenklusen2016-ai, Ashkan2015-jv}. 
-More investigation is needed to compare against the substantial literature of greedy algorithms \citep{Carbonell1998-ji, Barioni, Drosou, Qin2012-ok, KUNAVER2017154, Guo-shengbo, Abdool,Yu2016AGA,  Huang2024-wr, Pickett2024-ad, 5895106, Zhu2020-vb}.
+Second, we often may want to select some orthonormal subset of dimension much less than $D$.
+Finally, response matrices may be extended beyond the identity.
 
-The comparison of greedy \citep{Mallat93-wi, Mallat, Pati-93, Tropp05-ml} and convex \citep{Chen2001-hh, Tropp06-sg,Chen2006TheoreticalRO} basis pursuit formulations has a rich history, and theoretical understanding of the behavior of this approximation is evolving.
-For example, that the solution of a lasso problem can sometimes be a non-singleton set is well-known \citep{Osborne2000OnTL, DOSSAL2012117, Chrtien2011OnTG, Tibshirani2012TheLP, Ewald2017OnTD, Ali2018TheGL, Schneider2020-qt, Mishkin2022TheSP,Dupuis2019TheGO,Debarre2020OnTU,Everink2024TheGA}, but \isometrypursuit~ can generate non-unique solutions even when the design matrix satisfies general position condition.
-Besides the question of conditions for uniqueness, some other theoretical question posed by \isometrypursuit~ are how well the minimizer of a convex loss approximates the singular value loss, and the relationship with curvature.
+These extensions may faciliate an interesting set of applications diversification in recommendation \citep{Carbonell2017-gi, Wu2019-uk, Langchain} and retrieval \citep{Gao2023-cn, Pickett2024-ad, In2024-um, Weiss2024-xm, Vectara}.
+Maximum cosine similarity used in retrieval corresponds to the first coefficient of the Lasso regularization path \citep{Koelle2022-ju}.
+Greedy algorithms predominate in diversification \citep{Carbonell1998-ji, Barioni, Drosou, Qin2012-ok, KUNAVER2017154, Guo-shengbo, Abdool,Yu2016AGA,  Huang2024-wr, Pickett2024-ad, 5895106, Zhu2020-vb}, and convex reformulations have been studied to add speed and convergence to a global minima.
+% TODO (koelle): mention Colbert
+%However, we note that the standard max-sum diversity formulation that seeks to identify datapoints that are as far apart as possible is substantially different from the notion of diversity selected for by isometry pursuit \citep{Kuo1993-zy, Ghosh1996-id, Alfonso-Cevallos-Friedrich-Eisenbrand-and-Rico-Zenklusen2016-ai, Ashkan2015-jv}.

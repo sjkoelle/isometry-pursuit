@@ -12,18 +12,18 @@ pip install -e .
 
 ### 1. Prepare data
 
-```bash
-# Wine
-python -m isometry_pursuit.exec.load_wine_exec --output-dir data --R 25
+**Wine and Iris:**
 
-# Iris
+```bash
+python -m isometry_pursuit.exec.load_wine_exec --output-dir data --R 25
 python -m isometry_pursuit.exec.load_iris_exec --output-dir data --R 25
 ```
 
-The ethanol data is available at `https://drive.google.com/file/d/1CvVOIXokjfTT0AtyeXSZMlojnfL3AcUL/view?usp=drive_link`.
+**Ethanol (requires download):**
 
 ```bash
-# Ethanol (requires downloaded data)
+mkdir -p data
+gdown 1CvVOIXokjfTT0AtyeXSZMlojnfL3AcUL -O data/ethanol.mat
 python -m isometry_pursuit.exec.load_ethanol_exec \
     --config-path data/ethanol_config.json \
     --raw-data-path data/ethanol.mat \

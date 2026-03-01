@@ -161,9 +161,17 @@ Thus, $\widehat \beta ( X)$ is not on the intersection of the solution polytope 
 It is therefore maximally non-sparse with respect to any of the minimizing solutions.
 \end{proof}
 
+\subsubsection{Proof of Proposition \ref{prop:D_min}}
+
+$X_S$ admits a QR decomposition $X_S = QR$ where $Q$ is orthogonal and $R$ is upper triangular.
+By Proposition \ref{prop:basis_pursuit_selection_invariance}, we can assume without loss of generality that $Q = I_D$.
+That is, $X_S$ is upper triangular.
+Thus, $\beta = X_S^{-1}$ is upper triangular with diagonal elements $\beta_{dd} = R_{dd}^{-1}$.
+$\|\beta_{d.}\|_2 \geq \beta_{dd}$, with equality only occurring when the off-diagonal elements are $0$.
+Therefore, $\|\beta_{1,2}\| \geq D$ with equality occurring only when $\beta = I_D$.
+
 \subsubsection{Proof of Proposition \ref{prop:computational_complexity}}
 \label{proof:computational_complexity}
-
 
 \begin{proof}
     The augmented split Lagrangian minimized by ADMM is
@@ -275,3 +283,63 @@ Ethanol & 8.38 ± 0.57 & 0.55 ± 1.08 & 0.07 ± 0.01 \\
 \end{tabular}
 \caption{Algorithm runtimes in seconds across replicates.}
 \end{table}
+
+
+
+\begin{example}
+    \begin{align}
+        \label{prop:the_benzito}
+        X_{S} = \begin{bmatrix}
+        \frac{1}{2} & \frac{-1}{2} & \frac{1}{2} & \frac{-1}{2}  & \frac{1}{2} & \frac{-1}{2} \\
+        \frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} &0 & 0 \\
+        0 & 0 &\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2}  & 0& 0\\
+        0& 0 0 & 0 &\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} \\
+        \end{bmatrix}.
+        \end{align}
+\end{example}
+
+
+\begin{proof}
+    Let
+    
+    By 
+    Given the symmetry of the second and third columns around the y axis, the loss will not change regardless of whether we upweight one or downweight the other, these changes necessarily being in conjunction.
+    We therefore assume that their loadings with respect to the second column of the target matrix (the $D$ dimensional identity) are the same.
+    Clearly, they will both then have value of $\frac{1}{\sqrt{3}}$.
+    The question then becomes, what should the values of the first column in the loading matrix $\beta$ be?
+    
+    We can answer this question with a simple differential equation.
+    Let $b$ denote the constraint violation $1 - X_{1.} \beta_{.1}$.
+    
+    Then
+    \begin{align}
+        \frac{\partial b}{\partial \beta_{11}} = \frac{\partial b}{\partial\beta_{21}} \\
+        &= \frac{1}{2}
+    \end{align}
+    On the other hand, due to the value of $\frac{1}{\sqrt{3}}$ already assumed for the second loading of the second and third features,
+    \begin{align}
+        \frac{\partial l}{\partial \beta_{11}} &= \frac{\partial l}{\partial\beta_{21}} \\
+        &= \frac{\partial }{\partial x}{\sqrt{\frac{1}{3} + x^2}} \\
+        &= \frac{1}{2}(\frac{1}{3} + x^2)^{-\frac{1}{2}}(2x) \\
+        &= \frac{x}{\sqrt{\frac{1}{3} + x^2}}.
+    \end{align}
+    This means that the tradeoff
+    \begin{align}
+        \frac{\partial l}{\partial b} = \frac{1}{2x}\sqrt{\frac{1}{3} + x^2}.\
+    \end{align}
+    In contrast, $\frac{\partial l}{\partial \beta_{11}} = 1$ and similarly for its constraint violation.
+    Solving for the equilibrium, we get
+    \begin{align}
+        \frac{1}{2x}\sqrt{\frac{1}{3} + x^2} = 1 \\
+        \frac{1}{3} + x^2 = 4x^2 \\
+        \frac{1}{3} = 3x^2 \\
+        x = \frac{1}{\sqrt{3}}.
+    \end{align}
+    This leads to a value for $l$ of 
+    \begin{align}
+        \sqrt{\frac{1}{3} + \frac{1}{9}} + \sqrt{\frac{1}{3} + \frac{1}{9}} + \frac{2}{3} \\
+        &=\sqrt{\frac{4}{9}} + \sqrt{\frac{4}{9}} + \frac{2}{3} \\
+        &=\frac{2}{3} + \frac{2}{3} + \frac{2}{3} 
+    \end{align}
+    \end{proof}
+    
