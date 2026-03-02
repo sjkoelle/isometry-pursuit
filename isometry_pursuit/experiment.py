@@ -1,89 +1,44 @@
-from math import comb
-
-import pandas as pd
 import numpy as np
 
-from .algorithm import (
-    greedy,
-    brute,
-    group_basis_pursuit,
-    isometry_pursuit,
-    line_search_for_cardinality,
-)
+from .algorithm import isometry_pursuit
 from .loss import isometry_loss, group_lasso_norm
 
 
-def run_tensor_experiment(
-    data_tensor,
-    steps=None,
-    constraint_violation=0.0,
-    target_cardinality=None,
-    use_line_search=True,
-):
+def run_tensor_experiment(data_tensor, constraint_violation=0.0):
     """
-    Run experiment using pre-resampled data tensor with optional line search for target cardinality.
+    Run isometry pursuit on each replicate in a data tensor.
 
     Parameters:
     -----------
     data_tensor : numpy.ndarray
-        Pre-resampled data tensor of shape (D, n_samples_per_replicate, n_replicates)
-    steps : int, optional
-        Maximum number of steps for optimization
+        Shape (D, P, R) — D features, P samples per replicate, R replicates
     constraint_violation : float
-        Constraint violation tolerance (used if not using line search)
-    target_cardinality : int, optional
-        Target support cardinality (used with line search)
-    use_line_search : bool
-        Whether to use line search to find optimal constraint violation
+        Constraint violation tolerance for group basis pursuit
 
     Returns:
     --------
-    results_df : pandas.DataFrame
-        Results from the experiment
+    replicates : list of dict
+        Per-replicate results including basis_pursuit_indices
+    coefficient_matrices : list of np.ndarray
     """
-    import numpy as np
-    import pandas as pd
+    R = data_tensor.shape[2]
 
-    D = data_tensor.shape[0]  # Extract D from tensor shape
-    R = data_tensor.shape[2]  # Use all available replicates
-    P = data_tensor.shape[1]  # Number of samples per replicate
-
-    # Initialize result lists
-    constraint_violations = []
-    cardinalities = []
-    basis_pursuit_iterations_list = []
+    replicates = []
     coefficient_matrices = []
 
     for i in range(R):
-        # Extract data for this replicate
         X = data_tensor[:, :, i]
-
-        if use_line_search and target_cardinality is not None:
-            # Use line search to find optimal constraint violation
-            best_violation, best_cardinality, result = line_search_for_cardinality(
-                X,
-                target_cardinality=target_cardinality,
-            )
-            constraint_violations.append(best_violation)
-            cardinalities.append(best_cardinality)
-        else:
-            # Use fixed constraint violation
-            result = isometry_pursuit(
-                X, steps=steps, constraint_violation=constraint_violation
-            )
-            constraint_violations.append(constraint_violation)
-            cardinalities.append(len(result["basis_pursuit_indices"]))
-
-        basis_pursuit_iterations_list.append(result["basis_pursuit_iterations"])
+        result = isometry_pursuit(X, constraint_violation=constraint_violation)
+        indices = result["basis_pursuit_indices"]
+        loss = isometry_loss(X[:, indices]) if len(indices) > 0 else None
+        replicates.append({
+            "replicate": i,
+            "support_cardinality": len(indices),
+            "isometry_loss": loss,
+            "group_lasso_norm": float(group_lasso_norm(result["beta"])),
+            "basis_pursuit_iterations": result["basis_pursuit_iterations"],
+            "basis_pursuit_indices": indices.tolist(),
+        })
         coefficient_matrices.append(result["beta"])
 
-    # Create results DataFrame
-    results_data = {
-        "constraint_violation": constraint_violations,
-        "support_cardinality": cardinalities,
-        "basis_pursuit_iterations": basis_pursuit_iterations_list,
-    }
-
-    results_df = pd.DataFrame(results_data)
-
-    return results_df, coefficient_matrices
+    return replicates, coefficient_matrices

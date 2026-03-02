@@ -2,9 +2,19 @@
 
 Convex recovery of orthonormal column-submatrices via multitask basis pursuit with symmetric normalization.
 
-## Installation
+## Setup
+
+### 1. Create and activate a conda environment
 
 ```bash
+conda create -n isometry_pursuit python=3.9
+conda activate isometry_pursuit
+```
+
+### 2. Install dependencies
+
+```bash
+pip install -r requirements.txt
 pip install -e .
 ```
 
@@ -15,44 +25,43 @@ pip install -e .
 **Wine and Iris:**
 
 ```bash
-python -m isometry_pursuit.exec.load_wine_exec --output-dir data --R 25
-python -m isometry_pursuit.exec.load_iris_exec --output-dir data --R 25
+python -m isometry_pursuit.exec.load_wine_exec --output-dir data --R 1
+python -m isometry_pursuit.exec.load_iris_exec --output-dir data --R 1
 ```
 
 **Ethanol (requires download):**
 
 ```bash
 mkdir -p data
-gdown 1CvVOIXokjfTT0AtyeXSZMlojnfL3AcUL -O data/ethanol.mat
+gdown 1oaaDJWIPSJTRqSOkU8F3napGMPiNFQD1 -O data/ethanol.mat
+python -m isometry_pursuit.exec.prepare_ethanol_exec \
+    --raw-data-path data/ethanol.mat \
+    --config-path configs/ethanol/ethanol_config.json \
+    --output-dir data
 python -m isometry_pursuit.exec.load_ethanol_exec \
-    --config-path data/ethanol_config.json \
+    --config-path configs/ethanol/ethanol_config.json \
     --raw-data-path data/ethanol.mat \
     --positions-path data/positions.npy \
     --indices-path data/indices.npy \
     --angles-path data/angles.npy \
-    --output-dir data
+    --output-dir data \
+    --R 5 
 ```
 
 ### 2. Run experiments
 
 ```bash
-# Wine (D=6)
 python -m isometry_pursuit.exec.run_experiment \
     --data-file data/wine_standardized_resampled_tensor.npy \
-    --output-path results/wine_results.csv \
-    --D 6 --compute-brute
+    --output-path results/wine_results.json
 
-# Iris (D=4)
 python -m isometry_pursuit.exec.run_experiment \
     --data-file data/iris_standardized_resampled_tensor.npy \
-    --output-path results/iris_results.csv \
-    --D 4 --compute-brute
+    --output-path results/iris_results.json
 
-# Ethanol
 python -m isometry_pursuit.exec.run_experiment \
     --data-file data/ethanol_tensor.npy \
-    --output-path results/ethanol_results.csv \
-    --compute-brute
+    --output-path results/ethanol_results.json
 ```
 
 ## Generate figures
@@ -64,6 +73,13 @@ python -m isometry_pursuit.exec.generate_figure_1_example --output-dir figures
 # Figure 1: method (transformation and loss functions)
 python -m isometry_pursuit.exec.generate_figure_1_method --output-dir figures
 
-# Figure 2: box plots (requires experiment results)
-python -m isometry_pursuit.exec.generate_figure2 --results-dir results --output-dir figures
+# Isometry loss box plots (requires experiment results)
+python -m isometry_pursuit.exec.plot_loss_comparison --results-file results/wine_results.json --output-dir figures
+python -m isometry_pursuit.exec.plot_loss_comparison --results-file results/iris_results.json --output-dir figures
+python -m isometry_pursuit.exec.plot_loss_comparison --results-file results/ethanol_results.json --output-dir figures
+
+# Cardinality histograms (requires experiment results)
+python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file results/wine_results.json --output-dir figures
+python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file results/iris_results.json --output-dir figures
+python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file results/ethanol_results.json --output-dir figures --bin-width 25
 ```

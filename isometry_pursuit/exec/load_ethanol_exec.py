@@ -89,7 +89,7 @@ def load_ethanol_data(
     indices_path,
     angles_path,
     output_dir="data",
-    nsel=25,
+    R=25,
     dimension=2,
     power=1.0,
     n_neighbors=252,
@@ -112,8 +112,8 @@ def load_ethanol_data(
         Path to the pre-computed angles.npy file
     output_dir : str
         Directory to save the processed data
-    nsel : int
-        Number of selected points for the experiment
+    R : int
+        Number of replicates (selected points) for the experiment
     dimension : int
         Target dimension for the experiment
     power : float
@@ -166,7 +166,6 @@ def load_ethanol_data(
 
     # Extract configuration parameters
     d = hparams.d
-    n_components = hparams.n_components
     atoms2_feat = hparams.atoms2_feat
     atoms3_feat = hparams.atoms3_feat
     atoms4_feat = hparams.atoms4_feat
@@ -214,12 +213,12 @@ def load_ethanol_data(
         atoms3_dicts = np.asarray([])
 
     print(f"Ethanol dataset: {n} samples, {natoms} atoms")
-    print(f"Selected points: {nsel}")
+    print(f"Number of replicates: {R}")
     print(f"Target dimension: {dimension}")
 
     # Process the data following Ethanol.ipynb pattern
     p = atoms4full.shape[0]
-    selected_points = np.random.choice(range(min(50000, n)), nsel, replace=False)
+    selected_points = np.random.choice(range(min(50000, n)), R, replace=False)
 
     print("Computing geometric features...")
     from isometry_pursuit.atomic_geometry import get_D_feats_feats
@@ -235,12 +234,12 @@ def load_ethanol_data(
                 atoms3out=atoms3_dicts,
                 atoms4out=atoms4full,
             )
-            for i in tqdm(range(nsel), desc="Computing geometric features")
+            for i in tqdm(range(R), desc="Computing geometric features")
         ]
     )
 
     print("Computing tangent spaces and projections...")
-    dg_M = np.zeros((nsel, dimension, p))
+    dg_M = np.zeros((R, dimension, p))
     for i, sp in enumerate(tqdm(selected_points, desc="Computing tangent spaces")):
         tangent_bases = local_pca(data, sp, n_neighbors, dimension)
         dg_M[i] = np.einsum("b p, b d -> d p", dg_x[i], tangent_bases)
@@ -248,7 +247,7 @@ def load_ethanol_data(
     # Convert to DataFrame format for compatibility with run_experiment.py
     # Each row represents one experiment run with the projected data
     processed_data = []
-    for i in range(nsel):
+    for i in range(R):
         # Flatten the 2D projection to 1D for each sample
         row_data = dg_M[i].flatten()  # Shape: (dimension * p,)
         processed_data.append(row_data)
@@ -260,24 +259,18 @@ def load_ethanol_data(
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
 
-    # Save data
-    output_file = os.path.join(output_dir, "ethanol_standardized.csv")
-    data_df.to_csv(output_file, index=False)
-    print(f"Data saved to {output_file}")
-
     # Save metadata
     metadata = {
         "dataset_name": "ethanol",
-        "standardized": True,
-        "n_samples": nsel,
+        "n_samples": R,
         "n_features": dimension * p,
         "original_n_samples": n,
         "n_atoms": natoms,
         "target_dimension": dimension,
         "power": power,
         "n_neighbors": n_neighbors,
+        "seed": seed,
         "selected_points": selected_points.tolist(),
-        "data_file": output_file,
         "config_file": config_path,
         "raw_data_file": raw_data_path,
         "positions_file": positions_path,
@@ -292,12 +285,12 @@ def load_ethanol_data(
 
     # Generate ethanol data tensor
     print(f"Generating ethanol data tensor...")
-    # The data_df has nsel rows (one per selected point) and dimension*p columns
-    # We want a tensor of shape (dimension, p, nsel) where nsel are the replicates
-    data_tensor = np.zeros((dimension, p, nsel))
+    # The data_df has R rows (one per selected point) and dimension*p columns
+    # We want a tensor of shape (dimension, p, R) where R are the replicates
+    data_tensor = np.zeros((dimension, p, R))
 
     # Reshape each row from (dimension * p,) to (dimension, p)
-    for i in range(nsel):
+    for i in range(R):
         sample_data = data_df.iloc[i].values  # Shape: (dimension * p,)
         data_tensor[:, :, i] = sample_data.reshape(dimension, p)
 
@@ -308,7 +301,7 @@ def load_ethanol_data(
     np.save(tensor_file, data_tensor)
     print(f"Ethanol data tensor saved to {tensor_file}")
 
-    return data_tensor, data_df, dimension * p, nsel
+    return data_tensor, data_df, dimension * p, R
 
 
 def main():
@@ -330,7 +323,7 @@ def main():
         "--output-dir", default="data", help="Output directory for processed data"
     )
     parser.add_argument(
-        "--nsel", type=int, default=25, help="Number of selected points"
+        "--R", type=int, default=25, help="Number of replicates"
     )
     parser.add_argument("--dimension", type=int, default=2, help="Target dimension")
     parser.add_argument(
@@ -369,7 +362,7 @@ def main():
         indices_path=args.indices_path,
         angles_path=args.angles_path,
         output_dir=args.output_dir,
-        nsel=args.nsel,
+        R=args.R,
         dimension=args.dimension,
         power=args.power,
         n_neighbors=args.n_neighbors,
