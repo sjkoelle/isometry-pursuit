@@ -75,23 +75,27 @@ plt.tight_layout()
 plt.savefig('/Users/samsonkoelle/isometry-pursuit/experiments/scs_convergence.png', dpi=150)
 plt.close()
 
-# --- group lasso norm - D at each checkpoint, two eps values ---
-checkpoints = np.unique(np.logspace(np.log10(25), np.log10(100000), 60).astype(int))
+# --- group lasso norm - D: 2 warm-started runs, one per eps ---
+delta = 100        # iters per checkpoint
+n_checkpoints = 1000 # 100 * 1000 = 100000 total
 
 eps_configs = [(1e-4, 'eps=1e-4'), (1e-12, 'eps=1e-12')]
 
 fig2, ax = plt.subplots(figsize=(12, 5))
 for eps_val, label in eps_configs:
-    glnorms = []
-    for n_iters in checkpoints:
-        s = scs.SCS(scs_data, cone, eps_abs=eps_val, eps_rel=eps_val,
-                    max_iters=int(n_iters), verbose=False)
-        sol_cp = s.solve()
+    s = scs.SCS(scs_data, cone, eps_abs=eps_val, eps_rel=eps_val,
+                max_iters=delta, verbose=False)
+    glnorms, iters = [], []
+    sol_cp = s.solve()
+    for i in range(n_checkpoints):
+        if i > 0:
+            sol_cp = s.solve(warm_start=True)
         prob.unpack_results(sol_cp, chain, inverse_data)
         beta_val = beta_var.value
         glnorm = np.sum(np.linalg.norm(beta_val, axis=1)) if beta_val is not None else np.nan
         glnorms.append(max(glnorm - D, 1e-10))
-    ax.plot(checkpoints, glnorms, 'o-', ms=3, label=label)
+        iters.append((i + 1) * delta)
+    ax.plot(iters, glnorms, 'o-', ms=3, label=label)
     print(f"{label} done")
 
 ax.set_xscale('log')
