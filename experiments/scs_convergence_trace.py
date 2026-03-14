@@ -1,0 +1,106 @@
+"""Plot SCS primal objective over iterations for a single optimization run."""
+
+import numpy as np
+import pandas as pd
+import cvxpy as cp
+import scs
+import matplotlib.pyplot as plt
+
+from isometry_pursuit.transformation import exponential_transformation
+
+data_tensor = np.load('/Users/samsonkoelle/isometry-pursuit/data/ethanol_tensor.npy')
+r = 1
+X = data_tensor[:, :, r]
+X_t = exponential_transformation(X)
+D, P = X_t.shape
+
+beta_var = cp.Variable((P, D))
+prob = cp.Problem(
+    cp.Minimize(cp.sum(cp.norm(beta_var, axis=1))),
+    [X_t @ beta_var == np.eye(D)]
+)
+
+data, chain, inverse_data = prob.get_problem_data(cp.SCS)
+dims = data['dims']
+
+scs_data = {
+    'A': data['A'],
+    'b': data['b'],
+    'c': data['c'],
+}
+cone = {
+    'z': dims.zero,
+    'l': dims.nonneg,
+    'q': list(dims.soc),
+    'ep': dims.exp,
+}
+
+trace_path = '/Users/samsonkoelle/isometry-pursuit/experiments/scs_trace.csv'
+
+solver = scs.SCS(
+    scs_data,
+    cone,
+    eps_abs=1e-4,
+    eps_rel=1e-4,
+    max_iters=100000,
+    verbose=True,
+    log_csv_filename=trace_path,
+)
+
+sol = solver.solve()
+print(sol['info'])
+
+trace = pd.read_csv(trace_path)
+
+fig, axes = plt.subplots(1, 3, figsize=(16, 4))
+axes[0].plot(trace['iter'], trace['pobj'], '-', label='primal')
+axes[0].plot(trace['iter'], trace['dobj'], '-', label='dual')
+axes[0].legend()
+axes[0].set_xlabel('iteration'); axes[0].set_ylabel('objective')
+axes[0].set_title('Primal & dual obj vs iteration (rep 1)')
+axes[0].set_ylim(0, trace['pobj'].clip(lower=0).max() * 1.2)
+
+axes[1].plot(trace['iter'], trace['gap'], '-')
+axes[1].set_yscale('log')
+axes[1].set_xlabel('iteration'); axes[1].set_ylabel('gap')
+axes[1].set_title('Duality gap vs iteration')
+
+axes[2].plot(trace['iter'], trace['res_pri'], '-', label='pri res')
+axes[2].plot(trace['iter'], trace['res_dual'], '-', label='dua res')
+axes[2].set_yscale('log'); axes[2].legend()
+axes[2].set_xlabel('iteration'); axes[2].set_ylabel('residual')
+axes[2].set_title('SCS residuals vs iteration')
+
+plt.tight_layout()
+plt.savefig('/Users/samsonkoelle/isometry-pursuit/experiments/scs_convergence.png', dpi=150)
+plt.close()
+
+# --- group lasso norm - D at each checkpoint, two eps values ---
+checkpoints = np.unique(np.logspace(np.log10(25), np.log10(100000), 60).astype(int))
+
+eps_configs = [(1e-4, 'eps=1e-4'), (1e-12, 'eps=1e-12')]
+
+fig2, ax = plt.subplots(figsize=(12, 5))
+for eps_val, label in eps_configs:
+    glnorms = []
+    for n_iters in checkpoints:
+        s = scs.SCS(scs_data, cone, eps_abs=eps_val, eps_rel=eps_val,
+                    max_iters=int(n_iters), verbose=False)
+        sol_cp = s.solve()
+        prob.unpack_results(sol_cp, chain, inverse_data)
+        beta_val = beta_var.value
+        glnorm = np.sum(np.linalg.norm(beta_val, axis=1)) if beta_val is not None else np.nan
+        glnorms.append(max(glnorm - D, 1e-10))
+    ax.plot(checkpoints, glnorms, 'o-', ms=3, label=label)
+    print(f"{label} done")
+
+ax.set_xscale('log')
+ax.set_yscale('log')
+ax.set_xlabel('max_iters (fresh solve)')
+ax.set_ylabel('group lasso norm − D')
+ax.set_title(f'Convergence: group lasso norm − D={D} (rep 1)')
+ax.legend()
+plt.tight_layout()
+plt.savefig('/Users/samsonkoelle/isometry-pursuit/experiments/scs_glnorm.png', dpi=150)
+plt.close()
+print("saved scs_glnorm.png")

@@ -160,8 +160,9 @@ def isometry_pursuit(
     data_transformed = exponential_transformation(X, power=power)
     # Use CVXPY implementation
     beta, basis_pursuit_iterations, objective_value = group_basis_pursuit(
-        data_transformed, constraint_violation=constraint_violation
+        data_transformed, constraint_violation=constraint_violation#, steps=10000000
     )
+    print('obv',objective_value)
     # Note: Convergence logging is not implemented for the main experiment flow
     # since it would require calling group_basis_pursuit multiple times with different parameters
     # For convergence analysis, use the standalone convergence logging functions
@@ -282,6 +283,8 @@ def group_basis_pursuit(
     steps=None,
     constraint_violation=0.0,
 ):
+    if steps is not None:
+        eps = None
     assert not (steps and eps)
 
     D, P = matrix.shape
