@@ -75,34 +75,37 @@ plt.tight_layout()
 plt.savefig('/Users/samsonkoelle/isometry-pursuit/experiments/scs_convergence.png', dpi=150)
 plt.close()
 
-# --- group lasso norm - D: 2 warm-started runs, one per eps ---
-delta = 100        # iters per checkpoint
-n_checkpoints = 1000 # 100 * 1000 = 100000 total
+# --- group lasso norm - D: warm-started runs, one per eps ---
+delta = 100
+checkpoints = np.arange(100, 10001, 100)
+n_checkpoints = len(checkpoints)
 
-eps_configs = [(1e-4, 'eps=1e-4'), (1e-12, 'eps=1e-12')]
+eps_configs = [(1e-4, 'eps=1e-4'), (1e-12, 'eps=1e-12'), (1e-20, 'eps=1e-20')]
 
+saved = {'iters': checkpoints}
 fig2, ax = plt.subplots(figsize=(12, 5))
 for eps_val, label in eps_configs:
     s = scs.SCS(scs_data, cone, eps_abs=eps_val, eps_rel=eps_val,
                 max_iters=delta, verbose=False)
-    glnorms, iters = [], []
-    sol_cp = s.solve()
+    glnorms = []
     for i in range(n_checkpoints):
-        if i > 0:
-            sol_cp = s.solve(warm_start=True)
+        sol_cp = s.solve(warm_start=(i > 0))
         prob.unpack_results(sol_cp, chain, inverse_data)
         beta_val = beta_var.value
         glnorm = np.sum(np.linalg.norm(beta_val, axis=1)) if beta_val is not None else np.nan
         glnorms.append(max(glnorm - D, 1e-10))
-        iters.append((i + 1) * delta)
-    ax.plot(iters, glnorms, 'o-', ms=3, label=label)
+    saved[label] = np.array(glnorms)
+    ax.plot(checkpoints, glnorms, 'o-', ms=3, label=label)
     print(f"{label} done")
+
+np.savez('/Users/samsonkoelle/isometry-pursuit/experiments/glnorms_warmstart.npz', **saved)
+print("saved glnorms_warmstart.npz")
 
 ax.set_xscale('log')
 ax.set_yscale('log')
-ax.set_xlabel('max_iters (fresh solve)')
+ax.set_xlabel('cumulative iters (warm-started)')
 ax.set_ylabel('group lasso norm − D')
-ax.set_title(f'Convergence: group lasso norm − D={D} (rep 1)')
+ax.set_title(f'Convergence: group lasso norm − D={D} (rep 1, warm-started)')
 ax.legend()
 plt.tight_layout()
 plt.savefig('/Users/samsonkoelle/isometry-pursuit/experiments/scs_glnorm.png', dpi=150)

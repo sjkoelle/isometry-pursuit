@@ -1,4 +1,4 @@
-"""Check that warm-started chunks give the same result as one full run."""
+"""Check that warm-started chunks give the same result as fresh restarts at each N."""
 
 import numpy as np
 import cvxpy as cp
@@ -20,27 +20,31 @@ dims = data['dims']
 scs_data = {'A': data['A'], 'b': data['b'], 'c': data['c']}
 cone = {'z': dims.zero, 'l': dims.nonneg, 'q': list(dims.soc), 'ep': dims.exp}
 
-total = 100
 chunk = 10
+n_checkpoints = 10
 eps = 1e-20  # never converge early
 
-# --- single run ---
-s1 = scs.SCS(scs_data, cone, eps_abs=eps, eps_rel=eps, max_iters=total, verbose=False)
-sol1 = s1.solve()
-prob.unpack_results(sol1, chain, inverse_data)
-beta_single = beta_var.value.copy()
-glnorm_single = np.sum(np.linalg.norm(beta_single, axis=1))
+# --- warm-started: run chunk iters at a time, record glnorm at each checkpoint ---
+s_warm = scs.SCS(scs_data, cone, eps_abs=eps, eps_rel=eps, max_iters=chunk, verbose=False)
+glnorms_warm = []
+for i in range(n_checkpoints):
+    sol = s_warm.solve(warm_start=(i > 0))
+    prob.unpack_results(sol, chain, inverse_data)
+    glnorms_warm.append(np.sum(np.linalg.norm(beta_var.value, axis=1)))
 
-# --- warm-started chunks ---
-s2 = scs.SCS(scs_data, cone, eps_abs=eps, eps_rel=eps, max_iters=chunk, verbose=False)
-sol2 = s2.solve()
-for _ in range(total // chunk - 1):
-    sol2 = s2.solve(warm_start=True)
-prob.unpack_results(sol2, chain, inverse_data)
-beta_chunked = beta_var.value.copy()
-glnorm_chunked = np.sum(np.linalg.norm(beta_chunked, axis=1))
+# --- fresh restarts: for each N, run from scratch ---
+glnorms_fresh = []
+for i in range(1, n_checkpoints + 1):
+    N = i * chunk
+    s_fresh = scs.SCS(scs_data, cone, eps_abs=eps, eps_rel=eps, max_iters=N, verbose=False)
+    sol = s_fresh.solve()
+    prob.unpack_results(sol, chain, inverse_data)
+    glnorms_fresh.append(np.sum(np.linalg.norm(beta_var.value, axis=1)))
 
-print(f"single  run  glnorm: {glnorm_single:.8f}")
-print(f"chunked run  glnorm: {glnorm_chunked:.8f}")
-print(f"beta max abs diff:   {np.max(np.abs(beta_single - beta_chunked)):.2e}")
-print(f"match: {np.allclose(beta_single, beta_chunked, atol=1e-6)}")
+# --- comparison table ---
+print(f"{'N':>6}  {'warm':>12}  {'fresh':>12}  {'diff':>10}  match")
+for i in range(n_checkpoints):
+    N = (i + 1) * chunk
+    diff = abs(glnorms_warm[i] - glnorms_fresh[i])
+    match = np.isclose(glnorms_warm[i], glnorms_fresh[i], atol=1e-6)
+    print(f"{N:>6}  {glnorms_warm[i]:>12.6f}  {glnorms_fresh[i]:>12.6f}  {diff:>10.2e}  {match}")
