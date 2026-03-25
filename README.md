@@ -64,6 +64,10 @@ python -m isometry_pursuit.exec.run_experiment \
     --output-path results/ethanol_results.json
 ```
 
+```bash
+python -m isometry_pursuit.exec.scs_convergence_restarts --no-adaptive-scale
+python -m isometry_pursuit.exec.scs_convergence_trace --no-adaptive-scale
+```
 ## Generate figures
 
 ```bash
