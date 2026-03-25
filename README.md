@@ -26,7 +26,7 @@ pip install -e .
 
 ```bash
 python -m isometry_pursuit.exec.load_wine_exec --output-dir data --R 1
-python -m isometry_pursuit.exec.load_iris_exec --output-dir data --R 1
+python -m isometry_pursuit.exec.load_iris_exec --output-dir data --R 25
 ```
 
 **Ethanol (requires download):**
@@ -45,7 +45,7 @@ python -m isometry_pursuit.exec.load_ethanol_exec \
     --indices-path data/indices.npy \
     --angles-path data/angles.npy \
     --output-dir data \
-    --R 5 
+    --R 25 
 ```
 
 ### 2. Run experiments
@@ -64,10 +64,10 @@ python -m isometry_pursuit.exec.run_experiment \
     --output-path results/ethanol_results.json
 ```
 
-```bash
+<!-- ```bash
 python -m isometry_pursuit.exec.scs_convergence_restarts --no-adaptive-scale
 python -m isometry_pursuit.exec.scs_convergence_trace --no-adaptive-scale
-```
+``` -->
 ## Generate figures
 
 ```bash
@@ -85,5 +85,5 @@ python -m isometry_pursuit.exec.plot_loss_comparison --results-file results/etha
 # Cardinality histograms (requires experiment results)
 python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file results/wine_results.json --output-dir figures
 python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file results/iris_results.json --output-dir figures
-python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file results/ethanol_results.json --output-dir figures --bin-width 25
+python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file results/ethanol_results.json --output-dir figures --bin-width 1
 ```

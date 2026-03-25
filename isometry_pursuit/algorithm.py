@@ -305,6 +305,8 @@ def group_basis_pursuit(
         scs_opts = {"eps": eps}
     else:
         scs_opts = {"max_iters": steps}
+    scs_opts["acceleration_lookback"] = 0
+    scs_opts["adaptive_scale"] = False
 
     output = problem.solve(solver=cp.SCS, **scs_opts)
     if output is np.inf:
