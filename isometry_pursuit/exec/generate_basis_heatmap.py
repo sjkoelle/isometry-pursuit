@@ -22,25 +22,33 @@ from isometry_pursuit.transformation import exponential_transformation
 
 def compute_grids(n_ratio=40, n_angle=40, max_ratio=5.0):
     ratios = np.linspace(1.0, max_ratio, n_ratio)
-    # Exclude endpoints 0 and pi to avoid singular matrices
     angles = np.linspace(0.05, np.pi - 0.05, n_angle)
 
     isometry_loss_grid = np.full((n_angle, n_ratio), np.nan)
     group_lasso_grid = np.full((n_angle, n_ratio), np.nan)
+    nuclear_norm_grid = np.full((n_angle, n_ratio), np.nan)
+    distortion_grid = np.full((n_angle, n_ratio), np.nan)
 
     total = n_ratio * n_angle
     with tqdm(total=total, desc="Computing grid") as pbar:
         for i, theta in enumerate(angles):
             for j, r in enumerate(ratios):
-                # Build 2x2 matrix: columns are the two basis vectors
                 X = np.array([[1.0, r * np.cos(theta)],
                                [0.0, r * np.sin(theta)]])
 
-                # Isometry loss (applied to raw X)
+                svs = np.linalg.svd(X, compute_uv=False)
+                sv_max, sv_min = svs[0], svs[1]
+
                 loss_val = isometry_loss(X)
                 isometry_loss_grid[i, j] = loss_val if np.isfinite(loss_val) else np.nan
 
-                # Group lasso norm after basis pursuit on transformed X
+                nuclear_norm_grid[i, j] = sv_max + sv_min
+
+                if sv_min > 1e-14:
+                    distortion_grid[i, j] = sv_max / sv_min
+                else:
+                    distortion_grid[i, j] = np.nan
+
                 try:
                     X_t = exponential_transformation(X)
                     beta, _, obj = group_basis_pursuit(X_t, constraint_violation=0.0)
@@ -50,58 +58,58 @@ def compute_grids(n_ratio=40, n_angle=40, max_ratio=5.0):
 
                 pbar.update(1)
 
-    return ratios, angles, isometry_loss_grid, group_lasso_grid
+    return ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid
 
 
-def plot_heatmaps(ratios, angles, isometry_loss_grid, group_lasso_grid, output_dir):
+def plot_heatmaps(ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid, output_dir, log=True):
     os.makedirs(output_dir, exist_ok=True)
 
     angle_labels = [r"$0$", r"$\pi/4$", r"$\pi/2$", r"$3\pi/4$", r"$\pi$"]
     angle_ticks = [0, np.pi / 4, np.pi / 2, 3 * np.pi / 4, np.pi]
+    suffix = "_log" if log else "_raw"
+    scale_label = " (log scale)" if log else ""
 
-    fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+    grids = [
+        (isometry_loss_grid, "Isometry Loss", f"basis_isometry_loss_heatmap{suffix}.png"),
+        (group_lasso_grid, "Group Lasso Norm", f"basis_group_lasso_heatmap{suffix}.png"),
+        (nuclear_norm_grid, "Nuclear Norm", f"basis_nuclear_norm_heatmap{suffix}.png"),
+        (distortion_grid, r"Distortion ($\sigma_{max}/\sigma_{min}$)", f"basis_distortion_heatmap{suffix}.png"),
+    ]
 
-    for ax, grid, title, fname in [
-        (axes[0], isometry_loss_grid, "Isometry Loss", "basis_isometry_loss_heatmap.png"),
-        (axes[1], group_lasso_grid, "Group Lasso Norm", "basis_group_lasso_heatmap.png"),
-    ]:
-        log_grid = np.log1p(grid)
-        vmin = np.nanpercentile(log_grid, 1)
-        vmax = np.nanpercentile(log_grid, 99)
-        im = ax.pcolormesh(
-            ratios, angles, log_grid,
-            cmap="viridis", vmin=vmin, vmax=vmax, shading="auto"
-        )
+    def _prepare(grid):
+        g = np.log1p(grid) if log else grid.copy()
+        finite = g[np.isfinite(g)]
+        vmin = np.percentile(finite, 1)
+        vmax = np.percentile(finite, 99)
+        if log:
+            vmin, vmax = 1.0, 5.0
+        return g, vmin, vmax
+
+    fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+    for ax, (grid, title, _) in zip(axes.flat, grids):
+        g, vmin, vmax = _prepare(grid)
+        im = ax.pcolormesh(ratios, angles, g, cmap="viridis", vmin=vmin, vmax=vmax, shading="auto")
         plt.colorbar(im, ax=ax)
-        ax.set_xlabel(r"Length ratio $r = \|v_2\| / \|v_1\|$", fontsize=13)
-        ax.set_ylabel(r"Angle $\theta$ between vectors", fontsize=13)
-        ax.set_title(title + " (log scale)", fontsize=15)
+        ax.set_xlabel(r"Length ratio $r$", fontsize=12)
+        ax.set_ylabel(r"Angle $\theta$", fontsize=12)
+        ax.set_title(title + scale_label, fontsize=13)
         ax.set_yticks(angle_ticks)
-        ax.set_yticklabels(angle_labels, fontsize=11)
+        ax.set_yticklabels(angle_labels, fontsize=10)
 
     plt.tight_layout()
-    combined_path = os.path.join(output_dir, "basis_heatmaps.png")
+    combined_path = os.path.join(output_dir, f"basis_heatmaps{suffix}.png")
     plt.savefig(combined_path, dpi=150, bbox_inches="tight")
     plt.close()
     print(f"Combined heatmap saved to {combined_path}")
 
-    # Also save individual figures
-    for grid, title, fname in [
-        (isometry_loss_grid, "Isometry Loss", "basis_isometry_loss_heatmap.png"),
-        (group_lasso_grid, "Group Lasso Norm", "basis_group_lasso_heatmap.png"),
-    ]:
+    for grid, title, fname in grids:
         fig, ax = plt.subplots(figsize=(8, 6))
-        log_grid = np.log1p(grid)
-        vmin = np.nanpercentile(log_grid, 1)
-        vmax = np.nanpercentile(log_grid, 99)
-        im = ax.pcolormesh(
-            ratios, angles, log_grid,
-            cmap="viridis", vmin=vmin, vmax=vmax, shading="auto"
-        )
+        g, vmin, vmax = _prepare(grid)
+        im = ax.pcolormesh(ratios, angles, g, cmap="viridis", vmin=vmin, vmax=vmax, shading="auto")
         plt.colorbar(im, ax=ax)
         ax.set_xlabel(r"Length ratio $r = \|v_2\| / \|v_1\|$", fontsize=13)
         ax.set_ylabel(r"Angle $\theta$ between vectors", fontsize=13)
-        ax.set_title(title + " (log scale)", fontsize=15)
+        ax.set_title(title + scale_label, fontsize=15)
         ax.set_yticks(angle_ticks)
         ax.set_yticklabels(angle_labels, fontsize=11)
         plt.tight_layout()
@@ -109,6 +117,54 @@ def plot_heatmaps(ratios, angles, isometry_loss_grid, group_lasso_grid, output_d
         plt.savefig(out, dpi=150, bbox_inches="tight")
         plt.close()
         print(f"Saved {out}")
+
+
+def plot_marginal_theta(ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid, output_dir, log=True):
+    xticks = [0, np.pi / 4, np.pi / 2, 3 * np.pi / 4, np.pi]
+    xlabels = [r"$0$", r"$\pi/4$", r"$\pi/2$", r"$3\pi/4$", r"$\pi$"]
+    suffix = "_log" if log else "_raw"
+
+    slices = [
+        (isometry_loss_grid[:, 0], "Isometry Loss", "C0", "-"),
+        (group_lasso_grid[:, 0],   "Group Lasso Norm", "C1", "--"),
+        (nuclear_norm_grid[:, 0],  "Nuclear Norm", "C2", "-."),
+        (distortion_grid[:, 0],    r"Distortion ($\sigma_{max}/\sigma_{min}$)", "C3", ":"),
+    ]
+
+    fig, axes = plt.subplots(1, 2, figsize=(15, 5))
+
+    ax = axes[0]
+    for vals, label, color, ls in slices:
+        ax.plot(angles, vals, label=label, linewidth=2, color=color, linestyle=ls)
+    if log:
+        ax.set_yscale("log")
+    ax.set_xlabel(r"Angle $\theta$", fontsize=13)
+    ax.set_ylabel("Value" + (" (log scale)" if log else ""), fontsize=13)
+    ax.set_title(r"Marginal vs $\theta$ at $r = 1$", fontsize=15)
+    ax.set_xticks(xticks)
+    ax.set_xticklabels(xlabels, fontsize=11)
+    ax.legend(fontsize=11)
+
+    gl_slice = group_lasso_grid[:, 0]
+    ax = axes[1]
+    for vals, label, color, ls in slices:
+        if label != "Group Lasso Norm":
+            ax.plot(angles, vals / gl_slice, label=f"{label} / GL Norm", linewidth=2, color=color, linestyle=ls)
+    if log:
+        ax.set_yscale("log")
+    ax.set_xlabel(r"Angle $\theta$", fontsize=13)
+    ax.set_ylabel("Ratio to Group Lasso Norm" + (" (log scale)" if log else ""), fontsize=12)
+    ax.set_title(r"Ratio to Group Lasso Norm at $r = 1$", fontsize=15)
+    ax.set_xticks(xticks)
+    ax.set_xticklabels(xlabels, fontsize=11)
+    ax.axhline(1.0, color="gray", linestyle=":", linewidth=1.5, label="ratio = 1")
+    ax.legend(fontsize=11)
+
+    plt.tight_layout()
+    out = os.path.join(output_dir, f"basis_marginal_theta{suffix}.png")
+    plt.savefig(out, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"Saved {out}")
 
 
 def main():
@@ -121,10 +177,12 @@ def main():
     parser.add_argument("--max-ratio", type=float, default=5.0, help="Max length ratio")
     args = parser.parse_args()
 
-    ratios, angles, isometry_loss_grid, group_lasso_grid = compute_grids(
+    ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid = compute_grids(
         n_ratio=args.n_ratio, n_angle=args.n_angle, max_ratio=args.max_ratio
     )
-    plot_heatmaps(ratios, angles, isometry_loss_grid, group_lasso_grid, args.output_dir)
+    for log in (True, False):
+        plot_heatmaps(ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid, args.output_dir, log=log)
+        plot_marginal_theta(ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid, args.output_dir, log=log)
 
 
 if __name__ == "__main__":
