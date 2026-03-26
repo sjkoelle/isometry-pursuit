@@ -155,12 +155,14 @@ def isometry_pursuit(
     max_steps=None,
     log_convergence=False,
     constraint_violation=0.0,
+    iterations=None,
+    eps=None,
 ):
     D, P = X.shape
     data_transformed = exponential_transformation(X, power=power)
     # Use CVXPY implementation
     beta, basis_pursuit_iterations, objective_value = group_basis_pursuit(
-        data_transformed, constraint_violation=constraint_violation#, steps=10000000
+        data_transformed, constraint_violation=constraint_violation, steps=iterations, **({'eps': eps} if eps is not None else {})
     )
     print('obv',objective_value)
     # Note: Convergence logging is not implemented for the main experiment flow
@@ -302,7 +304,7 @@ def group_basis_pursuit(
 
     # Set SCS options based on whether steps is specified
     if steps is None:
-        scs_opts = {"eps": eps}
+        scs_opts = {"eps_abs": eps, "eps_rel": eps}
     else:
         scs_opts = {"max_iters": steps}
     scs_opts["acceleration_lookback"] = 0

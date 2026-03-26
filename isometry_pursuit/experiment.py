@@ -4,7 +4,7 @@ from .algorithm import isometry_pursuit
 from .loss import isometry_loss, group_lasso_norm
 
 
-def run_tensor_experiment(data_tensor, constraint_violation=0.0):
+def run_tensor_experiment(data_tensor, constraint_violation=0.0, iterations=None, eps=None):
     """
     Run isometry pursuit on each replicate in a data tensor.
 
@@ -28,7 +28,7 @@ def run_tensor_experiment(data_tensor, constraint_violation=0.0):
 
     for i in range(R):
         X = data_tensor[:, :, i]
-        result = isometry_pursuit(X, constraint_violation=constraint_violation)
+        result = isometry_pursuit(X, constraint_violation=constraint_violation, iterations=iterations, eps=eps)
         indices = result["basis_pursuit_indices"]
         loss = isometry_loss(X[:, indices]) if len(indices) > 0 else None
         replicates.append({

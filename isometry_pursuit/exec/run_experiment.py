@@ -18,6 +18,14 @@ def main():
         "--constraint-violation", type=float, default=0.0,
         help="Constraint violation tolerance (default: 0.0)"
     )
+    parser.add_argument(
+        "--iterations", type=int, default=None,
+        help="Max solver iterations (default: None, use eps stopping criterion)"
+    )
+    parser.add_argument(
+        "--eps", type=float, default=None,
+        help="Solver convergence tolerance (default: 1e-12)"
+    )
     args = parser.parse_args()
 
     if not args.data_file.endswith(".npy"):
@@ -31,12 +39,16 @@ def main():
     replicates, _ = run_tensor_experiment(
         data_tensor=data_tensor,
         constraint_violation=args.constraint_violation,
+        iterations=args.iterations,
+        eps=args.eps,
     )
 
     output = {
         "metadata": {
             "data_file": args.data_file,
             "constraint_violation": args.constraint_violation,
+            "iterations": args.iterations,
+            "eps": args.eps,
             "data_tensor_shape": list(data_tensor.shape),
         },
         "replicates": replicates,
