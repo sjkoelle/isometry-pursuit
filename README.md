@@ -25,7 +25,7 @@ pip install -e .
 **Wine and Iris:**
 
 ```bash
-python -m isometry_pursuit.exec.load_wine_exec --output-dir data --R 1
+python -m isometry_pursuit.exec.load_wine_exec --output-dir data --R 25
 python -m isometry_pursuit.exec.load_iris_exec --output-dir data --R 25
 ```
 

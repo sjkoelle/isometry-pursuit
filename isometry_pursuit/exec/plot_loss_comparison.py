@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Box plot of isometry loss across replicates."""
+"""Box plot of group lasso norm delta between greedy on all features vs BP-selected features."""
 
 import argparse
 import json
@@ -21,13 +21,17 @@ def main():
 
     dataset_name = os.path.basename(args.results_file).split("_")[0]
 
+    valid = results_df.dropna(subset=["greedy_gl_norm", "greedy_gl_bp_norm"])
+    delta = valid["greedy_gl_bp_norm"] - valid["greedy_gl_norm"]
+
     fig, ax = plt.subplots(figsize=(6, 7))
-    ax.boxplot(results_df["isometry_loss"], labels=[dataset_name])
-    ax.set_ylabel(r"Isometry loss $\ell_1(\hat{S}_{IP})$", fontsize=16)
+    ax.boxplot(delta, labels=[dataset_name])
+    ax.axhline(0, color="gray", linestyle="--", linewidth=1)
+    ax.set_ylabel(r"$\ell_{GL}(\hat{S}_{BP\to G}) - \ell_{GL}(\hat{S}_{G})$", fontsize=16)
     ax.tick_params(labelsize=13)
     plt.tight_layout()
 
-    output_file = os.path.join(args.output_dir, f"{dataset_name}_isometry_loss.png")
+    output_file = os.path.join(args.output_dir, f"{dataset_name}_gl_norm_delta.png")
     plt.savefig(output_file, dpi=300, bbox_inches="tight")
     plt.close()
     print(f"Saved to {output_file}")
