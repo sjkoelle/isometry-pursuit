@@ -52,10 +52,13 @@ def run_tensor_experiment(data_tensor, constraint_violation=0.0, iterations=None
             greedy_gl_bp_indices = None
             greedy_gl_bp_norm = None
 
+        # Compute group lasso norm of pseudoinverse for convex solution
+        bp_gl_norm = float(_gl_loss(exp_X[:, indices]))
+
         replicates.append({
             "replicate": i,
             "support_cardinality": len(indices),
-            "group_lasso_norm": float(group_lasso_norm(result["beta"])),
+            "group_lasso_norm": bp_gl_norm,
             "basis_pursuit_iterations": result["basis_pursuit_iterations"],
             "basis_pursuit_indices": indices.tolist(),
             "greedy_gl_indices": greedy_gl_indices,
@@ -66,3 +69,59 @@ def run_tensor_experiment(data_tensor, constraint_violation=0.0, iterations=None
         coefficient_matrices.append(result["beta"])
 
     return replicates, coefficient_matrices
+
+
+def print_experiment_summary(results):
+    """
+    Print summary statistics comparing convex (basis pursuit) vs greedy approach.
+
+    Parameters:
+    -----------
+    results : list of dict
+        List of replicate results from run_tensor_experiment
+    """
+    import json
+
+    # Handle both list of dicts and loaded JSON with 'replicates' key
+    if isinstance(results, dict) and 'replicates' in results:
+        replicates = results['replicates']
+    else:
+        replicates = results
+
+    convex_norms = []
+    greedy_norms = []
+    convex_cards = []
+    greedy_cards = []
+
+    for rep in replicates:
+        convex_norms.append(rep['group_lasso_norm'])
+        greedy_norms.append(rep['greedy_gl_norm'])
+        convex_cards.append(rep['support_cardinality'])
+        greedy_cards.append(len(rep['greedy_gl_indices']))
+
+    convex_norms = np.array(convex_norms)
+    greedy_norms = np.array(greedy_norms)
+    convex_cards = np.array(convex_cards)
+    greedy_cards = np.array(greedy_cards)
+
+    # Compute wins
+    greedy_wins = np.sum(greedy_norms < convex_norms)
+    convex_wins = np.sum(convex_norms < greedy_norms)
+    ties = np.sum(convex_norms == greedy_norms)
+
+    print("\n" + "="*70)
+    print("CONVEX vs GREEDY COMPARISON")
+    print("="*70)
+    print(f"\nGroup Lasso Norm (lower is better):")
+    print(f"  Convex:  mean={convex_norms.mean():.4f}, std={convex_norms.std():.4f}, "
+          f"min={convex_norms.min():.4f}, max={convex_norms.max():.4f}")
+    print(f"  Greedy:  mean={greedy_norms.mean():.4f}, std={greedy_norms.std():.4f}, "
+          f"min={greedy_norms.min():.4f}, max={greedy_norms.max():.4f}")
+    print(f"\nSupport Cardinality:")
+    print(f"  Convex:  mean={convex_cards.mean():.2f}, std={convex_cards.std():.2f}")
+    print(f"  Greedy:  mean={greedy_cards.mean():.2f}, std={greedy_cards.std():.2f}")
+    print(f"\nHead-to-head (out of {len(replicates)} replicates):")
+    print(f"  Greedy wins: {greedy_wins}")
+    print(f"  Convex wins: {convex_wins}")
+    print(f"  Ties:        {ties}")
+    print("="*70 + "\n")
