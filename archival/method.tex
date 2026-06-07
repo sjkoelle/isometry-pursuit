@@ -66,56 +66,72 @@ Figure \ref{fig:gt_loss} gives a graph of $\ell$ when $D=1$.
 \midrule
 Distortion\textsuperscript{\citet{Kohli2021-lr}} & $\sigma_{\max}(X) / \sigma_{\min}(X)$ & No & Yes & No & Yes \\
 Log determinant\textsuperscript{\citet{Boyd2004-ql}} & $\log(\det(X))$ & No & No & No & No \\
-Frobenius norm & $\|w(X)\|_F$ & No & No & Yes & No \\
 Isometry loss & $\sum_{d=1}^D g(\sigma_d)$ & Yes & Yes & No & Yes \\
-Frob. pseudoinverse & $\|w(X)^\dagger\|_F$ & No & Yes & Yes & Yes \\
-\isometrypursuit\textsuperscript{\citet{Yuan2006-bt}} & $\arg \min_{\beta} \|\beta\|_{1,2} : I_D = w(X) \beta$ & Yes & Yes & Yes & Yes \\
+Frobenius norm & $1/\|n_g^{\times P}(X)\|_F$ & No & No & Yes & No \\
+Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F$ & No & Yes & Yes & Yes \\
+\isometrypursuit\textsuperscript{\citet{Yuan2006-bt}} & $\arg \min_{\beta} \|\beta\|_{1,2} : I_D = n_q^{\times P}(X) \beta$ & Yes & Yes & Yes & Yes \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[p]
 \centering
-% Row 1: 1D loss functions (all 6, ordered to match table)
-\subcaptionbox{Distortion\label{fig:loss_1d_condition}}
-{\includegraphics[width = .16\textwidth]{../figures/loss_1d_condition_number.png}}
-\subcaptionbox{Log det\label{fig:loss_1d_logdet}}
-{\includegraphics[width = .16\textwidth]{../figures/loss_1d_log_det.png}}
-\subcaptionbox{Frob. norm\label{fig:loss_1d_frobenius}}
-{\includegraphics[width = .16\textwidth]{../figures/loss_1d_frobenius_norm.png}}
-\subcaptionbox{Isometry loss\label{fig:loss_1d_iso}}
-{\includegraphics[width = .16\textwidth]{../figures/loss_1d_isometry_loss.png}}
-\subcaptionbox{Frob. pseudoinv.\label{fig:loss_1d_frob}}
-{\includegraphics[width = .16\textwidth]{../figures/loss_1d_frob_pseudoinverse.png}}
-\subcaptionbox{Isometry pursuit\label{fig:loss_1d_gl}}
-{\includegraphics[width = .16\textwidth]{../figures/loss_1d_gl_pseudoinverse.png}}
+% 6 rows × 2 columns: Column 1 = 1D plots, Column 2 = 2D plots
+%
+% Row 1: Distortion
+\subcaptionbox{Distortion 1D\label{fig:loss_1d_condition}}
+{\includegraphics[width = 0.3072\textwidth]{../figures/loss_1d_condition_number.png}}
+\hfill
+\subcaptionbox{Distortion 2D\label{fig:loss_2d_condition}}
+{\includegraphics[width = 0.3072\textwidth]{../figures/loss_2d_condition_number.png}}
+\\[0.2cm]
 
-% Row 2: 2D loss functions (ordered to match table)
+% Row 2: Log det
+\subcaptionbox{Log det 1D\label{fig:loss_1d_logdet}}
+{\includegraphics[width = 0.3072\textwidth]{../figures/loss_1d_log_det.png}}
+\hfill
+\subcaptionbox{Log det 2D\label{fig:loss_2d_logdet}}
+{\includegraphics[width = 0.3072\textwidth]{../figures/loss_2d_log_det.png}}
+\\[0.2cm]
 
-\subcaptionbox{Distortion (good)\label{fig:loss_2d_condition}}
-{\includegraphics[width = .24\textwidth]{../figures/loss_2d_condition_number.png}}
-\subcaptionbox{Log det (bad)\label{fig:loss_2d_logdet}}
-{\includegraphics[width = .24\textwidth]{../figures/loss_2d_log_det.png}}
-\subcaptionbox{Frob. norm (bad)\label{fig:loss_2d_frobenius}}
-{\includegraphics[width = .24\textwidth]{../figures/loss_2d_frobenius_norm.png}}
-\subcaptionbox{Isometry loss (bad)\label{fig:loss_2d_isometry}}
-{\includegraphics[width = .24\textwidth]{../figures/loss_2d_isometry_loss.png}}
+% Row 3: Isometry loss
+\subcaptionbox{Isometry loss 1D\label{fig:loss_1d_iso}}
+{\includegraphics[width = 0.3072\textwidth]{../figures/loss_1d_isometry_loss.png}}
+\hfill
+\subcaptionbox{Isometry loss 2D\label{fig:loss_2d_iso}}
+{\includegraphics[width = 0.3072\textwidth]{../figures/loss_2d_isometry_loss.png}}
+\\[0.2cm]
 
-% Row 3: 2D loss functions (remaining)
+% Row 4: Frobenius norm
+\subcaptionbox{Frob. norm 1D\label{fig:loss_1d_frobenius}}
+{\includegraphics[width = 0.3072\textwidth]{../figures/loss_1d_frobenius_norm.png}}
+\hfill
+\subcaptionbox{Frob. norm 2D\label{fig:loss_2d_frobenius}}
+{\includegraphics[width = 0.3072\textwidth]{../figures/loss_2d_frobenius_norm.png}}
+\\[0.2cm]
 
-\subcaptionbox{Frob. pseudoinv. (good)\label{fig:loss_2d_frob}}
-{\includegraphics[width = .24\textwidth]{../figures/loss_2d_frob_pseudoinverse.png}}
-\subcaptionbox{Isometry pursuit (good)\label{fig:loss_2d_gl}}
-{\includegraphics[width = .24\textwidth]{../figures/loss_2d_gl_pseudoinverse.png}}
+% Row 5: Frobenius pseudoinverse
+\subcaptionbox{Frob. pseudoinv. 1D\label{fig:loss_1d_frob}}
+{\includegraphics[width = 0.3072\textwidth]{../figures/loss_1d_frob_pseudoinverse.png}}
+\hfill
+\subcaptionbox{Frob. pseudoinv. 2D\label{fig:loss_2d_frob}}
+{\includegraphics[width = 0.3072\textwidth]{../figures/loss_2d_frob_pseudoinverse.png}}
+\\[0.2cm]
+
+% Row 6: Isometry pursuit
+\subcaptionbox{Isometry pursuit 1D\label{fig:loss_1d_gl}}
+{\includegraphics[width = 0.3072\textwidth]{../figures/loss_1d_gl_pseudoinverse.png}}
+\hfill
+\subcaptionbox{Isometry pursuit 2D\label{fig:loss_2d_gl}}
+{\includegraphics[width = 0.3072\textwidth]{../figures/loss_2d_gl_pseudoinverse.png}}
 
 \caption{
-Comprehensive loss function comparison for isometry pursuit.
-\textit{Row 1:} 1D loss behavior for 1×1 matrices (X=[r]).
-\textit{Rows 2-3:} 2D loss landscapes for 2×2 matrices parameterized by length ratio $r$ and angle $\theta$.
-Red markers indicate the ideal point: $r=1$ (unit-length), $\theta=\pi/2$ (orthogonal for 2D).
+Comprehensive loss function comparison for isometry pursuit (6 rows × 2 columns).
+Left column: 1D loss curves for $X = [[r]]$ showing loss behavior versus vector length.
+Right column: 2D loss landscapes for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$.
+Red vertical dashed line in 1D plots marks $r=1$ (optimal). Red star in 2D plots marks $(r=1, \theta=\pi/2)$ (ideal).
+Panels (a,i,k): Good losses exhibit \textit{maxima} at optimal points. Panels (b,c,d,e,g,h): Bad losses exhibit minima, indicating they do not reliably prefer orthonormal solutions.
 See Table \ref{tab:loss_functions} for mathematical definitions.
-Good losses (panels a, e-f, g, k-l) prefer unit-length orthogonal solutions.
-Bad losses (panels b-d, h-j) do not reliably select orthonormal submatrices, including our ground truth isometry loss.
 \label{fig:loss_landscapes}
 }
 \end{figure}
@@ -149,10 +165,10 @@ q(v_1) &= q(v_2) \; \forall \; v_1, v_2 \in \mathbb R^D : \|v_1\|_2 = \|v_2\|_2.
 \end{definition}
 
 We use such functions to normalize column-vector length in such a way that vectors of length $1$ prior to normalization have longest length after normalization and vectors are shrunk proportionately to their deviation from $1$. 
-That is, we normalize vectors by 
+That is, we normalize vectors by
 \begin{align}
 n: \mathbb R^D  &\to \mathbb R^D \\
-v &\mapsto {q(v) }v
+v &\mapsto {q(v) } \frac{v}{\|v\|_2}
 \end{align}
 and matrices by
 \begin{align}
@@ -163,7 +179,7 @@ w: \mathbb R^{D \times P}  &\to \mathbb R^{D \times P} \\
 We choose $q$ as follows.
 \begin{align}
 q: \mathbb R^D  &\to \mathbb R^+ \\
-v  &\mapsto \frac{e^{\|v\|_2} + e^{\|v\|_2^{-1}}}{2e}.
+v  &\mapsto \frac{2e}{e^{\|v\|_2} + e^{\|v\|_2^{-1}}}.
 \label{eq:normalization}
 \end{align}
 

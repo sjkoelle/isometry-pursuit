@@ -15,7 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from isometry_pursuit.loss import isometry_loss, group_lasso_norm
-from isometry_pursuit.transformation import exponential_transformation
+from isometry_pursuit.transformation import exponential_transformation, g_broadcast_transformation
 
 
 def compute_1d_losses(r):
@@ -39,16 +39,17 @@ def compute_1d_losses(r):
     # Nuclear norm: sum of singular values = r
     losses['nuclear_norm'] = abs(r)
 
-    # Apply normalization using the existing exponential_transformation
-    X_norm = exponential_transformation(X)
-
-    # Frobenius norm: 1 / ||w(X)||_F^2 (squared to remove square root compression)
-    frob_norm_squared = np.linalg.norm(X_norm, 'fro') ** 2
-    losses['frobenius_norm'] = 1.0 / frob_norm_squared if frob_norm_squared > 1e-14 else np.inf
+    # Frobenius norm: 1 / ||g^{×P}(X)||_F (using inverse broadcast transformation)
+    X_g = g_broadcast_transformation(X)
+    frob_norm_g = np.linalg.norm(X_g, 'fro')
+    losses['frobenius_norm'] = 1.0 / frob_norm_g if frob_norm_g > 1e-14 else np.inf
 
     # Isometry loss: operates on raw X (already correct)
     iso_loss = isometry_loss(X)
     losses['isometry_loss'] = iso_loss if np.isfinite(iso_loss) else np.nan
+
+    # Apply n_q^{×P} transformation for pseudoinverse-based losses
+    X_norm = exponential_transformation(X)
 
     # GL norm of pseudoinverse: ||w(X)^†||_{1,2}
     X_norm_pinv = np.linalg.pinv(X_norm)
@@ -83,16 +84,17 @@ def compute_2d_losses(r, theta):
     # Nuclear norm
     losses['nuclear_norm'] = sv_max + sv_min
 
-    # Apply normalization
-    X_norm = exponential_transformation(X)
-
-    # Frobenius norm: 1 / ||w(X)||_F^2 (squared to remove square root compression)
-    frob_norm_squared = np.linalg.norm(X_norm, 'fro') ** 2
-    losses['frobenius_norm'] = 1.0 / frob_norm_squared if frob_norm_squared > 1e-14 else np.inf
+    # Frobenius norm: 1 / ||g^{×P}(X)||_F (using inverse broadcast transformation)
+    X_g = g_broadcast_transformation(X)
+    frob_norm_g = np.linalg.norm(X_g, 'fro')
+    losses['frobenius_norm'] = 1.0 / frob_norm_g if frob_norm_g > 1e-14 else np.inf
 
     # Isometry loss
     iso_loss = isometry_loss(X)
     losses['isometry_loss'] = iso_loss if np.isfinite(iso_loss) else np.nan
+
+    # Apply n_q^{×P} transformation for pseudoinverse-based losses
+    X_norm = exponential_transformation(X)
 
     # GL norm of pseudoinverse and Frobenius norm of pseudoinverse: use w(X)
     if sv_min > 1e-14:
