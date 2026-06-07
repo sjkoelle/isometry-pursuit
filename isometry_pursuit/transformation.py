@@ -52,10 +52,10 @@ def exponential_transformation(X, power=1):
 
 def g_broadcast_transformation(X):
     """
-    Applies the inverse broadcast transformation g^{×P}(X) to the input matrix.
+    Applies the broadcast transformation g^{×P}(X) to the input matrix.
 
-    This uses q^{-1} (inverse of column norms) instead of q, providing direct
-    scaling without requiring a reciprocal loss.
+    This scales each column by g(||v||) = (e^{||v||} + e^{1/||v||}) / (2e),
+    which is the reciprocal of q(||v||).
 
     Parameters:
     X (numpy.ndarray): A 2D array of shape (D, P)
@@ -67,22 +67,20 @@ def g_broadcast_transformation(X):
     norms = np.linalg.norm(X, axis=0)
     normalized_X = X / norms[np.newaxis, :]
 
-    # Use inverse of norms (q^{-1})
-    inverse_norms = norms ** (-1)
-
-    # Compute scaling factors based on inverse norms
+    # Compute g(||v||) = (e^{||v||} + e^{1/||v||}) / (2e)
+    # This is the reciprocal of q(||v||)
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
-        exp_values = ((np.exp(inverse_norms) + np.exp(inverse_norms ** (-1))) ** (-1)) * 2 * np.e
+        g_values = (np.exp(norms) + np.exp(norms ** (-1))) / (2 * np.e)
 
         for warning in w:
             if "overflow" in str(warning.message).lower():
                 print(f"g_broadcast_transformation overflow warning: {warning.message}")
-                print(f"inverse_norms shape: {inverse_norms.shape}")
-                print(f"inverse_norms min: {np.min(inverse_norms)}, max: {np.max(inverse_norms)}")
+                print(f"norms shape: {norms.shape}")
+                print(f"norms min: {np.min(norms)}, max: {np.max(norms)}")
                 break
 
     # Apply the transformation using einsum
-    transformed_X = np.einsum("j,ij->ij", exp_values, normalized_X)
+    transformed_X = np.einsum("j,ij->ij", g_values, normalized_X)
 
     return transformed_X

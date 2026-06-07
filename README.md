@@ -71,6 +71,9 @@ python -m isometry_pursuit.exec.scs_convergence_trace --no-adaptive-scale
 ## Generate figures
 
 ```bash
+# Figure 2: loss function landscapes (6x2 grid comparing loss properties)
+python -m isometry_pursuit.exec.visualize_loss_landscapes --output-dir figures
+
 # Figure 1: example (data, selection, normalization)
 python -m isometry_pursuit.exec.generate_figure_1_example --output-dir figures
 

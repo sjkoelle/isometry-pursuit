@@ -39,10 +39,10 @@ def compute_1d_losses(r):
     # Nuclear norm: sum of singular values = r
     losses['nuclear_norm'] = abs(r)
 
-    # Frobenius norm squared: ||w^{×P}(X)||_F^2 (using standard transformation)
-    X_w = exponential_transformation(X)
-    frob_norm_w_squared = np.linalg.norm(X_w, 'fro') ** 2
-    losses['frobenius_norm'] = frob_norm_w_squared
+    # Frobenius norm: ||n_g^{×P}(X)||_F (using g broadcast transformation)
+    X_w = g_broadcast_transformation(X)
+    frob_norm_w = np.linalg.norm(X_w, 'fro')
+    losses['frobenius_norm'] = frob_norm_w
 
     # Isometry loss: operates on raw X (already correct)
     iso_loss = isometry_loss(X)
@@ -55,8 +55,8 @@ def compute_1d_losses(r):
     X_norm_pinv = np.linalg.pinv(X_norm)
     losses['gl_pseudoinverse'] = np.linalg.norm(X_norm_pinv, axis=1).sum()
 
-    # Frobenius norm squared of pseudoinverse: ||w^{×P}(X)^†||_F^2
-    losses['frob_pseudoinverse'] = np.linalg.norm(X_norm_pinv, 'fro') ** 2
+    # Frobenius norm of pseudoinverse: ||n_q^{×P}(X)^†||_F
+    losses['frob_pseudoinverse'] = np.linalg.norm(X_norm_pinv, 'fro')
 
     # Log determinant: log(r)
     losses['log_det'] = np.log(abs(r))
@@ -84,10 +84,10 @@ def compute_2d_losses(r, theta):
     # Nuclear norm
     losses['nuclear_norm'] = sv_max + sv_min
 
-    # Frobenius norm squared: ||w^{×P}(X)||_F^2 (using standard transformation)
-    X_w = exponential_transformation(X)
-    frob_norm_w_squared = np.linalg.norm(X_w, 'fro') ** 2
-    losses['frobenius_norm'] = frob_norm_w_squared
+    # Frobenius norm: ||n_g^{×P}(X)||_F (using g broadcast transformation)
+    X_w = g_broadcast_transformation(X)
+    frob_norm_w = np.linalg.norm(X_w, 'fro')
+    losses['frobenius_norm'] = frob_norm_w
 
     # Isometry loss
     iso_loss = isometry_loss(X)
