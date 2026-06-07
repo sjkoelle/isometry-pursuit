@@ -87,3 +87,32 @@ python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file result
 python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file results/iris_results.json --output-dir figures
 python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file results/ethanol_results.json --output-dir figures --bin-width 1
 ```
+
+## Analyze convergence (optional)
+
+For detailed convergence analysis across solver iterations:
+
+```bash
+# Wine convergence
+python -m isometry_pursuit.exec.plot_convergence_analysis \
+    --convergence-file results/wine_convergence.pkl \
+    --dataset-name wine \
+    --output-dir figures
+
+# Iris convergence
+python -m isometry_pursuit.exec.plot_convergence_analysis \
+    --convergence-file results/iris_convergence.pkl \
+    --dataset-name iris \
+    --output-dir figures
+
+# Ethanol convergence
+python -m isometry_pursuit.exec.plot_convergence_analysis \
+    --convergence-file results/ethanol_convergence.pkl \
+    --dataset-name ethanol \
+    --output-dir figures
+```
+
+This generates:
+- Coefficient convergence plots showing how feature weights evolve
+- Sparsity convergence boxplots across replicates
+- Support cardinality histograms

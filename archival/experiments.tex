@@ -13,19 +13,19 @@ For the Wine dataset, even \brute~ on $\widehat {S}_{IP}$ is prohibitive in $D=1
 \begin{figure}[t]
    \centering
     % Row 1: Loss improvement and sparsity convergence
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{../figures/cross_dataset_comparison.png}
-        \caption{Loss improvement across datasets}
-        \label{fig:improvement_comparison}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{../figures/combined_sparsity_convergence_boxplot.png}
-        \caption{Sparsity convergence across datasets}
-        \label{fig:sparsity_convergence}
-    \end{subfigure}
+    % \begin{subfigure}[b]{0.45\textwidth}
+    %     \centering
+    %     \includegraphics[width=\textwidth]{../figures/cross_dataset_comparison.png}
+    %     \caption{Loss improvement across datasets}
+    %     \label{fig:improvement_comparison}
+    % \end{subfigure}
+    % \hfill
+    % \begin{subfigure}[b]{0.6\textwidth}
+    %     \centering
+    %     \includegraphics[width=\textwidth]{../figures/combined_sparsity_convergence_boxplot.png}
+    %     \caption{Sparsity convergence across datasets}
+    %     \label{fig:sparsity_convergence}
+    % \end{subfigure}
     \caption{Difference in isometry losses $\ell(\widehat{S}_g) - \ell(\widehat{S}_{TSIP})$ for Wine, Iris, and Ethanol datasets.
     The distributions reflect the relative losses of the supports estimated by greedy optimization on the $\ell$ objective is less than or equal to $\ell$ loss of the support estimated by \tsip.
     As shown here and detailed in Table \ref{tab:experiments}, losses are generally lower for two-stage isometry pursuit solutions.}

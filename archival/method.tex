@@ -55,6 +55,70 @@ By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell$ is unique
 Moreover, $g$ is convex, and $\ell( X^{-1}) = \ell( X)$ when $X$ is invertible.
 Figure \ref{fig:gt_loss} gives a graph of $\ell$ when $D=1$.
 
+\begin{table}[t]
+\centering
+\caption{Matrix loss functions evaluated for isometry pursuit. We evaluate four key properties: whether the loss has a unique minimum, whether it is minimized specifically at orthonormal matrices (isometries), whether it prefers unit-length vectors over scaled versions, and whether it prefers orthogonal (orthonormal) structure.}
+\label{tab:loss_functions}
+\small
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Loss Function} & \textbf{Definition} & \makecell{\textbf{Unique}\\\textbf{min.}} & \makecell{\textbf{Min. at}\\\textbf{isometry}} & \makecell{\textbf{Prefers}\\\textbf{unit-length}} & \makecell{\textbf{Prefers}\\\textbf{orthogonal}} \\
+\midrule
+Distortion\textsuperscript{\citet{Kohli2021-lr}} & $\sigma_{\max}(X) / \sigma_{\min}(X)$ & No & Yes & No & Yes \\
+Log determinant\textsuperscript{\citet{Boyd2004-ql}} & $\log(\det(X))$ & No & No & No & No \\
+Frobenius norm & $\|w(X)\|_F$ & No & No & Yes & No \\
+Isometry loss & $\sum_{d=1}^D g(\sigma_d)$ & Yes & Yes & No & Yes \\
+Frob. pseudoinverse & $\|w(X)^\dagger\|_F$ & No & Yes & Yes & Yes \\
+\isometrypursuit\textsuperscript{\citet{Yuan2006-bt}} & $\arg \min_{\beta} \|\beta\|_{1,2} : I_D = w(X) \beta$ & Yes & Yes & Yes & Yes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+% Row 1: 1D loss functions (all 6, ordered to match table)
+\subcaptionbox{Distortion\label{fig:loss_1d_condition}}
+{\includegraphics[width = .16\textwidth]{../figures/loss_1d_condition_number.png}}
+\subcaptionbox{Log det\label{fig:loss_1d_logdet}}
+{\includegraphics[width = .16\textwidth]{../figures/loss_1d_log_det.png}}
+\subcaptionbox{Frob. norm\label{fig:loss_1d_frobenius}}
+{\includegraphics[width = .16\textwidth]{../figures/loss_1d_frobenius_norm.png}}
+\subcaptionbox{Isometry loss\label{fig:loss_1d_iso}}
+{\includegraphics[width = .16\textwidth]{../figures/loss_1d_isometry_loss.png}}
+\subcaptionbox{Frob. pseudoinv.\label{fig:loss_1d_frob}}
+{\includegraphics[width = .16\textwidth]{../figures/loss_1d_frob_pseudoinverse.png}}
+\subcaptionbox{Isometry pursuit\label{fig:loss_1d_gl}}
+{\includegraphics[width = .16\textwidth]{../figures/loss_1d_gl_pseudoinverse.png}}
+
+% Row 2: 2D loss functions (ordered to match table)
+
+\subcaptionbox{Distortion (good)\label{fig:loss_2d_condition}}
+{\includegraphics[width = .24\textwidth]{../figures/loss_2d_condition_number.png}}
+\subcaptionbox{Log det (bad)\label{fig:loss_2d_logdet}}
+{\includegraphics[width = .24\textwidth]{../figures/loss_2d_log_det.png}}
+\subcaptionbox{Frob. norm (bad)\label{fig:loss_2d_frobenius}}
+{\includegraphics[width = .24\textwidth]{../figures/loss_2d_frobenius_norm.png}}
+\subcaptionbox{Isometry loss (bad)\label{fig:loss_2d_isometry}}
+{\includegraphics[width = .24\textwidth]{../figures/loss_2d_isometry_loss.png}}
+
+% Row 3: 2D loss functions (remaining)
+
+\subcaptionbox{Frob. pseudoinv. (good)\label{fig:loss_2d_frob}}
+{\includegraphics[width = .24\textwidth]{../figures/loss_2d_frob_pseudoinverse.png}}
+\subcaptionbox{Isometry pursuit (good)\label{fig:loss_2d_gl}}
+{\includegraphics[width = .24\textwidth]{../figures/loss_2d_gl_pseudoinverse.png}}
+
+\caption{
+Comprehensive loss function comparison for isometry pursuit.
+\textit{Row 1:} 1D loss behavior for 1×1 matrices (X=[r]).
+\textit{Rows 2-3:} 2D loss landscapes for 2×2 matrices parameterized by length ratio $r$ and angle $\theta$.
+Red markers indicate the ideal point: $r=1$ (unit-length), $\theta=\pi/2$ (orthogonal for 2D).
+See Table \ref{tab:loss_functions} for mathematical definitions.
+Good losses (panels a, e-f, g, k-l) prefer unit-length orthogonal solutions.
+Bad losses (panels b-d, h-j) do not reliably select orthonormal submatrices, including our ground truth isometry loss.
+\label{fig:loss_landscapes}
+}
+\end{figure}
 
 
 % compares it with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.
@@ -92,7 +156,7 @@ v &\mapsto {q(v) }v
 \end{align}
 and matrices by
 \begin{align}
-w: \mathbb R^{D \times P}  &\to \mathbb R^D \\
+w: \mathbb R^{D \times P}  &\to \mathbb R^{D \times P} \\
  X_{.p} &\mapsto n( X_{.p}) \; \forall \; p \in [P].
 \end{align}
 
