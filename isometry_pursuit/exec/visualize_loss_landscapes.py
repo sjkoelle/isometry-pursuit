@@ -39,23 +39,23 @@ def compute_1d_losses(r):
     # Nuclear norm: sum of singular values = r
     losses['nuclear_norm'] = abs(r)
 
-    # Frobenius norm squared: 1/||w(X)||_F^2 (using standard transformation)
+    # Frobenius norm squared: ||w^{×P}(X)||_F^2 (using standard transformation)
     X_w = exponential_transformation(X)
     frob_norm_w_squared = np.linalg.norm(X_w, 'fro') ** 2
-    losses['frobenius_norm'] = 1.0 / frob_norm_w_squared if frob_norm_w_squared > 1e-14 else np.inf
+    losses['frobenius_norm'] = frob_norm_w_squared
 
     # Isometry loss: operates on raw X (already correct)
     iso_loss = isometry_loss(X)
     losses['isometry_loss'] = iso_loss if np.isfinite(iso_loss) else np.nan
 
-    # Apply n_q transformation for pseudoinverse-based losses
+    # Apply w^{×P} transformation for pseudoinverse-based losses
     X_norm = exponential_transformation(X)
 
-    # GL norm of pseudoinverse: ||n_q^{×P}(X)^†||_{1,2}
+    # GL norm of pseudoinverse: ||w^{×P}(X)^†||_{1,2}
     X_norm_pinv = np.linalg.pinv(X_norm)
     losses['gl_pseudoinverse'] = np.linalg.norm(X_norm_pinv, axis=1).sum()
 
-    # Frobenius norm squared of pseudoinverse: ||n_q^{×P}(X)^†||_F^2
+    # Frobenius norm squared of pseudoinverse: ||w^{×P}(X)^†||_F^2
     losses['frob_pseudoinverse'] = np.linalg.norm(X_norm_pinv, 'fro') ** 2
 
     # Log determinant: log(r)
@@ -84,19 +84,19 @@ def compute_2d_losses(r, theta):
     # Nuclear norm
     losses['nuclear_norm'] = sv_max + sv_min
 
-    # Frobenius norm squared: 1/||w(X)||_F^2 (using standard transformation)
+    # Frobenius norm squared: ||w^{×P}(X)||_F^2 (using standard transformation)
     X_w = exponential_transformation(X)
     frob_norm_w_squared = np.linalg.norm(X_w, 'fro') ** 2
-    losses['frobenius_norm'] = 1.0 / frob_norm_w_squared if frob_norm_w_squared > 1e-14 else np.inf
+    losses['frobenius_norm'] = frob_norm_w_squared
 
     # Isometry loss
     iso_loss = isometry_loss(X)
     losses['isometry_loss'] = iso_loss if np.isfinite(iso_loss) else np.nan
 
-    # Apply n_q transformation for pseudoinverse-based losses
+    # Apply w^{×P} transformation for pseudoinverse-based losses
     X_norm = exponential_transformation(X)
 
-    # GL norm of pseudoinverse and Frobenius norm squared of pseudoinverse: use n_q^{×P}(X)
+    # GL norm of pseudoinverse and Frobenius norm squared of pseudoinverse: use w^{×P}(X)
     if sv_min > 1e-14:
         X_norm_pinv = np.linalg.pinv(X_norm)
         losses['gl_pseudoinverse'] = group_lasso_norm(X_norm_pinv)

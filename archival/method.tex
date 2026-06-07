@@ -67,9 +67,9 @@ Figure \ref{fig:gt_loss} gives a graph of $\ell$ when $D=1$.
 Distortion\textsuperscript{\citet{Kohli2021-lr}} & $\sigma_{\max}(X) / \sigma_{\min}(X)$ & No & Yes & No & Yes \\
 Log determinant\textsuperscript{\citet{Boyd2004-ql}} & $\log(\det(X))$ & No & No & No & No \\
 Isometry loss & $\sum_{d=1}^D g(\sigma_d)$ & Yes & Yes & No & Yes \\
-Frobenius norm & $1/\|w(X)\|_F^2$ & No & No & Yes & No \\
-Frob. pseudoinverse & $\|w(X)^\dagger\|_F^2$ & No & Yes & Yes & Yes \\
-\isometrypursuit\textsuperscript{\citet{Yuan2006-bt}} & $\arg \min_{\beta} \|\beta\|_{1,2} : I_D = w(X) \beta$ & Yes & Yes & Yes & Yes \\
+Frobenius norm & $\|w^{\times P}(X)\|_F^2$ & No & No & Yes & No \\
+Frob. pseudoinverse & $\|w^{\times P}(X)^\dagger\|_F^2$ & No & Yes & Yes & Yes \\
+\isometrypursuit\textsuperscript{\citet{Yuan2006-bt}} & $\arg \min_{\beta} \|\beta\|_{1,2} : I_D = w^{\times P}(X) \beta$ & Yes & Yes & Yes & Yes \\
 \bottomrule
 \end{tabular}
 \end{table}
