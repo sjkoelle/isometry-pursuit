@@ -67,8 +67,8 @@ Figure \ref{fig:gt_loss} gives a graph of $\ell$ when $D=1$.
 Distortion\textsuperscript{\citet{Kohli2021-lr}} & $\sigma_{\max}(X) / \sigma_{\min}(X)$ & No & Yes & No & Yes \\
 Log determinant\textsuperscript{\citet{Boyd2004-ql}} & $\log(\det(X))$ & No & No & No & No \\
 Isometry loss & $\sum_{d=1}^D g(\sigma_d)$ & Yes & Yes & No & Yes \\
-Frobenius norm & $\|n_g^{\times P}(X)\|_F^2$ & No & No & Yes & No \\
-Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F^2$ & No & Yes & Yes & Yes \\
+Frobenius norm & $\|n_g^{\times P}(X)\|_F$ & No & No & Yes & No \\
+Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F$ & No & Yes & Yes & Yes \\
 \isometrypursuit\textsuperscript{\citet{Yuan2006-bt}} & $\arg \min_{\beta} \|\beta\|_{1,2} : I_D = w^{\times P}(X) \beta$ & Yes & Yes & Yes & Yes \\
 \bottomrule
 \end{tabular}
@@ -76,7 +76,7 @@ Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F^2$ & No & Yes & Yes & Yes
 
 \begin{figure}[p]
 \centering
-% 6 rows × 2 columns: Column 1 = 1D plots, Column 2 = 2D plots
+% 6 rows × 2 columns: Column 1 = 1D plots, Column 2 = 2D plots (with log-scale colorbars)
 %
 % Row 1: Distortion
 \subcaptionbox{Distortion 1D\label{fig:loss_1d_condition}}
@@ -128,7 +128,7 @@ Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F^2$ & No & Yes & Yes & Yes
 \caption{
 Comprehensive loss function comparison for isometry pursuit (6 rows × 2 columns).
 Left column: 1D loss curves for $X = [[r]]$ showing loss behavior versus vector length.
-Right column: 2D loss landscapes for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$.
+Right column: 2D loss landscapes for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with log-scale colorbars.
 Red vertical dashed line in 1D plots marks $r=1$ (optimal). Red star in 2D plots marks $(r=1, \theta=\pi/2)$ (ideal).
 Panels (a,i,k): Good losses exhibit \textit{maxima} at optimal points. Panels (b,c,d,e,g,h): Bad losses exhibit minima, indicating they do not reliably prefer orthonormal solutions.
 See Table \ref{tab:loss_functions} for mathematical definitions.

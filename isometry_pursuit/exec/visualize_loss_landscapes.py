@@ -13,6 +13,7 @@ import argparse
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 
 from isometry_pursuit.loss import isometry_loss, group_lasso_norm
 from isometry_pursuit.transformation import exponential_transformation, g_broadcast_transformation
@@ -96,11 +97,11 @@ def compute_2d_losses(r, theta):
     # Apply w^{×P} transformation for pseudoinverse-based losses
     X_norm = exponential_transformation(X)
 
-    # GL norm of pseudoinverse and Frobenius norm squared of pseudoinverse: use w^{×P}(X)
+    # GL norm of pseudoinverse and Frobenius norm of pseudoinverse: use n_q^{×P}(X)
     if sv_min > 1e-14:
         X_norm_pinv = np.linalg.pinv(X_norm)
         losses['gl_pseudoinverse'] = group_lasso_norm(X_norm_pinv)
-        losses['frob_pseudoinverse'] = np.linalg.norm(X_norm_pinv, 'fro') ** 2
+        losses['frob_pseudoinverse'] = np.linalg.norm(X_norm_pinv, 'fro')
     else:
         losses['gl_pseudoinverse'] = np.nan
         losses['frob_pseudoinverse'] = np.nan
@@ -153,10 +154,9 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
                         all_grids[key][i, j] = losses[key]
                 pbar.update(1)
 
-    # Generate separate 1D and 2D plots for each loss (same height for alignment)
+    # Generate separate 1D and 2D plots for each loss
     print("Generating 1D and 2D plots...")
 
-    # Fixed size for both 1D and 2D plots: width=6, height=2/3*width=4
     plot_width = 6
     plot_height = 4
 
@@ -166,7 +166,6 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         losses_1d = np.array(losses_1d)
 
         config = loss_configs[loss_name]
-        status = "✓ Good property" if config['good'] else "✗ No good property"
 
         # 1D plot
         fig, ax = plt.subplots(figsize=(plot_width, plot_height))
@@ -181,7 +180,7 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         print(f"  Saved loss_1d_{loss_name}.png")
         plt.close()
 
-        # 2D heatmap
+        # 2D heatmap with log-scale colorbar
         fig, ax = plt.subplots(figsize=(plot_width, plot_height))
         grid = all_grids[loss_name]
         grid_plot = grid.copy()
@@ -195,8 +194,19 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
                 grid_plot = np.clip(grid_plot, None, clip_value)
 
         cmap = config['cmap']
-        im = ax.contourf(ratios, angles, grid_plot, levels=20, cmap=cmap)
-        cbar = plt.colorbar(im, ax=ax, label='Loss value')
+        # Use log scale for colorbar if all values are positive
+        finite_values = grid_plot[np.isfinite(grid_plot)]
+        if len(finite_values) > 0 and np.all(finite_values > 0):
+            # Log-spaced levels + LogNorm for consistent log-scale rendering
+            levels = np.logspace(np.log10(finite_values.min()), np.log10(finite_values.max()), 20)
+            norm = LogNorm(vmin=finite_values.min(), vmax=finite_values.max())
+            im = ax.contourf(ratios, angles, grid_plot, levels=levels, cmap=cmap, norm=norm)
+            cbar_label = 'Loss value (log scale)'
+        else:
+            im = ax.contourf(ratios, angles, grid_plot, levels=20, cmap=cmap)
+            cbar_label = 'Loss value'
+
+        plt.colorbar(im, ax=ax, label=cbar_label)
         ax.plot(1.0, np.pi/2, 'r*', markersize=20, label='Ideal (r=1, θ=90°)')
         ax.set_xlabel('Length ratio r', fontsize=11)
         ax.set_ylabel('Angle θ (radians)', fontsize=11)
