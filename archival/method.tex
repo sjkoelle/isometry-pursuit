@@ -60,77 +60,88 @@ Figure \ref{fig:gt_loss} gives a graph of $\ell$ when $D=1$.
 \caption{Matrix loss functions evaluated for isometry pursuit. We evaluate four key properties: whether the loss has a unique minimum, whether it is minimized specifically at orthonormal matrices (isometries), whether it prefers unit-length vectors over scaled versions, and whether it prefers orthogonal (orthonormal) structure.}
 \label{tab:loss_functions}
 \small
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{llcccc}
 \toprule
 \textbf{Loss Function} & \textbf{Definition} & \makecell{\textbf{Unique}\\\textbf{min.}} & \makecell{\textbf{Min. at}\\\textbf{isometry}} & \makecell{\textbf{Prefers}\\\textbf{unit-length}} & \makecell{\textbf{Prefers}\\\textbf{orthogonal}} \\
 \midrule
 Distortion\textsuperscript{\citet{Kohli2021-lr}} & $\sigma_{\max}(X) / \sigma_{\min}(X)$ & No & Yes & No & Yes \\
-Log determinant\textsuperscript{\citet{Boyd2004-ql}} & $\log(\det(X))$ & No & No & No & No \\
-Isometry loss & $\sum_{d=1}^D g(\sigma_d)$ & Yes & Yes & No & Yes \\
+Isometry loss & $\sum_{d=1}^D g(\sigma_d(X))$ & Yes & Yes & No & Yes \\
+S-divergence to identity & $\log\det\left((X^\top X + I_D)/2\right) - \frac{1}{2}\log\det(X^\top X)$ & Yes & Yes & Yes & Yes \\
+Normalized log-det volume & $-\sum_{d=1}^D \log\sigma_d\left(n_q^{\times P}(X)\right)$ & No & No & Yes & No \\
 Frobenius norm & $\|n_g^{\times P}(X)\|_F$ & No & No & Yes & No \\
 Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F$ & No & Yes & Yes & Yes \\
 \isometrypursuit\textsuperscript{\citet{Yuan2006-bt}} & $\arg \min_{\beta} \|\beta\|_{1,2} : I_D = w^{\times P}(X) \beta$ & Yes & Yes & Yes & Yes \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
 \begin{figure}[p]
 \centering
-% 6 rows × 2 columns: Column 1 = 1D plots, Column 2 = 2D plots (with log-scale colorbars)
+% 7 rows × 2 columns: Column 1 = 1D plots, Column 2 = 2D plots (with log-scale colorbars)
 %
 % Row 1: Distortion
 \subcaptionbox{Distortion 1D\label{fig:loss_1d_condition}}
-{\includegraphics[width = 0.3072\textwidth]{../figures/loss_1d_condition_number.png}}
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_1d_condition_number.png}}
 \hfill
 \subcaptionbox{Distortion 2D\label{fig:loss_2d_condition}}
-{\includegraphics[width = 0.3072\textwidth]{../figures/loss_2d_condition_number.png}}
-\\[0.2cm]
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_2d_condition_number.png}}
+\\[0.08cm]
 
-% Row 2: Log det
-\subcaptionbox{Log det 1D\label{fig:loss_1d_logdet}}
-{\includegraphics[width = 0.3072\textwidth]{../figures/loss_1d_log_det.png}}
-\hfill
-\subcaptionbox{Log det 2D\label{fig:loss_2d_logdet}}
-{\includegraphics[width = 0.3072\textwidth]{../figures/loss_2d_log_det.png}}
-\\[0.2cm]
-
-% Row 3: Isometry loss
+% Row 2: Isometry loss
 \subcaptionbox{Isometry loss 1D\label{fig:loss_1d_iso}}
-{\includegraphics[width = 0.3072\textwidth]{../figures/loss_1d_isometry_loss.png}}
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_1d_isometry_loss.png}}
 \hfill
 \subcaptionbox{Isometry loss 2D\label{fig:loss_2d_iso}}
-{\includegraphics[width = 0.3072\textwidth]{../figures/loss_2d_isometry_loss.png}}
-\\[0.2cm]
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_2d_isometry_loss.png}}
+\\[0.08cm]
 
-% Row 4: Frobenius norm
+% Row 3: S-divergence to identity
+\subcaptionbox{S-divergence 1D\label{fig:loss_1d_sdiv}}
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_1d_s_divergence_identity.png}}
+\hfill
+\subcaptionbox{S-divergence 2D\label{fig:loss_2d_sdiv}}
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_2d_s_divergence_identity.png}}
+\\[0.08cm]
+
+% Row 4: Normalized log-det volume
+\subcaptionbox{Norm. log-det 1D\label{fig:loss_1d_norm_logdet}}
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_1d_normalized_logdet_volume.png}}
+\hfill
+\subcaptionbox{Norm. log-det 2D\label{fig:loss_2d_norm_logdet}}
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_2d_normalized_logdet_volume.png}}
+\\[0.08cm]
+
+% Row 5: Frobenius norm
 \subcaptionbox{Frob. norm 1D\label{fig:loss_1d_frobenius}}
-{\includegraphics[width = 0.3072\textwidth]{../figures/loss_1d_frobenius_norm.png}}
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_1d_frobenius_norm.png}}
 \hfill
 \subcaptionbox{Frob. norm 2D\label{fig:loss_2d_frobenius}}
-{\includegraphics[width = 0.3072\textwidth]{../figures/loss_2d_frobenius_norm.png}}
-\\[0.2cm]
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_2d_frobenius_norm.png}}
+\\[0.08cm]
 
-% Row 5: Frobenius pseudoinverse
+% Row 6: Frobenius pseudoinverse
 \subcaptionbox{Frob. pseudoinv. 1D\label{fig:loss_1d_frob}}
-{\includegraphics[width = 0.3072\textwidth]{../figures/loss_1d_frob_pseudoinverse.png}}
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_1d_frob_pseudoinverse.png}}
 \hfill
 \subcaptionbox{Frob. pseudoinv. 2D\label{fig:loss_2d_frob}}
-{\includegraphics[width = 0.3072\textwidth]{../figures/loss_2d_frob_pseudoinverse.png}}
-\\[0.2cm]
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_2d_frob_pseudoinverse.png}}
+\\[0.08cm]
 
-% Row 6: Isometry pursuit
+% Row 7: Isometry pursuit
 \subcaptionbox{Isometry pursuit 1D\label{fig:loss_1d_gl}}
-{\includegraphics[width = 0.3072\textwidth]{../figures/loss_1d_gl_pseudoinverse.png}}
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_1d_gl_pseudoinverse.png}}
 \hfill
 \subcaptionbox{Isometry pursuit 2D\label{fig:loss_2d_gl}}
-{\includegraphics[width = 0.3072\textwidth]{../figures/loss_2d_gl_pseudoinverse.png}}
+{\includegraphics[width = 0.22\textwidth]{../figures/loss_2d_gl_pseudoinverse.png}}
 
 \caption{
-Comprehensive loss function comparison for isometry pursuit (6 rows × 2 columns).
+Comprehensive loss function comparison for isometry pursuit (7 rows × 2 columns).
 Left column: 1D loss curves for $X = [[r]]$ showing loss behavior versus vector length.
-Right column: 2D loss landscapes for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with log-scale colorbars.
+Right column: 2D loss landscapes for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with shared colorbars.
 Red vertical dashed line in 1D plots marks $r=1$ (optimal). Red star in 2D plots marks $(r=1, \theta=\pi/2)$ (ideal).
-Panels (a,i,k): Good losses exhibit \textit{maxima} at optimal points. Panels (b,c,d,e,g,h): Bad losses exhibit minima, indicating they do not reliably prefer orthonormal solutions.
+The panels visualize whether each candidate loss prefers unit-length and orthogonal structure at the ideal point.
 See Table \ref{tab:loss_functions} for mathematical definitions.
 \label{fig:loss_landscapes}
 }

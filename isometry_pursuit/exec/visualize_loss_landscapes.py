@@ -13,10 +13,34 @@ import argparse
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm
+from matplotlib.colors import SymLogNorm
 
 from isometry_pursuit.loss import isometry_loss, group_lasso_norm
 from isometry_pursuit.transformation import exponential_transformation, g_broadcast_transformation
+
+
+def s_divergence_to_identity(X):
+    """Stein/S-divergence between X^T X and the identity."""
+    gram = X.T @ X
+    sign_gram, logdet_gram = np.linalg.slogdet(gram)
+    if sign_gram <= 0:
+        return np.nan
+
+    identity = np.eye(gram.shape[0])
+    sign_mid, logdet_mid = np.linalg.slogdet((gram + identity) / 2.0)
+    if sign_mid <= 0:
+        return np.nan
+
+    return logdet_mid - 0.5 * logdet_gram
+
+
+def normalized_logdet_volume(X):
+    """Negative log singular-value volume after n_q column normalization."""
+    X_norm = exponential_transformation(X)
+    singular_values = np.linalg.svd(X_norm, compute_uv=False)
+    if np.any(singular_values <= 1e-14):
+        return np.nan
+    return -np.sum(np.log(singular_values))
 
 
 def compute_1d_losses(r):
@@ -27,7 +51,9 @@ def compute_1d_losses(r):
     if r < 1e-14:
         return {key: np.nan for key in ['condition_number', 'gl_pseudoinverse',
                                           'frob_pseudoinverse', 'isometry_loss',
-                                          'log_det', 'nuclear_norm', 'frobenius_norm']}
+                                          'nuclear_norm', 'frobenius_norm',
+                                          's_divergence_identity',
+                                          'normalized_logdet_volume']}
 
     # For 1x1 matrix, singular value is just |r|
     X = np.array([[r]])
@@ -59,8 +85,8 @@ def compute_1d_losses(r):
     # Frobenius norm of pseudoinverse: ||n_q^{×P}(X)^†||_F
     losses['frob_pseudoinverse'] = np.linalg.norm(X_norm_pinv, 'fro')
 
-    # Log determinant: log(r)
-    losses['log_det'] = np.log(abs(r))
+    losses['s_divergence_identity'] = s_divergence_to_identity(X)
+    losses['normalized_logdet_volume'] = normalized_logdet_volume(X)
 
     return losses
 
@@ -106,9 +132,8 @@ def compute_2d_losses(r, theta):
         losses['gl_pseudoinverse'] = np.nan
         losses['frob_pseudoinverse'] = np.nan
 
-    # Log determinant
-    det_val = sv_max * sv_min
-    losses['log_det'] = np.log(det_val) if det_val > 1e-14 else np.nan
+    losses['s_divergence_identity'] = s_divergence_to_identity(X)
+    losses['normalized_logdet_volume'] = normalized_logdet_volume(X)
 
     return losses
 
@@ -126,17 +151,26 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
     ratios = np.linspace(0.5, max_ratio, n_ratio)
     angles = np.linspace(0.05, np.pi - 0.05, n_angle)
 
-    # Define losses (exclude nuclear_norm, keep 6)
-    # Order matches table: Distortion, Log det, Isometry loss, Frob. norm, Frob. pseudoinv., Isometry pursuit
-    all_loss_names = ['condition_number', 'log_det', 'isometry_loss', 'frobenius_norm', 'frob_pseudoinverse', 'gl_pseudoinverse']
+    # Define losses (exclude nuclear_norm)
+    # Order matches table.
+    all_loss_names = [
+        'condition_number',
+        'isometry_loss',
+        's_divergence_identity',
+        'normalized_logdet_volume',
+        'frobenius_norm',
+        'frob_pseudoinverse',
+        'gl_pseudoinverse',
+    ]
 
     loss_configs = {
         'condition_number': {'color': 'C0', 'good': True, 'cmap': 'viridis'},
         'gl_pseudoinverse': {'color': 'C1', 'good': True, 'cmap': 'viridis'},
         'frob_pseudoinverse': {'color': 'C2', 'good': True, 'cmap': 'viridis'},
         'isometry_loss': {'color': 'C3', 'good': False, 'cmap': 'plasma'},
-        'log_det': {'color': 'C4', 'good': False, 'cmap': 'plasma'},
         'frobenius_norm': {'color': 'C5', 'good': False, 'cmap': 'plasma'},
+        's_divergence_identity': {'color': 'C6', 'good': True, 'cmap': 'viridis'},
+        'normalized_logdet_volume': {'color': 'C7', 'good': False, 'cmap': 'plasma'},
     }
 
     # Compute all 2D grids first
@@ -159,6 +193,12 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
 
     plot_width = 6
     plot_height = 4
+    shared_2d_ticks = [0, 1, 10, 100, 1000]
+    shared_2d_levels = np.unique(
+        np.concatenate(([0], np.linspace(0.05, 1, 10), np.logspace(0, 3, 32)))
+    )
+    shared_2d_norm = SymLogNorm(linthresh=1, vmin=0, vmax=1000, base=10)
+    shared_2d_cmap = 'viridis'
 
     for loss_name in all_loss_names:
         # Compute 1D losses
@@ -180,33 +220,24 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         print(f"  Saved loss_1d_{loss_name}.png")
         plt.close()
 
-        # 2D heatmap with log-scale colorbar
+        # 2D heatmap with shared colorbar scaling across all losses.
         fig, ax = plt.subplots(figsize=(plot_width, plot_height))
         grid = all_grids[loss_name]
         grid_plot = grid.copy()
         grid_plot[~np.isfinite(grid_plot)] = np.nan
+        grid_plot = np.clip(grid_plot, 0, 1000)
 
-        # For isometry_loss with extreme values, clip to 95th percentile for better visualization
-        if loss_name == 'isometry_loss':
-            finite_values = grid_plot[np.isfinite(grid_plot)]
-            if len(finite_values) > 0:
-                clip_value = np.percentile(finite_values, 95)
-                grid_plot = np.clip(grid_plot, None, clip_value)
-
-        cmap = config['cmap']
-        # Use log scale for colorbar if all values are positive
-        finite_values = grid_plot[np.isfinite(grid_plot)]
-        if len(finite_values) > 0 and np.all(finite_values > 0):
-            # Log-spaced levels + LogNorm for consistent log-scale rendering
-            levels = np.logspace(np.log10(finite_values.min()), np.log10(finite_values.max()), 20)
-            norm = LogNorm(vmin=finite_values.min(), vmax=finite_values.max())
-            im = ax.contourf(ratios, angles, grid_plot, levels=levels, cmap=cmap, norm=norm)
-            cbar_label = 'Loss value (log scale)'
-        else:
-            im = ax.contourf(ratios, angles, grid_plot, levels=20, cmap=cmap)
-            cbar_label = 'Loss value'
-
-        plt.colorbar(im, ax=ax, label=cbar_label)
+        im = ax.contourf(
+            ratios,
+            angles,
+            grid_plot,
+            levels=shared_2d_levels,
+            cmap=shared_2d_cmap,
+            norm=shared_2d_norm,
+        )
+        cbar = plt.colorbar(im, ax=ax, label='Loss value')
+        cbar.set_ticks(shared_2d_ticks)
+        cbar.set_ticklabels([str(tick) for tick in shared_2d_ticks])
         ax.plot(1.0, np.pi/2, 'r*', markersize=20, label='Ideal (r=1, θ=90°)')
         ax.set_xlabel('Length ratio r', fontsize=11)
         ax.set_ylabel('Angle θ (radians)', fontsize=11)
