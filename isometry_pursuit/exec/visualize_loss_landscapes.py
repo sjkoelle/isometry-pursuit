@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import SymLogNorm
 
 from isometry_pursuit.loss import isometry_loss, group_lasso_norm
-from isometry_pursuit.transformation import exponential_transformation, g_broadcast_transformation
+from isometry_pursuit.transformation import exponential_transformation
 
 
 def s_divergence_to_identity(X):
@@ -51,7 +51,7 @@ def compute_1d_losses(r):
     if r < 1e-14:
         return {key: np.nan for key in ['condition_number', 'gl_pseudoinverse',
                                           'frob_pseudoinverse', 'isometry_loss',
-                                          'nuclear_norm', 'frobenius_norm',
+                                          'nuclear_norm',
                                           's_divergence_identity',
                                           'normalized_logdet_volume']}
 
@@ -60,30 +60,27 @@ def compute_1d_losses(r):
 
     losses = {}
 
+    d = X.shape[0]
+
     # Condition number: for 1D, always 1 (only one singular value)
-    losses['condition_number'] = 1.0
+    losses['condition_number'] = 1.0 - 1.0
 
     # Nuclear norm: sum of singular values = r
     losses['nuclear_norm'] = abs(r)
 
-    # Frobenius norm: ||n_g^{×P}(X)||_F (using g broadcast transformation)
-    X_w = g_broadcast_transformation(X)
-    frob_norm_w = np.linalg.norm(X_w, 'fro')
-    losses['frobenius_norm'] = frob_norm_w
-
     # Isometry loss: operates on raw X (already correct)
     iso_loss = isometry_loss(X)
-    losses['isometry_loss'] = iso_loss if np.isfinite(iso_loss) else np.nan
+    losses['isometry_loss'] = iso_loss - d if np.isfinite(iso_loss) else np.nan
 
     # Apply w^{×P} transformation for pseudoinverse-based losses
     X_norm = exponential_transformation(X)
 
     # GL norm of pseudoinverse: ||w^{×P}(X)^†||_{1,2}
     X_norm_pinv = np.linalg.pinv(X_norm)
-    losses['gl_pseudoinverse'] = np.linalg.norm(X_norm_pinv, axis=1).sum()
+    losses['gl_pseudoinverse'] = np.linalg.norm(X_norm_pinv, axis=1).sum() - d
 
     # Frobenius norm of pseudoinverse: ||n_q^{×P}(X)^†||_F
-    losses['frob_pseudoinverse'] = np.linalg.norm(X_norm_pinv, 'fro')
+    losses['frob_pseudoinverse'] = np.linalg.norm(X_norm_pinv, 'fro') - np.sqrt(d)
 
     losses['s_divergence_identity'] = s_divergence_to_identity(X)
     losses['normalized_logdet_volume'] = normalized_logdet_volume(X)
@@ -105,20 +102,17 @@ def compute_2d_losses(r, theta):
 
     losses = {}
 
+    d = X.shape[0]
+
     # Condition number
-    losses['condition_number'] = sv_max / sv_min if sv_min > 1e-14 else np.inf
+    losses['condition_number'] = sv_max / sv_min - 1.0 if sv_min > 1e-14 else np.inf
 
     # Nuclear norm
     losses['nuclear_norm'] = sv_max + sv_min
 
-    # Frobenius norm: ||n_g^{×P}(X)||_F (using g broadcast transformation)
-    X_w = g_broadcast_transformation(X)
-    frob_norm_w = np.linalg.norm(X_w, 'fro')
-    losses['frobenius_norm'] = frob_norm_w
-
     # Isometry loss
     iso_loss = isometry_loss(X)
-    losses['isometry_loss'] = iso_loss if np.isfinite(iso_loss) else np.nan
+    losses['isometry_loss'] = iso_loss - d if np.isfinite(iso_loss) else np.nan
 
     # Apply w^{×P} transformation for pseudoinverse-based losses
     X_norm = exponential_transformation(X)
@@ -126,8 +120,8 @@ def compute_2d_losses(r, theta):
     # GL norm of pseudoinverse and Frobenius norm of pseudoinverse: use n_q^{×P}(X)
     if sv_min > 1e-14:
         X_norm_pinv = np.linalg.pinv(X_norm)
-        losses['gl_pseudoinverse'] = group_lasso_norm(X_norm_pinv)
-        losses['frob_pseudoinverse'] = np.linalg.norm(X_norm_pinv, 'fro')
+        losses['gl_pseudoinverse'] = group_lasso_norm(X_norm_pinv) - d
+        losses['frob_pseudoinverse'] = np.linalg.norm(X_norm_pinv, 'fro') - np.sqrt(d)
     else:
         losses['gl_pseudoinverse'] = np.nan
         losses['frob_pseudoinverse'] = np.nan
@@ -158,7 +152,6 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         'isometry_loss',
         's_divergence_identity',
         'normalized_logdet_volume',
-        'frobenius_norm',
         'frob_pseudoinverse',
         'gl_pseudoinverse',
     ]
@@ -168,7 +161,6 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         'gl_pseudoinverse': {'color': 'C1', 'good': True, 'cmap': 'viridis'},
         'frob_pseudoinverse': {'color': 'C2', 'good': True, 'cmap': 'viridis'},
         'isometry_loss': {'color': 'C3', 'good': False, 'cmap': 'plasma'},
-        'frobenius_norm': {'color': 'C5', 'good': False, 'cmap': 'plasma'},
         's_divergence_identity': {'color': 'C6', 'good': True, 'cmap': 'viridis'},
         'normalized_logdet_volume': {'color': 'C7', 'good': False, 'cmap': 'plasma'},
     }
