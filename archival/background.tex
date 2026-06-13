@@ -50,36 +50,26 @@ The \textit{condition number} \citep{GolubWilkinson-condition,Boyd2004-ql} $\fra
 While it is minimized by an isometric function, it is also minimized by any conformal (i.e. low distortion) linear map.
 
 A class of functions more suitable for measuring isometry are S-divergences \citep{Sra2011-sdivergence}.
-S-divergences define a metric $D(P,P')$ on positive definite matrices $P,P'$.
-If those matrices are $X^T X$ and $I_D$, the S-divergence distance is 
+S-divergences define a distance $D(P,P')$ on positive definite matrices $P,P'$ given by 
 \begin{align}
-D(X^T X,I_D) = (\log \det (\frac{X^T X + I_D}{2}) - \frac{1}{2}\log \det(X^T X))^{\frac{1}{2}}.
+D(P,P') = (\log \det (\frac{P + P'}{2}) - \frac{1}{2}\log \det(PP'))^{\frac{1}{2}}.
 \end{align}
-This is a log singular value penalty.
-This is because, first of all,
-\begin{align}
-\frac{1}{2}\log \det(X^T X) &= \frac{1}{2} \log \prod_{d=1}^D \sigma_d(X)^2 \\
-&= \log \prod_{d=1}^D \sigma_d(X) \\
-&= \sum_{d=1}^D \log \sigma_d(X).
-\end{align}
-Secondly, $I_D$ and $X^T X$ are diagonalizable in the same basis, so
-\begin{align}
-\log \det (\frac{X^T X + I_D}{2}) &= \log \prod_{d=1}^D \frac{\sigma_d(X)^2 + 1}{2} \\
-&= \sum_{d=1}^D \log \frac{\sigma_d(X)^2 + 1}{2}.
-\end{align}
-Then,
+Applied to the positive definite matrices $X^T X$ and $I_D$, the S-divergence is a log singular value penalty.
+
+\begin{proposition}
+\label{prop:sdiv_singular_values}
+If $X^T X$ is positive definite, then
 \begin{align}
 D(X^T X,I_D)^2
-&= \sum_{d=1}^D (\log \frac{\sigma_d(X)^2 + 1}{2} - \log \sigma_d(X)) \\
-&= \sum_{d=1}^D \log \frac{\sigma_d(X)^2 + 1}{2 \sigma_d(X)} \\
 &= \sum_{d=1}^D \log \frac{\sigma_d(X) + \sigma_d(X)^{-1}}{2}.
 \end{align}
+\end{proposition}
 By Proposition \ref{prop:orthonormal_spectrum}, this function is uniquely minimized by isometric matrices.
-TODO: explain how works for PSD not just PD.
+%TODO: explain how works for PSD not just PD.
 
 \subsection{Best subset selection}
 
-Given a matrix $ X \in \mathbb R^{D \times P}$, we compare algorithmic paradigms for solving problems of the form
+Equipped with function $\ell(X)$ such as $D(X,I_D)$ that is minimized by an isometry, we now consider algorithms for solving problems of the form
 \begin{align}
 \label{prog:ground_truth}
 \arg \min_{ S \in \binom{[P]}{D}} \ell ( X_{. S})
@@ -100,7 +90,3 @@ to the overcomplete regression problem $Y = X \beta$ are a classic example \cite
 When $f(\beta) = \|\beta\|_0$, this problem is non-convex, and is thus suitable for greedy or brute algorithms, but when $f(\beta) =\|\beta\|_1$, the problem is convex, and may be solved efficiently via interior-point methods.
 When the equality constraint is relaxed, Lagrangian duality may be used to reformulate as a so-called Lasso problem, which leads to an even richer set of optimization algorithms \citep{Hastie2016-cn}. % cite FISTA< glmnet, coordinate descent
 
-The form of basis pursuit that we apply is inspired by the group basis pursuit \citep{Koelle2022-ju,Szeghy2022-ri}.
-Multitask basis pursuit is a special form of group basis pursuit which we call differently since grouping is dependent only on the structure of matrix-valued response variable $y$.
-The objective $f(\beta) = \|\beta\|_{1,2} := \sum_{p=1}^P \|\beta_{p.}\|_2$ creates joint sparsity across entire rows $\beta_{p.}$ \citep{Yuan2006-bt, Obozinski2006-kq, Yeung2011-fg}.
-It was used in \citet{Koelle2022-ju} to select independent subsets among interpretable features.

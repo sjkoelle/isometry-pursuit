@@ -157,12 +157,48 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
     ]
 
     loss_configs = {
-        'condition_number': {'color': 'C0', 'good': True, 'cmap': 'viridis', 'title': 'Distortion'},
-        'gl_pseudoinverse': {'color': 'C1', 'good': True, 'cmap': 'viridis', 'title': 'Isometry pursuit'},
-        'frob_pseudoinverse': {'color': 'C2', 'good': True, 'cmap': 'viridis', 'title': 'Frob. pseudoinv.'},
-        'isometry_loss': {'color': 'C3', 'good': False, 'cmap': 'plasma', 'title': 'Isometry loss'},
-        's_divergence_identity': {'color': 'C6', 'good': True, 'cmap': 'viridis', 'title': 'S-divergence'},
-        'normalized_logdet_volume': {'color': 'C7', 'good': False, 'cmap': 'plasma', 'title': 'Norm. log-det'},
+        'condition_number': {
+            'color': 'C0',
+            'good': True,
+            'cmap': 'viridis',
+            'title': 'Distortion',
+            'ylabel_1d': r'$\sigma_{\max}([r])/\sigma_{\min}([r]) - 1 = 0$',
+        },
+        'gl_pseudoinverse': {
+            'color': 'C1',
+            'good': True,
+            'cmap': 'viridis',
+            'title': 'Isometry pursuit',
+            'ylabel_1d': r'$q(r)^{-1} - 1 = \frac{e^r + e^{r^{-1}}}{2e} - 1$',
+        },
+        'frob_pseudoinverse': {
+            'color': 'C2',
+            'good': True,
+            'cmap': 'viridis',
+            'title': 'Frob. pseudoinv.',
+            'ylabel_1d': r'$q(r)^{-1} - 1 = \frac{e^r + e^{r^{-1}}}{2e} - 1$',
+        },
+        'isometry_loss': {
+            'color': 'C3',
+            'good': False,
+            'cmap': 'plasma',
+            'title': 'Isometry loss',
+            'ylabel_1d': r'$g(r) - 1 = \frac{e^r + e^{r^{-1}}}{2e} - 1$',
+        },
+        's_divergence_identity': {
+            'color': 'C6',
+            'good': True,
+            'cmap': 'viridis',
+            'title': 'S-divergence',
+            'ylabel_1d': r'$D(r^2,1)^2 = \log \frac{r + r^{-1}}{2}$',
+        },
+        'normalized_logdet_volume': {
+            'color': 'C7',
+            'good': False,
+            'cmap': 'plasma',
+            'title': 'Norm. log-det',
+            'ylabel_1d': r'$-\log q(r) = \log \frac{e^r + e^{r^{-1}}}{2e}$',
+        },
     }
 
     # Compute all 2D grids first
@@ -206,7 +242,7 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         ax.axvline(x=1.0, color='red', linestyle='--', linewidth=2, alpha=0.7, label='r = 1 (optimal)')
         ax.set_title(config['title'], fontsize=13, weight='bold')
         ax.set_xlabel('Length r', fontsize=11)
-        ax.set_ylabel('Loss value', fontsize=11)
+        ax.set_ylabel(config['ylabel_1d'], fontsize=10)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=10)
         fig.savefig(os.path.join(output_dir, f'loss_1d_{loss_name}.png'), dpi=300, bbox_inches='tight')

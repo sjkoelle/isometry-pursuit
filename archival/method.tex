@@ -1,84 +1,46 @@
-
-\begin{figure}[t]
-\centering
-% First row of images
-\subcaptionbox{Raw data\label{fig:data}}
-{\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/data.png}}
-\subcaptionbox{Isometric subset\label{fig:selection}}
-{\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/selection.png}}
-\subcaptionbox{Normalization step\label{fig:normalization}}
-{\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/normalization.png}}
-\subcaptionbox{Ground truth loss\label{fig:gt_loss}}
-{\includegraphics[width = .32\textwidth]{../figures/Figure_1a_bw.png}}
-\subcaptionbox{Normalized length vs. unnormalized length\label{fig:normalized_length}}
-{\includegraphics[width = .32\textwidth]{../figures/Figure_1b_bw.png}}
-\subcaptionbox{Basis pursuit loss\label{fig:bp_loss}}
-{\includegraphics[width = .32\textwidth]{../figures/Figure_1c_bw.png}}
-
-\caption{\ref{fig:data} Raw data $X$ represented as column-vectors.
- \ref{fig:selection} An isometric subset - the identification of which is our objective.
- \ref{fig:normalization} The vectors after normalization so that vectors of length $1$ maintain longest length.
- \ref{fig:gt_loss} Our ground truth loss function in the one-dimensional case $D = 1$
- \ref{fig:normalized_length} Normalized length used to rescale Figure \ref{fig:data} to get vectors in Figure \ref{fig:normalization}.
- \ref{fig:bp_loss} Basis pursuit loss. 
-This loss is equivalent to that shown in Figure \ref{fig:gt_loss} in the one-dimensional case.
-\label{fig:losses}
-}
-\end{figure}
-
-Distortion is minimized by conformal functions.
-
 \section{Method}
 
+The contributions of this paper is that we introduce an $\ell$ uniquely minimized by isometries that is
+\begin{itemize}
+\item convex in its parameters
+\item induces sparsity
+\item is more appropriate than S-divergence when an isometric submatrix is not present in that it always favors vectors of unit length
+\end{itemize}
+
+This $\ell$ is a multitask inspired by the group basis pursuit \citep{Koelle2022-ju,Szeghy2022-ri} which we call differently since grouping is dependent only on the structure of matrix-valued response variable $I_D$.
 We apply the multitask basis pursuit paradigm used to select independent dictionary elements in \citet{Koelle2022-ju, Koelle2024-no} to the more specific problem of selecting pointwise isometries from a dictionary.
 We first define a ground truth objective computable via brute and greedy algorithms that is uniquely minimized by orthonormal matrices.
 We then define the combination of normalization and multitask basis pursuit that approximates this ground truth loss function.
 We finally give a brute post-processing method for ensuring that the solution is $D$ sparse, and provide a theoretical result that the two stage approach will always result in recovery of an isometric solution from the dictionary, should one exist.
 
-\subsection{Ground truth}
+\subsection{Ground truth and ground truther}
 \label{sec:ground_truth}
 
-We'd like a ground truth objective to be minimized uniquely by orthonormal matrices, invariant under rotation, and depend on all changes in the matrix.
-Deformation \citep{Kohli2021-lr} and nuclear norm \citep{Boyd2004-ql} use only a subset of the differential's information and are not uniquely minimized at unitarity, respectively.
-We therefore introduce an alternative ground truth objective that satisfies the above desiderata and has convenient connections to isometry pursuit.
-
-This ground truth objective is
+$\ell_S(X) = D(X^TX, I_D)$ is minimized uniquely by orthonormal matrices and invariant under rotation.
+However, it is plainly not the only function of $X$ satisfying these properties.
+Consider that function
 \begin{align}
 \label{eq:gt_loss}
 \ell: \mathbb R^{D \times P} &\to \mathbb R^{+} \\
-X &\mapsto \sum_{d = 1}^D g(\sigma_d( X))
+X &\mapsto \sum_{d = 1}^D \log g(\sigma_d( X))
 \end{align}
-where $\sigma_d ( X)$ is the $d$-th singular value of $ X$ and
+where
+\begin{align}
+g: \mathbb R^+ &\to \mathbb R^+ \\
+t &\mapsto \frac{t + t^{-1}}{2}.
+\end{align}
+
 \begin{align}
 g: \mathbb R^+ &\to \mathbb R^+ \\
 t &\mapsto \frac{e^{t} + e^{t^{-1}}}{2e}.
 \end{align}
+
+
 By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell$ is uniquely maximized by orthonormal matrices.
 Moreover, $g$ is convex, and $\ell( X^{-1}) = \ell( X)$ when $X$ is invertible.
-Figure \ref{fig:gt_loss} gives a graph of $\ell$ when $D=1$.
+Figure \ref{fig:loss_landscapes} gives graphs of candidate losses when $D=1$ and $D=2$.
 
-\begin{table}[t]
-\centering
-\caption{Matrix loss functions evaluated for isometry pursuit. We evaluate four key properties: whether the loss has a unique minimum, whether it is minimized specifically at orthonormal matrices (isometries), whether it prefers unit-length vectors over scaled versions, and whether it prefers orthogonal (orthonormal) structure.}
-\label{tab:loss_functions}
-\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{llcccc}
-\toprule
-\textbf{Loss Function} & \textbf{Definition} & \makecell{\textbf{Unique}\\\textbf{min.}} & \makecell{\textbf{Min. at}\\\textbf{isometry}} & \makecell{\textbf{Prefers}\\\textbf{unit-length}} & \makecell{\textbf{Prefers}\\\textbf{orthogonal}} \\
-\midrule
-Distortion\textsuperscript{\citet{Kohli2021-lr}} & $\sigma_{\max}(X) / \sigma_{\min}(X) - 1$ & No & Yes & No & Yes \\
-Isometry loss & $\sum_{d=1}^D g(\sigma_d(X)) - D$ & Yes & Yes & No & Yes \\
-S-divergence to identity & $\log\det\left((X^\top X + I_D)/2\right) - \frac{1}{2}\log\det(X^\top X)$ & Yes & Yes & Yes & Yes \\
-Normalized log-det volume & $-\sum_{d=1}^D \log\sigma_d\left(n_q^{\times P}(X)\right)$ & No & No & Yes & No \\
-Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & Yes & Yes \\
-\isometrypursuit & $\|n_q^{\times P}(X)^\dagger\|_{1,2} - D$ & Yes & Yes & Yes & Yes \\
-\bottomrule
-\end{tabular}
-}
-\end{table}
-
-\begin{figure}[p]
+\begin{figure}[t]
 \centering
 % 2 rows × 6 columns: Row 1 = 1D plots, Row 2 = 2D plots.
 \begingroup
@@ -120,9 +82,30 @@ The panels visualize whether each candidate loss prefers unit-length and orthogo
 See Table \ref{tab:loss_functions} for mathematical definitions.
 \label{fig:loss_landscapes}
 }
+
 \end{figure}
 
 
+\begin{table}[b]
+\centering
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Loss Function} & \textbf{Definition} & \makecell{\textbf{Unique}\\\textbf{min.}} & \makecell{\textbf{Min. at}\\\textbf{isometry}} & \makecell{\textbf{Prefers}\\\textbf{unit-length}} & \makecell{\textbf{Prefers}\\\textbf{orthogonal}} \\
+\midrule
+Distortion\textsuperscript{\citet{Kohli2021-lr}} & $\sigma_{\max}(X) / \sigma_{\min}(X) - 1$ & No & Yes & No & Yes \\
+Isometry loss & $\sum_{d=1}^D g(\sigma_d(X)) - D$ & Yes & Yes & No & Yes \\
+S-divergence to identity & $\log\det\left((X^\top X + I_D)/2\right) - \frac{1}{2}\log\det(X^\top X)$ & Yes & Yes & Yes & Yes \\
+Normalized log-det volume & $-\sum_{d=1}^D \log\sigma_d\left(n_q^{\times P}(X)\right)$ & No & No & Yes & No \\
+Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & Yes & Yes \\
+\isometrypursuit & $\|n_q^{\times P}(X)^\dagger\|_{1,2} - D$ & Yes & Yes & Yes & Yes \\
+\bottomrule
+\end{tabular}
+}
+\caption{Matrix loss functions evaluated for isometry pursuit. We evaluate four key properties: whether the loss has a unique minimum, whether it is minimized specifically at orthonormal matrices (isometries), whether it prefers unit-length vectors over scaled versions, and whether it prefers orthogonal (orthonormal) structure.}
+\label{tab:loss_functions}
+\end{table}
 % compares it with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.
 % NOTE (Sam): Do we need proofs of maximized by orthonormal matrices and convex?
 % Can we prove this is a norm?
@@ -174,7 +157,7 @@ First, $q$ is convex.
 Second, it grows asymptotically log-linearly.
 Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp \citep{Boyd2004-ql} replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon exponentiation.
 This normalization provides good numerical properties for avoiding issues arising close to $0$ and $\infty$.
-We plot this normalization function in Figure \ref{fig:normalized_length} and its effect on our example data in Figure \ref{fig:normalization}.
+We plot the effect of this normalization on our example data in Figure \ref{fig:normalization}.
 
 
 \subsection{Isometry pursuit}

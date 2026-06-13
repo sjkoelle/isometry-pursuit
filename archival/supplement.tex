@@ -43,6 +43,30 @@ Greedy algorithms are computationally expedient but can get stuck in local optim
 \subsection{Proofs}
 \label{sec:proofs}
 
+\subsubsection{Proof of Proposition \ref{prop:sdiv_singular_values}}
+\label{proof:sdiv_singular_values}
+
+\begin{proof}
+First,
+\begin{align}
+\frac{1}{2}\log \det(X^T X) &= \frac{1}{2} \log \prod_{d=1}^D \sigma_d(X)^2 \\
+&= \log \prod_{d=1}^D \sigma_d(X) \\
+&= \sum_{d=1}^D \log \sigma_d(X).
+\end{align}
+Secondly, $I_D$ and $X^T X$ are diagonalizable in the same basis, so
+\begin{align}
+\log \det (\frac{X^T X + I_D}{2}) &= \log \prod_{d=1}^D \frac{\sigma_d(X)^2 + 1}{2} \\
+&= \sum_{d=1}^D \log \frac{\sigma_d(X)^2 + 1}{2}.
+\end{align}
+Then,
+\begin{align}
+D(X^T X,I_D)^2
+&= \sum_{d=1}^D (\log \frac{\sigma_d(X)^2 + 1}{2} - \log \sigma_d(X)) \\
+&= \sum_{d=1}^D \log \frac{\sigma_d(X)^2 + 1}{2 \sigma_d(X)} \\
+&= \sum_{d=1}^D \log \frac{\sigma_d(X) + \sigma_d(X)^{-1}}{2}.
+\end{align}
+\end{proof}
+
 \subsubsection{Proof of Proposition \ref{prop:basis_pursuit_selection_invariance}}
 \label{proof:basis_pursuit_program_invariance}
 
