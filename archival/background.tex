@@ -1,6 +1,6 @@
 \section{Background}
 
-Our algorithm is motivated by spectral and convex analysis.
+Our algorithm is motivated by a classic question in numerical linear algebra.
 
 \subsection{Problem}
 
@@ -8,18 +8,8 @@ Our goal is, given a matrix $ X \in \mathbb R^{D \times P}$, to select a subset 
 To this end, we define a ground truth loss function that measures orthonormalness, and then introduce a surrogate loss function that convexifies the problem so that it may be efficiently solved.
 Figure \ref{fig:data} and \ref{fig:selection} provide a visual depiction of this problem when $D=2$ and $P=30$.
 
-\subsection{Interpretability and isometry}
+\subsection{Isometry}
 
-Our motivating example is the selection of data representations from within sets of putative coordinates: the columns of a provided wide matrix.
-Compared with Sparse PCA \citep{DAspremont2007-aq, Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, we seek a low-dimensional representation from the set of these column vectors rather than their span.
-
-This method applies to interpretability, for which parsimony is at a premium.
-Interpretability arises through comparison of data with what is known to be important in the domain of the problem.
-This knowledge often takes the form of a functional dictionary.
-Evaluation of independence of dictionary features arises in numerous scenarios \citep{Chen2019-km, Koelle2022-ju, He2023-ch}.
-The requirement that dictionary features be full rank has been called functional independence \citep{Koelle2022-ju} or feature decomposability \citep{templeton2024scaling}, with connection between dictionary rank and independence via the implicit function theorem.
-Besides independence, the metric properties of such dictionary elements are of natural interest.
-This is formalized through the notion of differential.
 
 \begin{definition}
 The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ between $D$ dimensional manifolds $\M \subseteq \mathbb R^B$ and $\N \subseteq \mathbb R^P$ is a map in tangent bases $x_1 \dots x_{D}$ of $T_\xi \M$ and $y_1 \dots y_{D}$ of $T_{\phi(\xi)} \N$ consisting of entries
@@ -68,6 +58,56 @@ The component vectors $u_1 \dots u_D \in \mathbb R^B$ form a orthonormal matrix 
 0 \; d_1 \neq d_2 
 \end{cases}$.
 \end{proposition}
+
+
+\subsection{Matrix functions suitable for measuring isometry}
+
+A function of a rectangular matrix is suitable for measuring isometry provided it is 
+The \textit{condition number} (Golub and Wilkerson https://gdz.sub.uni-goettingen.de/id/PPN362160546_0009?tify=%7B%22pages%22%3A%5B147%5D%2C%22pan%22%3A%7B%22x%22%3A0.467%2C%22y%22%3A0.818%7D%2C%22view%22%3A%22info%22%2C%22zoom%22%3A0.348%7D, Boyd)
+, 
+measures the ratio of the largest and smallest singular vectors of a matrix $A$.
+This has been example been used to assess putative embedding coordinates in (Mishne).
+Clearly, what this actually measures is a conformal map, not an isometry.
+
+A class of functions suitable for measuring isometry are S-divergences \citep{Sra2011-sdivergence}.
+S-divergences define a metric $D(P,P')$ on positive definite matrices $P,P'$.
+If those matrices are $X^T X$ and $I_D$, the S-divergence distance is 
+\begin{align}
+D(X^T X,I_D) = (\log \det (\frac{X^T X + I_D}{2}) - \frac{1}{2}\log \det(X^T X))^{\frac{1}{2}}.
+\end{align}
+This is a log singular value penalty.
+This is because, first of all,
+\begin{align}
+\frac{1}{2}\log \det(X^T X) &= \frac{1}{2} \log \prod_{d=1}^D \sigma_d(X)^2 \\
+&= \log \prod_{d=1}^D \sigma_d(X) \\
+&= \sum_{d=1}^D \log \sigma_d(X).
+\end{align}
+Secondly, $I_D$ and $X^T X$ are diagonalizable in the same basis, so
+\begin{align}
+\log \det (\frac{X^T X + I_D}{2}) &= \log \prod_{d=1}^D \frac{\sigma_d(X)^2 + 1}{2} \\
+&= \sum_{d=1}^D \log \frac{\sigma_d(X)^2 + 1}{2}.
+\end{align}
+Then,
+\begin{align}
+D(X^T X,I_D)^2
+&= \sum_{d=1}^D (\log \frac{\sigma_d(X)^2 + 1}{2} - \log \sigma_d(X)) \\
+&= \sum_{d=1}^D \log \frac{\sigma_d(X)^2 + 1}{2 \sigma_d(X)} \\
+&= \sum_{d=1}^D \log \frac{\sigma_d(X) + \sigma_d(X)^{-1}}{2}.
+\end{align}
+TODO: explain how works for PSD not just PD.
+
+\subsection{Interpretability and isometry}
+
+Our motivating example is the selection of data representations from within sets of putative coordinates: the columns of a provided wide matrix.
+Compared with Sparse PCA \citep{DAspremont2007-aq, Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, we seek a low-dimensional representation from the set of these column vectors rather than their span.
+
+This method applies to interpretability, for which parsimony is at a premium.
+Interpretability arises through comparison of data with what is known to be important in the domain of the problem.
+This knowledge often takes the form of a functional dictionary.
+Evaluation of independence of dictionary features arises in numerous scenarios \citep{Chen2019-km, Koelle2022-ju, He2023-ch}.
+The requirement that dictionary features be full rank has been called functional independence \citep{Koelle2022-ju} or feature decomposability \citep{templeton2024scaling}, with connection between dictionary rank and independence via the implicit function theorem.
+Besides independence, the metric properties of such dictionary elements are of natural interest.
+This is formalized through the notion of differential.
 
 
 \subsection{Best subset selection}

@@ -157,12 +157,12 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
     ]
 
     loss_configs = {
-        'condition_number': {'color': 'C0', 'good': True, 'cmap': 'viridis'},
-        'gl_pseudoinverse': {'color': 'C1', 'good': True, 'cmap': 'viridis'},
-        'frob_pseudoinverse': {'color': 'C2', 'good': True, 'cmap': 'viridis'},
-        'isometry_loss': {'color': 'C3', 'good': False, 'cmap': 'plasma'},
-        's_divergence_identity': {'color': 'C6', 'good': True, 'cmap': 'viridis'},
-        'normalized_logdet_volume': {'color': 'C7', 'good': False, 'cmap': 'plasma'},
+        'condition_number': {'color': 'C0', 'good': True, 'cmap': 'viridis', 'title': 'Distortion'},
+        'gl_pseudoinverse': {'color': 'C1', 'good': True, 'cmap': 'viridis', 'title': 'Isometry pursuit'},
+        'frob_pseudoinverse': {'color': 'C2', 'good': True, 'cmap': 'viridis', 'title': 'Frob. pseudoinv.'},
+        'isometry_loss': {'color': 'C3', 'good': False, 'cmap': 'plasma', 'title': 'Isometry loss'},
+        's_divergence_identity': {'color': 'C6', 'good': True, 'cmap': 'viridis', 'title': 'S-divergence'},
+        'normalized_logdet_volume': {'color': 'C7', 'good': False, 'cmap': 'plasma', 'title': 'Norm. log-det'},
     }
 
     # Compute all 2D grids first
@@ -204,6 +204,7 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         valid = np.isfinite(losses_1d)
         ax.plot(rs[valid], losses_1d[valid], linewidth=3, color=config['color'])
         ax.axvline(x=1.0, color='red', linestyle='--', linewidth=2, alpha=0.7, label='r = 1 (optimal)')
+        ax.set_title(config['title'], fontsize=13, weight='bold')
         ax.set_xlabel('Length r', fontsize=11)
         ax.set_ylabel('Loss value', fontsize=11)
         ax.grid(True, alpha=0.3)
@@ -231,6 +232,7 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         cbar.set_ticks(shared_2d_ticks)
         cbar.set_ticklabels([str(tick) for tick in shared_2d_ticks])
         ax.plot(1.0, np.pi/2, 'r*', markersize=20, label='Ideal (r=1, θ=90°)')
+        ax.set_title(config['title'], fontsize=13, weight='bold')
         ax.set_xlabel('Length ratio r', fontsize=11)
         ax.set_ylabel('Angle θ (radians)', fontsize=11)
         ax.legend(fontsize=10)

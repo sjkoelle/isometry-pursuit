@@ -26,6 +26,8 @@ This loss is equivalent to that shown in Figure \ref{fig:gt_loss} in the one-dim
 }
 \end{figure}
 
+Distortion is minimized by conformal functions.
+
 \section{Method}
 
 We apply the multitask basis pursuit paradigm used to select independent dictionary elements in \citet{Koelle2022-ju, Koelle2024-no} to the more specific problem of selecting pointwise isometries from a dictionary.
@@ -70,7 +72,7 @@ Isometry loss & $\sum_{d=1}^D g(\sigma_d(X)) - D$ & Yes & Yes & No & Yes \\
 S-divergence to identity & $\log\det\left((X^\top X + I_D)/2\right) - \frac{1}{2}\log\det(X^\top X)$ & Yes & Yes & Yes & Yes \\
 Normalized log-det volume & $-\sum_{d=1}^D \log\sigma_d\left(n_q^{\times P}(X)\right)$ & No & No & Yes & No \\
 Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & Yes & Yes \\
-\isometrypursuit\textsuperscript{\citet{Yuan2006-bt}} & $\|n_q^{\times P}(X)^\dagger\|_{1,2} - D$ & Yes & Yes & Yes & Yes \\
+\isometrypursuit & $\|n_q^{\times P}(X)^\dagger\|_{1,2} - D$ & Yes & Yes & Yes & Yes \\
 \bottomrule
 \end{tabular}
 }
@@ -79,45 +81,35 @@ Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & 
 \begin{figure}[p]
 \centering
 % 2 rows × 6 columns: Row 1 = 1D plots, Row 2 = 2D plots.
-%
-% Row 1: 1D loss curves
-\subcaptionbox{Dist. 1D\label{fig:loss_1d_condition}}
-{\includegraphics[width = 0.155\textwidth]{../figures/loss_1d_condition_number.png}}
-\hfill
-\subcaptionbox{Iso. 1D\label{fig:loss_1d_iso}}
-{\includegraphics[width = 0.155\textwidth]{../figures/loss_1d_isometry_loss.png}}
-\hfill
-\subcaptionbox{S-div. 1D\label{fig:loss_1d_sdiv}}
-{\includegraphics[width = 0.155\textwidth]{../figures/loss_1d_s_divergence_identity.png}}
-\hfill
-\subcaptionbox{Log-det 1D\label{fig:loss_1d_norm_logdet}}
-{\includegraphics[width = 0.155\textwidth]{../figures/loss_1d_normalized_logdet_volume.png}}
-\hfill
-\subcaptionbox{Frob. 1D\label{fig:loss_1d_frob}}
-{\includegraphics[width = 0.155\textwidth]{../figures/loss_1d_frob_pseudoinverse.png}}
-\hfill
-\subcaptionbox{IP 1D\label{fig:loss_1d_gl}}
-{\includegraphics[width = 0.155\textwidth]{../figures/loss_1d_gl_pseudoinverse.png}}
-\\[0.12cm]
-
-% Row 2: 2D loss landscapes
-\subcaptionbox{Dist. 2D\label{fig:loss_2d_condition}}
-{\includegraphics[width = 0.155\textwidth]{../figures/loss_2d_condition_number.png}}
-\hfill
-\subcaptionbox{Iso. 2D\label{fig:loss_2d_iso}}
-{\includegraphics[width = 0.155\textwidth]{../figures/loss_2d_isometry_loss.png}}
-\hfill
-\subcaptionbox{S-div. 2D\label{fig:loss_2d_sdiv}}
-{\includegraphics[width = 0.155\textwidth]{../figures/loss_2d_s_divergence_identity.png}}
-\hfill
-\subcaptionbox{Log-det 2D\label{fig:loss_2d_norm_logdet}}
-{\includegraphics[width = 0.155\textwidth]{../figures/loss_2d_normalized_logdet_volume.png}}
-\hfill
-\subcaptionbox{Frob. 2D\label{fig:loss_2d_frob}}
-{\includegraphics[width = 0.155\textwidth]{../figures/loss_2d_frob_pseudoinverse.png}}
-\hfill
-\subcaptionbox{IP 2D\label{fig:loss_2d_gl}}
-{\includegraphics[width = 0.155\textwidth]{../figures/loss_2d_gl_pseudoinverse.png}}
+\begingroup
+\setlength{\tabcolsep}{1pt}
+\begin{tabular}{@{}*{6}{c}@{}}
+\subcaptionbox{\label{fig:loss_1d_condition}}[0.155\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_1d_condition_number.png}} &
+\subcaptionbox{\label{fig:loss_1d_iso}}[0.155\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_1d_isometry_loss.png}} &
+\subcaptionbox{\label{fig:loss_1d_sdiv}}[0.155\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_1d_s_divergence_identity.png}} &
+\subcaptionbox{\label{fig:loss_1d_norm_logdet}}[0.155\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_1d_normalized_logdet_volume.png}} &
+\subcaptionbox{\label{fig:loss_1d_frob}}[0.155\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_1d_frob_pseudoinverse.png}} &
+\subcaptionbox{\label{fig:loss_1d_gl}}[0.155\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_1d_gl_pseudoinverse.png}} \\
+\subcaptionbox{\label{fig:loss_2d_condition}}[0.155\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_condition_number.png}} &
+\subcaptionbox{\label{fig:loss_2d_iso}}[0.155\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_isometry_loss.png}} &
+\subcaptionbox{\label{fig:loss_2d_sdiv}}[0.155\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_s_divergence_identity.png}} &
+\subcaptionbox{\label{fig:loss_2d_norm_logdet}}[0.155\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_normalized_logdet_volume.png}} &
+\subcaptionbox{\label{fig:loss_2d_frob}}[0.155\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_frob_pseudoinverse.png}} &
+\subcaptionbox{\label{fig:loss_2d_gl}}[0.155\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_gl_pseudoinverse.png}}
+\end{tabular}
+\endgroup
 
 \caption{
 Comprehensive loss function comparison for isometry pursuit (2 rows × 6 columns).

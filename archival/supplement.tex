@@ -222,6 +222,142 @@ The computational complexity of this operation is dominated by that of the matri
 That is, it is $O(D^2P)$.
 \end{proof}
 
+\subsection{Partial derivatives of candidate losses}
+\label{sec:loss_derivatives}
+
+We summarize the column-wise derivatives of the losses in Table \ref{tab:loss_functions}.
+Throughout this section let $X = [x_1,\dotsc,x_D] \in \mathbb R^{D \times D}$ be full rank.
+For a scalar loss $L(X)$, write
+\begin{align}
+\nabla_X L = \left[
+\frac{\partial L}{\partial x_1},
+\dotsc,
+\frac{\partial L}{\partial x_D}
+\right].
+\end{align}
+All formulas are stated on smooth strata: rank deficient matrices, repeated singular values, and zero rows of pseudoinverse factors should be handled using subgradients.
+
+We will use two common identities.
+First, if $X = U \operatorname{diag}(\sigma) V^\top$ is a singular value decomposition and
+$L(X) = \sum_{d=1}^D \phi(\sigma_d(X))$, then
+\begin{align}
+\nabla_X L = U \operatorname{diag}(\phi'(\sigma_1),\dotsc,\phi'(\sigma_D)) V^\top .
+\label{eq:spectral_gradient_identity}
+\end{align}
+Second, for normalized losses let $N = n_q^{\times D}(X)$.
+If $M = \nabla_N L$, then the column-wise chain rule is
+\begin{align}
+\frac{\partial L}{\partial x_p} = \mathrm{D}n_q(x_p)^\top M_{.p}.
+\label{eq:column_chain_rule}
+\end{align}
+For $r=\|x\|_2$, write $n_q(x)=s(r)x$ with $s(r)=q(r)/r$.
+Then
+\begin{align}
+\mathrm{D}n_q(x) &= s(r) I_D + \frac{s'(r)}{r}xx^\top, \\
+s'(r) &= \frac{q'(r)}{r} - \frac{q(r)}{r^2}, \\
+q'(r) &= -\frac{2e(e^r-r^{-2}e^{1/r})}{(e^r+e^{1/r})^2}.
+\label{eq:normalization_jacobian}
+\end{align}
+Since $\mathrm{D}n_q(x)$ is symmetric, the transpose in this chain rule may be omitted.
+
+\paragraph{Distortion.}
+Let $\sigma_1=\sigma_{\max}(X)$ and $\sigma_D=\sigma_{\min}(X)$ with corresponding singular vectors $u_1,v_1$ and $u_D,v_D$.
+For
+\begin{align}
+L_{\mathrm{dist}}(X)=\frac{\sigma_1}{\sigma_D}-1,
+\end{align}
+The spectral gradient identity gives
+\begin{align}
+\nabla_X L_{\mathrm{dist}}
+= \frac{u_1v_1^\top}{\sigma_D}
+- \frac{\sigma_1}{\sigma_D^2}u_Dv_D^\top .
+\end{align}
+The derivative is insensitive to uniform rescaling, which is the sense in which this loss does not prefer unit length.
+
+\paragraph{Isometry loss.}
+For
+\begin{align}
+L_{\mathrm{iso}}(X)=\sum_{d=1}^D g(\sigma_d(X))-D,
+\end{align}
+we have
+\begin{align}
+g'(t) = \frac{e^t - t^{-2}e^{1/t}}{2e}.
+\end{align}
+Thus
+\begin{align}
+\nabla_X L_{\mathrm{iso}}
+= U \operatorname{diag}(g'(\sigma_1),\dotsc,g'(\sigma_D))V^\top .
+\end{align}
+
+\paragraph{S-divergence to identity.}
+Let $G=X^\top X$ and
+\begin{align}
+L_{\mathrm{sdiv}}(X)
+= \log\det\left(\frac{G+I_D}{2}\right)
+-\frac{1}{2}\log\det(G).
+\end{align}
+The constant $\log\det(1/2)$ does not contribute to the derivative.
+Using $d\log\det A = \operatorname{tr}(A^{-1}dA)$ and $dG=dX^\top X+X^\top dX$,
+\begin{align}
+\nabla_X L_{\mathrm{sdiv}}
+= 2X(G+I_D)^{-1} - XG^{-1}.
+\end{align}
+
+\paragraph{Normalized log-det volume.}
+Let $N=n_q^{\times D}(X)$ and
+\begin{align}
+L_{\mathrm{nld}}(X)= -\sum_{d=1}^D \log\sigma_d(N).
+\end{align}
+For square full-rank $N$, this is $-\log|\det N|$, so
+\begin{align}
+\nabla_N L_{\mathrm{nld}} = -N^{-\top}.
+\end{align}
+Therefore, by the column-wise chain rule,
+\begin{align}
+\frac{\partial L_{\mathrm{nld}}}{\partial x_p}
+= -\mathrm{D}n_q(x_p)^\top (N^{-\top})_{.p}.
+\end{align}
+
+\paragraph{Frobenius pseudoinverse.}
+Let $N=n_q^{\times D}(X)$ and $B=N^{-1}$.
+For
+\begin{align}
+L_{\mathrm{frob}}(X)=\|N^{-1}\|_F-\sqrt{D},
+\end{align}
+the differential identity $dB=-B(dN)B$ gives
+\begin{align}
+\nabla_N L_{\mathrm{frob}}
+= -\frac{N^{-\top}N^{-1}N^{-\top}}{\|N^{-1}\|_F}.
+\end{align}
+Thus
+\begin{align}
+\frac{\partial L_{\mathrm{frob}}}{\partial x_p}
+= \mathrm{D}n_q(x_p)^\top
+\left(
+-\frac{N^{-\top}N^{-1}N^{-\top}}{\|N^{-1}\|_F}
+\right)_{.p}.
+\end{align}
+
+\paragraph{Isometry pursuit proxy.}
+Let $N=n_q^{\times D}(X)$ and $B=N^{-1}$.
+The differentiable proxy for the \isometrypursuit~ table row is
+\begin{align}
+L_{\mathrm{ip}}(X)=\|N^{-1}\|_{1,2}-D.
+\end{align}
+Define $R \in \mathbb R^{D\times D}$ by
+\begin{align}
+R_{p.}=\frac{B_{p.}}{\|B_{p.}\|_2}.
+\end{align}
+Then $R \in \partial \|B\|_{1,2}$ on the smooth stratum where every row of $B$ is nonzero, and
+\begin{align}
+\nabla_N L_{\mathrm{ip}} = -B^\top R B^\top.
+\end{align}
+The column-wise gradient is therefore
+\begin{align}
+\frac{\partial L_{\mathrm{ip}}}{\partial x_p}
+= \mathrm{D}n_q(x_p)^\top (-B^\top R B^\top)_{.p}.
+\end{align}
+
 \newpage
 
 \subsection{Support cardinalities}
