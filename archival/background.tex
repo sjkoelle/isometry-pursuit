@@ -10,66 +10,46 @@ Figure \ref{fig:data} and \ref{fig:selection} provide a visual depiction of this
 
 \subsection{Isometry}
 
-
+The mathematical construct central to our estimation problem is the isometric linear map.
 \begin{definition}
-The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ between $D$ dimensional manifolds $\M \subseteq \mathbb R^B$ and $\N \subseteq \mathbb R^P$ is a map in tangent bases $x_1 \dots x_{D}$ of $T_\xi \M$ and $y_1 \dots y_{D}$ of $T_{\phi(\xi)} \N$ consisting of entries
+\label{def:isometry}
+A matrix $X \in \mathbb R^{D \times P}$ is an \textbf{isometry} or, equivalently, \textbf{unitary} if
 \begin{align}
-\label{eq:diff}
-    D\phi (\xi) = \begin{bmatrix}
-    \frac{\partial \phi_1  }{\partial x_1}(\xi)  & \dots & \frac{\partial \phi_1 }{\partial x_D}(\xi)  \\
-    \vdots & & \vdots \\
-    \frac{\partial \phi_D }{\partial x_1}(\xi)  & \dots & \frac{\partial \phi_{D}  }{\partial x_{D}}(\xi) 
-    \end{bmatrix}.
+X^T X = I_D.
 \end{align}
 \end{definition}
+Note that necessarily, $P \geq D$.
 
-It is not always necessary to explicitly estimate tangent spaces when applying this definition.
-The most commonly encountered manifolds are vector spaces for which the tangent spaces are trivial.
-This is the case for full-rank tabular data, for which isometry has a natural interpretation as a type of diversification, and often for the latent spaces of deep learning models.
-In this case, $B = D$.
-
-\begin{definition}
-\label{def:isometric_at_a_point}
-A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq R^{B}$ and $\mathcal N  \subseteq R^{P}$
-$\phi$ is an \textbf{isometry at a point} $\xi \in \mathcal M$ if
-\begin{align}
-{D \phi (\xi)}^T D \phi (\xi) = I_D.
-\end{align}
-That is, $\phi$ is an isometry at $\xi$ if $D \phi (\xi)$ is orthonormal.
-\end{definition}
-
-The applications of pointwise isometry are themselves manifold.
-Pointwise isometric embeddings faithfully preserve high-dimensional geometry.
-For example, Local Tangent Space Alignment \citep{ZhangZ:04}, Multidimensional Scaling \citep{ChenBuja:localMDS09} and Isomap \citep{tenenbaum2000ggf} non-parametrically estimate embeddings that are as isometric as possible.
-Another approach stitches together pointwise isometries selected from a dictionary to form global embeddings \citep{Kohli2021-lr}.
-The method is particularly relevant since it constructs such isometries through greedy search, with putative dictionary features added one at a time.
-
-That $D\phi$ is orthonormal has several equivalent formulations.
-The one motivating our ground truth loss function comes from spectral analysis.
+Definition \ref{def:isometry} has several equivalent formulations.
 \begin{proposition}
 \label{prop:orthonormal_spectrum}
-The singular values $\sigma_1 \dots \sigma_D$ are equal to $1$ if and only if $U \in \mathbb{R}^{D \times D}$ is orthonormal.
+The singular values $\sigma_1(X) \dots \sigma_D(X)$ are equal to $1$ if and only if $X$ is an isometry.
 \end{proposition}
-On the other hand, the formulation that motivates our convex approach is that orthonormal matrices consist of $D$ coordinate features whose gradients are orthogonal and of unit length.
+On the other hand, if $P = D$, $X$
 \begin{proposition}
 \label{prop:orthonormal_basis}
-The component vectors $u_1 \dots u_D \in \mathbb R^B$ form a orthonormal matrix if and only if, for all $d_1, d_2 \in [D], \langle u_{d_1}, u_{d_2} \rangle = \begin{cases}
+The component vectors $X_{.}1 \dots X_{.D} \in \mathbb R^D$ form an orthonormal matrix if and only if, for all $d_1, d_2 \in [D], \langle X_{.d_1}, X_{.d_2} \rangle = \begin{cases}
 1 \; d_1 = d_2 \\ 
 0 \; d_1 \neq d_2 
 \end{cases}$.
 \end{proposition}
+That is, $X$ is an isometry if its columns are orthonormal.
 
+The applications of isometry are manifold.
+Overall, is a classically interesting problem.
+It is naturally a type of diversification.
+Embedding algorithms like Local Tangent Space Alignment \citep{ZhangZ:04}, Multidimensional Scaling \citep{ChenBuja:localMDS09} and Isomap \citep{tenenbaum2000ggf} non-parametrically estimate embeddings that are as isometric as possible.
+Note that an isometric embedding is a map whose differential induces isometry between tangent spaces.
+The inspiration for this paper comes from an approach that stitches together isometries selected from a dictionary to form global embeddings \citep{Kohli2021-lr}.
+This method constructs such isometries through greedy search, with putative dictionary features added one at a time.
 
-\subsection{Matrix functions suitable for measuring isometry}
+\subsection{Functions minimized by isometries}
 
-A function of a rectangular matrix is suitable for measuring isometry provided it is 
-The \textit{condition number} (Golub and Wilkerson https://gdz.sub.uni-goettingen.de/id/PPN362160546_0009?tify=%7B%22pages%22%3A%5B147%5D%2C%22pan%22%3A%7B%22x%22%3A0.467%2C%22y%22%3A0.818%7D%2C%22view%22%3A%22info%22%2C%22zoom%22%3A0.348%7D, Boyd)
-, 
-measures the ratio of the largest and smallest singular vectors of a matrix $A$.
-This has been example been used to assess putative embedding coordinates in (Mishne).
-Clearly, what this actually measures is a conformal map, not an isometry.
+The distortion loss function used the evaluate isometricness in \citep{Kohli2021-lr} reduces in the linear tangent space limit to the condition number.
+The \textit{condition number} \citep{GolubWilkinson-condition,Boyd2004-ql} $\frac{\sigma_1(X)}{\sigma_D(X)}$ measures the ratio of the largest and smallest singular values of a matrix $A$.
+While it is minimized by an isometric function, it is also minimized by any conformal (i.e. low distortion) linear map.
 
-A class of functions suitable for measuring isometry are S-divergences \citep{Sra2011-sdivergence}.
+A class of functions more suitable for measuring isometry are S-divergences \citep{Sra2011-sdivergence}.
 S-divergences define a metric $D(P,P')$ on positive definite matrices $P,P'$.
 If those matrices are $X^T X$ and $I_D$, the S-divergence distance is 
 \begin{align}
@@ -94,21 +74,8 @@ D(X^T X,I_D)^2
 &= \sum_{d=1}^D \log \frac{\sigma_d(X)^2 + 1}{2 \sigma_d(X)} \\
 &= \sum_{d=1}^D \log \frac{\sigma_d(X) + \sigma_d(X)^{-1}}{2}.
 \end{align}
+By Proposition \ref{prop:orthonormal_spectrum}, this function is uniquely minimized by isometric matrices.
 TODO: explain how works for PSD not just PD.
-
-\subsection{Interpretability and isometry}
-
-Our motivating example is the selection of data representations from within sets of putative coordinates: the columns of a provided wide matrix.
-Compared with Sparse PCA \citep{DAspremont2007-aq, Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, we seek a low-dimensional representation from the set of these column vectors rather than their span.
-
-This method applies to interpretability, for which parsimony is at a premium.
-Interpretability arises through comparison of data with what is known to be important in the domain of the problem.
-This knowledge often takes the form of a functional dictionary.
-Evaluation of independence of dictionary features arises in numerous scenarios \citep{Chen2019-km, Koelle2022-ju, He2023-ch}.
-The requirement that dictionary features be full rank has been called functional independence \citep{Koelle2022-ju} or feature decomposability \citep{templeton2024scaling}, with connection between dictionary rank and independence via the implicit function theorem.
-Besides independence, the metric properties of such dictionary elements are of natural interest.
-This is formalized through the notion of differential.
-
 
 \subsection{Best subset selection}
 
