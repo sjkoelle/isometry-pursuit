@@ -16,20 +16,65 @@ We finally give a brute post-processing method for ensuring that the solution is
 \subsection{Ground truth and ground truther}
 \label{sec:ground_truth}
 
+\begin{align}
+\label{property:ortho_min}
+\end{align}
+\begin{align}
+\label{property:rot_inv}
+\end{align}
 $\ell_S(X) = D(X^TX, I_D)$ is minimized uniquely by orthonormal matrices and invariant under rotation.
 However, it is plainly not the only function of $X$ satisfying these properties.
 Consider that function
 \begin{align}
 \label{eq:gt_loss}
 \ell: \mathbb R^{D \times P} &\to \mathbb R^{+} \\
-X &\mapsto \sum_{d = 1}^D \log g(\sigma_d( X))
+X &\mapsto \sum_{d = 1}^D g(\sigma_d( X))
 \end{align}
 where
 \begin{align}
 g: \mathbb R^+ &\to \mathbb R^+ \\
-t &\mapsto \frac{t + t^{-1}}{2}.
+t &\mapsto \log \frac{t + t^{-1}}{2}.
 \end{align}
+Clearly, any $g$ uniquely minimized at $1$ will provide a suitable rescaling of singular values.
+However, there are some nice properties we may also want.
+Monotonicity away from $1$.
+$g(t) = t(t^{-1})$.
+See for example \citet{Cichocki2014-logdet} for a variety of log-polynomial singular value divergences on positive definite matrices satisfying these property.
+We provide a heuristic answer to the first question and a more rigorous to the second.
+Intuitively, the problem with singular values seems to be that they can blow up when $X$ is rank deficient and so aren't very good for partially correct answers.
+On the other hand, the log-polynomial loss grows quite slowly with error and so is overly forgiving.
 
+The deep issue is more subtle.
+Essentially, we want a loss that grows the further from isometry we are.
+Among the conditions for satisfying this are that given a set of angles between vectors we want the loss to be less when the vectors are length 1.
+This is an issue for singular-value based losses, since two colinear vectors of length 1 will increase a singular value to $\sqrt{2}$.
+In this way, as one of the vectors is shortened, the singular value passes through $1$.
+What of the other singular values?
+It was quite small, and it now has gotten a little bit smaller, but not commesurately with the decrease in loss from the top singular value.
+
+Put mathematically, we want
+\begin{align}
+\label{property:pathwise}
+\frac{\partial \ell}{\partial \|x_{.d}\|_2}
+\begin{cases}
+>0 \; : \; \|x_{.d}\|_2 > 1 \\
+=0 \; : \; \|x_{.d}\|_2 = 1 \\ 
+<0 \; : \; \|x_{.d}\|_2 < 1 \\ 
+\end{cases}
+\end{align}
+for all $X$.
+What this property says is that, as a column-set becomes more normal, the loss is lower.
+This property is plainly of interest for isometry selection.
+
+Unfortunately, we show the following proposition.
+\begin{proposition}
+There does not exist a $g$ such that $\ell = \sum_{d=1}^D g( \sigma_d(X))$ such that $\ell$ satisfies Property \label{property:pathwise}
+\end{proposition}
+A suitable counterexample is shown in Section \ref{sec:nearly_colinear_singular_values}.
+The issue basically is that colinear vectors punish singular value based losses by pushing larger singular values away from $1$.
+TODO: check logic - The issue can also be seen visually in Figure \ref{fig:}, where the level sets of the log det losses are not tangent to length at $r = 1$, meaning that given an angle loss can actually be decreased by shrinking 
+
+These divergences raise the question of what is the most reasonable form of $g$, and whether starting with singular values is a good way to define an isometry loss.
 \begin{align}
 g: \mathbb R^+ &\to \mathbb R^+ \\
 t &\mapsto \frac{e^{t} + e^{t^{-1}}}{2e}.
@@ -40,53 +85,8 @@ By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell$ is unique
 Moreover, $g$ is convex, and $\ell( X^{-1}) = \ell( X)$ when $X$ is invertible.
 Figure \ref{fig:loss_landscapes} gives graphs of candidate losses when $D=1$ and $D=2$.
 
-\begin{figure}[t]
-\centering
-% 2 rows × 6 columns: Row 1 = 1D plots, Row 2 = 2D plots.
-\begingroup
-\setlength{\tabcolsep}{1pt}
-\begin{tabular}{@{}*{6}{c}@{}}
-\subcaptionbox{\label{fig:loss_1d_condition}}[0.155\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_1d_condition_number.png}} &
-\subcaptionbox{\label{fig:loss_1d_iso}}[0.155\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_1d_isometry_loss.png}} &
-\subcaptionbox{\label{fig:loss_1d_sdiv}}[0.155\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_1d_s_divergence_identity.png}} &
-\subcaptionbox{\label{fig:loss_1d_norm_logdet}}[0.155\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_1d_normalized_logdet_volume.png}} &
-\subcaptionbox{\label{fig:loss_1d_frob}}[0.155\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_1d_frob_pseudoinverse.png}} &
-\subcaptionbox{\label{fig:loss_1d_gl}}[0.155\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_1d_gl_pseudoinverse.png}} \\
-\subcaptionbox{\label{fig:loss_2d_condition}}[0.155\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_condition_number.png}} &
-\subcaptionbox{\label{fig:loss_2d_iso}}[0.155\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_isometry_loss.png}} &
-\subcaptionbox{\label{fig:loss_2d_sdiv}}[0.155\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_s_divergence_identity.png}} &
-\subcaptionbox{\label{fig:loss_2d_norm_logdet}}[0.155\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_normalized_logdet_volume.png}} &
-\subcaptionbox{\label{fig:loss_2d_frob}}[0.155\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_frob_pseudoinverse.png}} &
-\subcaptionbox{\label{fig:loss_2d_gl}}[0.155\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_gl_pseudoinverse.png}}
-\end{tabular}
-\endgroup
 
-\caption{
-Comprehensive loss function comparison for isometry pursuit (2 rows × 6 columns).
-Top row: 1D loss curves for $X = [[r]]$ showing loss behavior versus vector length.
-Bottom row: 2D loss landscapes for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with shared colorbars.
-Red vertical dashed line in 1D plots marks $r=1$ (optimal). Red star in 2D plots marks $(r=1, \theta=\pi/2)$ (ideal).
-The panels visualize whether each candidate loss prefers unit-length and orthogonal structure at the ideal point.
-See Table \ref{tab:loss_functions} for mathematical definitions.
-\label{fig:loss_landscapes}
-}
-
-\end{figure}
-
-
-\begin{table}[b]
+\begin{table}[t]
 \centering
 \small
 \resizebox{\textwidth}{!}{%
@@ -97,6 +97,7 @@ See Table \ref{tab:loss_functions} for mathematical definitions.
 Distortion\textsuperscript{\citet{Kohli2021-lr}} & $\sigma_{\max}(X) / \sigma_{\min}(X) - 1$ & No & Yes & No & Yes \\
 Isometry loss & $\sum_{d=1}^D g(\sigma_d(X)) - D$ & Yes & Yes & No & Yes \\
 S-divergence to identity & $\log\det\left((X^\top X + I_D)/2\right) - \frac{1}{2}\log\det(X^\top X)$ & Yes & Yes & Yes & Yes \\
+Squared log singular value & $\sum_{d=1}^D (\log\sigma_d(X))^2$ & Yes & Yes & No & Yes \\
 Normalized log-det volume & $-\sum_{d=1}^D \log\sigma_d\left(n_q^{\times P}(X)\right)$ & No & No & Yes & No \\
 Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & Yes & Yes \\
 \isometrypursuit & $\|n_q^{\times P}(X)^\dagger\|_{1,2} - D$ & Yes & Yes & Yes & Yes \\
@@ -106,6 +107,43 @@ Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & 
 \caption{Matrix loss functions evaluated for isometry pursuit. We evaluate four key properties: whether the loss has a unique minimum, whether it is minimized specifically at orthonormal matrices (isometries), whether it prefers unit-length vectors over scaled versions, and whether it prefers orthogonal (orthonormal) structure.}
 \label{tab:loss_functions}
 \end{table}
+
+\begin{figure}[t]
+\centering
+\begingroup
+\setlength{\tabcolsep}{1pt}
+\begin{tabular}{@{}*{4}{c}@{}}
+\multicolumn{4}{c}{\includegraphics[width = .95\textwidth]{../figures/loss_1d_all.png}} \\
+\subcaptionbox{\label{fig:loss_2d_condition}}[0.23\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_condition_number.png}} &
+\subcaptionbox{\label{fig:loss_2d_iso}}[0.23\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_isometry_loss.png}} &
+\subcaptionbox{\label{fig:loss_2d_sdiv}}[0.23\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_s_divergence_identity.png}} &
+\subcaptionbox{\label{fig:loss_2d_log_singular}}[0.23\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_log_singular_values.png}} \\
+\subcaptionbox{\label{fig:loss_2d_norm_logdet}}[0.23\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_normalized_logdet_volume.png}} &
+\subcaptionbox{\label{fig:loss_2d_frob}}[0.23\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_frob_pseudoinverse.png}} &
+\subcaptionbox{\label{fig:loss_2d_gl}}[0.23\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_gl_pseudoinverse.png}} &
+{}
+\end{tabular}
+\endgroup
+
+\caption{
+Comprehensive loss function comparison for isometry pursuit.
+Top: 1D loss curves for $X = [[r]]$ showing loss behavior versus vector length.
+Bottom: 2D loss landscapes for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with shared colorbars.
+Red vertical dashed line in 1D plots marks $r=1$ (optimal). Red star in 2D plots marks $(r=1, \theta=\pi/2)$ (ideal).
+The panels visualize whether each candidate loss prefers unit-length and orthogonal structure at the ideal point.
+See Table \ref{tab:loss_functions} for mathematical definitions.
+\label{fig:loss_landscapes}
+}
+
+\end{figure}
+
 % compares it with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.
 % NOTE (Sam): Do we need proofs of maximized by orthonormal matrices and convex?
 % Can we prove this is a norm?

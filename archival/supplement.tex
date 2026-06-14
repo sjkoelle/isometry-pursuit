@@ -67,6 +67,152 @@ D(X^T X,I_D)^2
 \end{align}
 \end{proof}
 
+\subsubsection{Singular values of nearly colinear vectors}
+\label{sec:nearly_colinear_singular_values}
+
+We now exhibit a matrix for which no $g$ can be chosen such that a log det divergence satisfies property. 
+We parametrize this matrix as
+\begin{align}
+X_\epsilon(r) =
+\begin{bmatrix}
+1 & r (1 - \epsilon^2)^{1/2} \\
+0 & r \epsilon
+\end{bmatrix}
+\end{align}
+where $r$ is the length of the second vector and $0<\epsilon<1$ controls the angle between the two vectors.
+We compute
+\begin{align}
+\frac{\partial \ell}{\partial r} |_{r=1} &= \frac{\partial }{\partial r} (g(\sigma_1(X_\epsilon(r))) + g(\sigma_2(X_\epsilon(r)))) |_{r=1} \\
+&= g'(\sigma_1(X_\epsilon(r)))\frac{\partial \sigma_1}{\partial r} \sigma_1(X_\epsilon(r)) + g'(\sigma_2(X_\epsilon(r)))\frac{\partial \sigma_1}{\partial r} \sigma_2(X_\epsilon(r)) 
+\end{align}
+We want to show that, for any $g$, there exists an $\epsilon$ such that
+\begin{align}
+g'(\sigma_1(X_\epsilon(r)))\frac{\partial \sigma_1}{\partial r} \sigma_1(X_\epsilon(r)) \neq  - g'(\sigma_2(X_\epsilon(r)))\frac{\partial \sigma_1}{\partial r} \sigma_2(X_\epsilon(r))  
+\end{align}
+
+First, let's compute $\sigma_1(X_\epsilon(r)) $ and $\sigma_2(X_\epsilon(r))$.
+\begin{align}
+X_\epsilon(r)^T X_\epsilon(r)
+=
+\begin{bmatrix}
+1 & r (1 - \epsilon^2)^{1/2} \\
+r (1 - \epsilon^2)^{1/2} & r^2
+\end{bmatrix}.
+\end{align}
+Recall that $\lambda$ is an eigenvalue of a matrix $A$ if there is a non-zero vector $v$ such that $Av=\lambda v$.
+Equivalently,
+\begin{align}
+\det(A - \lambda I) = 0.
+\end{align}
+In our case, this gives
+\begin{align}
+0
+&=
+\det
+\begin{bmatrix}
+1 - \lambda & r (1 - \epsilon^2)^{1/2} \\
+r (1 - \epsilon^2)^{1/2} & r^2 - \lambda
+\end{bmatrix} \\
+&= (1-\lambda)(r^2-\lambda) - r^2(1-\epsilon^2) \\
+&= \lambda^2 - (1+r^2)\lambda + \epsilon^2 r^2.
+\end{align}
+Thus the eigenvalues of $X_\epsilon(r)^T X_\epsilon(r)$ are
+\begin{align}
+\lambda_1(r)
+&=
+\frac{1+r^2 + \sqrt{(1+r^2)^2 - 4\epsilon^2 r^2}}{2} \\
+\lambda_2(r)
+&=
+\frac{1+r^2 - \sqrt{(1+r^2)^2 - 4\epsilon^2 r^2}}{2}.
+\end{align}
+Since singular values are the square roots of the eigenvalues of $X_\epsilon(r)^T X_\epsilon(r)$,
+\begin{align}
+\sigma_1(r)
+&=
+\left[
+\frac{1+r^2 + \sqrt{(1+r^2)^2 - 4\epsilon^2 r^2}}{2}
+\right]^{1/2} \\
+\sigma_2(r)
+&=
+\left[
+\frac{1+r^2 - \sqrt{(1+r^2)^2 - 4\epsilon^2 r^2}}{2}
+\right]^{1/2}.
+\end{align}
+
+Differentiating the first singular value directly gives
+\begin{align}
+\frac{\partial \sigma_1}{\partial r} = \frac{1}{2}(\frac{1 + r^2 + \sqrt{(1 + r^2)^2-4\epsilon^2r^2}}{2})^{-1/2} \frac{2r + \frac{1}{2} (((1+r^2)^2 - 4\epsilon^2r^2)^{-1/2}(2(1+r^2)(2r) - 8\epsilon^2r))}{2}
+\end{align}
+
+
+
+
+
+The second derivative is easier to obtain from the determinant.
+Since
+\begin{align}
+\det(X_\epsilon(r)^T X_\epsilon(r))
+&= r^2 - r^2(1-\epsilon^2) \\
+&= \epsilon^2r^2,
+\end{align}
+and since this determinant is also $\sigma_1(r)^2\sigma_2(r)^2$,
+\begin{align}
+\sigma_1(r)\sigma_2(r)=\epsilon r
+\end{align}
+since singular values are nonnegative.
+Differentiating both sides gives
+\begin{align}
+\sigma_2(r)\frac{\partial\sigma_1}{\partial r}
++
+\sigma_1(r)\frac{\partial\sigma_2}{\partial r}
+&= \epsilon.
+\end{align}
+Therefore,
+\begin{align}
+\frac{\partial \sigma_2}{\partial r}
+&=
+\frac{\epsilon}{\sigma_1(r)}
+-
+\frac{\sigma_2(r)}{\sigma_1(r)}
+\frac{\partial \sigma_1}{\partial r} \\
+&=
+\frac{\epsilon}{\sigma_1(r)}
+-
+\frac{\epsilon r}{\sigma_1(r)^2}
+\frac{\partial \sigma_1}{\partial r}.
+\end{align}
+For a singular value loss $\ell(X)=\sum_d g(\sigma_d(X))$,
+\begin{align}
+\frac{\partial \ell(X_\epsilon(r))}{\partial r}
+&=
+g'(\sigma_1(r))\frac{\partial \sigma_1}{\partial r}
++
+g'(\sigma_2(r))\frac{\partial \sigma_2}{\partial r}.
+\end{align}
+At $r=1$, these expressions simplify to
+\begin{align}
+\sigma_1(1)^2 &= 1 + (1-\epsilon^2)^{1/2} \\
+\sigma_2(1)^2 &= 1 - (1-\epsilon^2)^{1/2}
+\end{align}
+and
+\begin{align}
+\frac{\partial \sigma_1}{\partial r}\bigg|_{r=1}
+&= \frac{\sigma_1(1)}{2} \\
+\frac{\partial \sigma_2}{\partial r}\bigg|_{r=1}
+&= \frac{\sigma_2(1)}{2}
+= \frac{\epsilon}{2\sigma_1(1)}.
+\end{align}
+Therefore,
+\begin{align}
+\frac{\partial \sigma_1 / \partial r}{\partial \sigma_2 / \partial r}\bigg|_{r=1}
+&=
+\frac{\sigma_1(1)}{\sigma_2(1)} \\
+&=
+\frac{1 + (1-\epsilon^2)^{1/2}}{\epsilon}.
+\end{align}
+This ratio diverges as $\epsilon \to 0$.
+Thus, as the vectors become more colinear, changing the length of the second vector has an arbitrarily larger first-order effect on the large singular value than on the small singular value.
+
 \subsubsection{Proof of Proposition \ref{prop:basis_pursuit_selection_invariance}}
 \label{proof:basis_pursuit_program_invariance}
 
