@@ -34,6 +34,15 @@ def s_divergence_to_identity(X):
     return logdet_mid - 0.5 * logdet_gram
 
 
+def quadratic_log_singular_value_sum(X):
+    """Sum of g(sigma_d) for g(t) = 2t^2 - log(t)."""
+    singular_values = np.linalg.svd(X, compute_uv=False)
+    if np.any(singular_values <= 1e-14):
+        return np.nan
+
+    return np.sum(2.0 * singular_values ** 2 - np.log(singular_values))
+
+
 def normalized_logdet_volume(X):
     """Negative log singular-value volume after n_q column normalization."""
     X_norm = exponential_transformation(X)
@@ -62,6 +71,7 @@ def compute_1d_losses(r):
                                           'frob_pseudoinverse', 'isometry_loss',
                                           'nuclear_norm',
                                           's_divergence_identity',
+                                          'quadratic_log_singular_values',
                                           'log_singular_values',
                                           'normalized_logdet_volume']}
 
@@ -93,6 +103,7 @@ def compute_1d_losses(r):
     losses['frob_pseudoinverse'] = np.linalg.norm(X_norm_pinv, 'fro') - np.sqrt(d)
 
     losses['s_divergence_identity'] = s_divergence_to_identity(X)
+    losses['quadratic_log_singular_values'] = quadratic_log_singular_value_sum(X)
     losses['log_singular_values'] = squared_log_singular_value_sum(X)
     losses['normalized_logdet_volume'] = normalized_logdet_volume(X)
 
@@ -138,6 +149,7 @@ def compute_2d_losses(r, theta):
         losses['frob_pseudoinverse'] = np.nan
 
     losses['s_divergence_identity'] = s_divergence_to_identity(X)
+    losses['quadratic_log_singular_values'] = quadratic_log_singular_value_sum(X)
     losses['log_singular_values'] = squared_log_singular_value_sum(X)
     losses['normalized_logdet_volume'] = normalized_logdet_volume(X)
 
@@ -169,6 +181,7 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         'condition_number',
         'isometry_loss',
         's_divergence_identity',
+        'quadratic_log_singular_values',
         'log_singular_values',
         'normalized_logdet_volume',
         'frob_pseudoinverse',
@@ -223,6 +236,14 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
             'title': 'S-divergence',
             'legend_label': r'S-divergence: $D(r^2,1)^2 = \log \frac{r + r^{-1}}{2}$',
             'ylabel_1d': r'$D(r^2,1)^2 = \log \frac{r + r^{-1}}{2}$',
+        },
+        'quadratic_log_singular_values': {
+            'color': 'C8',
+            'good': False,
+            'cmap': 'plasma',
+            'title': 'Quadratic-log',
+            'legend_label': r'Quadratic-log: $\sum_d (2\sigma_d(X)^2 - \log\sigma_d(X))$',
+            'ylabel_1d': r'$2r^2 - \log r$',
         },
         'normalized_logdet_volume': {
             'color': 'C7',

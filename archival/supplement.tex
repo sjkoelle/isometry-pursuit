@@ -83,11 +83,11 @@ where $r$ is the length of the second vector and $0<\epsilon<1$ controls the ang
 We compute
 \begin{align}
 \frac{\partial \ell}{\partial r} |_{r=1} &= \frac{\partial }{\partial r} (g(\sigma_1(X_\epsilon(r))) + g(\sigma_2(X_\epsilon(r)))) |_{r=1} \\
-&= g'(\sigma_1(X_\epsilon(r)))\frac{\partial \sigma_1}{\partial r} \sigma_1(X_\epsilon(r)) + g'(\sigma_2(X_\epsilon(r)))\frac{\partial \sigma_1}{\partial r} \sigma_2(X_\epsilon(r)) 
+&= g'(\sigma_1(X_\epsilon(r)))\frac{\partial }{\partial r} \sigma_1(X_\epsilon(r)) + g'(\sigma_2(X_\epsilon(r)))\frac{\partial }{\partial r} \sigma_2(X_\epsilon(r)) 
 \end{align}
-We want to show that, for any $g$, there exists an $\epsilon$ such that
+We will to show that, for any log-symmetric $g$ and any $\epsilon != 0$
 \begin{align}
-g'(\sigma_1(X_\epsilon(r)))\frac{\partial \sigma_1}{\partial r} \sigma_1(X_\epsilon(r)) \neq  - g'(\sigma_2(X_\epsilon(r)))\frac{\partial \sigma_1}{\partial r} \sigma_2(X_\epsilon(r))  
+g'(\sigma_1(X_\epsilon(r)))\frac{\partial }{\partial r} \sigma_1(X_\epsilon(r)) |_{r = 1} \neq  - g'(\sigma_2(X_\epsilon(r)))\frac{\partial }{\partial r} \sigma_2(X_\epsilon(r)) |_{r = 1}  
 \end{align}
 
 First, let's compute $\sigma_1(X_\epsilon(r)) $ and $\sigma_2(X_\epsilon(r))$.
@@ -127,22 +127,57 @@ Thus the eigenvalues of $X_\epsilon(r)^T X_\epsilon(r)$ are
 \end{align}
 Since singular values are the square roots of the eigenvalues of $X_\epsilon(r)^T X_\epsilon(r)$,
 \begin{align}
-\sigma_1(r)
+\sigma_1(X_\epsilon(r))
 &=
 \left[
 \frac{1+r^2 + \sqrt{(1+r^2)^2 - 4\epsilon^2 r^2}}{2}
 \right]^{1/2} \\
-\sigma_2(r)
+\sigma_2(X_\epsilon(r))
 &=
 \left[
 \frac{1+r^2 - \sqrt{(1+r^2)^2 - 4\epsilon^2 r^2}}{2}
 \right]^{1/2}.
 \end{align}
 
-Differentiating the first singular value directly gives
+Differentiating the singular values gives
 \begin{align}
-\frac{\partial \sigma_1}{\partial r} = \frac{1}{2}(\frac{1 + r^2 + \sqrt{(1 + r^2)^2-4\epsilon^2r^2}}{2})^{-1/2} \frac{2r + \frac{1}{2} (((1+r^2)^2 - 4\epsilon^2r^2)^{-1/2}(2(1+r^2)(2r) - 8\epsilon^2r))}{2}
+\frac{\partial \sigma_1}{\partial r} &= \frac{1}{2}(\frac{1 + r^2 + \sqrt{(1 + r^2)^2-4\epsilon^2r^2}}{2})^{-1/2} \frac{2r + \frac{1}{2} (((1+r^2)^2 - 4\epsilon^2r^2)^{-1/2}(2(1+r^2)(2r) - 8\epsilon^2r))}{2} \\
+\frac{\partial \sigma_2}{\partial r}
+&=
+\frac{1}{2}
+\left(
+\frac{1 + r^2 - \sqrt{(1 + r^2)^2-4\epsilon^2r^2}}{2}
+\right)^{-1/2}
+\frac{
+2r
+-
+\frac{1}{2}
+\left(((1+r^2)^2 - 4\epsilon^2r^2)^{-1/2}
+\left(2(1+r^2)(2r) - 8\epsilon^2r\right)\right)
+}{2}.
 \end{align}
+Then
+\begin{align}
+\sigma_1(X_\epsilon(1)) &= (1 + \sqrt{1 -\epsilon^2} )^{1/2}\\
+\sigma_2(X_\epsilon(1)) &= (1 - \sqrt{1 -\epsilon^2} )^{1/2} \\
+\frac{\partial \sigma_1}{\partial r} |_{r=1}&= \frac{1}{2}
+\left(1 + \sqrt{1 - \epsilon^2}\right)^{1/2}\\
+\frac{\partial \sigma_2}{\partial r} |_{r=1}&= \frac{1}{2}
+\left(1 - \sqrt{1 - \epsilon^2}\right)^{1/2}
+\end{align}
+Now we can specify $g$.
+Suppose
+\begin{align}
+g'\left(\left(1+\sqrt{1-\epsilon^2}\right)^{1/2}\right)
+\frac{1}{2}
+\left(1+\sqrt{1-\epsilon^2}\right)^{1/2}
+=
+-
+g'\left(\left(1-\sqrt{1-\epsilon^2}\right)^{1/2}\right)
+\frac{1}{2}
+\left(1-\sqrt{1-\epsilon^2}\right)^{1/2}.
+\end{align}
+
 
 
 
