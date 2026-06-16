@@ -61,6 +61,15 @@ def squared_log_singular_value_sum(X):
     return np.sum(np.log(singular_values) ** 2)
 
 
+def absolute_log_singular_value_sum(X):
+    """Sum of absolute log singular values."""
+    singular_values = np.linalg.svd(X, compute_uv=False)
+    if np.any(singular_values <= 1e-14):
+        return np.nan
+
+    return np.sum(np.abs(np.log(singular_values)))
+
+
 def compute_1d_losses(r):
     """
     Compute all losses for 1x1 matrix X = [r].
@@ -73,6 +82,7 @@ def compute_1d_losses(r):
                                           's_divergence_identity',
                                           'quadratic_log_singular_values',
                                           'log_singular_values',
+                                          'absolute_log_singular_values',
                                           'normalized_logdet_volume']}
 
     # For 1x1 matrix, singular value is just |r|
@@ -105,6 +115,7 @@ def compute_1d_losses(r):
     losses['s_divergence_identity'] = s_divergence_to_identity(X)
     losses['quadratic_log_singular_values'] = quadratic_log_singular_value_sum(X)
     losses['log_singular_values'] = squared_log_singular_value_sum(X)
+    losses['absolute_log_singular_values'] = absolute_log_singular_value_sum(X)
     losses['normalized_logdet_volume'] = normalized_logdet_volume(X)
 
     return losses
@@ -151,6 +162,59 @@ def compute_2d_losses(r, theta):
     losses['s_divergence_identity'] = s_divergence_to_identity(X)
     losses['quadratic_log_singular_values'] = quadratic_log_singular_value_sum(X)
     losses['log_singular_values'] = squared_log_singular_value_sum(X)
+    losses['absolute_log_singular_values'] = absolute_log_singular_value_sum(X)
+    losses['normalized_logdet_volume'] = normalized_logdet_volume(X)
+
+    return losses
+
+
+def compute_3d_equicorrelation_losses(r, rho):
+    """
+    Compute all losses for 3 vectors in R^3 with lengths (1, r, 1)
+    and pairwise correlations equal to rho.
+    """
+    lengths = np.array([1.0, r, 1.0])
+    corr = np.full((3, 3), rho)
+    np.fill_diagonal(corr, 1.0)
+    gram = np.diag(lengths) @ corr @ np.diag(lengths)
+
+    try:
+        X = np.linalg.cholesky(gram).T
+    except np.linalg.LinAlgError:
+        return {key: np.nan for key in ['condition_number', 'gl_pseudoinverse',
+                                          'frob_pseudoinverse', 'isometry_loss',
+                                          'nuclear_norm',
+                                          's_divergence_identity',
+                                          'quadratic_log_singular_values',
+                                          'log_singular_values',
+                                          'absolute_log_singular_values',
+                                          'normalized_logdet_volume']}
+
+    U, svs, VT = np.linalg.svd(X)
+    sv_max, sv_min = svs[0], svs[-1]
+
+    losses = {}
+    d = X.shape[0]
+
+    losses['condition_number'] = sv_max / sv_min - 1.0 if sv_min > 1e-14 else np.inf
+    losses['nuclear_norm'] = np.sum(svs)
+
+    iso_loss = isometry_loss(X)
+    losses['isometry_loss'] = iso_loss - d if np.isfinite(iso_loss) else np.nan
+
+    X_norm = exponential_transformation(X)
+    if sv_min > 1e-14:
+        X_norm_pinv = np.linalg.pinv(X_norm)
+        losses['gl_pseudoinverse'] = group_lasso_norm(X_norm_pinv) - d
+        losses['frob_pseudoinverse'] = np.linalg.norm(X_norm_pinv, 'fro') - np.sqrt(d)
+    else:
+        losses['gl_pseudoinverse'] = np.nan
+        losses['frob_pseudoinverse'] = np.nan
+
+    losses['s_divergence_identity'] = s_divergence_to_identity(X)
+    losses['quadratic_log_singular_values'] = quadratic_log_singular_value_sum(X)
+    losses['log_singular_values'] = squared_log_singular_value_sum(X)
+    losses['absolute_log_singular_values'] = absolute_log_singular_value_sum(X)
     losses['normalized_logdet_volume'] = normalized_logdet_volume(X)
 
     return losses
@@ -183,6 +247,7 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         's_divergence_identity',
         'quadratic_log_singular_values',
         'log_singular_values',
+        'absolute_log_singular_values',
         'normalized_logdet_volume',
         'frob_pseudoinverse',
         'gl_pseudoinverse',
@@ -191,6 +256,7 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         'condition_number',
         'isometry_loss',
         's_divergence_identity',
+        'absolute_log_singular_values',
         'normalized_logdet_volume',
         'frob_pseudoinverse',
         'gl_pseudoinverse',
@@ -260,6 +326,14 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
             'title': 'Squared log singular',
             'legend_label': r'Squared log singular: $\sum_d (\log\sigma_d(X))^2$',
             'ylabel_1d': r'$(\log r)^2$',
+        },
+        'absolute_log_singular_values': {
+            'color': 'C5',
+            'good': True,
+            'cmap': 'viridis',
+            'title': 'Abs. log singular',
+            'legend_label': r'Abs. log singular: $\sum_d |\log\sigma_d(X)|$',
+            'ylabel_1d': r'$|\log r|$',
         },
     }
 
@@ -352,16 +426,137 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         plt.close()
 
 
+def generate_3d_equicorrelation_plots(output_dir="figures", n_ratio=60, n_rho=60, max_ratio=3.0):
+    """Generate 3D equicorrelation heatmaps over length ratio and rho."""
+    os.makedirs(output_dir, exist_ok=True)
+
+    print("Generating 3D equicorrelation loss visualizations...")
+
+    ratios = np.linspace(0.5, max_ratio, n_ratio)
+    rhos = np.linspace(-0.49, 0.99, n_rho)
+
+    loss_names = [
+        'condition_number',
+        'isometry_loss',
+        's_divergence_identity',
+        'quadratic_log_singular_values',
+        'log_singular_values',
+        'absolute_log_singular_values',
+        'normalized_logdet_volume',
+        'frob_pseudoinverse',
+        'gl_pseudoinverse',
+    ]
+    loss_titles = {
+        'condition_number': 'Distortion',
+        'isometry_loss': 'Isometry loss',
+        's_divergence_identity': 'S-divergence',
+        'quadratic_log_singular_values': 'Quadratic-log',
+        'log_singular_values': 'Squared log singular',
+        'absolute_log_singular_values': 'Abs. log singular',
+        'normalized_logdet_volume': 'Norm. log-det',
+        'frob_pseudoinverse': 'Frob. pseudoinv.',
+        'gl_pseudoinverse': 'Isometry pursuit',
+    }
+
+    print(f"Computing 3D equicorrelation grids ({n_ratio} x {n_rho} resolution)...")
+    all_grids = {key: np.full((n_rho, n_ratio), np.nan) for key in loss_names}
+
+    from tqdm import tqdm
+    total = n_ratio * n_rho
+    with tqdm(total=total, desc="Computing 3D grids") as pbar:
+        for i, rho in enumerate(rhos):
+            for j, r in enumerate(ratios):
+                losses = compute_3d_equicorrelation_losses(r, rho)
+                for key in loss_names:
+                    all_grids[key][i, j] = losses[key]
+                pbar.update(1)
+
+    shared_ticks = [0, 1, 10, 100, 1000]
+    shared_levels = np.unique(
+        np.concatenate(([0], np.linspace(0.05, 1, 10), np.logspace(0, 3, 32)))
+    )
+    shared_norm = SymLogNorm(linthresh=1, vmin=0, vmax=1000, base=10)
+    shared_cmap = 'viridis'
+
+    print("Generating 3D equicorrelation heatmaps...")
+    for loss_name in loss_names:
+        fig, ax = plt.subplots(figsize=(6, 4))
+        grid_plot = all_grids[loss_name].copy()
+        grid_plot[~np.isfinite(grid_plot)] = np.nan
+        grid_plot = np.clip(grid_plot, 0, 1000)
+
+        im = ax.contourf(
+            ratios,
+            rhos,
+            grid_plot,
+            levels=shared_levels,
+            cmap=shared_cmap,
+            norm=shared_norm,
+        )
+        cbar = plt.colorbar(im, ax=ax, label='Loss value')
+        cbar.set_ticks(shared_ticks)
+        cbar.set_ticklabels([str(tick) for tick in shared_ticks])
+        ax.plot(1.0, 0.0, 'r*', markersize=20, label=r'Ideal $(r=1, \rho=0)$')
+        ax.set_title(f"3D {loss_titles[loss_name]}", fontsize=13, weight='bold')
+        ax.set_xlabel('Length ratio r = ||v2|| / ||v1||', fontsize=11)
+        ax.set_ylabel(r'Pairwise correlation $\rho$', fontsize=11)
+        ax.legend(fontsize=10)
+        fig.savefig(
+            os.path.join(output_dir, f'loss_3d_equicorr_{loss_name}.png'),
+            dpi=300,
+            bbox_inches='tight',
+        )
+        print(f"  Saved loss_3d_equicorr_{loss_name}.png")
+        plt.close()
+
+    fig, axes = plt.subplots(3, 3, figsize=(12, 10), sharex=True, sharey=True)
+    for ax, loss_name in zip(axes.ravel(), loss_names):
+        grid_plot = all_grids[loss_name].copy()
+        grid_plot[~np.isfinite(grid_plot)] = np.nan
+        grid_plot = np.clip(grid_plot, 0, 1000)
+        im = ax.contourf(
+            ratios,
+            rhos,
+            grid_plot,
+            levels=shared_levels,
+            cmap=shared_cmap,
+            norm=shared_norm,
+        )
+        ax.plot(1.0, 0.0, 'r*', markersize=12)
+        ax.set_title(loss_titles[loss_name], fontsize=11, weight='bold')
+
+    for ax in axes[-1, :]:
+        ax.set_xlabel('Length ratio r')
+    for ax in axes[:, 0]:
+        ax.set_ylabel(r'Correlation $\rho$')
+
+    fig.suptitle('3D equicorrelation loss landscapes', fontsize=15, weight='bold')
+    cbar = fig.colorbar(im, ax=axes.ravel().tolist(), label='Loss value', shrink=0.9)
+    cbar.set_ticks(shared_ticks)
+    cbar.set_ticklabels([str(tick) for tick in shared_ticks])
+    fig.savefig(
+        os.path.join(output_dir, 'loss_3d_equicorr_all.png'),
+        dpi=300,
+        bbox_inches='tight',
+    )
+    print("  Saved loss_3d_equicorr_all.png")
+    plt.close()
+
+
 def main():
     parser = argparse.ArgumentParser(description="Visualize loss function landscapes")
     parser.add_argument("--output-dir", default="figures", help="Output directory")
     parser.add_argument("--n-ratio", type=int, default=60, help="2D grid resolution (ratio)")
     parser.add_argument("--n-angle", type=int, default=60, help="2D grid resolution (angle)")
+    parser.add_argument("--n-rho", type=int, default=60, help="3D equicorrelation grid resolution (rho)")
+    parser.add_argument("--skip-3d-equicorr", action="store_true", help="Skip 3D equicorrelation plots")
 
     args = parser.parse_args()
 
     print("Generating loss landscape visualizations...\n")
     generate_combined_plots(args.output_dir, args.n_ratio, args.n_angle)
+    if not args.skip_3d_equicorr:
+        generate_3d_equicorrelation_plots(args.output_dir, args.n_ratio, args.n_rho)
     print("\nDone! Open figures/ to see loss comparisons.")
 
 
