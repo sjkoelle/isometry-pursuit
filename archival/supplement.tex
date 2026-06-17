@@ -70,33 +70,40 @@ D(X^T X,I_D)^2
 \subsubsection{Singular values of nearly colinear vectors}
 \label{sec:nearly_colinear_singular_values}
 
-We now exhibit a matrix for which no $g$ can be chosen such that a log det divergence satisfies property. 
+We now exhibit a matrix for which no $g$ can be chosen such that a log det divergence satisfies Properties \ref{prop:} and \ref{prop:log_symmetry}. 
 We parametrize this matrix as
 \begin{align}
-X_\epsilon(r) =
+X_\rho(r) =
 \begin{bmatrix}
-1 & r (1 - \epsilon^2)^{1/2} \\
-0 & r \epsilon
+r & \rho & \rho \\
+0 & \sqrt{1-\rho^2} & \frac{\rho(1-\rho)}{\sqrt{1-\rho^2}} \\
+0 & 0 & \sqrt{\frac{(1-\rho)(1+2\rho)}{1+\rho}}
 \end{bmatrix}
 \end{align}
-where $r$ is the length of the second vector and $0<\epsilon<1$ controls the angle between the two vectors.
+where $r$ is the length of the second vector and $\rho$ controls the colinearity between vectors.
 We compute
 \begin{align}
-\frac{\partial \ell}{\partial r} |_{r=1} &= \frac{\partial }{\partial r} (g(\sigma_1(X_\epsilon(r))) + g(\sigma_2(X_\epsilon(r)))) |_{r=1} \\
-&= g'(\sigma_1(X_\epsilon(r)))\frac{\partial }{\partial r} \sigma_1(X_\epsilon(r)) + g'(\sigma_2(X_\epsilon(r)))\frac{\partial }{\partial r} \sigma_2(X_\epsilon(r)) 
-\end{align}
-We will to show that, for any log-symmetric $g$ and any $\epsilon != 0$
-\begin{align}
-g'(\sigma_1(X_\epsilon(r)))\frac{\partial }{\partial r} \sigma_1(X_\epsilon(r)) |_{r = 1} \neq  - g'(\sigma_2(X_\epsilon(r)))\frac{\partial }{\partial r} \sigma_2(X_\epsilon(r)) |_{r = 1}  
+\frac{\partial \ell (r)s}{\partial r} |_{r=1} &=
+\sum_{d=1}^3
+g'(\sigma_d(X_\rho(r)))
+\frac{\partial}{\partial r}
+\sigma_d(X_\rho(r))\bigg|_{r=1}.
 \end{align}
 
-First, let's compute $\sigma_1(X_\epsilon(r)) $ and $\sigma_2(X_\epsilon(r))$.
+We will to show that, for any log-symmetric $g$ such that $g(t) = g(1/t)$ and any $\rho \in (-1,1)$
 \begin{align}
-X_\epsilon(r)^T X_\epsilon(r)
+\frac{\partial \ell (r)}{\partial r} |_{r=1} 
+&\neq 0.
+\end{align}
+
+First, let's compute $\sigma_d(X_\rho(r)) $.
+\begin{align}
+X_\rho(r)^T X_\rho(r)
 =
 \begin{bmatrix}
-1 & r (1 - \epsilon^2)^{1/2} \\
-r (1 - \epsilon^2)^{1/2} & r^2
+r^2 & r\rho & r\rho \\
+r\rho & 1 & \rho \\
+r\rho & \rho & 1
 \end{bmatrix}.
 \end{align}
 Recall that $\lambda$ is an eigenvalue of a matrix $A$ if there is a non-zero vector $v$ such that $Av=\lambda v$.
@@ -110,155 +117,274 @@ In our case, this gives
 &=
 \det
 \begin{bmatrix}
-1 - \lambda & r (1 - \epsilon^2)^{1/2} \\
-r (1 - \epsilon^2)^{1/2} & r^2 - \lambda
+r^2-\lambda & r\rho & r\rho \\
+r\rho & 1-\lambda & \rho \\
+r\rho & \rho & 1-\lambda
 \end{bmatrix} \\
-&= (1-\lambda)(r^2-\lambda) - r^2(1-\epsilon^2) \\
-&= \lambda^2 - (1+r^2)\lambda + \epsilon^2 r^2.
+&=
+(r^2-\lambda)
+\left((1-\lambda)^2-\rho^2\right)
+-r\rho
+\left(r\rho(1-\lambda)-r\rho^2\right)
++r\rho
+\left(r\rho^2-r\rho(1-\lambda)\right) \\
+&=
+(r^2-\lambda)
+\left((1-\lambda)^2-\rho^2\right)
+-2r^2\rho^2(1-\lambda)
++2r^2\rho^3 \\
+&=
+(r^2-\lambda)(1-\rho-\lambda)(1+\rho-\lambda)
+-2r^2\rho^2(1-\rho-\lambda) \\
+&=
+(1-\rho-\lambda)
+\left(
+(r^2-\lambda)(1+\rho-\lambda)-2r^2\rho^2
+\right) \\
+&=
+(1-\rho-\lambda)
+\left(
+r^2(1+\rho)-r^2\lambda-\lambda(1+\rho)+\lambda^2-2r^2\rho^2
+\right) \\
+&=
+(1-\rho-\lambda)
+\left(
+\lambda^2-(r^2+1+\rho)\lambda+r^2(1+\rho-2\rho^2)
+\right).
 \end{align}
-Thus the eigenvalues of $X_\epsilon(r)^T X_\epsilon(r)$ are
+
+
+Thus the eigenvalues of $X_\rho(r)^T X_\rho(r)$ are
 \begin{align}
 \lambda_1(r)
 &=
-\frac{1+r^2 + \sqrt{(1+r^2)^2 - 4\epsilon^2 r^2}}{2} \\
+1-\rho,
+\\
 \lambda_2(r)
 &=
-\frac{1+r^2 - \sqrt{(1+r^2)^2 - 4\epsilon^2 r^2}}{2}.
+\frac{
+r^2+1+\rho
++
+\sqrt{
+(r^2+1+\rho)^2
+-
+4r^2(1+\rho-2\rho^2)
+}
+}{2} \\ &= \frac{
+r^2+1+\rho
++
+\sqrt{
+\left(r^2-(1+\rho)\right)^2+8r^2\rho^2
+}
+}{2},
+\\
+\lambda_3(r)
+&=
+\frac{
+r^2+1+\rho
+-
+\sqrt{
+(r^2+1+\rho)^2
+-
+4r^2(1+\rho-2\rho^2)
+}
+}{2} \\ &= \frac{
+r^2+1+\rho
+-
+\sqrt{
+\left(r^2-(1+\rho)\right)^2+8r^2\rho^2
+}
+}{2}.
 \end{align}
 Since singular values are the square roots of the eigenvalues of $X_\epsilon(r)^T X_\epsilon(r)$,
 \begin{align}
-\sigma_1(X_\epsilon(r))
+\sigma_1(X_\rho(r))
 &=
 \left[
-\frac{1+r^2 + \sqrt{(1+r^2)^2 - 4\epsilon^2 r^2}}{2}
-\right]^{1/2} \\
-\sigma_2(X_\epsilon(r))
+1-\rho
+\right]^{1/2},
+\\
+\sigma_2(X_\rho(r))
 &=
 \left[
-\frac{1+r^2 - \sqrt{(1+r^2)^2 - 4\epsilon^2 r^2}}{2}
+\frac{
+r^2+1+\rho
++
+\sqrt{
+\left(r^2-(1+\rho)\right)^2+8r^2\rho^2
+}
+}{2}
+\right]^{1/2},
+\\
+\sigma_3(X_\rho(r))
+&=
+\left[
+\frac{
+r^2+1+\rho
+-
+\sqrt{
+\left(r^2-(1+\rho)\right)^2+8r^2\rho^2
+}
+}{2}
 \right]^{1/2}.
 \end{align}
 
 Differentiating the singular values gives
 \begin{align}
-\frac{\partial \sigma_1}{\partial r} &= \frac{1}{2}(\frac{1 + r^2 + \sqrt{(1 + r^2)^2-4\epsilon^2r^2}}{2})^{-1/2} \frac{2r + \frac{1}{2} (((1+r^2)^2 - 4\epsilon^2r^2)^{-1/2}(2(1+r^2)(2r) - 8\epsilon^2r))}{2} \\
+\frac{\partial \sigma_1}{\partial r}
+&=
+0,
+\\
 \frac{\partial \sigma_2}{\partial r}
 &=
 \frac{1}{2}
 \left(
-\frac{1 + r^2 - \sqrt{(1 + r^2)^2-4\epsilon^2r^2}}{2}
+\frac{
+r^2+1+\rho
++
+\sqrt{
+(r^2-(1+\rho))^2+8r^2\rho^2
+}
+}{2}
 \right)^{-1/2}
+\\
+&\qquad \times
+\frac{
+2r
++
+\frac{
+1
+}{
+2
+}
+\left(
+\left(
+(r^2-(1+\rho))^2+8r^2\rho^2
+\right)^{-1/2}
+\left(
+2(r^2-(1+\rho))(2r)+16r\rho^2
+\right)
+\right)
+}{2},
+\\
+\frac{\partial \sigma_3}{\partial r}
+&=
+\frac{1}{2}
+\left(
+\frac{
+r^2+1+\rho
+-
+\sqrt{
+(r^2-(1+\rho))^2+8r^2\rho^2
+}
+}{2}
+\right)^{-1/2}
+\\
+&\qquad \times
 \frac{
 2r
 -
-\frac{1}{2}
-\left(((1+r^2)^2 - 4\epsilon^2r^2)^{-1/2}
-\left(2(1+r^2)(2r) - 8\epsilon^2r\right)\right)
+\frac{
+1
+}{
+2
+}
+\left(
+\left(
+(r^2-(1+\rho))^2+8r^2\rho^2
+\right)^{-1/2}
+\left(
+2(r^2-(1+\rho))(2r)+16r\rho^2
+\right)
+\right)
 }{2}.
 \end{align}
 Then
 \begin{align}
-\sigma_1(X_\epsilon(1)) &= (1 + \sqrt{1 -\epsilon^2} )^{1/2}\\
-\sigma_2(X_\epsilon(1)) &= (1 - \sqrt{1 -\epsilon^2} )^{1/2} \\
-\frac{\partial \sigma_1}{\partial r} |_{r=1}&= \frac{1}{2}
-\left(1 + \sqrt{1 - \epsilon^2}\right)^{1/2}\\
-\frac{\partial \sigma_2}{\partial r} |_{r=1}&= \frac{1}{2}
-\left(1 - \sqrt{1 - \epsilon^2}\right)^{1/2}
+\sigma_1(X_\rho(1))
+&=
+(1-\rho)^{1/2},
+\\
+\sigma_2(X_\rho(1))
+&=
+(1+2\rho)^{1/2},
+\\
+\sigma_3(X_\rho(1))
+&=
+(1-\rho)^{1/2},
+\\
+\left.\frac{\partial \sigma_1}{\partial r}\right|_{r=1}
+&=
+0,
+\\
+\left.\frac{\partial \sigma_2}{\partial r}\right|_{r=1}
+&=
+\frac{1}{3}
+(1+2\rho)^{1/2},
+\\
+\left.\frac{\partial \sigma_3}{\partial r}\right|_{r=1}
+&=
+\frac{2}{3}
+(1-\rho)^{1/2}.
 \end{align}
+Note that in fact $\sigma_2$ is the largest singular value, but for notational consistency we won't reorder.
+
 Now we can specify $g$.
-Suppose
+Compute
 \begin{align}
-g'(\sigma_1(X_\epsilon(r)))\frac{\partial }{\partial r} \sigma_1(X_\epsilon(r)) |_{r = 1} = - g'(\sigma_2(X_\epsilon(r)))\frac{\partial }{\partial r} \sigma_2(X_\epsilon(r)) |_{r = 1}  
+\frac{\partial \ell (r)}{\partial r} |_{r=1} &= 
+g'\left((1-\rho)^{1/2}\right)\cdot 0
++
+g'\left((1+2\rho)^{1/2}\right)
+\frac{1}{3}(1+2\rho)^{1/2}
++
+g'\left((1-\rho)^{1/2}\right)
+\frac{2}{3}(1-\rho)^{1/2}
+\\
+&=
+\frac{1}{3}
+g'\left((1+2\rho)^{1/2}\right)
+(1+2\rho)^{1/2}
++
+\frac{2}{3}
+g'\left((1-\rho)^{1/2}\right)
+(1-\rho)^{1/2}.
 \end{align}
-Based on the derivations above, this is equivalent to
+Suppose $\frac{\partial \ell (r)}{\partial r} |_{r=1} = 0$.
+Then
 \begin{align}
-g'(\sigma_1(X_\epsilon(r)))\sigma_1(X_\epsilon(r)) &= -g'(\sigma_2(X_\epsilon(r)))\sigma_2(X_\epsilon(r)) 
+    \frac{1}{3}
+g'\left((1+2\rho)^{1/2}\right)
+(1+2\rho)^{1/2} = - \frac{2}{3}
+g'\left((1-\rho)^{1/2}\right)
+(1-\rho)^{1/2}.
 \end{align}
+What is a suitable $g$?
+We can rewrite the above constraint as 
 \begin{align}
-g'\left(\left(1+\sqrt{1-\epsilon^2}\right)^{1/2}\right)
-\frac{1}{2}
-\left(1+\sqrt{1-\epsilon^2}\right)^{1/2}
+g'\left((1+2\rho)^{1/2}\right)
 =
--
-g'\left(\left(1-\sqrt{1-\epsilon^2}\right)^{1/2}\right)
-\frac{1}{2}
-\left(1-\sqrt{1-\epsilon^2}\right)^{1/2}.
+-2
+\left(\frac{1-\rho}{1+2\rho}\right)^{1/2}
+g'\left((1-\rho)^{1/2}\right).
 \end{align}
-We can then see that 
+Let $\rho = 1/2$.
+Then 
 \begin{align}
-    
-\end{align}
-
-
-
-
-
-
-
-The second derivative is easier to obtain from the determinant.
-Since
-\begin{align}
-\det(X_\epsilon(r)^T X_\epsilon(r))
-&= r^2 - r^2(1-\epsilon^2) \\
-&= \epsilon^2r^2,
-\end{align}
-and since this determinant is also $\sigma_1(r)^2\sigma_2(r)^2$,
-\begin{align}
-\sigma_1(r)\sigma_2(r)=\epsilon r
-\end{align}
-since singular values are nonnegative.
-Differentiating both sides gives
-\begin{align}
-\sigma_2(r)\frac{\partial\sigma_1}{\partial r}
-+
-\sigma_1(r)\frac{\partial\sigma_2}{\partial r}
-&= \epsilon.
-\end{align}
-Therefore,
-\begin{align}
-\frac{\partial \sigma_2}{\partial r}
+g'(\sqrt{2})
 &=
-\frac{\epsilon}{\sigma_1(r)}
--
-\frac{\sigma_2(r)}{\sigma_1(r)}
-\frac{\partial \sigma_1}{\partial r} \\
-&=
-\frac{\epsilon}{\sigma_1(r)}
--
-\frac{\epsilon r}{\sigma_1(r)^2}
-\frac{\partial \sigma_1}{\partial r}.
+-2
+\left(\frac{1}{4}\right)^{1/2}
+g'\left((1/2)^{1/2}\right)\\
+&= - g'(1/\sqrt{2})
 \end{align}
-For a singular value loss $\ell(X)=\sum_d g(\sigma_d(X))$,
-\begin{align}
-\frac{\partial \ell(X_\epsilon(r))}{\partial r}
-&=
-g'(\sigma_1(r))\frac{\partial \sigma_1}{\partial r}
-+
-g'(\sigma_2(r))\frac{\partial \sigma_2}{\partial r}.
-\end{align}
-At $r=1$, these expressions simplify to
-\begin{align}
-\sigma_1(1)^2 &= 1 + (1-\epsilon^2)^{1/2} \\
-\sigma_2(1)^2 &= 1 - (1-\epsilon^2)^{1/2}
-\end{align}
-and
-\begin{align}
-\frac{\partial \sigma_1}{\partial r}\bigg|_{r=1}
-&= \frac{\sigma_1(1)}{2} \\
-\frac{\partial \sigma_2}{\partial r}\bigg|_{r=1}
-&= \frac{\sigma_2(1)}{2}
-= \frac{\epsilon}{2\sigma_1(1)}.
-\end{align}
-Therefore,
-\begin{align}
-\frac{\partial \sigma_1 / \partial r}{\partial \sigma_2 / \partial r}\bigg|_{r=1}
-&=
-\frac{\sigma_1(1)}{\sigma_2(1)} \\
-&=
-\frac{1 + (1-\epsilon^2)^{1/2}}{\epsilon}.
-\end{align}
-This ratio diverges as $\epsilon \to 0$.
-Thus, as the vectors become more colinear, changing the length of the second vector has an arbitrarily larger first-order effect on the large singular value than on the small singular value.
+However, by assumption, we have $g(t) = g(1/t)$, and so $g'(t) = \frac{1}{t^2}g'(1/t)$.
+At $t = \sqrt{2}$, $g'(\sqrt{2}) = \frac{1}{2} g'(1/\sqrt{2})$.
+Thus $ \frac{1}{2} g'(1/\sqrt{2}) = - g'(1/\sqrt{2})$ and so $g'(1/\sqrt{2}) $ and $g$ is not monotone.
+
+
+
+
 
 \subsubsection{Proof of Proposition \ref{prop:basis_pursuit_selection_invariance}}
 \label{proof:basis_pursuit_program_invariance}

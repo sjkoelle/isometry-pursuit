@@ -66,9 +66,18 @@ for all $X$.
 What this property says is that, as a column-set becomes more normal, the loss is lower.
 This property is plainly of interest for isometry selection.
 
+What is also of interest is the following log-symmetry property.
+
+
 Unfortunately, we show the following proposition.
 \begin{proposition}
-There does not exist a $g$ such that $\ell = \sum_{d=1}^D g( \sigma_d(X))$ such that $\ell$ satisfies Property \label{property:pathwise}
+There does not exist a $g$ such that $\ell = \sum_{d=1}^D g( \sigma_d(X))$ such that $\ell$ satisfies Property \label{property:pathwise} and
+\begin{property}
+\begin{align}
+\label{prop:log_symmetry}
+g(t) = g(1/t)
+\end{align}
+\end{property}
 \end{proposition}
 A suitable counterexample is shown in Section \ref{sec:nearly_colinear_singular_values}.
 The issue basically is that colinear vectors punish singular value based losses by pushing larger singular values away from $1$.
