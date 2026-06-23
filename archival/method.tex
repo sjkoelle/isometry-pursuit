@@ -71,17 +71,34 @@ What is also of interest is the following log-symmetry property.
 
 Unfortunately, we show the following proposition.
 \begin{proposition}
+\label{prop:log_svd_bad}
 There does not exist a $g$ such that $\ell = \sum_{d=1}^D g( \sigma_d(X))$ such that $\ell$ satisfies Property \label{property:pathwise} and
 \begin{property}
+\label{property:log_symmetry}
 \begin{align}
-\label{prop:log_symmetry}
 g(t) = g(1/t)
 \end{align}
 \end{property}
 \end{proposition}
 A suitable counterexample is shown in Section \ref{sec:nearly_colinear_singular_values}.
 The issue basically is that colinear vectors punish singular value based losses by pushing larger singular values away from $1$.
-TODO: check logic - The issue can also be seen visually in Figure \ref{fig:}, where the level sets of the log det losses are not tangent to length at $r = 1$, meaning that given an angle loss can actually be decreased by shrinking 
+The issue can also be seen visually in Figure \ref{fig:}, where the level sets of the log det losses are not tangent to length at $r = 1$, meaning that given an angle loss can actually be decreased by shrinking 
+
+Although starting from singular values is bad in the sense of Proposition \label{prop:log_svd_bad}, other losses do satisfy this property.
+These losses arise from the obvious intuition that we can shrink vectors away from length $1$ in a manner similar to how we selected $g$.
+Then, we can apply some loss function to the rescaled matrix that satisfies Property \ref{property:pathwise}.
+
+In fact, two fundamentally different loss functions first come under consideration.
+The determinant of the rescaled matrix will be maximized at orthonormality.
+Determinant is monotonic with product of singular values.
+So now basically we can do something with product of the singular values rather than their log sum.
+
+Why is product bad?
+
+Sum of singular values is the trace.
+So will the sum of its squared singular values.
+On the other hand we can apply a method-of-frames penalty.
+Also note that trace of A transpose A is in fact the nuclear norm.
 
 These divergences raise the question of what is the most reasonable form of $g$, and whether starting with singular values is a good way to define an isometry loss.
 \begin{align}
@@ -93,6 +110,7 @@ t &\mapsto \frac{e^{t} + e^{t^{-1}}}{2e}.
 By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell$ is uniquely maximized by orthonormal matrices.
 Moreover, $g$ is convex, and $\ell( X^{-1}) = \ell( X)$ when $X$ is invertible.
 Figure \ref{fig:loss_landscapes} gives graphs of candidate losses when $D=1$ and $D=2$.
+Figure \ref{fig:loss_3d_equicorr_landscapes} gives the analogous two-parameter view for $D=3$ equicorrelated matrices.
 
 
 \begin{table}[t]
@@ -156,6 +174,18 @@ See Table \ref{tab:loss_functions} for mathematical definitions.
 \label{fig:loss_landscapes}
 }
 
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width = .95\textwidth]{../figures/loss_3d_equicorr_all.png}
+\caption{
+Loss function comparison for 3D equicorrelated matrices, shown as two-dimensional landscapes.
+Each matrix consists of three vectors in $\mathbb R^3$ with lengths $(1,r,1)$ and common pairwise correlation $\rho$.
+The horizontal axis varies the length ratio $r = \|v_2\|_2 / \|v_1\|_2$, while the vertical axis varies $\rho$.
+The red star marks the ideal orthonormal setting $(r,\rho)=(1,0)$.
+\label{fig:loss_3d_equicorr_landscapes}
+}
 \end{figure}
 
 % compares it with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.
