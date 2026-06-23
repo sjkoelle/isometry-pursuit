@@ -122,11 +122,7 @@ Figure \ref{fig:loss_3d_equicorr_landscapes} gives the analogous two-parameter v
 \textbf{Loss Function} & \textbf{Definition} & \makecell{\textbf{Unique}\\\textbf{min.}} & \makecell{\textbf{Min. at}\\\textbf{isometry}} & \makecell{\textbf{Prefers}\\\textbf{unit-length}} & \makecell{\textbf{Prefers}\\\textbf{orthogonal}} \\
 \midrule
 Distortion\textsuperscript{\citet{Kohli2021-lr}} & $\sigma_{\max}(X) / \sigma_{\min}(X) - 1$ & No & Yes & No & Yes \\
-Isometry loss & $\sum_{d=1}^D g(\sigma_d(X)) - D$ & Yes & Yes & No & Yes \\
-S-divergence to identity & $\log\det\left((X^\top X + I_D)/2\right) - \frac{1}{2}\log\det(X^\top X)$ & Yes & Yes & Yes & Yes \\
-Quadratic-log singular value & $\sum_{d=1}^D \left(2\sigma_d(X)^2 - \log\sigma_d(X)\right)$ & Yes & No & No & Yes \\
-Squared log singular value & $\sum_{d=1}^D (\log\sigma_d(X))^2$ & Yes & Yes & No & Yes \\
-Absolute log singular value & $\sum_{d=1}^D |\log\sigma_d(X)|$ & Yes & Yes & No & Yes \\
+Generic spectral loss & $\ell(X) = \sum_{d=1}^D g(\sigma_d(X))$ & Depends on $g$ & Depends on $g$ & Depends on $g$ & Depends on $g$ \\
 Normalized log-det volume & $-\sum_{d=1}^D \log\sigma_d\left(n_q^{\times P}(X)\right)$ & No & No & Yes & No \\
 Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & Yes & Yes \\
 \isometrypursuit & $\|n_q^{\times P}(X)^\dagger\|_{1,2} - D$ & Yes & Yes & Yes & Yes \\
@@ -141,34 +137,27 @@ Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & 
 \centering
 \begingroup
 \setlength{\tabcolsep}{1pt}
-\begin{tabular}{@{}*{3}{c}@{}}
-\multicolumn{3}{c}{\includegraphics[width = .95\textwidth]{../figures/loss_1d_all.png}} \\
+\begin{tabular}{@{}*{2}{c}@{}}
 \subcaptionbox{\label{fig:loss_2d_condition}}[0.30\textwidth]
 {\includegraphics[width = \linewidth]{../figures/loss_2d_condition_number.png}} &
-\subcaptionbox{\label{fig:loss_2d_iso}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_isometry_loss.png}} &
 \subcaptionbox{\label{fig:loss_2d_sdiv}}[0.30\textwidth]
 {\includegraphics[width = \linewidth]{../figures/loss_2d_s_divergence_identity.png}} \\
-\subcaptionbox{\label{fig:loss_2d_quadratic_log}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_quadratic_log_singular_values.png}} &
-\subcaptionbox{\label{fig:loss_2d_log_singular}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_log_singular_values.png}} &
-\subcaptionbox{\label{fig:loss_2d_abs_log_singular}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_absolute_log_singular_values.png}} \\
 \subcaptionbox{\label{fig:loss_2d_norm_logdet}}[0.30\textwidth]
 {\includegraphics[width = \linewidth]{../figures/loss_2d_normalized_logdet_volume.png}} &
 \subcaptionbox{\label{fig:loss_2d_frob}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_frob_pseudoinverse.png}} &
+{\includegraphics[width = \linewidth]{../figures/loss_2d_frob_pseudoinverse.png}} \\
+\multicolumn{2}{c}{
 \subcaptionbox{\label{fig:loss_2d_gl}}[0.30\textwidth]
 {\includegraphics[width = \linewidth]{../figures/loss_2d_gl_pseudoinverse.png}}
+}
 \end{tabular}
 \endgroup
 
 \caption{
 Comprehensive loss function comparison for isometry pursuit.
-Top: 1D loss curves for $X = [[r]]$ showing loss behavior versus vector length.
-Bottom: 2D loss landscapes for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with shared colorbars.
-Red vertical dashed line in 1D plots marks $r=1$ (optimal). Red star in 2D plots marks $(r=1, \theta=\pi/2)$ (ideal).
+The 2D loss landscapes are for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with shared colorbars.
+S-divergence is shown as the representative generic spectral loss.
+The red star in each plot marks $(r=1, \theta=\pi/2)$ (ideal).
 The panels visualize whether each candidate loss prefers unit-length and orthogonal structure at the ideal point.
 See Table \ref{tab:loss_functions} for mathematical definitions.
 \label{fig:loss_landscapes}
@@ -178,11 +167,28 @@ See Table \ref{tab:loss_functions} for mathematical definitions.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width = .95\textwidth]{../figures/loss_3d_equicorr_all.png}
+\begingroup
+\setlength{\tabcolsep}{1pt}
+\begin{tabular}{@{}*{2}{c}@{}}
+\subcaptionbox{\label{fig:loss_3d_equicorr_condition}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_condition_number.png}} &
+\subcaptionbox{\label{fig:loss_3d_equicorr_sdiv}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_s_divergence_identity.png}} \\
+\subcaptionbox{\label{fig:loss_3d_equicorr_norm_logdet}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_normalized_logdet_volume.png}} &
+\subcaptionbox{\label{fig:loss_3d_equicorr_frob}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_frob_pseudoinverse.png}} \\
+\multicolumn{2}{c}{
+\subcaptionbox{\label{fig:loss_3d_equicorr_gl}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_gl_pseudoinverse.png}}
+}
+\end{tabular}
+\endgroup
 \caption{
 Loss function comparison for 3D equicorrelated matrices, shown as two-dimensional landscapes.
 Each matrix consists of three vectors in $\mathbb R^3$ with lengths $(1,r,1)$ and common pairwise correlation $\rho$.
 The horizontal axis varies the length ratio $r = \|v_2\|_2 / \|v_1\|_2$, while the vertical axis varies $\rho$.
+S-divergence is shown as the representative generic spectral loss.
 The red star marks the ideal orthonormal setting $(r,\rho)=(1,0)$.
 \label{fig:loss_3d_equicorr_landscapes}
 }
