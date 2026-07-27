@@ -10,44 +10,111 @@ Figure \ref{fig:data} and \ref{fig:selection} provide a visual depiction of this
 
 \subsection{Isometry}
 
+Isometries are a classical object in numerical linear algebra and geometry.
 The mathematical construct central to our estimation problem is the isometric linear map.
 \begin{definition}
 \label{def:isometry}
 A matrix $X \in \mathbb R^{D \times P}$ is an \textbf{isometry} or, equivalently, \textbf{unitary} if
 \begin{align}
-X^T X = I_D.
+X X^T = I_D.
 \end{align}
 \end{definition}
 Note that necessarily, $P \geq D$.
 
-Definition \ref{def:isometry} has several equivalent formulations.
+The analogous object for smooth nonlinear maps is defined through the differential.
+\begin{definition}
+The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ between $D$ dimensional manifolds $\M \subseteq \mathbb R^B$ and $\N \subseteq \mathbb R^P$ is a map in tangent bases $x_1 \dots x_{D}$ of $T_\xi \M$ and $y_1 \dots y_{D}$ of $T_{\phi(\xi)} \N$ consisting of entries
+\begin{align}
+\label{eq:diff}
+    D\phi (\xi) = \begin{bmatrix}
+    \frac{\partial \phi_1  }{\partial x_1}(\xi)  & \dots & \frac{\partial \phi_1 }{\partial x_D}(\xi)  \\
+    \vdots & & \vdots \\
+    \frac{\partial \phi_D }{\partial x_1}(\xi)  & \dots & \frac{\partial \phi_{D}  }{\partial x_{D}}(\xi) 
+    \end{bmatrix}.
+\end{align}
+\end{definition}
+
+\begin{definition}
+\label{def:isometric_at_a_point}
+A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq \mathbb R^{B}$ and $\mathcal N  \subseteq \mathbb R^{P}$ is an \textbf{isometry at a point} $\xi \in \mathcal M$ if
+\begin{align}
+{D \phi (\xi)}^T D \phi (\xi) = I_D.
+\end{align}
+That is, $\phi$ is an isometry at $\xi$ if $D \phi (\xi)$ is orthonormal.
+\end{definition}
+
+\begin{definition}
+\label{def:conformal_at_a_point}
+A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq \mathbb R^{B}$ and $\mathcal N  \subseteq \mathbb R^{P}$ is \textbf{conformal at a point} $\xi \in \mathcal M$ if there exists a scalar $\lambda(\xi) > 0$ such that
+\begin{align}
+{D \phi (\xi)}^T D \phi (\xi) = \lambda(\xi) I_D.
+\end{align}
+That is, $\phi$ is conformal at $\xi$ if its differential preserves angles but may rescale lengths.
+\end{definition}
+
+Definition \ref{def:isometry} has several related formulations.
 \begin{proposition}
 \label{prop:orthonormal_spectrum}
 The singular values $\sigma_1(X) \dots \sigma_D(X)$ are equal to $1$ if and only if $X$ is an isometry.
 \end{proposition}
-On the other hand, if $P = D$, $X$
 \begin{proposition}
 \label{prop:orthonormal_basis}
-The component vectors $X_{.}1 \dots X_{.D} \in \mathbb R^D$ form an orthonormal matrix if and only if, for all $d_1, d_2 \in [D], \langle X_{.d_1}, X_{.d_2} \rangle = \begin{cases}
+If $P = D$, the component vectors $X_{.1} \dots X_{.D} \in \mathbb R^D$ form an isometry if and only if, for all $d_1, d_2 \in [D], \langle X_{.d_1}, X_{.d_2} \rangle = \begin{cases}
 1 \; d_1 = d_2 \\ 
 0 \; d_1 \neq d_2 
 \end{cases}$.
 \end{proposition}
-That is, $X$ is an isometry if its columns are orthonormal.
 
-The applications of isometry are manifold.
-Overall, is a classically interesting problem.
-It is naturally a type of diversification.
-Embedding algorithms like Local Tangent Space Alignment \citep{ZhangZ:04}, Multidimensional Scaling \citep{ChenBuja:localMDS09} and Isomap \citep{tenenbaum2000ggf} non-parametrically estimate embeddings that are as isometric as possible.
-Note that an isometric embedding is a map whose differential induces isometry between tangent spaces.
-The inspiration for this paper comes from an approach that stitches together isometries selected from a dictionary to form global embeddings \citep{Kohli2021-lr}.
-This method constructs such isometries through greedy search, with putative dictionary features added one at a time.
+Distance-preserving maps between Riemannian manifolds are smooth isometries \citep[Problem~6-7]{Lee2018-rm}.
+This motivates embedding algorithms such as Local Tangent Space Alignment \citep{ZhangZ:04}, Multidimensional Scaling \citep{ChenBuja:localMDS09}, and Isomap \citep{tenenbaum2000ggf} to non-parametrically estimate embeddings that are as close to isometric as possible.
 
-\subsection{Functions minimized by isometries}
+% \begin{proposition}
+% \label{prop:distance_differential_isometry}
+% Let $\mathcal M$ and $\mathcal N$ be connected Riemannian manifolds with Riemannian distances $d_\mathcal M$ and $d_\mathcal N$.
+% A map $\phi:\mathcal M \to \mathcal N$ preserves distances,
+% \begin{align}
+% d_\mathcal N(\phi(\xi_1), \phi(\xi_2)) = d_\mathcal M(\xi_1, \xi_2),
+% \end{align}
+% if and only if $\phi$ is smooth and is an isometry at every point \citep[Problem~6-7]{Lee2018-rm}.
+% \end{proposition}
 
-The distortion loss function used the evaluate isometricness in \citep{Kohli2021-lr} reduces in the linear tangent space limit to the condition number.
-The \textit{condition number} \citep{GolubWilkinson-condition,Boyd2004-ql} $\frac{\sigma_1(X)}{\sigma_D(X)}$ measures the ratio of the largest and smallest singular values of a matrix $A$.
+\subsection{Coordinate selection via linearization}
+
+More recently, methods for selecting $D$ coordinates from a dictionary $f_{1:P}$ of candidate features have emerged \citep{Kohli2021-lr, Koelle2022-ju, Koelle2024-}.
+One motivation for this approach to from a dictionary of candidate features that have been pre-identified as interpretable \citep{Koelle2024-no}. 
+In contrast, \citet{Kohli2021-lr} seeks selection of a subset of coordinates that are as conformal as possible, in a manner that we will explain in the next section.
+In \citet{Kohli2021-lr}, this loss function is computer for each individual data point, while in \citet{Koelle2022-ju, Koelle2024-}, the loss function is computed over the entire dataset.
+However, both of these methods in essence linearize the following best subset selection problem by considering the differentials of the candidate features.
+
+The dictionary-based coordinate search problem best subset selection problem is
+\begin{align}
+\label{prog:function_best_subset_selection}
+\arg \min_{ S \in \binom{[P]}{D}} \ell ( f_{. S})
+\end{align}
+where $\ell$ is some loss function that measures isometricness of a selected functional subset $f_{. S}$.
+In contrast, the linearized version of this problem is
+\begin{align}
+\label{prog:linearized_best_subset_selection}
+\arg \min_{ S \in \binom{[P]}{D}} \ell ( D f_{. S}(\xi))
+\end{align}
+where $\ell$ is now a loss function that measures the orthonormalness of a matrix.
+
+
+
+Due to the relation between metric and global properties of smooth maps, it is possible to linearize the best subset selection problem by considering differentials.
+
+For example, the distortion loss function used the evaluate isometricness in \citep{Kohli2021-lr} reduces in the linear tangent space limit to the condition number.
+The \textit{condition number} \citep{GolubWilkinson-condition,Boyd2004-ql} $\frac{\sigma_1(X)}{\sigma_D(X)}$ measures the ratio of the largest and smallest singular values.
+This is also known as the \textit{distortion}.
+Plainly, this is minimized by conformal maps.
+
 While it is minimized by an isometric function, it is also minimized by any conformal (i.e. low distortion) linear map.
+
+Another example, \citep{Koelle2022-ju}, uses gradients of coordinate functions computed by automatic differentiation.
+This is justified by theory about rank conditions, but plainly more specifics are possible.
+Also, it considers support recovery over the whole manifold.
+
+\subsection{Linear isometry selection}
 
 A class of functions more suitable for measuring isometry are S-divergences \citep{Sra2011-sdivergence}.
 S-divergences define a distance $D(P,P')$ on positive definite matrices $P,P'$ given by 
@@ -90,3 +157,5 @@ to the overcomplete regression problem $Y = X \beta$ are a classic example \cite
 When $f(\beta) = \|\beta\|_0$, this problem is non-convex, and is thus suitable for greedy or brute algorithms, but when $f(\beta) =\|\beta\|_1$, the problem is convex, and may be solved efficiently via interior-point methods.
 When the equality constraint is relaxed, Lagrangian duality may be used to reformulate as a so-called Lasso problem, which leads to an even richer set of optimization algorithms \citep{Hastie2016-cn}. % cite FISTA< glmnet, coordinate descent
 
+The inspiration for this paper comes from an approach that stitches together pointwise conformal maps selected from a dictionary to form global embeddings \citep{Kohli2021-lr}.
+That method constructs such isometries through greedy search, with putative dictionary features added one at a time.

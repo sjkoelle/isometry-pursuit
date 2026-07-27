@@ -1,0 +1,3 @@
+display_name: Isometry Pursuit Experiments
+short_description: Run and inspect experiments.
+default_prompt: Use this when preparing data, running experiments, regenerating figures, or analyzing results in the isometry-pursuit repository.

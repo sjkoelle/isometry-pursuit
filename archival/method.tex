@@ -138,6 +138,7 @@ Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & 
 \begingroup
 \setlength{\tabcolsep}{1pt}
 \begin{tabular}{@{}*{2}{c}@{}}
+\multicolumn{2}{c}{\includegraphics[width = .95\textwidth]{../figures/loss_1d_all.png}} \\
 \subcaptionbox{\label{fig:loss_2d_condition}}[0.30\textwidth]
 {\includegraphics[width = \linewidth]{../figures/loss_2d_condition_number.png}} &
 \subcaptionbox{\label{fig:loss_2d_sdiv}}[0.30\textwidth]
@@ -155,9 +156,10 @@ Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & 
 
 \caption{
 Comprehensive loss function comparison for isometry pursuit.
-The 2D loss landscapes are for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with shared colorbars.
+Top: 1D loss curves for $X = [[r]]$ showing loss behavior versus vector length.
+Bottom: 2D loss landscapes for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with shared colorbars.
 S-divergence is shown as the representative generic spectral loss.
-The red star in each plot marks $(r=1, \theta=\pi/2)$ (ideal).
+Red vertical dashed line in the 1D plot marks $r=1$ (optimal). Red star in each 2D plot marks $(r=1, \theta=\pi/2)$ (ideal).
 The panels visualize whether each candidate loss prefers unit-length and orthogonal structure at the ideal point.
 See Table \ref{tab:loss_functions} for mathematical definitions.
 \label{fig:loss_landscapes}

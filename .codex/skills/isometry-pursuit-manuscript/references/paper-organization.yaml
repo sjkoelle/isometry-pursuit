@@ -1,0 +1,236 @@
+version: 1
+source: archival
+description: >
+  Graph of definitions, properties, and propositions in the archival Isometry
+  Pursuit paper. Node ids are stable within this file even when LaTeX labels
+  are currently duplicated or incomplete.
+
+nodes:
+  definitions:
+    - id: D1
+      label: def:isometry
+      title: Isometry
+      location: archival/background.tex
+      role: Defines isometry/unitary matrices by X^T X = I_D.
+    - id: D2
+      label: def:symmetric_normalization
+      title: Symmetric normalization
+      location: archival/method.tex
+      role: Defines symmetric normalization q for length-aware preprocessing.
+
+  properties:
+    - id: R1
+      label: property:ortho_min
+      title: Orthonormal minimizer
+      location: archival/method.tex
+      status: placeholder
+      role: Ground-truth loss is uniquely minimized by orthonormal matrices.
+    - id: R2
+      label: property:rot_inv
+      title: Rotation invariance
+      location: archival/method.tex
+      status: placeholder
+      role: Ground-truth loss should be invariant under rotation.
+    - id: R3
+      label: property:pathwise
+      title: Pathwise length preference
+      location: archival/method.tex
+      status: equation_label
+      role: Loss decreases as a column length moves toward 1.
+    - id: R4
+      label: property:log_symmetry
+      title: Log symmetry
+      location: archival/method.tex
+      status: property_environment
+      role: Desired scalar symmetry g(t) = g(1/t).
+
+  propositions:
+    - id: P1
+      label: prop:orthonormal_spectrum
+      title: Orthonormal spectrum
+      location: archival/background.tex
+      role: Isometry is equivalent to all singular values being 1.
+    - id: P2
+      label: prop:orthonormal_basis
+      title: Orthonormal basis
+      location: archival/background.tex
+      role: Square isometry is equivalent to orthonormal columns.
+    - id: P3
+      label: prop:sdiv_singular_values
+      title: S-divergence singular values
+      location: archival/background.tex
+      role: S-divergence to identity is a log singular-value penalty.
+    - id: P4
+      label: prop:log_svd_bad
+      title: Spectral loss impossibility
+      location: archival/method.tex
+      role: No spectral loss sum_d g(sigma_d(X)) satisfies pathwise length preference and log symmetry.
+    - id: P5
+      label: prop:basis_pursuit_selection_invariance
+      title: Selection invariance
+      location: archival/method.tex
+      role: Isometry Pursuit support is invariant under orthonormal basis changes.
+    - id: P6
+      label: prop:unitary_selection
+      title: Isometry support containment
+      location: archival/method.tex
+      role: If an orthonormal column submatrix exists, Isometry Pursuit support contains it.
+    - id: P7
+      label: prop:D_min
+      title: Cardinality-D optimum
+      location: archival/method.tex
+      role: The isometric solution is optimal among cardinality-D solutions.
+    - id: P8
+      label: prop:computational_complexity
+      title: Ground-truth loss complexity
+      location: archival/method.tex
+      role: Ground-truth loss complexity is O(D^2P).
+      notes:
+        - This label is duplicated in archival/method.tex.
+    - id: P9
+      label: prop:computational_complexity
+      title: Isometry Pursuit per-step complexity
+      location: archival/method.tex
+      role: Per-step Isometry Pursuit complexity is O(D^2P).
+      notes:
+        - This label is duplicated in archival/method.tex.
+    - id: P10
+      label: prop:basis_pursuit_loss_equivalence
+      title: Group penalty invariance
+      location: archival/supplement.tex
+      role: The ||.||_{1,2} penalty is invariant under right multiplication by a unitary matrix.
+      notes:
+        - This label is duplicated in archival/supplement.tex.
+    - id: P11
+      label: prop:basis_pursuit_loss_equivalence
+      title: Optimizer equivariance
+      location: archival/supplement.tex
+      role: The optimizer transforms equivariantly under orthonormal basis change.
+      notes:
+        - This label is duplicated in archival/supplement.tex.
+    - id: P12
+      label: prop:kkt
+      title: KKT support certificate
+      location: archival/supplement.tex
+      role: KKT argument showing the isometric support is among multitask basis pursuit solutions.
+    - id: P13
+      label: prop:support_containment
+      title: Minimum-Frobenius support union
+      location: archival/supplement.tex
+      role: Minimum-Frobenius solution contains the union of supports of minimizing solutions.
+
+edges:
+  main_logical_flow:
+    - from: D1
+      to: P1
+      relation: supports
+      meaning: Singular spectrum characterizes isometries.
+    - from: D1
+      to: P2
+      relation: supports
+      meaning: Column orthonormality characterizes square isometries.
+    - from: P1
+      to: P3
+      relation: supports
+      meaning: S-divergence is minimized at singular values equal to 1.
+    - from: P3
+      to: R1
+      relation: motivates
+      meaning: The first ground-truth objective should be minimized at isometries.
+    - from: P3
+      to: R2
+      relation: motivates
+      meaning: Singular-value losses motivate rotation-invariant objectives.
+    - from: R1
+      to: R3
+      relation: refines
+      meaning: Isometry minimization is not enough; the loss should prefer unit column lengths.
+    - from: R3
+      to: P4
+      relation: assumption
+      meaning: The impossibility result uses the pathwise property.
+    - from: R4
+      to: P4
+      relation: assumption
+      meaning: The impossibility result also assumes log symmetry.
+    - from: P4
+      to: D2
+      relation: motivates
+      meaning: Failure of spectral losses motivates normalization before basis pursuit.
+    - from: D2
+      to: P5
+      relation: supports
+      meaning: Normalized basis pursuit should be basis-independent.
+    - from: P5
+      to: P6
+      relation: supports
+      meaning: Basis invariance is used in the recovery/containment theorem.
+    - from: P6
+      to: P7
+      relation: contextualizes
+      meaning: Containment motivates discussion of optimal cardinality-D solutions and non-uniqueness.
+    - from: P6
+      to: P8
+      relation: motivates
+      meaning: Recovery claim motivates comparison with brute-force ground-truth search.
+    - from: P8
+      to: P9
+      relation: contrasts
+      meaning: Both per-evaluation/per-step costs are O(D^2P), but search iteration counts differ.
+
+  proof_placement:
+    - from: P3
+      to: archival/supplement.tex#proof:sdiv_singular_values
+      relation: proved-in
+      meaning: Proof belongs in the supplement.
+    - from: P4
+      to: archival/supplement.tex#sec:nearly_colinear_singular_values
+      relation: proved-in
+      meaning: Counterexample and derivative argument belong in the supplement.
+    - from: P5
+      to: P10
+      relation: uses
+      meaning: Selection invariance uses group penalty invariance.
+    - from: P5
+      to: P11
+      relation: uses
+      meaning: Selection invariance uses optimizer equivariance.
+    - from: P10
+      to: archival/supplement.tex#proof:basis_pursuit_program_invariance
+      relation: proved-in
+      meaning: Supporting proposition proof belongs in the supplement.
+    - from: P11
+      to: archival/supplement.tex#proof:basis_pursuit_program_invariance
+      relation: proved-in
+      meaning: Supporting proposition proof belongs in the supplement.
+    - from: P6
+      to: P12
+      relation: uses
+      meaning: Recovery/containment uses a KKT certificate.
+    - from: P6
+      to: P13
+      relation: uses
+      meaning: Recovery/containment uses support union containment for the minimum-Frobenius solution.
+    - from: P12
+      to: archival/supplement.tex#proof:unitary_selection
+      relation: proved-in
+      meaning: Supporting proposition proof belongs in the supplement.
+    - from: P13
+      to: archival/supplement.tex#proof:unitary_selection
+      relation: proved-in
+      meaning: Supporting proposition proof belongs in the supplement.
+    - from: P7
+      to: archival/supplement.tex#proof-of-proposition-prop-d-min
+      relation: proved-in
+      meaning: Proof currently appears in the supplement without a direct label.
+    - from: P9
+      to: archival/supplement.tex#proof:computational_complexity
+      relation: proved-in
+      meaning: ADMM/SCS per-step complexity proof belongs in the supplement.
+
+notes:
+  - property:ortho_min and property:rot_inv are currently empty labeled equations, not property environments.
+  - property:pathwise is currently an equation label, while property:log_symmetry is a formal property environment.
+  - prop:computational_complexity is used twice in archival/method.tex.
+  - prop:basis_pursuit_loss_equivalence is used twice in archival/supplement.tex.
+  - Proofs should remain in archival/supplement.tex; the main paper should contain statements, intuition, and consequences.
