@@ -5,7 +5,26 @@ Many real-world problems may be abstracted as selecting a subset of the columns 
 This paper focuses on a simple such problem.
 Given a rank $D$ matrix $ X \in \mathbb R^{D \times P}$ with $P > D$, select a square submatrix $ X_{. S}$ where subset $ S \subset [P]$ satisfies $| S| = D$ that is as isometric as possible.
 
-\begin{figure}[b]
+
+
+This problem arises in feature learning because while the coordinate functions of a given feature space may have no intrinsic meaning, it is often possible to generate a dictionary of interpretable features for consideration as potential parametrizing coordinates.
+When this is the case, selection of candidate interpretable features as coordinates can take the above form.
+Isometric embeddings - data mappings that compress high-dimensional distributions into low dimensions while preserving distances and angles on the data surface - have differentials that are isometric matrices.
+Thus, selecting isometric embeddings from without dictionaries of putative coordinates can be cast as a linear isometric submatrix coordinate selection problem.
+Identification of such coordinates generally aids mechanistic understanding, generative control, and statistical efficiency.
+
+This paper takes an optimization perspective on the problem of selecting isometric submatrices.
+The background develops the the problem from the perspective of non-linear embeddings.
+However, the focus switches to a purely linear algebraic perspective in the remainder of the paper.
+
+The main contribution of this paper is to show that an adapted version of the multitask basis pursuit feature learning algorithm in \citet{Koelle2024-no} is a convex alternative isometry selection algorithm.
+This enables identification of low-dimensional coordinates within a Jacobian that preserve the original geometry of the data manifold under mapping given by the flow lines 
+This algorithm - \isometrypursuit~ - is multitask basis pursuit applied to an appropriately normalized $ X$ selects orthonormal submatrices.
+Given vectors in $\mathbb R^D$, the normalization log-symmetrizes length and favors those closer to unit length, while basis pursuit favors those which are orthogonal.
+Our theoretical results formalize this intuition, and show the usefulness of \isometrypursuit~ as a trimming procedure prior to brute force search for diversification and interpretable coordinate selection.
+It is an alternative to greedy coordinate selection approaches such as those in \citet{5895106, NEURIPS2019_6a10bbd4, Kohli2021-lr, Jones2007-uc}.
+
+\begin{figure}[t]
 \centering
 \subcaptionbox{Raw data\label{fig:data}}
 {\includegraphics[width = .32\textwidth]{/Users/samsonkoelle/isometry-pursuit/figures/data.png}}
@@ -19,34 +38,4 @@ Given a rank $D$ matrix $ X \in \mathbb R^{D \times P}$ with $P > D$, select a s
 \label{fig:losses}
 }
 \end{figure}
-
-This problem arises in feature learning because while the coordinate functions of a given feature space may have no intrinsic meaning, it is often possible to generate a dictionary of interpretable features for consideration as potential parametrizing coordinates.
-When this is the case, selection of candidate interpretable features as coordinates can take the above form.
-Isometric embeddings - data mappings that compress high-dimensional distributions into low dimensions while preserving distances and angles on the data surface - have differentials that are isometric matrices.
-Thus, selecting isometric embeddings from without dictionaries of putative coordinates can be cast as a linear isometric submatrix coordinate selection problem.
-Identification of such coordinates generally aids mechanistic understanding, generative control, and statistical efficiency.
-
-More generally, 
-Applications of this general idea apply across and algorithmic domains.
-Diversification may be framed an a kind of orthogonal selection problem.
-
-to greedy coordinate selection approaches such as those in \citet{5895106, NEURIPS2019_6a10bbd4, Kohli2021-lr, Jones2007-uc}.
-
-The main contribution of this paper is 
-
-
-This paper shows that an adapted version of the multitask basis pursuit feature learning algorithm in \citet{Koelle2024-no} is a convex alternative isometry selection algorithm.
-
-Coordinate selection algorithms are useful for several reasons.
-First, there is an application in non-linear geometry.
-
-Second, 
-
-Convex 
-
-they enable identification of low-dimensional coordinates within a Jacobian that preserve the original geometry of the data manifold under mapping given by the flow lines 
-This algorithm - \isometrypursuit~ - is multitask basis pursuit applied to an appropriately normalized $ X$ selects orthonormal submatrices.
-Given vectors in $\mathbb R^D$, the normalization log-symmetrizes length and favors those closer to unit length, while basis pursuit favors those which are orthogonal.
-Our theoretical results formalize this intuition, and show the usefulness of \isometrypursuit~ as a trimming procedure prior to brute force search for diversification and interpretable coordinate selection.
-
  %\footnotetext[2]{Code is available at \url{https://anonymous.4open.science/r/isometry-pursuit-8FC4/README.md}.}

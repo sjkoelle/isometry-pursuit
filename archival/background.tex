@@ -1,6 +1,7 @@
 \section{Background}
 
-Our algorithm is motivated by a classic question in numerical linear algebra.
+Selecting a subset of columns from a matrix that is as orthonormal as possible is a rather generic linear algebra problem.
+We therefore motivate the problem from the perspective of non-linear embeddings.
 
 \subsection{Problem}
 
@@ -52,6 +53,22 @@ A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metri
 That is, $\phi$ is conformal at $\xi$ if its differential preserves angles but may rescale lengths.
 \end{definition}
 
+\begin{table}[t]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Reference & Loss function & Linearized? & Single point? & Identifies & Analytic?  \\
+\hline
+\citet{NEURIPS2019_6a10bbd4} & & Yes & Yes & Conformal & No \\
+\citet{Kohli2021-lr} & $ \ell_{distortion} = \sup_{\xi',\xi'' \in \mathcal{N}(\xi)} \frac{\|f_{.S}(\xi') - f_{.S}(\xi'')\|_2}{d(\xi',\xi'')}\inf_{\xi',\xi'' \in \mathcal N(\xi)}  \frac{d(\xi',\xi'')}{\|f_{.S}(\xi') - f_{.S}(\xi)\|_2} $ & No & Yes & Conformal & No \\
+\citet{Koelle2024-no} & $\ell_{TSLASSO}$ & Yes & No & Bijection & No \\
+\citet{Koelle2022-lp} & $\ell_{TS,BP}$ & Yes & No & Isometries \citep{Koelle2022-lp} & No \\
+\hline
+\end{tabular}
+\caption{Dictionary-based manifold learning losses.}
+\label{tab:losses}
+\end{table}
+
 Definition \ref{def:isometry} has several related formulations.
 \begin{proposition}
 \label{prop:orthonormal_spectrum}
@@ -65,26 +82,28 @@ If $P = D$, the component vectors $X_{.1} \dots X_{.D} \in \mathbb R^D$ form an 
 \end{cases}$.
 \end{proposition}
 
-Distance-preserving maps between Riemannian manifolds are smooth isometries \citep[Problem~6-7]{Lee2018-rm}.
+Distance-preserving maps between Riemannian manifolds are smooth isometries
+\begin{proposition}
+\label{prop:distance_differential_isometry}
+Let $\mathcal M$ and $\mathcal N$ be connected Riemannian manifolds with Riemannian distances $d_\mathcal M$ and $d_\mathcal N$.
+A map $\phi:\mathcal M \to \mathcal N$ preserves distances,
+\begin{align}
+d_\mathcal N(\phi(\xi_1), \phi(\xi_2)) = d_\mathcal M(\xi_1, \xi_2),
+\end{align}
+if and only if $\phi$ is smooth and is an isometry at every point \citep[Problem~6-7]{Lee2018-rm}.
+\end{proposition}
+
+
 This motivates embedding algorithms such as Local Tangent Space Alignment \citep{ZhangZ:04}, Multidimensional Scaling \citep{ChenBuja:localMDS09}, and Isomap \citep{tenenbaum2000ggf} to non-parametrically estimate embeddings that are as close to isometric as possible.
 
-% \begin{proposition}
-% \label{prop:distance_differential_isometry}
-% Let $\mathcal M$ and $\mathcal N$ be connected Riemannian manifolds with Riemannian distances $d_\mathcal M$ and $d_\mathcal N$.
-% A map $\phi:\mathcal M \to \mathcal N$ preserves distances,
-% \begin{align}
-% d_\mathcal N(\phi(\xi_1), \phi(\xi_2)) = d_\mathcal M(\xi_1, \xi_2),
-% \end{align}
-% if and only if $\phi$ is smooth and is an isometry at every point \citep[Problem~6-7]{Lee2018-rm}.
-% \end{proposition}
 
-\subsection{Coordinate selection via linearization}
+
+\subsection{Coordinate selection}
 
 More recently, methods for selecting $D$ coordinates from a dictionary $f_{1:P}$ of candidate features have emerged \citep{Kohli2021-lr, Koelle2022-ju, Koelle2024-}.
 One motivation for this approach to from a dictionary of candidate features that have been pre-identified as interpretable \citep{Koelle2024-no}. 
 In contrast, \citet{Kohli2021-lr} seeks selection of a subset of coordinates that are as conformal as possible, in a manner that we will explain in the next section.
 In \citet{Kohli2021-lr}, this loss function is computer for each individual data point, while in \citet{Koelle2022-ju, Koelle2024-}, the loss function is computed over the entire dataset.
-However, both of these methods in essence linearize the following best subset selection problem by considering the differentials of the candidate features.
 
 The dictionary-based coordinate search problem best subset selection problem is
 \begin{align}
@@ -92,37 +111,65 @@ The dictionary-based coordinate search problem best subset selection problem is
 \arg \min_{ S \in \binom{[P]}{D}} \ell ( f_{. S})
 \end{align}
 where $\ell$ is some loss function that measures isometricness of a selected functional subset $f_{. S}$.
+
+\subsection{Linearized coordinate selection}
+
 In contrast, the linearized version of this problem is
 \begin{align}
 \label{prog:linearized_best_subset_selection}
 \arg \min_{ S \in \binom{[P]}{D}} \ell ( D f_{. S}(\xi))
 \end{align}
 where $\ell$ is now a loss function that measures the orthonormalness of a matrix.
+\citet{Koelle2024-no} computes $Df_{.S}(\xi)$ via automatic differentiation.
+
+\subsection{Isometry losses}
+
+\begin{table}[t]
+\centering
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Loss Function} & \textbf{Definition} & \makecell{\textbf{Unique}\\\textbf{min.}} & \makecell{\textbf{Min. at}\\\textbf{isometry}} & \makecell{\textbf{Prefers}\\\textbf{unit-length}} & \makecell{\textbf{Prefers}\\\textbf{orthogonal}} \\
+\midrule
+Distortion\textsuperscript{\citet{Kohli2021-lr}} & $\sigma_{\max}(X) / \sigma_{\min}(X) - 1$ & No & Yes & No & Yes \\
+Generic spectral loss & $\ell(X) = \sum_{d=1}^D g(\sigma_d(X))$ & Depends on $g$ & Depends on $g$ & Depends on $g$ & Depends on $g$ \\
+Normalized log-det volume & $-\sum_{d=1}^D \log\sigma_d\left(n_q^{\times P}(X)\right)$ & No & No & Yes & No \\
+Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & Yes & Yes \\
+\isometrypursuit & $\|n_q^{\times P}(X)^\dagger\|_{1,2} - D$ & Yes & Yes & Yes & Yes \\
+\bottomrule
+\end{tabular}
+}
+\caption{Matrix loss functions evaluated for isometry pursuit. We evaluate four key properties: whether the loss has a unique minimum, whether it is minimized specifically at orthonormal matrices (isometries), whether it prefers unit-length vectors over scaled versions, and whether it prefers orthogonal (orthonormal) structure.}
+\label{tab:loss_functions}
+\end{table}
+
+Loss functions for isometry vary on many axes.
+For example, functions may be measured at a single point \citep{Kohli2021-lr} or over an entire dataset \citep{Koelle2022-ju, Koelle2024-no, NEURIPS2019_6a10bbd4}.
+The loss function may make use of either linearized or non-linearized objectives.
+Linearized objectives can be computed via automatic differentiation, or estimated.
+Isometry may be relaxed as optimization target to the weaker notion of conformalness or embedding.
+
+In this paper, we will focus the optimizamizability of the loss function itself and other intuitive properties for linearized single point isometry losses.
+However, we will draw motivation and methods from existing methods.
+These methods as applied in the dictionary-based manifold learning literature are summarized in Table \ref{tab:losses}.
 
 
 
-Due to the relation between metric and global properties of smooth maps, it is possible to linearize the best subset selection problem by considering differentials.
+\begin{proposition}
+\label{prop:distortion_is_condition_number}
+The distortion loss function of $f_S$ is equal to the condition number \citep{GolubWilkinson-condition,Boyd2004-ql} $\frac{\sigma_1(X)}{\sigma_D(X)}$ of $Df_{.S}(\xi)$ as $\mathcal N(\xi) \to \{\xi\}$.
+\end{proposition}
+\begin{proposition}
+This is minimized by conformal maps.
+\end{proposition}
 
-For example, the distortion loss function used the evaluate isometricness in \citep{Kohli2021-lr} reduces in the linear tangent space limit to the condition number.
-The \textit{condition number} \citep{GolubWilkinson-condition,Boyd2004-ql} $\frac{\sigma_1(X)}{\sigma_D(X)}$ measures the ratio of the largest and smallest singular values.
-This is also known as the \textit{distortion}.
-Plainly, this is minimized by conformal maps.
-
-While it is minimized by an isometric function, it is also minimized by any conformal (i.e. low distortion) linear map.
-
-Another example, \citep{Koelle2022-ju}, uses gradients of coordinate functions computed by automatic differentiation.
-This is justified by theory about rank conditions, but plainly more specifics are possible.
-Also, it considers support recovery over the whole manifold.
-
-\subsection{Linear isometry selection}
-
-A class of functions more suitable for measuring isometry are S-divergences \citep{Sra2011-sdivergence}.
+From the linear algebra literature, a class of functions more suitable for measuring isometry are S-divergences \citep{Sra2011-sdivergence}.
 S-divergences define a distance $D(P,P')$ on positive definite matrices $P,P'$ given by 
 \begin{align}
 D(P,P') = (\log \det (\frac{P + P'}{2}) - \frac{1}{2}\log \det(PP'))^{\frac{1}{2}}.
 \end{align}
 Applied to the positive definite matrices $X^T X$ and $I_D$, the S-divergence is a log singular value penalty.
-
 \begin{proposition}
 \label{prop:sdiv_singular_values}
 If $X^T X$ is positive definite, then
@@ -134,28 +181,18 @@ D(X^T X,I_D)^2
 By Proposition \ref{prop:orthonormal_spectrum}, this function is uniquely minimized by isometric matrices.
 %TODO: explain how works for PSD not just PD.
 
-\subsection{Best subset selection}
+\subsection{Sparse convex coordinate selection}
 
-Equipped with function $\ell(X)$ such as $D(X,I_D)$ that is minimized by an isometry, we now consider algorithms for solving problems of the form
-\begin{align}
-\label{prog:ground_truth}
-\arg \min_{ S \in \binom{[P]}{D}} \ell ( X_{. S})
-\end{align}
-where $\binom{[P]}{D} = \left\{ A \subseteq [P] : \left|A\right| = D \right\}$.
-Brute force algorithms consider all possible solutions.
+Equipped with function $\ell(X)$ such as $D(X,I_D)$ that is minimized by an isometry, brute force algorithms consider all possible solutions in the sense of Proposition \ref{prop:function_best_subset_selection}.
 These algorithms are conceptually simple, but have the often prohibitive time complexity $O(C_\ell P^D)$ where $C_\ell$ is the cost of evaluating $\ell$.
 Greedy algorithms consist of iteratively adding one element at a time to $ S$.
 This algorithms have time complexity $O(C_\ell PD)$ and so are computationally more efficient than brute force algorithms, but can get stuck in local minima.
 Formal definitions are given in Section \ref{sec:algorithms}.
 
 Sometimes, it is possible to introduce an objective which convexifies problems of the above form  \citep{Liberti2004-iu, Abdi2013-th, Zhou2021-zz}.
-Solutions
 \begin{align}
 \arg \min f(\beta) : Y  = X\beta 
 \end{align}
 to the overcomplete regression problem $Y = X \beta$ are a classic example \citep{Chen2001-hh}.
 When $f(\beta) = \|\beta\|_0$, this problem is non-convex, and is thus suitable for greedy or brute algorithms, but when $f(\beta) =\|\beta\|_1$, the problem is convex, and may be solved efficiently via interior-point methods.
 When the equality constraint is relaxed, Lagrangian duality may be used to reformulate as a so-called Lasso problem, which leads to an even richer set of optimization algorithms \citep{Hastie2016-cn}. % cite FISTA< glmnet, coordinate descent
-
-The inspiration for this paper comes from an approach that stitches together pointwise conformal maps selected from a dictionary to form global embeddings \citep{Kohli2021-lr}.
-That method constructs such isometries through greedy search, with putative dictionary features added one at a time.

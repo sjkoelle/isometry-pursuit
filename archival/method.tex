@@ -85,7 +85,7 @@ The issue basically is that colinear vectors punish singular value based losses 
 The issue can also be seen visually in Figure \ref{fig:}, where the level sets of the log det losses are not tangent to length at $r = 1$, meaning that given an angle loss can actually be decreased by shrinking 
 
 Although starting from singular values is bad in the sense of Proposition \label{prop:log_svd_bad}, other losses do satisfy this property.
-These losses arise from the obvious intuition that we can shrink vectors away from length $1$ in a manner similar to how we selected $g$.
+These losses arise from the intuition that we can shrink vectors away from length $1$ in a manner similar to how we selected $g$.
 Then, we can apply some loss function to the rescaled matrix that satisfies Property \ref{property:pathwise}.
 
 In fact, two fundamentally different loss functions first come under consideration.
@@ -113,25 +113,7 @@ Figure \ref{fig:loss_landscapes} gives graphs of candidate losses when $D=1$ and
 Figure \ref{fig:loss_3d_equicorr_landscapes} gives the analogous two-parameter view for $D=3$ equicorrelated matrices.
 
 
-\begin{table}[t]
-\centering
-\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{llcccc}
-\toprule
-\textbf{Loss Function} & \textbf{Definition} & \makecell{\textbf{Unique}\\\textbf{min.}} & \makecell{\textbf{Min. at}\\\textbf{isometry}} & \makecell{\textbf{Prefers}\\\textbf{unit-length}} & \makecell{\textbf{Prefers}\\\textbf{orthogonal}} \\
-\midrule
-Distortion\textsuperscript{\citet{Kohli2021-lr}} & $\sigma_{\max}(X) / \sigma_{\min}(X) - 1$ & No & Yes & No & Yes \\
-Generic spectral loss & $\ell(X) = \sum_{d=1}^D g(\sigma_d(X))$ & Depends on $g$ & Depends on $g$ & Depends on $g$ & Depends on $g$ \\
-Normalized log-det volume & $-\sum_{d=1}^D \log\sigma_d\left(n_q^{\times P}(X)\right)$ & No & No & Yes & No \\
-Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & Yes & Yes \\
-\isometrypursuit & $\|n_q^{\times P}(X)^\dagger\|_{1,2} - D$ & Yes & Yes & Yes & Yes \\
-\bottomrule
-\end{tabular}
-}
-\caption{Matrix loss functions evaluated for isometry pursuit. We evaluate four key properties: whether the loss has a unique minimum, whether it is minimized specifically at orthonormal matrices (isometries), whether it prefers unit-length vectors over scaled versions, and whether it prefers orthogonal (orthonormal) structure.}
-\label{tab:loss_functions}
-\end{table}
+
 
 \begin{figure}[t]
 \centering
