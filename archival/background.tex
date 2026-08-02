@@ -1,28 +1,35 @@
 \section{Background}
 
-Selecting a subset of columns from a matrix that is as orthonormal as possible is a rather generic linear algebra problem.
-We therefore motivate the problem from the perspective of non-linear embeddings.
-
-\subsection{Problem}
-
 Our goal is, given a matrix $ X \in \mathbb R^{D \times P}$, to select a subset $ S \subset [P]$ with $| S| = D$ such that $X_{.  S}$ is as orthonormal as possible in a computationally efficient way.
-To this end, we define a ground truth loss function that measures orthonormalness, and then introduce a surrogate loss function that convexifies the problem so that it may be efficiently solved.
 Figure \ref{fig:data} and \ref{fig:selection} provide a visual depiction of this problem when $D=2$ and $P=30$.
+We motivate this problem from the perspective of non-linear embeddings.
 
 \subsection{Isometry}
 
 Isometries are a classical object in numerical linear algebra and geometry.
-The mathematical construct central to our estimation problem is the isometric linear map.
+They preserve distances and angles, and such can be used faithfully for subsequent human or algorithmic analysis.
+This motivates embedding algorithms such as Local Tangent Space Alignment \citep{ZhangZ:04}, Multidimensional Scaling \citep{ChenBuja:localMDS09}, and Isomap \citep{tenenbaum2000ggf}.
+
 \begin{definition}
 \label{def:isometry}
-A matrix $X \in \mathbb R^{D \times P}$ is an \textbf{isometry} or, equivalently, \textbf{unitary} if
+A matrix $X \in \mathbb R^{D \times P}$ ($P \geq D$) is an \textbf{isometry} or, equivalently, \textbf{unitary} if
 \begin{align}
 X X^T = I_D.
 \end{align}
 \end{definition}
-Note that necessarily, $P \geq D$.
 
-The analogous object for smooth nonlinear maps is defined through the differential.
+\begin{proposition}
+\label{prop:orthonormal_spectrum}
+The singular values $\sigma_1(X) \dots \sigma_D(X)$ are equal to $1$ if and only if $X$ is an isometry.
+\end{proposition}
+\begin{proposition}
+\label{prop:orthonormal_basis}
+If $P = D$, the component vectors $X_{.1} \dots X_{.D} \in \mathbb R^D$ form an isometry if and only if, for all $d_1, d_2 \in [D], \langle X_{.d_1}, X_{.d_2} \rangle = \begin{cases}
+1 \; d_1 = d_2 \\ 
+0 \; d_1 \neq d_2 
+\end{cases}$.
+\end{proposition}
+
 \begin{definition}
 The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ between $D$ dimensional manifolds $\M \subseteq \mathbb R^B$ and $\N \subseteq \mathbb R^P$ is a map in tangent bases $x_1 \dots x_{D}$ of $T_\xi \M$ and $y_1 \dots y_{D}$ of $T_{\phi(\xi)} \N$ consisting of entries
 \begin{align}
@@ -37,52 +44,59 @@ The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ betwe
 
 \begin{definition}
 \label{def:isometric_at_a_point}
-A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq \mathbb R^{B}$ and $\mathcal N  \subseteq \mathbb R^{P}$ is an \textbf{isometry at a point} $\xi \in \mathcal M$ if
+A map $\phi$ between $D$ dimensional submanifolds is an \textbf{isometry at a point} $\xi \in \mathcal M$ if
 \begin{align}
 {D \phi (\xi)}^T D \phi (\xi) = I_D.
 \end{align}
-That is, $\phi$ is an isometry at $\xi$ if $D \phi (\xi)$ is orthonormal.
 \end{definition}
 
 \begin{definition}
 \label{def:conformal_at_a_point}
-A map $\phi$ between $D$ dimensional submanifolds with inherited Euclidean metric $\mathcal M \subseteq \mathbb R^{B}$ and $\mathcal N  \subseteq \mathbb R^{P}$ is \textbf{conformal at a point} $\xi \in \mathcal M$ if there exists a scalar $\lambda(\xi) > 0$ such that
+A map $\phi$ between $D$ dimensional submanifolds is \textbf{conformal at a point} $\xi \in \mathcal M$ if there exists a scalar $\lambda(\xi) > 0$ such that
 \begin{align}
 {D \phi (\xi)}^T D \phi (\xi) = \lambda(\xi) I_D.
 \end{align}
-That is, $\phi$ is conformal at $\xi$ if its differential preserves angles but may rescale lengths.
 \end{definition}
 
 \begin{table}[t]
 \centering
-\begin{tabular}{|c|c|c|c|c|c|}
-\hline
-Reference & Loss function & Linearized? & Single point? & Identifies & Analytic?  \\
-\hline
-\citet{NEURIPS2019_6a10bbd4} & & Yes & Yes & Conformal & No \\
-\citet{Kohli2021-lr} & $ \ell_{distortion} = \sup_{\xi',\xi'' \in \mathcal{N}(\xi)} \frac{\|f_{.S}(\xi') - f_{.S}(\xi'')\|_2}{d(\xi',\xi'')}\inf_{\xi',\xi'' \in \mathcal N(\xi)}  \frac{d(\xi',\xi'')}{\|f_{.S}(\xi') - f_{.S}(\xi)\|_2} $ & No & Yes & Conformal & No \\
-\citet{Koelle2024-no} & $\ell_{TSLASSO}$ & Yes & No & Bijection & No \\
-\citet{Koelle2022-lp} & $\ell_{TS,BP}$ & Yes & No & Isometries \citep{Koelle2022-lp} & No \\
-\hline
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.42\textwidth}>{\centering\arraybackslash}p{0.08\textwidth}>{\centering\arraybackslash}p{0.085\textwidth}>{\centering\arraybackslash}p{0.10\textwidth}>{\centering\arraybackslash}p{0.085\textwidth}@{}}
+\toprule
+\textbf{Reference} & \textbf{Objective} & \makecell{\textbf{Lin.}} & \makecell{\textbf{Single}\\\textbf{point}} & \textbf{Identifies} & \makecell{\textbf{Analytic}}  \\
+\midrule
+\citet{NEURIPS2019_6a10bbd4} & $\begin{aligned}
+\max_S\;& \frac{1}{n}\sum_{i=1}^n
+\log
+\frac{\det(U_S(i)^TU_S(i))^{1/2}}
+{\prod_{k=1}^d \|u^S_k(i)\|_2}\\
+&\quad - \zeta\sum_{k\in S}\lambda_k
+\end{aligned}$ & Yes & Yes & Conformal & No \\
+\citet{Kohli2021-lr} & $\begin{aligned}
+\ell_{\mathrm{distortion}} &=
+\sup_{\xi',\xi'' \in \mathcal{N}(\xi)}
+\frac{\|f_{.S}(\xi') - f_{.S}(\xi'')\|_2}{d(\xi',\xi'')}\\
+&\quad \cdot
+\inf_{\xi',\xi'' \in \mathcal N(\xi)}
+\frac{d(\xi',\xi'')}{\|f_{.S}(\xi') - f_{.S}(\xi)\|_2}
+\end{aligned}$ & No & Yes & Conformal & No \\
+\citet{Koelle2024-no} & $\begin{aligned}
+\min_B\;& \frac{1}{2}\sum_{i=1}^n
+\|I_d-X_iB_i\|_F^2\\
+&\quad + \lambda_n\sqrt{nd}\|B\|_{1,2}
+\end{aligned}$ & Yes & No & Bijection & No \\
+\citet{Koelle2022-lp} & $\begin{aligned}
+\min_B\;& \|B\|_{1,2}\\
+\mathrm{s.t.}\;& X_iB_i=I_d,\; i\in[n]
+\end{aligned}$ & Yes & No & \makecell{Isometries\\\citep{Koelle2022-lp}} & No \\
+\bottomrule
 \end{tabular}
 \caption{Dictionary-based manifold learning losses.}
 \label{tab:losses}
 \end{table}
 
-Definition \ref{def:isometry} has several related formulations.
-\begin{proposition}
-\label{prop:orthonormal_spectrum}
-The singular values $\sigma_1(X) \dots \sigma_D(X)$ are equal to $1$ if and only if $X$ is an isometry.
-\end{proposition}
-\begin{proposition}
-\label{prop:orthonormal_basis}
-If $P = D$, the component vectors $X_{.1} \dots X_{.D} \in \mathbb R^D$ form an isometry if and only if, for all $d_1, d_2 \in [D], \langle X_{.d_1}, X_{.d_2} \rangle = \begin{cases}
-1 \; d_1 = d_2 \\ 
-0 \; d_1 \neq d_2 
-\end{cases}$.
-\end{proposition}
 
-Distance-preserving maps between Riemannian manifolds are smooth isometries
 \begin{proposition}
 \label{prop:distance_differential_isometry}
 Let $\mathcal M$ and $\mathcal N$ be connected Riemannian manifolds with Riemannian distances $d_\mathcal M$ and $d_\mathcal N$.
@@ -92,11 +106,6 @@ d_\mathcal N(\phi(\xi_1), \phi(\xi_2)) = d_\mathcal M(\xi_1, \xi_2),
 \end{align}
 if and only if $\phi$ is smooth and is an isometry at every point \citep[Problem~6-7]{Lee2018-rm}.
 \end{proposition}
-
-
-This motivates embedding algorithms such as Local Tangent Space Alignment \citep{ZhangZ:04}, Multidimensional Scaling \citep{ChenBuja:localMDS09}, and Isomap \citep{tenenbaum2000ggf} to non-parametrically estimate embeddings that are as close to isometric as possible.
-
-
 
 \subsection{Coordinate selection}
 
@@ -126,28 +135,27 @@ where $\ell$ is now a loss function that measures the orthonormalness of a matri
 
 \begin{table}[t]
 \centering
-\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{llcccc}
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.31\textwidth}*{4}{>{\centering\arraybackslash}p{0.105\textwidth}}@{}}
 \toprule
-\textbf{Loss Function} & \textbf{Definition} & \makecell{\textbf{Unique}\\\textbf{min.}} & \makecell{\textbf{Min. at}\\\textbf{isometry}} & \makecell{\textbf{Prefers}\\\textbf{unit-length}} & \makecell{\textbf{Prefers}\\\textbf{orthogonal}} \\
+\textbf{Loss Function} & \textbf{Definition} & \makecell{\textbf{Unique}\\\textbf{min.}} & \makecell{\textbf{At}\\\textbf{isometry}} & \makecell{\textbf{Unit}\\\textbf{length}} & \makecell{\textbf{Ortho-}\\\textbf{gonal}} \\
 \midrule
-Distortion\textsuperscript{\citet{Kohli2021-lr}} & $\sigma_{\max}(X) / \sigma_{\min}(X) - 1$ & No & Yes & No & Yes \\
-Generic spectral loss & $\ell(X) = \sum_{d=1}^D g(\sigma_d(X))$ & Depends on $g$ & Depends on $g$ & Depends on $g$ & Depends on $g$ \\
-Normalized log-det volume & $-\sum_{d=1}^D \log\sigma_d\left(n_q^{\times P}(X)\right)$ & No & No & Yes & No \\
-Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F - \sqrt{D}$ & No & Yes & Yes & Yes \\
-\isometrypursuit & $\|n_q^{\times P}(X)^\dagger\|_{1,2} - D$ & Yes & Yes & Yes & Yes \\
+Distortion\\\citep{Kohli2021-lr} & \makecell[l]{$\sigma_{\max}(X) / \sigma_{\min}(X)$\\$- 1$} & No & Yes & No & Yes \\
+Generic spectral loss & \makecell[l]{$\ell(X)=\sum_{d=1}^D$\\$g(\sigma_d(X))$} & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} \\
+Normalized log-det volume & \makecell[l]{$-\sum_{d=1}^D \log\sigma_d$\\$\left(n_q^{\times P}(X)\right)$} & No & No & Yes & No \\
+Frob. pseudoinverse & \makecell[l]{$\|n_q^{\times P}(X)^\dagger\|_F$\\$-\sqrt{D}$} & No & Yes & Yes & Yes \\
+\isometrypursuit & \makecell[l]{$\|n_q^{\times P}(X)^\dagger\|_{1,2}$\\$-D$} & Yes & Yes & Yes & Yes \\
 \bottomrule
 \end{tabular}
-}
 \caption{Matrix loss functions evaluated for isometry pursuit. We evaluate four key properties: whether the loss has a unique minimum, whether it is minimized specifically at orthonormal matrices (isometries), whether it prefers unit-length vectors over scaled versions, and whether it prefers orthogonal (orthonormal) structure.}
 \label{tab:loss_functions}
 \end{table}
 
-Loss functions for isometry vary on many axes.
+Loss functions for isometry vary along many axes.
 For example, functions may be measured at a single point \citep{Kohli2021-lr} or over an entire dataset \citep{Koelle2022-ju, Koelle2024-no, NEURIPS2019_6a10bbd4}.
 The loss function may make use of either linearized or non-linearized objectives.
-Linearized objectives can be computed via automatic differentiation, or estimated.
+Objectives can be computed analytically or from numerical methods.
 Isometry may be relaxed as optimization target to the weaker notion of conformalness or embedding.
 
 In this paper, we will focus the optimizamizability of the loss function itself and other intuitive properties for linearized single point isometry losses.
