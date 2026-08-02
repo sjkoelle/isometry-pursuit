@@ -23,9 +23,9 @@ The singular values $\sigma_1(X) \dots \sigma_D(X)$ are equal to $1$ if and only
 \end{proposition}
 \begin{proposition}
 \label{prop:orthonormal_basis}
-If $P = D$, the component vectors $X_{.1} \dots X_{.D} \in \mathbb R^D$ form an isometry if and only if, for all $d_1, d_2 \in [D], \langle X_{.d_1}, X_{.d_2} \rangle = \begin{cases}
-1 \; d_1 = d_2 \\ 
-0 \; d_1 \neq d_2 
+If $P = D$, the component vectors $X_{.1} \dots X_{.D} \in \mathbb R^D$ form an isometry if and only if, for all $d, d' \in [D], \langle X_{.d}, X_{.d'} \rangle = \begin{cases}
+1 \; d = d' \\ 
+0 \; d \neq d' 
 \end{cases}$.
 \end{proposition}
 
@@ -33,11 +33,7 @@ If $P = D$, the component vectors $X_{.1} \dots X_{.D} \in \mathbb R^D$ form an 
 The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ between $D$ dimensional manifolds $\M \subseteq \mathbb R^B$ and $\N \subseteq \mathbb R^P$ is a map in tangent bases $x_1 \dots x_{D}$ of $T_\xi \M$ and $y_1 \dots y_{D}$ of $T_{\phi(\xi)} \N$ consisting of entries
 \begin{align}
 \label{eq:diff}
-    D\phi (\xi) = \begin{bmatrix}
-    \frac{\partial \phi_1  }{\partial x_1}(\xi)  & \dots & \frac{\partial \phi_1 }{\partial x_D}(\xi)  \\
-    \vdots & & \vdots \\
-    \frac{\partial \phi_D }{\partial x_1}(\xi)  & \dots & \frac{\partial \phi_{D}  }{\partial x_{D}}(\xi) 
-    \end{bmatrix}.
+D\phi(\xi)_{ij} = \langle y_i, \frac{\partial \phi}{\partial x_j} \rangle (\xi)
 \end{align}
 \end{definition}
 
@@ -56,7 +52,7 @@ ${D \phi (\xi)}^T D \phi (\xi) = \lambda(\xi) I_D$.
 \label{prop:distance_differential_isometry}
 Let $\phi:\mathcal M \to \mathcal N$ be a map between $D$ dimensional submanifolds.
 \begin{align}
-d_\mathcal N(\phi(\xi_1), \phi(\xi_2)) = d_\mathcal M(\xi_1, \xi_2),
+d_\mathcal N(\phi(\xi_i), \phi(\xi_{i'})) = d_\mathcal M(\xi_{i}, \xi_{i'}),
 \end{align}
 if and only if $\phi$ is smooth and is an isometry at every point \citep[Problem~6-7]{Lee2018-rm}.
 \end{proposition}
@@ -69,33 +65,34 @@ if and only if $\phi$ is smooth and is an isometry at every point \citep[Problem
 \toprule
 \textbf{Reference} & \textbf{Objective} & \makecell{\textbf{Lin.}} & \makecell{\textbf{Single}\\\textbf{point}} & \textbf{Identifies} & \makecell{\textbf{Analytic}}  \\
 \midrule
-\citet{NEURIPS2019_6a10bbd4} & $\begin{aligned}
-\max_S\;& \frac{1}{n}\sum_{i=1}^n
+\citet{NEURIPS2019_6a10bbd4} & $\displaystyle
+\max_{ S \in \binom{[P]}{M}} 
+\frac{1}{I}\sum_{i=1}^I
 \log
-\frac{\det(U_S(i)^TU_S(i))^{1/2}}
-{\prod_{k=1}^d \|u^S_k(i)\|_2}\\
-&\quad - \zeta\sum_{k\in S}\lambda_k
-\end{aligned}$ & Yes & Yes & Conformal & No \\
+\frac{
+\det\!\left(x_S^T x_S\right)^{1/2}
+}{
+\prod_{s \in S} \|x_s\|_2
+} (\xi_i)$
+ & Yes & Yes & Conformal & No \\
 \citet{Kohli2021-lr} & $\begin{aligned}
-\ell_{\mathrm{distortion}} &=
-\sup_{\xi',\xi'' \in \mathcal{N}(\xi)}
-\frac{\|f_{.S}(\xi') - f_{.S}(\xi'')\|_2}{d(\xi',\xi'')}\\
-&\quad \cdot
-\inf_{\xi',\xi'' \in \mathcal N(\xi)}
-\frac{d(\xi',\xi'')}{\|f_{.S}(\xi') - f_{.S}(\xi)\|_2}
-\end{aligned}$ & No & Yes & Conformal & No \\
-\citet{Koelle2024-no} & $\begin{aligned}
-\min_B\;& \frac{1}{2}\sum_{i=1}^n
-\|I_d-X_iB_i\|_F^2\\
-&\quad + \lambda_n\sqrt{nd}\|B\|_{1,2}
-\end{aligned}$ & Yes & No & Bijection & No \\
+\sup_{\substack{\xi',\xi''\in\mathcal N(\xi)\\
+                 \xi'\neq\xi''}}
+r_S(\xi',\xi'')
+\sup_{\substack{\xi',\xi''\in\mathcal N(\xi)\\
+                 \xi'\neq\xi''}}
+r_S(\xi',\xi'')^{-1} \\
+\text{where }
+r_S(\xi',\xi'')
+:= \frac{\|f_{.S}(\xi')-f_{.S}(\xi'')\|_2}
+     { \| \xi' - \xi'' \|_2}. \end{aligned}$ & Yes & No & Bijection & No \\
 \citet{Koelle2022-lp} & $\begin{aligned}
 \min_B\;& \|B\|_{1,2}\\
 \mathrm{s.t.}\;& X_iB_i=I_d,\; i\in[n]
 \end{aligned}$ & Yes & No & \makecell{Isometries\\\citep{Koelle2022-lp}} & No \\
 \bottomrule
 \end{tabular}
-\caption{Dictionary-based manifold learning losses.}
+\caption{Dictionary-based manifold learning losses. Note that we set the eigenfunction penalty to $0$ for \citet{NEURIPS2019_6a10bbd4} to emphasize the geometric condition}
 \label{tab:losses}
 \end{table}
 
@@ -122,6 +119,16 @@ In contrast, the linearized version of this problem is
 \end{align}
 where $\ell$ is now a loss function that measures the orthonormalness of a matrix.
 \citet{Koelle2024-no} computes $Df_{.S}(\xi)$ via automatic differentiation.
+
+\begin{proposition}
+\label{prop:distortion_is_condition_number}
+The distortion loss function of $f_S$ is equal to the condition number \citep{GolubWilkinson-condition,Boyd2004-ql} $\frac{\sigma_1(X)}{\sigma_D(X)}$ of $Df_{.S}(\xi)$ as $\mathcal N(\xi) \to \{\xi\}$.
+\end{proposition}
+\begin{proposition}
+This is minimized by conformal maps.
+\end{proposition}
+
+Non-linear objectives are often gradient estimators of linearized objectives, and so the distinction is smaller than it may appear.
 
 \subsection{Isometry losses}
 
@@ -154,15 +161,6 @@ In this paper, we will focus the optimizamizability of the loss function itself 
 However, we will draw motivation and methods from existing methods.
 These methods as applied in the dictionary-based manifold learning literature are summarized in Table \ref{tab:losses}.
 
-
-
-\begin{proposition}
-\label{prop:distortion_is_condition_number}
-The distortion loss function of $f_S$ is equal to the condition number \citep{GolubWilkinson-condition,Boyd2004-ql} $\frac{\sigma_1(X)}{\sigma_D(X)}$ of $Df_{.S}(\xi)$ as $\mathcal N(\xi) \to \{\xi\}$.
-\end{proposition}
-\begin{proposition}
-This is minimized by conformal maps.
-\end{proposition}
 
 From the linear algebra literature, a class of functions more suitable for measuring isometry are S-divergences \citep{Sra2011-sdivergence}.
 S-divergences define a distance $D(P,P')$ on positive definite matrices $P,P'$ given by 
