@@ -12,10 +12,9 @@ This motivates embedding algorithms such as Local Tangent Space Alignment \citep
 
 \begin{definition}
 \label{def:isometry}
-A matrix $X \in \mathbb R^{D \times P}$ ($P \geq D$) is an \textbf{isometry} or, equivalently, \textbf{unitary} if
-\begin{align}
-X X^T = I_D.
-\end{align}
+A matrix $X \in \mathbb R^{D \times D}$ is an \textbf{isometry} or, equivalently, \textbf{unitary} if
+$X X^T = I_D$.
+
 \end{definition}
 
 \begin{proposition}
@@ -44,19 +43,23 @@ The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ betwe
 
 \begin{definition}
 \label{def:isometric_at_a_point}
-A map $\phi$ between $D$ dimensional submanifolds is an \textbf{isometry at a point} $\xi \in \mathcal M$ if
-\begin{align}
-{D \phi (\xi)}^T D \phi (\xi) = I_D.
-\end{align}
+A map $\phi$ between $D$ dimensional submanifolds is an \textbf{isometry at a point} $\xi \in \mathcal M$ if $D \phi (\xi)$ is an isometry.
 \end{definition}
 
 \begin{definition}
 \label{def:conformal_at_a_point}
 A map $\phi$ between $D$ dimensional submanifolds is \textbf{conformal at a point} $\xi \in \mathcal M$ if there exists a scalar $\lambda(\xi) > 0$ such that
-\begin{align}
-{D \phi (\xi)}^T D \phi (\xi) = \lambda(\xi) I_D.
-\end{align}
+${D \phi (\xi)}^T D \phi (\xi) = \lambda(\xi) I_D$.
 \end{definition}
+
+\begin{proposition}
+\label{prop:distance_differential_isometry}
+Let $\phi:\mathcal M \to \mathcal N$ be a map between $D$ dimensional submanifolds.
+\begin{align}
+d_\mathcal N(\phi(\xi_1), \phi(\xi_2)) = d_\mathcal M(\xi_1, \xi_2),
+\end{align}
+if and only if $\phi$ is smooth and is an isometry at every point \citep[Problem~6-7]{Lee2018-rm}.
+\end{proposition}
 
 \begin{table}[t]
 \centering
@@ -95,17 +98,6 @@ A map $\phi$ between $D$ dimensional submanifolds is \textbf{conformal at a poin
 \caption{Dictionary-based manifold learning losses.}
 \label{tab:losses}
 \end{table}
-
-
-\begin{proposition}
-\label{prop:distance_differential_isometry}
-Let $\mathcal M$ and $\mathcal N$ be connected Riemannian manifolds with Riemannian distances $d_\mathcal M$ and $d_\mathcal N$.
-A map $\phi:\mathcal M \to \mathcal N$ preserves distances,
-\begin{align}
-d_\mathcal N(\phi(\xi_1), \phi(\xi_2)) = d_\mathcal M(\xi_1, \xi_2),
-\end{align}
-if and only if $\phi$ is smooth and is an isometry at every point \citep[Problem~6-7]{Lee2018-rm}.
-\end{proposition}
 
 \subsection{Coordinate selection}
 
