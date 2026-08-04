@@ -1,3 +1,10 @@
+\section{Method}
+\label{sec:method}
+
+The contributions of this paper is that we introduce an $\ell$ uniquely minimized by isometries that is convex in its parameters, induces sparsity, and is more appropriate than S-divergence when an isometric submatrix is not present in that it always favors vectors of unit length.
+This $\ell$ is a multitask inspired by the group basis pursuit \citep{Koelle2022-ju,Szeghy2022-ri} which we call differently since grouping is dependent only on the structure of matrix-valued response variable $I_D$.
+We show that this approach, used to select independent dictionary elements in \citet{Koelle2022-ju, Koelle2024-no}, is in fact capable of usefully solving the more specific problem of selecting pointwise isometries from a dictionary.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=.86\textwidth]{../figures/loss_1d_all.png}
@@ -8,83 +15,8 @@ The red vertical dashed line marks $r=1$.
 }
 \end{figure}
 
-\begin{figure}[t]
-\centering
-\begingroup
-\setlength{\tabcolsep}{1pt}
-\begin{tabular}{@{}*{2}{c}@{}}
-\subcaptionbox{\label{fig:loss_2d_condition}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_condition_number.png}} &
-\subcaptionbox{\label{fig:loss_2d_sdiv}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_s_divergence_identity.png}} \\
-\subcaptionbox{\label{fig:loss_2d_norm_logdet}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_normalized_logdet_volume.png}} &
-\subcaptionbox{\label{fig:loss_2d_frob}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_frob_pseudoinverse.png}} \\
-\multicolumn{2}{c}{
-\subcaptionbox{\label{fig:loss_2d_gl}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_gl_pseudoinverse.png}}
-}
-\end{tabular}
-\endgroup
 
-\caption{
-Two-dimensional loss function comparison for isometry pursuit.
-The 2D loss landscapes are for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with shared colorbars.
-S-divergence is shown as the representative generic spectral loss.
-The red star in each 2D plot marks $(r=1, \theta=\pi/2)$ (ideal).
-The panels visualize whether each candidate loss prefers unit-length and orthogonal structure at the ideal point.
-See Table \ref{tab:loss_functions} for mathematical definitions.
-\label{fig:loss_landscapes}
-}
-
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\begingroup
-\setlength{\tabcolsep}{1pt}
-\begin{tabular}{@{}*{2}{c}@{}}
-\subcaptionbox{\label{fig:loss_3d_equicorr_condition}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_condition_number.png}} &
-\subcaptionbox{\label{fig:loss_3d_equicorr_sdiv}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_s_divergence_identity.png}} \\
-\subcaptionbox{\label{fig:loss_3d_equicorr_norm_logdet}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_normalized_logdet_volume.png}} &
-\subcaptionbox{\label{fig:loss_3d_equicorr_frob}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_frob_pseudoinverse.png}} \\
-\multicolumn{2}{c}{
-\subcaptionbox{\label{fig:loss_3d_equicorr_gl}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_gl_pseudoinverse.png}}
-}
-\end{tabular}
-\endgroup
-\caption{
-Loss function comparison for 3D equicorrelated matrices, shown as two-dimensional landscapes.
-Each matrix consists of three vectors in $\mathbb R^3$ with lengths $(1,r,1)$ and common pairwise correlation $\rho$.
-The horizontal axis varies the length ratio $r = \|v_2\|_2 / \|v_1\|_2$, while the vertical axis varies $\rho$.
-S-divergence is shown as the representative generic spectral loss.
-The red star marks the ideal orthonormal setting $(r,\rho)=(1,0)$.
-\label{fig:loss_3d_equicorr_landscapes}
-}
-\end{figure}
-
-\section{Method}
-
-The contributions of this paper is that we introduce an $\ell$ uniquely minimized by isometries that is
-\begin{itemize}
-\item convex in its parameters
-\item induces sparsity
-\item is more appropriate than S-divergence when an isometric submatrix is not present in that it always favors vectors of unit length
-\end{itemize}
-
-This $\ell$ is a multitask inspired by the group basis pursuit \citep{Koelle2022-ju,Szeghy2022-ri} which we call differently since grouping is dependent only on the structure of matrix-valued response variable $I_D$.
-We apply the multitask basis pursuit paradigm used to select independent dictionary elements in \citet{Koelle2022-ju, Koelle2024-no} to the more specific problem of selecting pointwise isometries from a dictionary.
-We first define a ground truth objective computable via brute and greedy algorithms that is uniquely minimized by orthonormal matrices.
-We then define the combination of normalization and multitask basis pursuit that approximates this ground truth loss function.
-We finally give a brute post-processing method for ensuring that the solution is $D$ sparse, and provide a theoretical result that the two stage approach will always result in recovery of an isometric solution from the dictionary, should one exist.
-
-\subsection{Ground truth and ground truther}
+\subsection{The problem with singular values}
 \label{sec:ground_truth}
 
 \begin{align}
@@ -184,6 +116,67 @@ Figure \ref{fig:loss_1d_all} gives graphs of candidate losses when $D=1$, and Fi
 Figure \ref{fig:loss_3d_equicorr_landscapes} gives the analogous two-parameter view for $D=3$ equicorrelated matrices.
 
 
+\begin{figure}[t]
+\centering
+\begingroup
+\setlength{\tabcolsep}{1pt}
+\begin{tabular}{@{}*{2}{c}@{}}
+\subcaptionbox{\label{fig:loss_2d_condition}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_condition_number.png}} &
+\subcaptionbox{\label{fig:loss_2d_sdiv}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_s_divergence_identity.png}} \\
+\subcaptionbox{\label{fig:loss_2d_norm_logdet}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_normalized_logdet_volume.png}} &
+\subcaptionbox{\label{fig:loss_2d_frob}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_frob_pseudoinverse.png}} \\
+\multicolumn{2}{c}{
+\subcaptionbox{\label{fig:loss_2d_gl}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_gl_pseudoinverse.png}}
+}
+\end{tabular}
+\endgroup
+
+\caption{
+Two-dimensional loss function comparison for isometry pursuit.
+The 2D loss landscapes are for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with shared colorbars.
+S-divergence is shown as the representative generic spectral loss.
+The red star in each 2D plot marks $(r=1, \theta=\pi/2)$ (ideal).
+The panels visualize whether each candidate loss prefers unit-length and orthogonal structure at the ideal point.
+See Table \ref{tab:loss_functions} for mathematical definitions.
+\label{fig:loss_landscapes}
+}
+
+\end{figure}
+
+
+\begin{figure}[t]
+\centering
+\begingroup
+\setlength{\tabcolsep}{1pt}
+\begin{tabular}{@{}*{2}{c}@{}}
+\subcaptionbox{\label{fig:loss_3d_equicorr_condition}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_condition_number.png}} &
+\subcaptionbox{\label{fig:loss_3d_equicorr_sdiv}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_s_divergence_identity.png}} \\
+\subcaptionbox{\label{fig:loss_3d_equicorr_norm_logdet}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_normalized_logdet_volume.png}} &
+\subcaptionbox{\label{fig:loss_3d_equicorr_frob}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_frob_pseudoinverse.png}} \\
+\multicolumn{2}{c}{
+\subcaptionbox{\label{fig:loss_3d_equicorr_gl}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_gl_pseudoinverse.png}}
+}
+\end{tabular}
+\endgroup
+\caption{
+Loss function comparison for 3D equicorrelated matrices, shown as two-dimensional landscapes.
+Each matrix consists of three vectors in $\mathbb R^3$ with lengths $(1,r,1)$ and common pairwise correlation $\rho$.
+The horizontal axis varies the length ratio $r = \|v_2\|_2 / \|v_1\|_2$, while the vertical axis varies $\rho$.
+S-divergence is shown as the representative generic spectral loss.
+The red star marks the ideal orthonormal setting $(r,\rho)=(1,0)$.
+\label{fig:loss_3d_equicorr_landscapes}
+}
+\end{figure}
 
 
 % compares it with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.

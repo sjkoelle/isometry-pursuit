@@ -382,7 +382,7 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
             color=config['color'],
             label=config['legend_label'],
         )
-    ax.axvline(x=1.0, color='red', linestyle='--', linewidth=2, alpha=0.7, label=r'$r=1$')
+    ax.axvline(x=1.0, color='red', linestyle='--', linewidth=2, alpha=0.7)
     ax.set_xscale('log')
     ax.set_xlim(rs.min(), rs.max())
     ax.set_ylim(-0.05, 8.0)
@@ -390,7 +390,7 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
     ax.set_xlabel('Length r', fontsize=11)
     ax.set_ylabel('Loss value', fontsize=11)
     ax.grid(True, alpha=0.3)
-    ax.legend(fontsize=8, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=2)
+    ax.legend(fontsize=10, loc='center left', bbox_to_anchor=(1.02, 0.5))
     fig.savefig(os.path.join(output_dir, 'loss_1d_all.png'), dpi=300, bbox_inches='tight')
     print("  Saved loss_1d_all.png")
     plt.close()
