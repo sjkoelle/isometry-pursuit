@@ -156,6 +156,24 @@ Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F-\sqrt{D}$ & No & Yes & Ye
 \label{tab:loss_functions}
 \end{table}
 
+% TODO: These two properties overlap with the ``Unique min.'' and ``At isometry''
+% columns in Table \ref{tab:loss_functions}; consider whether both are needed.
+\begin{property}[Rotation invariance]
+\label{property:rotation_invariance}
+A matrix loss $\ell$ is rotation invariant if, for every orthonormal $U \in \mathbb R^{D \times D}$,
+\begin{align}
+\ell(UX) = \ell(X).
+\end{align}
+\end{property}
+
+\begin{property}[Unique isometry minimum]
+\label{property:unique_isometry_minimum}
+A matrix loss $\ell$ is uniquely minimized by isometries if
+\begin{align}
+\arg \min_X \ell(X) = \{X : XX^T = I_D\}.
+\end{align}
+\end{property}
+
 \begin{definition}{\citet{Sra2011-sdivergence}}
 The \textbf{S-divergence} $D(P,P')$ on positive definite matrices $P,P'$ is given by 
 \begin{align}

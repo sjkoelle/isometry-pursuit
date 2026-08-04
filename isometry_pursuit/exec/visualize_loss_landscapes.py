@@ -253,8 +253,6 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         'gl_pseudoinverse',
     ]
     combined_1d_loss_names = [
-        'condition_number',
-        'isometry_loss',
         's_divergence_identity',
         'absolute_log_singular_values',
         'normalized_logdet_volume',
@@ -386,11 +384,12 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
     ax.set_xscale('log')
     ax.set_xlim(rs.min(), rs.max())
     ax.set_ylim(-0.05, 8.0)
-    ax.set_title('1D loss comparison', fontsize=13, weight='bold')
-    ax.set_xlabel('Length r', fontsize=11)
-    ax.set_ylabel('Loss value', fontsize=11)
+    ax.set_title('1D loss comparison', fontsize=16, weight='bold')
+    ax.set_xlabel('Length r', fontsize=14)
+    ax.set_ylabel('Loss value', fontsize=14)
+    ax.tick_params(axis='both', labelsize=12)
     ax.grid(True, alpha=0.3)
-    ax.legend(fontsize=10, loc='center left', bbox_to_anchor=(1.02, 0.5))
+    ax.legend(fontsize=12, loc='center left', bbox_to_anchor=(1.02, 0.5))
     fig.savefig(os.path.join(output_dir, 'loss_1d_all.png'), dpi=300, bbox_inches='tight')
     print("  Saved loss_1d_all.png")
     plt.close()

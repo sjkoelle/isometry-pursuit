@@ -2,8 +2,11 @@
 \label{sec:method}
 
 The contributions of this paper is that we introduce an $\ell$ uniquely minimized by isometries that is convex in its parameters, induces sparsity, and is more appropriate than S-divergence when an isometric submatrix is not present in that it always favors vectors of unit length.
-This $\ell$ is a multitask inspired by the group basis pursuit \citep{Koelle2022-ju,Szeghy2022-ri} which we call differently since grouping is dependent only on the structure of matrix-valued response variable $I_D$.
+We call this $\ell$ multitask basis pursuit rather than group basis pursuite \citep{Koelle2022-ju,Szeghy2022-ri} since grouping is dependent only on the structure of matrix-valued response variable $I_D$.
 We show that this approach, used to select independent dictionary elements in \citet{Koelle2022-ju, Koelle2024-no}, is in fact capable of usefully solving the more specific problem of selecting pointwise isometries from a dictionary.
+We justify this approach in two ways.
+First, we should that this loss and its {\it method of frames} analog have intuitively preferable geometric properties to S-divergence and other singular-value based losses.
+Second, we exhibit the usefulness of this basis pursuit approach for convexifying the coordinate selection problem.
 
 \begin{figure}[t]
 \centering
@@ -17,17 +20,10 @@ The red vertical dashed line marks $r=1$.
 
 
 \subsection{The problem with singular values}
-\label{sec:ground_truth}
+\label{sec:singular_value_problem}
 
-\begin{align}
-\label{property:ortho_min}
-\end{align}
-\begin{align}
-\label{property:rot_inv}
-\end{align}
-$\ell_S(X) = D(X^TX, I_D)$ is minimized uniquely by orthonormal matrices and invariant under rotation.
-However, it is plainly not the only function of $X$ satisfying these properties.
-Consider that function
+$D(X^TX, I_D)$ is not the only function of $X$ minimized uniquely by orthonormal matrices and invariant under rotation.
+Consider 
 \begin{align}
 \label{eq:gt_loss}
 \ell: \mathbb R^{D \times P} &\to \mathbb R^{+} \\
@@ -40,8 +36,23 @@ t &\mapsto \log \frac{t + t^{-1}}{2}.
 \end{align}
 Clearly, any $g$ uniquely minimized at $1$ will provide a suitable rescaling of singular values.
 However, there are some nice properties we may also want.
-Monotonicity away from $1$.
-$g(t) = t(t^{-1})$.
+\begin{property}[Monotonicity away from one]
+\label{property:scalar_monotonicity}
+\begin{align}
+g'(t)
+\begin{cases}
+<0 \; : \; 0 < t < 1 \\
+=0 \; : \; t = 1 \\
+>0 \; : \; t > 1.
+\end{cases}
+\end{align}
+\end{property}
+\begin{property}[Log-symmetry]
+\label{property:log_symmetry}
+\begin{align}
+g(t) = g(1/t).
+\end{align}
+\end{property}
 See for example \citet{Cichocki2014-logdet} for a variety of log-polynomial singular value divergences on positive definite matrices satisfying these property.
 We provide a heuristic answer to the first question and a more rigorous to the second.
 Intuitively, the problem with singular values seems to be that they can blow up when $X$ is rank deficient and so aren't very good for partially correct answers.
@@ -56,8 +67,9 @@ What of the other singular values?
 It was quite small, and it now has gotten a little bit smaller, but not commesurately with the decrease in loss from the top singular value.
 
 Put mathematically, we want
-\begin{align}
+\begin{property}[Column-rescaling monotonicity]
 \label{property:pathwise}
+\begin{align}
 \frac{\partial \ell}{\partial \|x_{.d}\|_2}
 \begin{cases}
 >0 \; : \; \|x_{.d}\|_2 > 1 \\
@@ -66,22 +78,31 @@ Put mathematically, we want
 \end{cases}
 \end{align}
 for all $X$.
+Equivalently, writing $X^{(p)}(r)$ for the matrix obtained by rescaling column $p$ to length $r$ while preserving its direction, this condition is
+\begin{align}
+\left\langle
+\frac{\partial \ell}{\partial x_{.p}}(X^{(p)}(r)),
+\frac{x_{.p}}{\|x_{.p}\|_2}
+\right\rangle
+\begin{cases}
+<0 \; : \; r < 1 \\
+=0 \; : \; r = 1 \\
+>0 \; : \; r > 1 .
+\end{cases}
+\end{align}
+\end{property}
 What this property says is that, as a column-set becomes more normal, the loss is lower.
 This property is plainly of interest for isometry selection.
 
 What is also of interest is the following log-symmetry property.
 
+% TODO: The preceding Property \ref{property:log_symmetry} already states this;
+% this nested property can probably be replaced by a reference.
 
 Unfortunately, we show the following proposition.
 \begin{proposition}
 \label{prop:log_svd_bad}
-There does not exist a $g$ such that $\ell = \sum_{d=1}^D g( \sigma_d(X))$ such that $\ell$ satisfies Property \label{property:pathwise} and
-\begin{property}
-\label{property:log_symmetry}
-\begin{align}
-g(t) = g(1/t)
-\end{align}
-\end{property}
+There does not exist a $g$ such that $\ell = \sum_{d=1}^D g( \sigma_d(X))$ such that $\ell$ satisfies Property \label{property:pathwise} and Property \label{property:log_symmetry}.
 \end{proposition}
 A suitable counterexample is shown in Section \ref{sec:nearly_colinear_singular_values}.
 The issue basically is that colinear vectors punish singular value based losses by pushing larger singular values away from $1$.
