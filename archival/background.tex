@@ -197,6 +197,7 @@ In Section \ref{sec:method}, we will examine matrix loss functions capable of se
 %TODO: explain how works for PSD not just PD.
 
 \subsection{Sparse convex coordinate selection}
+\label{sec:sparse_convex_coordinate_selection}
 
 Equipped with a function $\ell$ that is minimized by an isometry, objective functions like \ref{prog:function_best_subset_selection} may be optimized in a variety of ways.
 Brute force algorithms consider all possible solutions are guaranteed to find the global minimum, but have the often prohibitive time complexity $O(C_\ell P^D)$ where $C_\ell$ is the cost of evaluating $\ell$.
@@ -206,10 +207,11 @@ Formal definitions are given in Section \ref{sec:algorithms}.
 
 Sometimes, it is possible to introduce an objective which convexifies problems of the above form \citep{Liberti2004-iu, Abdi2013-th, Zhou2021-zz}.
 \begin{align}
-\arg \min_{\beta \in \mathbb R^P : y  = x\beta} \ell(\beta) 
+\arg \min_{\beta \in \mathbb R^P : y  = X\beta} \rho(\beta) 
 \end{align}
-to the overcomplete regression problem $y = x \beta$ are a classic example \citep{Chen2001-hh}.
+for an overcomplete regression problem $y = X \beta$ is a classic example \citep{Chen2001-hh}.
 Overcomplete regression problems are distinguished by the fact that $P > D$ and so the solution $\beta$ is not unique.
-When $f(\beta) = \|\beta\|_0$, this non-convex problem can be solved by any subset of sufficient rank.
-However, when $f(\beta) =\|\beta\|_1$, the problem is not only more geometrically restrictive, but it is also only convex and may be solved efficiently e.g. via interior-point methods.
+When $\rho(\beta) = \|\beta\|_0$, this non-convex problem searches directly for a sparsest representing subset.
+However, when $\rho(\beta) =\|\beta\|_1$, the problem is a convex relaxation and may be solved efficiently e.g. via interior-point methods.
+Because the $\ell_1$ objective is scale-sensitive, this relaxation is geometrically meaningful for coordinate selection only after normalizing the columns of $X$ so that sparsity is not confounded with column length.
 See \citet{JMLR:v23:21-0420} for a recent discussion.

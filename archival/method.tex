@@ -47,26 +47,14 @@ g'(t)
 \end{cases}
 \end{align}
 \end{property}
+
 \begin{property}[Log-symmetry]
 \label{property:log_symmetry}
 \begin{align}
 g(t) = g(1/t).
 \end{align}
 \end{property}
-See for example \citet{Cichocki2014-logdet} for a variety of log-polynomial singular value divergences on positive definite matrices satisfying these property.
-We provide a heuristic answer to the first question and a more rigorous to the second.
-Intuitively, the problem with singular values seems to be that they can blow up when $X$ is rank deficient and so aren't very good for partially correct answers.
-On the other hand, the log-polynomial loss grows quite slowly with error and so is overly forgiving.
 
-The deep issue is more subtle.
-Essentially, we want a loss that grows the further from isometry we are.
-Among the conditions for satisfying this are that given a set of angles between vectors we want the loss to be less when the vectors are length 1.
-This is an issue for singular-value based losses, since two colinear vectors of length 1 will increase a singular value to $\sqrt{2}$.
-In this way, as one of the vectors is shortened, the singular value passes through $1$.
-What of the other singular values?
-It was quite small, and it now has gotten a little bit smaller, but not commesurately with the decrease in loss from the top singular value.
-
-Put mathematically, we want
 \begin{property}[Column-rescaling monotonicity]
 \label{property:pathwise}
 \begin{align}
@@ -78,96 +66,115 @@ Put mathematically, we want
 \end{cases}
 \end{align}
 for all $X$.
-Equivalently, writing $X^{(p)}(r)$ for the matrix obtained by rescaling column $p$ to length $r$ while preserving its direction, this condition is
-\begin{align}
-\left\langle
-\frac{\partial \ell}{\partial x_{.p}}(X^{(p)}(r)),
-\frac{x_{.p}}{\|x_{.p}\|_2}
-\right\rangle
-\begin{cases}
-<0 \; : \; r < 1 \\
-=0 \; : \; r = 1 \\
->0 \; : \; r > 1 .
-\end{cases}
-\end{align}
 \end{property}
-What this property says is that, as a column-set becomes more normal, the loss is lower.
-This property is plainly of interest for isometry selection.
-
-What is also of interest is the following log-symmetry property.
-
-% TODO: The preceding Property \ref{property:log_symmetry} already states this;
-% this nested property can probably be replaced by a reference.
 
 Unfortunately, we show the following proposition.
 \begin{proposition}
 \label{prop:log_svd_bad}
-There does not exist a $g$ such that $\ell = \sum_{d=1}^D g( \sigma_d(X))$ such that $\ell$ satisfies Property \label{property:pathwise} and Property \label{property:log_symmetry}.
+There does not exist a $g$ such that $\ell = \sum_{d=1}^D g( \sigma_d(X))$ such that $\ell$ satisfies Property \ref{property:pathwise} and Property \ref{property:log_symmetry}.
 \end{proposition}
-A suitable counterexample is shown in Section \ref{sec:nearly_colinear_singular_values}.
-The issue basically is that colinear vectors punish singular value based losses by pushing larger singular values away from $1$.
-The issue can also be seen visually in Figure \ref{fig:}, where the level sets of the log det losses are not tangent to length at $r = 1$, meaning that given an angle loss can actually be decreased by shrinking 
+A suitable matrix for which no $g$ can be chosen such that a log det divergence satisfies Properties \ref{prop:} and \ref{prop:log_symmetry} is shown in Section \ref{sec:nearly_colinear_singular_values}.
+Figure \ref{fig:loss_1d_all} gives graphs of candidate losses when $D=1$.
+A view of the loss landscape for this matrix is shown in Figure \ref{fig:loss_3d_equicorr_landscapes}.
+The level sets of the log det losses are not tangent to length at $r = 1$.
+This means that given an angle loss can actually be decreased by shrinking a vector away from length $1$.
+This is an intuitively non-sensical property for a loss that is supposed to prefer orthonormal matrices.
+
+\subsection{Normalization}
+\label{sec:normalization}
 
 Although starting from singular values is bad in the sense of Proposition \label{prop:log_svd_bad}, other losses do satisfy this property.
 These losses arise from the intuition that we can shrink vectors away from length $1$ in a manner similar to how we selected $g$.
 Then, we can apply some loss function to the rescaled matrix that satisfies Property \ref{property:pathwise}.
 
-In fact, two fundamentally different loss functions first come under consideration.
-The determinant of the rescaled matrix will be maximized at orthonormality.
-Determinant is monotonic with product of singular values.
-So now basically we can do something with product of the singular values rather than their log sum.
+As mentioned in Section \ref{sec:sparse_convex_coordinate_selection}, it is important to normalize the columns of $x$ before applying basis pursuit.
+A similar insight can be applied to the problem of selecting isometric submatrices.
+Since basis pursuit methods tend to select longer vectors, selection of orthonormal submatrices requires normalization such that both long and short candidate basis vectors are penalized in the subsequent regression.
+We introduce the following definition.
 
-Why is product bad?
+\begin{definition}
+Let $g:\mathbb R^+ \to \mathbb R^+$ satisfy Properties
+\ref{property:scalar_monotonicity} and \ref{property:log_symmetry}.
+We define a \textbf{symmetric normalization}
+\begin{align}
+n_g: \mathbb R^D \setminus \{0\} &\to \mathbb R^D \\
+v &\mapsto \frac{g(\|v\|_2)}{\|v\|_2}v .
+\end{align}
+\label{def:symmetric_normalization}
+\end{definition}
+
+
+We suggest to choose $g$ as follows.
+\begin{align}
+g: \mathbb R^+  &\to \mathbb R^+ \\
+t  &\mapsto \frac{2e}{e^{t} + e^{t^{-1}}}.
+\label{eq:normalization}
+\end{align}
+
+Besides satisfying the conditions in Definition \ref{def:symmetric_normalization}, this choice of $g$ has some additional nice properties.
+
+\begin{proposition}
+For $g$ defined in \eqref{eq:normalization}, $-\log g$ is convex.
+\end{proposition}
+
+\begin{proposition}
+The function $g$ defined in \eqref{eq:normalization} is smooth on $\mathbb R^+$.
+\end{proposition}
+
+\begin{proposition}
+For $g$ defined in \eqref{eq:normalization}, $\log g(t)$ decays linearly in $t$ as $t \to \infty$ and in $t^{-1}$ as $t \to 0$.
+\end{proposition}
+
+\begin{proposition}
+\label{prop:normalization_logsumexp}
+The inverse normalization $1/g$ in \eqref{eq:normalization} is the normalized exponential of the LogSumExp \citep{Boyd2004-ql} relaxation of $\max(t,t^{-1})$.
+\end{proposition}
+
+We plot the effect of this normalization on our example data in Figure \ref{fig:normalization}.
+
+\subsection{Normalized Gram trace loss}
+
+When the columns of $x$ are so normalized, then both the determinant and trace of $X^TX$ are maximized by orthonormal matrices.
+By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell$ is uniquely maximized by orthonormal matrices.
+Moreover, $g$ is convex, and $\ell( X^{-1}) = \ell( X)$ when $X$ is invertible.
+Figure \ref{fig:loss_3d_equicorr_landscapes} gives the analogous two-parameter view for $D=3$ equicorrelated matrices.
 
 Sum of singular values is the trace.
 So will the sum of its squared singular values.
 On the other hand we can apply a method-of-frames penalty.
 Also note that trace of A transpose A is in fact the nuclear norm.
 
-These divergences raise the question of what is the most reasonable form of $g$, and whether starting with singular values is a good way to define an isometry loss.
-\begin{align}
-g: \mathbb R^+ &\to \mathbb R^+ \\
-t &\mapsto \frac{e^{t} + e^{t^{-1}}}{2e}.
-\end{align}
+% \begin{figure}[t]
+% \centering
+% \begingroup
+% \setlength{\tabcolsep}{1pt}
+% \begin{tabular}{@{}*{2}{c}@{}}
+% \subcaptionbox{\label{fig:loss_2d_condition}}[0.30\textwidth]
+% {\includegraphics[width = \linewidth]{../figures/loss_2d_condition_number.png}} &
+% \subcaptionbox{\label{fig:loss_2d_sdiv}}[0.30\textwidth]
+% {\includegraphics[width = \linewidth]{../figures/loss_2d_s_divergence_identity.png}} \\
+% \subcaptionbox{\label{fig:loss_2d_norm_logdet}}[0.30\textwidth]
+% {\includegraphics[width = \linewidth]{../figures/loss_2d_normalized_logdet_volume.png}} &
+% \subcaptionbox{\label{fig:loss_2d_frob}}[0.30\textwidth]
+% {\includegraphics[width = \linewidth]{../figures/loss_2d_frob_pseudoinverse.png}} \\
+% \multicolumn{2}{c}{
+% \subcaptionbox{\label{fig:loss_2d_gl}}[0.30\textwidth]
+% {\includegraphics[width = \linewidth]{../figures/loss_2d_gl_pseudoinverse.png}}
+% }
+% \end{tabular}
+% \endgroup
 
+% \caption{
+% Two-dimensional loss function comparison for isometry pursuit.
+% The 2D loss landscapes are for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with shared colorbars.
+% S-divergence is shown as the representative generic spectral loss.
+% The red star in each 2D plot marks $(r=1, \theta=\pi/2)$ (ideal).
+% The panels visualize whether each candidate loss prefers unit-length and orthogonal structure at the ideal point.
+% See Table \ref{tab:loss_functions} for mathematical definitions.
+% \label{fig:loss_landscapes}
+% }
 
-By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell$ is uniquely maximized by orthonormal matrices.
-Moreover, $g$ is convex, and $\ell( X^{-1}) = \ell( X)$ when $X$ is invertible.
-Figure \ref{fig:loss_1d_all} gives graphs of candidate losses when $D=1$, and Figure \ref{fig:loss_landscapes} gives the analogous landscapes for $D=2$.
-Figure \ref{fig:loss_3d_equicorr_landscapes} gives the analogous two-parameter view for $D=3$ equicorrelated matrices.
-
-
-\begin{figure}[t]
-\centering
-\begingroup
-\setlength{\tabcolsep}{1pt}
-\begin{tabular}{@{}*{2}{c}@{}}
-\subcaptionbox{\label{fig:loss_2d_condition}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_condition_number.png}} &
-\subcaptionbox{\label{fig:loss_2d_sdiv}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_s_divergence_identity.png}} \\
-\subcaptionbox{\label{fig:loss_2d_norm_logdet}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_normalized_logdet_volume.png}} &
-\subcaptionbox{\label{fig:loss_2d_frob}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_frob_pseudoinverse.png}} \\
-\multicolumn{2}{c}{
-\subcaptionbox{\label{fig:loss_2d_gl}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_gl_pseudoinverse.png}}
-}
-\end{tabular}
-\endgroup
-
-\caption{
-Two-dimensional loss function comparison for isometry pursuit.
-The 2D loss landscapes are for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with shared colorbars.
-S-divergence is shown as the representative generic spectral loss.
-The red star in each 2D plot marks $(r=1, \theta=\pi/2)$ (ideal).
-The panels visualize whether each candidate loss prefers unit-length and orthogonal structure at the ideal point.
-See Table \ref{tab:loss_functions} for mathematical definitions.
-\label{fig:loss_landscapes}
-}
-
-\end{figure}
+% \end{figure}
 
 
 \begin{figure}[t]
@@ -199,60 +206,9 @@ The red star marks the ideal orthonormal setting $(r,\rho)=(1,0)$.
 }
 \end{figure}
 
-
 % compares it with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.
 % NOTE (Sam): Do we need proofs of maximized by orthonormal matrices and convex?
 % Can we prove this is a norm?
-
-Our ground truth objective is therefore the best subset selection problem
-\begin{align}
-\label{prog:ground_truth}
-\arg \min_{ S \in \binom{[P]}{d}} \ell( X_{. S}).
-\end{align}
-Regardless of the convexity of $\ell $, brute combinatorial search over $[P]$ is inherently non-convex.
-This motivates our alternative formulation.
-
-\subsection{Normalization}
-\label{sec:normalization}
-
-Since basis pursuit methods tend to select longer vectors, selection of orthonormal submatrices requires normalization such that both long and short candidate basis vectors are penalized in the subsequent regression.
-We introduce the following definition.
-
-\begin{definition}[Symmetric normalization]
-A function $q: \mathbb R^D \to \mathbb R^+ $ is a symmetric normalization if 
-\begin{align}
-\arg \max_{v \in \mathbb R^D} \ q (v) &=\{ v : \|v\|_2 = 1 \} \\
-q(v) &= q(\frac{v}{\|v\|_2^2}) \\
-q(v_1) &= q(v_2) \; \forall \; v_1, v_2 \in \mathbb R^D : \|v_1\|_2 = \|v_2\|_2.
-\end{align} \label{def:symmetric_normalization}
-\end{definition}
-
-We use such functions to normalize column-vector length in such a way that vectors of length $1$ prior to normalization have longest length after normalization and vectors are shrunk proportionately to their deviation from $1$. 
-That is, we normalize vectors by
-\begin{align}
-n: \mathbb R^D  &\to \mathbb R^D \\
-v &\mapsto {q(v) } \frac{v}{\|v\|_2}
-\end{align}
-and matrices by
-\begin{align}
-w: \mathbb R^{D \times P}  &\to \mathbb R^{D \times P} \\
- X_{.p} &\mapsto n( X_{.p}) \; \forall \; p \in [P].
-\end{align}
-
-We choose $q$ as follows.
-\begin{align}
-q: \mathbb R^D  &\to \mathbb R^+ \\
-v  &\mapsto \frac{2e}{e^{\|v\|_2} + e^{\|v\|_2^{-1}}}.
-\label{eq:normalization}
-\end{align}
-
-Besides satisfying the conditions in Definition \ref{def:symmetric_normalization}, this normalization has some additional nice properties.
-First, $q$ is convex.
-Second, it grows asymptotically log-linearly.
-Third, while $\exp(-|\log t|) = \exp(-\max (t, 1/t))$ is a seemingly natural choice for normalization, it is non smooth, and the LogSumExp \citep{Boyd2004-ql} replacement of $\max (t, 1/t)$ with $ \log (\exp (t ) + \exp(1/t))$ simplifies to \ref{eq:normalization} upon exponentiation.
-This normalization provides good numerical properties for avoiding issues arising close to $0$ and $\infty$.
-We plot the effect of this normalization on our example data in Figure \ref{fig:normalization}.
-
 
 \subsection{Isometry pursuit}
 

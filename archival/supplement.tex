@@ -386,6 +386,36 @@ Thus $ \frac{1}{2} g'(1/\sqrt{2}) = - g'(1/\sqrt{2})$ and so $g'(1/\sqrt{2}) $ a
 
 
 
+\subsubsection{Proof of Proposition \ref{prop:normalization_logsumexp}}
+\label{proof:normalization_logsumexp}
+
+\begin{proof}
+The LogSumExp relaxation of $\max(t,t^{-1})$ is
+\begin{align}
+\operatorname{LSE}(t,t^{-1})
+&=
+\log\left(e^t+e^{t^{-1}}\right).
+\end{align}
+The exponential of this relaxation is
+\begin{align}
+\exp\left(\operatorname{LSE}(t,t^{-1})\right)
+&=
+\exp\left(\log\left(e^t+e^{t^{-1}}\right)\right) \\
+&=
+e^t+e^{t^{-1}}.
+\end{align}
+Since $g(1)=1$, its inverse is normalized to equal $1$ at $t=1$:
+\begin{align}
+\frac{1}{g(t)}
+&=
+\frac{e^t+e^{t^{-1}}}{2e} \\
+&=
+\exp\left(\operatorname{LSE}(t,t^{-1}) - 1 - \log 2\right),
+\end{align}
+which is the normalized exponential of the LogSumExp relaxation.
+\end{proof}
+
+
 \subsubsection{Proof of Proposition \ref{prop:basis_pursuit_selection_invariance}}
 \label{proof:basis_pursuit_program_invariance}
 
