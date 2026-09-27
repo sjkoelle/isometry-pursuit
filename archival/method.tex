@@ -78,7 +78,7 @@ Figure \ref{fig:loss_1d_all} gives graphs of candidate losses when $D=1$.
 A view of the loss landscape for this matrix is shown in Figure \ref{fig:loss_3d_equicorr_landscapes}.
 The level sets of the log det losses are not tangent to length at $r = 1$.
 This means that given an angle loss can actually be decreased by shrinking a vector away from length $1$.
-This is an intuitively non-sensical property for a loss that is supposed to prefer orthonormal matrices.
+This is an intuitively bad property for a loss that is supposed to prefer orthonormal matrices.
 
 \subsection{Normalization}
 \label{sec:normalization}
@@ -131,50 +131,62 @@ The inverse normalization $1/g$ in \eqref{eq:normalization} is the normalized ex
 \end{proposition}
 
 We plot the effect of this normalization on our example data in Figure \ref{fig:normalization}.
+% why are these important
 
-\subsection{Normalized Gram trace loss}
+\subsection{Normalized trace loss}
 
-When the columns of $x$ are so normalized, then both the determinant and trace of $X^TX$ are maximized by orthonormal matrices.
-By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell$ is uniquely maximized by orthonormal matrices.
-Moreover, $g$ is convex, and $\ell( X^{-1}) = \ell( X)$ when $X$ is invertible.
-Figure \ref{fig:loss_3d_equicorr_landscapes} gives the analogous two-parameter view for $D=3$ equicorrelated matrices.
+Many matrix functions applied to suitably normalized matrices are uniquely minimized by orthonormal matrices.
+Two examples are the determinant and also the Frobenius norm of the inverse.
+\begin{proposition}
+    \label{prop:determinant_singular_values}
+    The determinant of the normalized matrix $\propto \sum_{d=1}^D \log \sigma_d$.
+\end{proposition}
+\begin{proposition}
+    \label{prop:frobenius_inverse_singular_values}
+    The Frobenius norm of the inverse $=\sum_{d=1}^D \frac{1}{\sigma_d^2} \propto \sum_{d=1}^D \sigma_d$
+\end{proposition}
+\begin{proposition}
+The determinant of the normalized matrix satisfies Properties \ref{property:scalar_monotonicity}, \ref{property:log_symmetry}, and \ref{property:pathwise}. 
+\end{proposition}
+\begin{proposition}
+The Frobenius norm of the inverse Properties \ref{property:scalar_monotonicity}, \ref{property:log_symmetry}, and \ref{property:pathwise}. 
+\end{proposition}
 
-Sum of singular values is the trace.
-So will the sum of its squared singular values.
-On the other hand we can apply a method-of-frames penalty.
-Also note that trace of A transpose A is in fact the nuclear norm.
+Unfortunately, we haven't identified a justification for one of these losses over the other beyond taste.
+The determinant will more gently penalize highly divergent singular values, but be less forgiving of small deviations from orthogonality.
+%When the columns of $x$ are so normalized, then both the determinant and trace of $X^TX$ are maximized by orthonormal matrices.
+%By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell$ is uniquely maximized by orthonormal matrices.
+%Moreover, $g$ is convex, and $\ell( X^{-1}) = \ell( X)$ when $X$ is invertible.
+Figure \ref{fig:loss_landscapes} gives the analogous two-parameter view for $D=2$ matrices, and Figure \ref{fig:loss_3d_equicorr_landscapes} extends this comparison to an equicorrelated $D=3$ slice.
 
-% \begin{figure}[t]
-% \centering
-% \begingroup
-% \setlength{\tabcolsep}{1pt}
-% \begin{tabular}{@{}*{2}{c}@{}}
-% \subcaptionbox{\label{fig:loss_2d_condition}}[0.30\textwidth]
-% {\includegraphics[width = \linewidth]{../figures/loss_2d_condition_number.png}} &
-% \subcaptionbox{\label{fig:loss_2d_sdiv}}[0.30\textwidth]
-% {\includegraphics[width = \linewidth]{../figures/loss_2d_s_divergence_identity.png}} \\
-% \subcaptionbox{\label{fig:loss_2d_norm_logdet}}[0.30\textwidth]
-% {\includegraphics[width = \linewidth]{../figures/loss_2d_normalized_logdet_volume.png}} &
-% \subcaptionbox{\label{fig:loss_2d_frob}}[0.30\textwidth]
-% {\includegraphics[width = \linewidth]{../figures/loss_2d_frob_pseudoinverse.png}} \\
-% \multicolumn{2}{c}{
-% \subcaptionbox{\label{fig:loss_2d_gl}}[0.30\textwidth]
-% {\includegraphics[width = \linewidth]{../figures/loss_2d_gl_pseudoinverse.png}}
-% }
-% \end{tabular}
-% \endgroup
-
-% \caption{
-% Two-dimensional loss function comparison for isometry pursuit.
-% The 2D loss landscapes are for 2×2 matrices parametrized by length ratio $r$ and angle $\theta$ with shared colorbars.
-% S-divergence is shown as the representative generic spectral loss.
-% The red star in each 2D plot marks $(r=1, \theta=\pi/2)$ (ideal).
-% The panels visualize whether each candidate loss prefers unit-length and orthogonal structure at the ideal point.
-% See Table \ref{tab:loss_functions} for mathematical definitions.
-% \label{fig:loss_landscapes}
-% }
-
-% \end{figure}
+\begin{figure}[t]
+\centering
+\begingroup
+\setlength{\tabcolsep}{1pt}
+\begin{tabular}{@{}*{2}{c}@{}}
+\subcaptionbox{\label{fig:loss_2d_condition}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_condition_number.png}} &
+\subcaptionbox{\label{fig:loss_2d_sdiv}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_s_divergence_identity.png}} \\
+\subcaptionbox{\label{fig:loss_2d_abs_log_singular}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_absolute_log_singular_values.png}} &
+\subcaptionbox{\label{fig:loss_2d_norm_logdet}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_normalized_logdet_volume.png}} \\
+\subcaptionbox{\label{fig:loss_2d_frob}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_frob_pseudoinverse.png}} &
+\subcaptionbox{\label{fig:loss_2d_gl}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_2d_gl_pseudoinverse.png}}
+\end{tabular}
+\endgroup
+\caption{
+Loss function comparison for $2 \times 2$ matrices.
+Each landscape varies the length ratio $r$ and angle $\theta$ between two column vectors.
+S-divergence and absolute log singular value are shown as representative generic spectral losses.
+The red star marks the ideal orthonormal setting $(r,\theta)=(1,\pi/2)$.
+See Table \ref{tab:loss_functions} for mathematical definitions.
+\label{fig:loss_landscapes}
+}
+\end{figure}
 
 
 \begin{figure}[t]
@@ -186,21 +198,21 @@ Also note that trace of A transpose A is in fact the nuclear norm.
 {\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_condition_number.png}} &
 \subcaptionbox{\label{fig:loss_3d_equicorr_sdiv}}[0.30\textwidth]
 {\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_s_divergence_identity.png}} \\
+\subcaptionbox{\label{fig:loss_3d_equicorr_abs_log_singular}}[0.30\textwidth]
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_absolute_log_singular_values.png}} &
 \subcaptionbox{\label{fig:loss_3d_equicorr_norm_logdet}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_normalized_logdet_volume.png}} &
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_normalized_logdet_volume.png}} \\
 \subcaptionbox{\label{fig:loss_3d_equicorr_frob}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_frob_pseudoinverse.png}} \\
-\multicolumn{2}{c}{
+{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_frob_pseudoinverse.png}} &
 \subcaptionbox{\label{fig:loss_3d_equicorr_gl}}[0.30\textwidth]
 {\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_gl_pseudoinverse.png}}
-}
 \end{tabular}
 \endgroup
 \caption{
 Loss function comparison for 3D equicorrelated matrices, shown as two-dimensional landscapes.
 Each matrix consists of three vectors in $\mathbb R^3$ with lengths $(1,r,1)$ and common pairwise correlation $\rho$.
 The horizontal axis varies the length ratio $r = \|v_2\|_2 / \|v_1\|_2$, while the vertical axis varies $\rho$.
-S-divergence is shown as the representative generic spectral loss.
+S-divergence and absolute log singular value are shown as representative generic spectral losses.
 The red star marks the ideal orthonormal setting $(r,\rho)=(1,0)$.
 \label{fig:loss_3d_equicorr_landscapes}
 }
@@ -209,6 +221,15 @@ The red star marks the ideal orthonormal setting $(r,\rho)=(1,0)$.
 % compares it with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.
 % NOTE (Sam): Do we need proofs of maximized by orthonormal matrices and convex?
 % Can we prove this is a norm?
+
+We have established that there are losses $\ell$ that satisfy our conditions for a good loss function on square matrices $X \in \mathbb R^{D\times D}$.
+However, the computational identification of such matrices is combinatorial in nature.
+Thus, in the actual application setting of selecting combinations of columns from a larger matrix $X \in \mathbb R^{D \times P}$, we still need to perform many expensive evaluations of singular values or inversions.
+
+To fix this, we follow the well-trodden path of convexifying combinatorial problems by relaxing the problem to a convex optimization problem.
+As mentioned in the previous section, the Frobenius norm of the inverse satisfies our desiderata.
+This loss has a natural relaxation to the high-dimensional setting, namely the Frobenius norm of the Moore-Penrose pseudoinverse, also known as the method-of-frames solution.
+From here, there is an obvious extensive to the sparse basis pursuit objective.
 
 \subsection{Isometry pursuit}
 

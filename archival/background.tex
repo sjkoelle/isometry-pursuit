@@ -147,7 +147,7 @@ We now turn our review to the linear algebra literature.
 \midrule
 Distortion\\\citep{Kohli2021-lr} & $\sigma_{\max}(X) / \sigma_{\min}(X) - 1$ & No & Yes & No & Yes \\
 Generic spectral loss & $\ell(X)=\sum_{d=1}^D g(\sigma_d(X))$ & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} \\
-Normalized log-det volume & $-\sum_{d=1}^D \log\sigma_d\left(n_q^{\times P}(X)\right)$ & No & No & Yes & No \\
+Normalized determinant volume & $\left|\det\left(n_q^{\times D}(X)\right)\right|^{-1}-1$ & No & Yes & Yes & Yes \\
 Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F-\sqrt{D}$ & No & Yes & Yes & Yes \\
 \isometrypursuit & $\|n_q^{\times P}(X)^\dagger\|_{1,2}-D$ & Yes & Yes & Yes & Yes \\
 \bottomrule
