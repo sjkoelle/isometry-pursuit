@@ -82,7 +82,7 @@ def run_ethanol_experiment(
     two_stage_losses = []
     random_two_stage_losses = []
     greedy_multitask_norms_two_stage = []
-    brute_isometry_losses = []
+    brute_gl_losses = []
     brute_losses = []
     basis_pursuit_times = []
     greedy_times = []
@@ -113,7 +113,7 @@ def run_ethanol_experiment(
             random_two_stage_loss,
             greedy_multitask_norm_two_stage,
             brute_loss,
-            brute_isometry_loss,
+            brute_gl_loss,
             basis_pursuit_time,
             stage_two_time,
             greedy_time,
@@ -136,7 +136,7 @@ def run_ethanol_experiment(
         random_two_stage_losses.append(random_two_stage_loss)
         greedy_multitask_norms_two_stage.append(greedy_multitask_norm_two_stage)
         brute_losses.append(brute_loss)
-        brute_isometry_losses.append(brute_isometry_loss)
+        brute_gl_losses.append(brute_gl_loss)
         basis_pursuit_times.append(basis_pursuit_time)
         greedy_times.append(greedy_time)
         stage_two_times.append(stage_two_time)
@@ -152,7 +152,7 @@ def run_ethanol_experiment(
             "two_stage_loss": two_stage_losses,
             "random_two_stage_loss": random_two_stage_losses,
             "greedy_multitask_norm_two_stage": greedy_multitask_norms_two_stage,
-            "brute_isometry_loss": brute_isometry_losses,
+            "brute_gl_loss": brute_gl_losses,
             "brute_loss": brute_losses,
             "basis_pursuit_time": basis_pursuit_times,
             "stage_two_time": stage_two_times,

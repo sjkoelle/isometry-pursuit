@@ -64,6 +64,36 @@ python -m isometry_pursuit.exec.run_experiment \
     --output-path results/ethanol_results.json
 ```
 
+Generate the manuscript experiment table rows from these outputs:
+
+```bash
+python -m isometry_pursuit.exec.generate_experiment_table \
+    --results results/iris_results.json:Iris \
+              results/wine_results.json:Wine \
+              results/ethanol_results.json:Ethanol \
+    --output archival/generated/experiment_table_rows.tex
+```
+
+**Synthetic identity-block experiment:**
+
+```bash
+python -m isometry_pursuit.exec.run_identity_experiment \
+    --config configs/identity_experiment.yaml \
+    --output-dir results/identity_experiment
+```
+
+This writes per-run selected/true indices, configuration metadata, and summary
+tables to `results/identity_experiment`. Command-line options override values
+in `configs/identity_experiment.yaml`.
+
+A quick pilot sweep can be run with:
+
+```bash
+python -m isometry_pursuit.exec.run_identity_experiment \
+    --config configs/identity_experiment_small.yaml \
+    --output-dir results/identity_experiment_small
+```
+
 <!-- ```bash
 python -m isometry_pursuit.exec.scs_convergence_restarts --no-adaptive-scale
 python -m isometry_pursuit.exec.scs_convergence_trace --no-adaptive-scale
@@ -80,7 +110,7 @@ python -m isometry_pursuit.exec.generate_figure_1_example --output-dir figures
 # Figure 1: method (transformation and loss functions)
 python -m isometry_pursuit.exec.generate_figure_1_method --output-dir figures
 
-# Isometry loss box plots (requires experiment results)
+# Group-lasso loss box plots (requires experiment results)
 python -m isometry_pursuit.exec.plot_loss_comparison --results-file results/wine_results.json --output-dir figures
 python -m isometry_pursuit.exec.plot_loss_comparison --results-file results/iris_results.json --output-dir figures
 python -m isometry_pursuit.exec.plot_loss_comparison --results-file results/ethanol_results.json --output-dir figures
@@ -89,7 +119,15 @@ python -m isometry_pursuit.exec.plot_loss_comparison --results-file results/etha
 python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file results/wine_results.json --output-dir figures
 python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file results/iris_results.json --output-dir figures
 python -m isometry_pursuit.exec.plot_cardinality_histogram --results-file results/ethanol_results.json --output-dir figures --bin-width 1
+
+# Synthetic identity-block success rates (requires identity experiment results)
+python -m isometry_pursuit.exec.plot_identity_experiment \
+    --results-dir results/identity_experiment_small \
+    --output-dir figures
 ```
+
+The identity plotter saves one success-rate curve per full dimension, e.g.
+`figures/identity_experiment_strict_success_rate_D4.png`.
 
 ## Analyze convergence (optional)
 

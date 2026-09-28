@@ -1,0 +1,54 @@
+# Small pilot configuration for the synthetic identity-block experiment.
+# The experiment builds matrices with one true D-dimensional identity block
+# and lower-dimensional corrupting orthonormal blocks.
+
+output_dir: results/identity_experiment_small
+
+# Each trial is one plotted point group before replicate averaging:
+#   D: ambient/full identity-block dimension
+#   corrupting_D: dimension of each lower-rank corrupting block
+#   num_corrupting_matrices: number of corrupting blocks
+trials:
+  - D: 2
+    corrupting_D: 1
+    num_corrupting_matrices: 1
+  - D: 2
+    corrupting_D: 1
+    num_corrupting_matrices: 2
+  - D: 2
+    corrupting_D: 1
+    num_corrupting_matrices: 4
+  - D: 4
+    corrupting_D: 1
+    num_corrupting_matrices: 1
+  - D: 4
+    corrupting_D: 1
+    num_corrupting_matrices: 2
+  - D: 4
+    corrupting_D: 1
+    num_corrupting_matrices: 4
+  - D: 4
+    corrupting_D: 2
+    num_corrupting_matrices: 1
+  - D: 4
+    corrupting_D: 2
+    num_corrupting_matrices: 2
+  - D: 4
+    corrupting_D: 2
+    num_corrupting_matrices: 4
+  - D: 4
+    corrupting_D: 3
+    num_corrupting_matrices: 1
+  - D: 4
+    corrupting_D: 3
+    num_corrupting_matrices: 2
+  - D: 4
+    corrupting_D: 3
+    num_corrupting_matrices: 4
+
+replicates: 5
+
+seed: 1234
+constraint_violation: 0.0
+iterations: null
+eps: null

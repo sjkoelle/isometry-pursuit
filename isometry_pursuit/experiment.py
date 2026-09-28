@@ -5,8 +5,27 @@ from .loss import group_lasso_norm
 from .transformation import exponential_transformation
 
 
+PINV_RCOND = 0.0
+RANK_TOL = 0.0
+RECONSTRUCTION_TOL = 1e-6
+
+
 def _gl_loss(sub_matrix, indices=None):
-    return group_lasso_norm(np.linalg.pinv(sub_matrix))
+    ambient_dimension, num_columns = sub_matrix.shape
+    singular_values = np.linalg.svd(sub_matrix, compute_uv=False)
+    rank = int(np.sum(singular_values > RANK_TOL))
+
+    if num_columns <= ambient_dimension and rank < num_columns:
+        return np.inf
+    if num_columns >= ambient_dimension and rank < ambient_dimension:
+        return np.inf
+
+    beta = np.linalg.pinv(sub_matrix, rcond=PINV_RCOND)
+    if num_columns >= ambient_dimension:
+        residual = np.linalg.norm(sub_matrix @ beta - np.eye(ambient_dimension), ord="fro")
+        if residual > RECONSTRUCTION_TOL:
+            return np.inf
+    return group_lasso_norm(beta)
 
 
 def run_tensor_experiment(data_tensor, constraint_violation=0.0, iterations=None, eps=None):

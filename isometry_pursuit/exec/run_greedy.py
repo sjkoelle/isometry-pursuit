@@ -13,20 +13,24 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from isometry_pursuit.algorithm import greedy
-from isometry_pursuit.loss import isometry_loss
+from isometry_pursuit.loss import group_lasso_norm
 from isometry_pursuit.transformation import exponential_transformation
+
+
+def _gl_pseudoinverse_loss(sub_matrix, indices=None):
+    return group_lasso_norm(np.linalg.pinv(sub_matrix))
 
 
 def run_greedy_on_tensor(data_tensor, power=1.0, target_dimension=None):
     """
-    Run greedy algorithm on data tensor.
+    Run greedy feature selection with the normalized group-lasso pseudoinverse loss.
 
     Parameters:
     -----------
     data_tensor : numpy.ndarray
         Data tensor of shape (D, n_samples_per_replicate, n_replicates)
     power : float
-        Power parameter for isometry loss
+        Power parameter for symmetric normalization
     target_dimension : int, optional
         Target dimension (if None, uses tensor dimension)
 
@@ -45,8 +49,6 @@ def run_greedy_on_tensor(data_tensor, power=1.0, target_dimension=None):
         f"Running greedy algorithm on {R} replicates with target dimension {target_dimension}"
     )
 
-    isometry_loss_power = lambda x, indices=None: isometry_loss(x, power, indices)
-
     losses = []
     greedy_times = []
     greedy_solutions = []
@@ -54,6 +56,7 @@ def run_greedy_on_tensor(data_tensor, power=1.0, target_dimension=None):
     for i in range(R):
         print(f"Processing replicate {i+1}/{R}")
         X = data_tensor[:, :, i]
+        X_t = exponential_transformation(X, power=power)
 
         import time
 
@@ -61,14 +64,14 @@ def run_greedy_on_tensor(data_tensor, power=1.0, target_dimension=None):
 
         # Run greedy algorithm
         greedy_solution = greedy(
-            X, isometry_loss_power, target_dimension, [], verbose=False
+            X_t, _gl_pseudoinverse_loss, target_dimension, [], verbose=False
         )
 
         end_time = time.time()
         greedy_time = end_time - start_time
 
         # Calculate loss
-        loss = isometry_loss_power(X[:, greedy_solution])
+        loss = _gl_pseudoinverse_loss(X_t[:, greedy_solution])
 
         losses.append(loss)
         greedy_times.append(greedy_time)

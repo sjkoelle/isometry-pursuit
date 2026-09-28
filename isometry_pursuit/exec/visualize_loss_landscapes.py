@@ -17,7 +17,7 @@ import matplotlib.tri as mtri
 from matplotlib.colors import SymLogNorm
 from matplotlib.colors import LogNorm
 
-from isometry_pursuit.loss import isometry_loss, group_lasso_norm
+from isometry_pursuit.loss import group_lasso_norm
 from isometry_pursuit.transformation import exponential_transformation
 
 
@@ -89,7 +89,7 @@ def compute_1d_losses(r):
     """
     if r < 1e-14:
         return {key: np.nan for key in ['condition_number', 'gl_pseudoinverse',
-                                          'frob_pseudoinverse', 'isometry_loss',
+                                          'frob_pseudoinverse',
                                           'nuclear_norm',
                                           's_divergence_identity',
                                           'quadratic_log_singular_values',
@@ -110,10 +110,6 @@ def compute_1d_losses(r):
 
     # Nuclear norm: sum of singular values = r
     losses['nuclear_norm'] = abs(r)
-
-    # Isometry loss: operates on raw X (already correct)
-    iso_loss = isometry_loss(X)
-    losses['isometry_loss'] = iso_loss - d if np.isfinite(iso_loss) else np.nan
 
     # Apply w^{×P} transformation for pseudoinverse-based losses
     X_norm = exponential_transformation(X)
@@ -157,10 +153,6 @@ def compute_2d_losses(r, theta):
     # Nuclear norm
     losses['nuclear_norm'] = sv_max + sv_min
 
-    # Isometry loss
-    iso_loss = isometry_loss(X)
-    losses['isometry_loss'] = iso_loss - d if np.isfinite(iso_loss) else np.nan
-
     # Apply w^{×P} transformation for pseudoinverse-based losses
     X_norm = exponential_transformation(X)
 
@@ -196,7 +188,7 @@ def compute_3d_equicorrelation_losses(r, rho):
         X = np.linalg.cholesky(gram).T
     except np.linalg.LinAlgError:
         return {key: np.nan for key in ['condition_number', 'gl_pseudoinverse',
-                                          'frob_pseudoinverse', 'isometry_loss',
+                                          'frob_pseudoinverse',
                                           'nuclear_norm',
                                           's_divergence_identity',
                                           'quadratic_log_singular_values',
@@ -212,9 +204,6 @@ def compute_3d_equicorrelation_losses(r, rho):
 
     losses['condition_number'] = sv_max / sv_min - 1.0 if sv_min > 1e-14 else np.inf
     losses['nuclear_norm'] = np.sum(svs)
-
-    iso_loss = isometry_loss(X)
-    losses['isometry_loss'] = iso_loss - d if np.isfinite(iso_loss) else np.nan
 
     X_norm = exponential_transformation(X)
     if sv_min > 1e-14:
@@ -248,7 +237,7 @@ def compute_3d_equal_length_equicorrelation_losses(length, rho, dimension=3):
         X = np.linalg.cholesky(gram).T
     except np.linalg.LinAlgError:
         return {key: np.nan for key in ['condition_number', 'gl_pseudoinverse',
-                                          'frob_pseudoinverse', 'isometry_loss',
+                                          'frob_pseudoinverse',
                                           'nuclear_norm',
                                           's_divergence_identity',
                                           'quadratic_log_singular_values',
@@ -265,9 +254,6 @@ def compute_3d_equal_length_equicorrelation_losses(length, rho, dimension=3):
 
     losses['condition_number'] = sv_max / sv_min - 1.0 if sv_min > 1e-14 else np.inf
     losses['nuclear_norm'] = np.sum(singular_values)
-
-    iso_loss = isometry_loss(X)
-    losses['isometry_loss'] = iso_loss - d if np.isfinite(iso_loss) else np.nan
 
     X_norm = exponential_transformation(X)
     X_norm_singular_values = np.linalg.svd(X_norm, compute_uv=False)
@@ -305,9 +291,6 @@ def compute_3d_simplex_losses(x):
 
     losses['condition_number'] = sv_max / sv_min - 1.0 if sv_min > 1e-14 else np.inf
     losses['nuclear_norm'] = np.sum(singular_values)
-
-    iso_loss = isometry_loss(X)
-    losses['isometry_loss'] = iso_loss - d if np.isfinite(iso_loss) else np.nan
 
     X_norm = exponential_transformation(X)
     X_norm_singular_values = np.linalg.svd(X_norm, compute_uv=False)
@@ -352,7 +335,6 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
     # Order matches table.
     all_loss_names = [
         'condition_number',
-        'isometry_loss',
         's_divergence_identity',
         'quadratic_log_singular_values',
         'log_singular_values',
@@ -397,14 +379,6 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
             'linestyle': '--',
             'legend_label': r'Frob. pseudoinv.: $q(r)^{-1} - 1 = \frac{e^r + e^{r^{-1}}}{2e} - 1$',
             'ylabel_1d': r'$q(r)^{-1} - 1 = \frac{e^r + e^{r^{-1}}}{2e} - 1$',
-        },
-        'isometry_loss': {
-            'color': 'C3',
-            'good': False,
-            'cmap': 'plasma',
-            'title': 'Isometry loss',
-            'legend_label': r'Isometry loss: $g(r) - 1 = \frac{e^r + e^{r^{-1}}}{2e} - 1$',
-            'ylabel_1d': r'$g(r) - 1 = \frac{e^r + e^{r^{-1}}}{2e} - 1$',
         },
         's_divergence_identity': {
             'color': 'C6',
@@ -559,7 +533,6 @@ def generate_3d_equicorrelation_plots(output_dir="figures", n_ratio=60, n_rho=60
 
     loss_names = [
         'condition_number',
-        'isometry_loss',
         's_divergence_identity',
         'quadratic_log_singular_values',
         'log_singular_values',
@@ -570,7 +543,6 @@ def generate_3d_equicorrelation_plots(output_dir="figures", n_ratio=60, n_rho=60
     ]
     loss_titles = {
         'condition_number': 'Distortion',
-        'isometry_loss': 'Isometry loss',
         's_divergence_identity': 'S-divergence',
         'quadratic_log_singular_values': 'Quadratic-log',
         'log_singular_values': 'Squared log singular',
@@ -646,6 +618,8 @@ def generate_3d_equicorrelation_plots(output_dir="figures", n_ratio=60, n_rho=60
         )
         ax.plot(1.0, 0.0, 'r*', markersize=12)
         ax.set_title(loss_titles[loss_name], fontsize=11, weight='bold')
+    for ax in axes.ravel()[len(loss_names):]:
+        ax.set_axis_off()
 
     for ax in axes[-1, :]:
         ax.set_xlabel('Length ratio r')

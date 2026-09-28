@@ -7,7 +7,8 @@ This creates a composite figure suitable for the paper.
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from isometry_pursuit.loss import group_lasso_norm, isometry_loss
+from isometry_pursuit.loss import group_lasso_norm
+from isometry_pursuit.transformation import exponential_transformation
 
 
 def compute_2d_losses(r, theta):
@@ -20,8 +21,8 @@ def compute_2d_losses(r, theta):
 
     losses = {}
     losses['condition_number'] = sv_max / sv_min if sv_min > 1e-14 else np.inf
-    losses['gl_pseudoinverse'] = group_lasso_norm(np.linalg.pinv(X)) if sv_min > 1e-14 else np.nan
-    losses['isometry_loss'] = isometry_loss(X)
+    X_norm = exponential_transformation(X)
+    losses['gl_pseudoinverse'] = group_lasso_norm(np.linalg.pinv(X_norm)) if sv_min > 1e-14 else np.nan
     losses['log_det'] = np.log(sv_max * sv_min) if sv_max * sv_min > 1e-14 else np.nan
 
     return losses
@@ -38,7 +39,6 @@ def generate_comparison_figure(output_dir="figures", n_ratio=80, n_angle=80):
     grids = {
         'gl_pseudoinverse': np.full((n_angle, n_ratio), np.nan),
         'condition_number': np.full((n_angle, n_ratio), np.nan),
-        'isometry_loss': np.full((n_angle, n_ratio), np.nan),
         'log_det': np.full((n_angle, n_ratio), np.nan),
     }
 
@@ -53,11 +53,10 @@ def generate_comparison_figure(output_dir="figures", n_ratio=80, n_angle=80):
                         grids[key][i, j] = losses[key]
                 pbar.update(1)
 
-    # Create figure: 2 rows x 2 columns
-    fig, axes = plt.subplots(2, 2, figsize=(14, 12))
+    # Create figure: one row comparing remaining losses.
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
 
-    # Good losses
-    ax = axes[0, 0]
+    ax = axes[0]
     grid = grids['gl_pseudoinverse']
     grid_plot = grid.copy()
     grid_plot[~np.isfinite(grid_plot)] = np.nan
@@ -65,10 +64,10 @@ def generate_comparison_figure(output_dir="figures", n_ratio=80, n_angle=80):
     ax.plot(1.0, np.pi/2, 'r*', markersize=25, markeredgewidth=2, markeredgecolor='white')
     ax.set_xlabel('Length ratio $r$', fontsize=12)
     ax.set_ylabel('Angle $\\theta$', fontsize=12)
-    ax.set_title('GL pseudoinverse norm ✓', fontsize=13, weight='bold', color='green')
+    ax.set_title('GL pseudoinverse norm', fontsize=13, weight='bold')
     plt.colorbar(im, ax=ax)
 
-    ax = axes[0, 1]
+    ax = axes[1]
     grid = grids['condition_number']
     grid_plot = grid.copy()
     grid_plot[~np.isfinite(grid_plot)] = np.nan
@@ -76,22 +75,10 @@ def generate_comparison_figure(output_dir="figures", n_ratio=80, n_angle=80):
     ax.plot(1.0, np.pi/2, 'r*', markersize=25, markeredgewidth=2, markeredgecolor='white')
     ax.set_xlabel('Length ratio $r$', fontsize=12)
     ax.set_ylabel('Angle $\\theta$', fontsize=12)
-    ax.set_title('Condition number ✓', fontsize=13, weight='bold', color='green')
+    ax.set_title('Condition number', fontsize=13, weight='bold')
     plt.colorbar(im, ax=ax)
 
-    # Bad losses
-    ax = axes[1, 0]
-    grid = grids['isometry_loss']
-    grid_plot = grid.copy()
-    grid_plot[~np.isfinite(grid_plot)] = np.nan
-    im = ax.contourf(ratios, angles, grid_plot, levels=20, cmap='plasma')
-    ax.plot(1.0, np.pi/2, 'c*', markersize=25, markeredgewidth=2, markeredgecolor='white')
-    ax.set_xlabel('Length ratio $r$', fontsize=12)
-    ax.set_ylabel('Angle $\\theta$', fontsize=12)
-    ax.set_title('Isometry loss ✗', fontsize=13, weight='bold', color='red')
-    plt.colorbar(im, ax=ax)
-
-    ax = axes[1, 1]
+    ax = axes[2]
     grid = grids['log_det']
     grid_plot = grid.copy()
     grid_plot[~np.isfinite(grid_plot)] = np.nan
@@ -99,11 +86,10 @@ def generate_comparison_figure(output_dir="figures", n_ratio=80, n_angle=80):
     ax.plot(1.0, np.pi/2, 'c*', markersize=25, markeredgewidth=2, markeredgecolor='white')
     ax.set_xlabel('Length ratio $r$', fontsize=12)
     ax.set_ylabel('Angle $\\theta$', fontsize=12)
-    ax.set_title('Log determinant ✗', fontsize=13, weight='bold', color='red')
+    ax.set_title('Log determinant', fontsize=13, weight='bold')
     plt.colorbar(im, ax=ax)
 
-    plt.suptitle('Loss Function Comparison: Good losses (top) prefer unit-length vectors, Bad losses (bottom) do not',
-                 fontsize=14, weight='bold', y=0.995)
+    plt.suptitle('Loss Function Comparison', fontsize=14, weight='bold', y=0.995)
     plt.tight_layout()
 
     fig.savefig(os.path.join(output_dir, 'loss_comparison_good_vs_bad.png'), dpi=300, bbox_inches='tight')

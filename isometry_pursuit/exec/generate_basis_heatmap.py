@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate heatmaps of isometry_loss and group_lasso_norm over a 2D grid of
+Generate heatmaps of group_lasso_norm over a 2D grid of
 basis configurations: ratio of vector lengths (x-axis) x angle between vectors (y-axis).
 
 The 2x2 matrix is constructed as:
@@ -15,7 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-from isometry_pursuit.loss import isometry_loss, group_lasso_norm
+from isometry_pursuit.loss import group_lasso_norm
 from isometry_pursuit.algorithm import group_basis_pursuit
 from isometry_pursuit.transformation import exponential_transformation
 
@@ -24,7 +24,6 @@ def compute_grids(n_ratio=40, n_angle=40, max_ratio=5.0):
     ratios = np.linspace(1.0, max_ratio, n_ratio)
     angles = np.linspace(0.05, np.pi - 0.05, n_angle)
 
-    isometry_loss_grid = np.full((n_angle, n_ratio), np.nan)
     group_lasso_grid = np.full((n_angle, n_ratio), np.nan)
     nuclear_norm_grid = np.full((n_angle, n_ratio), np.nan)
     distortion_grid = np.full((n_angle, n_ratio), np.nan)
@@ -38,9 +37,6 @@ def compute_grids(n_ratio=40, n_angle=40, max_ratio=5.0):
 
                 svs = np.linalg.svd(X, compute_uv=False)
                 sv_max, sv_min = svs[0], svs[1]
-
-                loss_val = isometry_loss(X)
-                isometry_loss_grid[i, j] = loss_val if np.isfinite(loss_val) else np.nan
 
                 nuclear_norm_grid[i, j] = sv_max + sv_min
 
@@ -58,10 +54,10 @@ def compute_grids(n_ratio=40, n_angle=40, max_ratio=5.0):
 
                 pbar.update(1)
 
-    return ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid
+    return ratios, angles, group_lasso_grid, nuclear_norm_grid, distortion_grid
 
 
-def plot_heatmaps(ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid, output_dir, log=True):
+def plot_heatmaps(ratios, angles, group_lasso_grid, nuclear_norm_grid, distortion_grid, output_dir, log=True):
     os.makedirs(output_dir, exist_ok=True)
 
     angle_labels = [r"$0$", r"$\pi/4$", r"$\pi/2$", r"$3\pi/4$", r"$\pi$"]
@@ -70,7 +66,6 @@ def plot_heatmaps(ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_
     scale_label = " (log scale)" if log else ""
 
     grids = [
-        (isometry_loss_grid, "Isometry Loss", f"basis_isometry_loss_heatmap{suffix}.png"),
         (group_lasso_grid, "Group Lasso Norm", f"basis_group_lasso_heatmap{suffix}.png"),
         (nuclear_norm_grid, "Nuclear Norm", f"basis_nuclear_norm_heatmap{suffix}.png"),
         (distortion_grid, r"Distortion ($\sigma_{max}/\sigma_{min}$)", f"basis_distortion_heatmap{suffix}.png"),
@@ -85,7 +80,7 @@ def plot_heatmaps(ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_
             vmin, vmax = 1.0, 5.0
         return g, vmin, vmax
 
-    fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     for ax, (grid, title, _) in zip(axes.flat, grids):
         g, vmin, vmax = _prepare(grid)
         im = ax.pcolormesh(ratios, angles, g, cmap="viridis", vmin=vmin, vmax=vmax, shading="auto")
@@ -119,13 +114,12 @@ def plot_heatmaps(ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_
         print(f"Saved {out}")
 
 
-def plot_marginal_theta(ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid, output_dir, log=True):
+def plot_marginal_theta(ratios, angles, group_lasso_grid, nuclear_norm_grid, distortion_grid, output_dir, log=True):
     xticks = [0, np.pi / 4, np.pi / 2, 3 * np.pi / 4, np.pi]
     xlabels = [r"$0$", r"$\pi/4$", r"$\pi/2$", r"$3\pi/4$", r"$\pi$"]
     suffix = "_log" if log else "_raw"
 
     slices = [
-        (isometry_loss_grid[:, 0], "Isometry Loss", "C0", "-"),
         (group_lasso_grid[:, 0],   "Group Lasso Norm", "C1", "--"),
         (nuclear_norm_grid[:, 0],  "Nuclear Norm", "C2", "-."),
         (distortion_grid[:, 0],    r"Distortion ($\sigma_{max}/\sigma_{min}$)", "C3", ":"),
@@ -172,7 +166,6 @@ def compute_grids_xy(n=50, xy_range=2.0):
     coords = np.linspace(-xy_range, xy_range, n)
     xs, ys = coords, coords
 
-    isometry_loss_grid = np.full((n, n), np.nan)
     group_lasso_grid   = np.full((n, n), np.nan)
     nuclear_norm_grid  = np.full((n, n), np.nan)
     distortion_grid    = np.full((n, n), np.nan)
@@ -187,8 +180,6 @@ def compute_grids_xy(n=50, xy_range=2.0):
                 svs = np.linalg.svd(X, compute_uv=False)
                 sv_max, sv_min = svs[0], svs[1]
 
-                loss_val = isometry_loss(X)
-                isometry_loss_grid[i, j] = loss_val if np.isfinite(loss_val) else np.nan
                 nuclear_norm_grid[i, j] = sv_max + sv_min
                 if sv_min > 1e-14:
                     distortion_grid[i, j] = sv_max / sv_min
@@ -202,16 +193,15 @@ def compute_grids_xy(n=50, xy_range=2.0):
 
                 pbar.update(1)
 
-    return xs, ys, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid
+    return xs, ys, group_lasso_grid, nuclear_norm_grid, distortion_grid
 
 
-def plot_heatmaps_xy(xs, ys, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid, output_dir, log=True):
+def plot_heatmaps_xy(xs, ys, group_lasso_grid, nuclear_norm_grid, distortion_grid, output_dir, log=True):
     os.makedirs(output_dir, exist_ok=True)
     suffix = "_xy_log" if log else "_xy_raw"
     scale_label = " (log scale)" if log else ""
 
     grids = [
-        (isometry_loss_grid, "Isometry Loss",                       f"basis_isometry_loss_heatmap{suffix}.png"),
         (group_lasso_grid,   "Group Lasso Norm",                    f"basis_group_lasso_heatmap{suffix}.png"),
         (nuclear_norm_grid,  "Nuclear Norm",                        f"basis_nuclear_norm_heatmap{suffix}.png"),
         (distortion_grid,    r"Distortion ($\sigma_{max}/\sigma_{min}$)", f"basis_distortion_heatmap{suffix}.png"),
@@ -225,7 +215,7 @@ def plot_heatmaps_xy(xs, ys, isometry_loss_grid, group_lasso_grid, nuclear_norm_
         vmin, vmax = np.percentile(finite, 1), np.percentile(finite, 99)
         return g, vmin, vmax
 
-    fig, axes = plt.subplots(2, 2, figsize=(14, 12))
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
     for ax, (grid, title, _) in zip(axes.flat, grids):
         g, vmin, vmax = _prepare(grid)
         im = ax.pcolormesh(xs, ys, g, cmap="viridis", vmin=vmin, vmax=vmax, shading="auto")
@@ -265,7 +255,7 @@ def plot_heatmaps_xy(xs, ys, isometry_loss_grid, group_lasso_grid, nuclear_norm_
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Heatmaps of isometry_loss and group_lasso_norm over 2D basis grid"
+        description="Heatmaps of group_lasso_norm over 2D basis grid"
     )
     parser.add_argument("--output-dir", default="figures", help="Output directory")
     parser.add_argument("--n-ratio", type=int, default=40, help="Grid points along ratio axis")
@@ -275,16 +265,16 @@ def main():
     parser.add_argument("--xy-range", type=float, default=2.0, help="xy plot range [-r, r]")
     args = parser.parse_args()
 
-    ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid = compute_grids(
+    ratios, angles, group_lasso_grid, nuclear_norm_grid, distortion_grid = compute_grids(
         n_ratio=args.n_ratio, n_angle=args.n_angle, max_ratio=args.max_ratio
     )
     for log in (True, False):
-        plot_heatmaps(ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid, args.output_dir, log=log)
-        plot_marginal_theta(ratios, angles, isometry_loss_grid, group_lasso_grid, nuclear_norm_grid, distortion_grid, args.output_dir, log=log)
+        plot_heatmaps(ratios, angles, group_lasso_grid, nuclear_norm_grid, distortion_grid, args.output_dir, log=log)
+        plot_marginal_theta(ratios, angles, group_lasso_grid, nuclear_norm_grid, distortion_grid, args.output_dir, log=log)
 
-    xs, ys, il_xy, gl_xy, nn_xy, dist_xy = compute_grids_xy(n=args.n_xy, xy_range=args.xy_range)
+    xs, ys, gl_xy, nn_xy, dist_xy = compute_grids_xy(n=args.n_xy, xy_range=args.xy_range)
     for log in (True, False):
-        plot_heatmaps_xy(xs, ys, il_xy, gl_xy, nn_xy, dist_xy, args.output_dir, log=log)
+        plot_heatmaps_xy(xs, ys, gl_xy, nn_xy, dist_xy, args.output_dir, log=log)
 
 
 if __name__ == "__main__":

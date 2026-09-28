@@ -97,16 +97,16 @@ def plot_experiment_results(
     print(f"Saved plot: {plot_filename}")
 
     # Plot 2: Optional brute force comparison (only if data exists)
-    if "brute_isometry_loss" in results_df.columns:
+    if "brute_gl_loss" in results_df.columns:
         # Filter to only include replicates where both brute force and two-stage methods have valid results
         brute_valid_mask = ~(
-            results_df["brute_isometry_loss"].isna()
+            results_df["brute_gl_loss"].isna()
             | results_df["two_stage_loss"].isna()
         )
 
         if brute_valid_mask.sum() > 0:
             print("Creating brute force vs two-stage comparison plot...")
-            brute_losses = results_df.loc[brute_valid_mask, "brute_isometry_loss"]
+            brute_losses = results_df.loc[brute_valid_mask, "brute_gl_loss"]
             brute_two_stage_losses = results_df.loc[brute_valid_mask, "two_stage_loss"]
             print(
                 f"Using {len(brute_losses)} replicates where both brute force and two-stage methods have valid results"

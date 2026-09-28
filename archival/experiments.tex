@@ -26,9 +26,9 @@ For the Wine dataset, even \brute~ on $\widehat {S}_{IP}$ is prohibitive in $D=1
     %     \caption{Sparsity convergence across datasets}
     %     \label{fig:sparsity_convergence}
     % \end{subfigure}
-    \caption{Difference in isometry losses $\ell(\widehat{S}_g) - \ell(\widehat{S}_{TSIP})$ for Wine, Iris, and Ethanol datasets.
-    The distributions reflect the relative losses of the supports estimated by greedy optimization on the $\ell$ objective is less than or equal to $\ell$ loss of the support estimated by \tsip.
-    As shown here and detailed in Table \ref{tab:experiments}, losses are generally lower for two-stage isometry pursuit solutions.}
+    \caption{Difference in isometry losses $\ell(\widehat{S}_G) - \ell(\widehat{S}_{G \mid IP})$ for Wine, Iris, and Ethanol datasets.
+    The distributions compare full-dictionary greedy supports with supports selected by applying greedy search after restricting to the \isometrypursuit~ support.
+    As shown here and detailed in Table \ref{tab:experiments}, this evaluates the effect of using \isometrypursuit~ as a trimming stage before greedy search.}
     \label{fig:isometry_losses}
 \end{figure}
 
@@ -40,41 +40,42 @@ Rather than selecting between data points, we are selecting between functions wh
 Replicas are created by sampling from data points and their corresponding tangent spaces are estimated in $B = 252$.
 This dataset exemplifies our motivating example - the search for locally isometric embeddings.
 
+\input{generated/experiment_table_rows.tex}
+
 \begin{table}[t]
 \tiny
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
 \toprule
-Name & $D$ & $P$ & $R$ & $\ell(X_{.\widehat{S}_{G}})$ & $|\widehat{S}|$ & $\ell(X_{.\widehat{S}})$ &
+Name & $D$ & $P$ & $R$ & $\ell(X_{.\widehat{S}_{G}})$ & $|\widehat{S}_{IP}|$ & $\ell(X_{.\widehat{S}_{G \mid IP}})$ &
 \begin{tabular}{c}
 $\widehat P (\ell(X_{.\widehat{S}_{G}}) >$ \\
-$\ell(X_{.\widehat{S}}))$
+$\ell(X_{.\widehat{S}_{G \mid IP}}))$
 \end{tabular} &
 \begin{tabular}{c}
 $\widehat P (\ell(X_{.\widehat{S}_{G}}) =$ \\
-$\ell(X_{.\widehat{S}}))$
+$\ell(X_{.\widehat{S}_{G \mid IP}}))$
 \end{tabular} &
 \begin{tabular}{c}
-$\widehat P(\bar{\ell}_1(X_{.\widehat{S}_{G}}) >$ \\
-$\bar{\ell}_1(X_{.\widehat{S}}))$
+Paired $t$-test \\
+$p$-value
 \end{tabular} \\
 \midrule
-Iris & 4 & 75 & 25  & 14 ± 7.3 & 6.7 ± 1 & 6.9 ± 1.4 & 0.96 & 0 & 2.4e-05 \\
-Wine & 6 & 89 & 25  & 7.7 ± 0.33 & 13 ± 1.5 & 7.6 ± 0.29 & 0.64 & 0.16 & 6.3e-04 \\
-Ethanol & 2 & 756 & 25 & 2.6 ± 0.3 & 90 ± 1.7e+02 & 2.5 ± 0.2 & 0.66 & 0.17 & 2.1e-05 \\
+\experimenttablerows
 \bottomrule
 \end{tabular}
 \caption{Experimental parameters and results.
 For Iris and Wine, probability estimates $\widehat P$ result from random downsampling features $[P]$ by a factor of $2$ to create $R$ replicates, while for Ethanol, replicates correspond to individual data points.
-Distributional probabilities $\widehat P (\ell(X_{.\widehat{S}_{G}}) > \ell(X_{.\widehat{S}_{TSIP}}))$ and $\widehat P (\ell(X_{.\widehat{S}_{G}}) = \ell(X_{.\widehat{S}_{TSIP}}))$ are empirical across replicates, while asymptotic probabilities $\widehat P(\bar{\ell}_1(X_{.\widehat{S}_{G}}) > \bar{\ell}_1(X_{.\widehat{S}_{TSIP}}))$ is computed by paired two-sample T-test on  $\ell(X_{.\widehat S})$ and $\ell(X_{.\widehat S_{G}})$.
-For brevity, in this table $\widehat S := \widehat {S}_{TSIP}$.
+Distributional probabilities $\widehat P (\ell(X_{.\widehat{S}_{G}}) > \ell(X_{.\widehat{S}_{G \mid IP}}))$ and $\widehat P (\ell(X_{.\widehat{S}_{G}}) = \ell(X_{.\widehat{S}_{G \mid IP}}))$ are empirical across replicates.
+Here $\widehat{S}_{G \mid IP}$ denotes the support selected by applying greedy search after restricting the dictionary to $\widehat{S}_{IP}$.
+The final column reports the one-sided paired $t$-test $p$-value for the alternative that full-dictionary greedy losses exceed restricted greedy losses.
 }
 \label{tab:experiments}
 \end{table}
 
-Figure \ref{fig:isometry_losses} and Table \ref{tab:experiments} show that the $\ell$ accrued by the subset $\widehat S_{G}$ estimated using \greedy~ with objective $\ell$ is higher than that for the subset estimated by \tsip.
-This effect is statistically significant across datasets.
-Generally, the ground truth loss obtained by \greedy~ optimization of $\ell$ is higher and therefore worse than that obtained by two-stage isometry pursuit.
+Figure \ref{fig:isometry_losses} and Table \ref{tab:experiments} compare the $\ell$ accrued by the subset $\widehat S_{G}$ estimated using full-dictionary \greedy~ with the subset $\widehat S_{G \mid IP}$ estimated by applying \greedy~ after \isometrypursuit.
+This comparison quantifies how much the \isometrypursuit~ trimming stage changes the greedy loss landscape across datasets.
+Generally, the ground truth loss obtained by full-dictionary \greedy~ optimization of $\ell$ is compared with the loss obtained by greedy optimization after \isometrypursuit~ trimming.
 Table \ref{tab:experiments}  and Figure \ref{fig:support_cardinalities} detail intermediate support recovery cardinalities from \isometrypursuit.
 Isometry pursuit substantially reduced the size of the dictionary and made brute search computationally feasible.
 Wall-clock runtimes are given in Section \ref{sec:timing}.

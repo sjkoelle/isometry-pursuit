@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 from einops import rearrange
 
 from isometry_pursuit.transformation import exponential_transformation
-from isometry_pursuit.loss import isometry_loss
 
 
 def generate_figure1(output_dir="figures"):
@@ -40,7 +39,6 @@ def generate_figure1(output_dir="figures"):
     lengths = [
         exponential_transformation(rmv, power)[0][0] for rmv in rearranged_matrix_values
     ]
-    losses_isometry = [isometry_loss(rmv, power) for rmv in rearranged_matrix_values]
     basis_pursuit_losses = np.asarray(lengths) ** (-1)
 
     line_style = "-"  # single style since only one curve
