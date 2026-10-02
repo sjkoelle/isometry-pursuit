@@ -1,6 +1,6 @@
 import numpy as np
 
-from .algorithm import isometry_pursuit, greedy
+from .algorithm import isometry_pursuit, greedy, backward_elimination
 from .loss import group_lasso_norm
 from .transformation import exponential_transformation
 
@@ -67,9 +67,15 @@ def run_tensor_experiment(data_tensor, constraint_violation=0.0, iterations=None
             local_indices = greedy(exp_X_bp, _gl_loss)
             greedy_gl_bp_indices = [int(indices[j]) for j in local_indices]
             greedy_gl_bp_norm = float(_gl_loss(exp_X[:, greedy_gl_bp_indices]))
+
+            local_backward_indices = backward_elimination(exp_X_bp, _gl_loss)
+            backward_gl_bp_indices = [int(indices[j]) for j in local_backward_indices]
+            backward_gl_bp_norm = float(_gl_loss(exp_X[:, backward_gl_bp_indices]))
         else:
             greedy_gl_bp_indices = None
             greedy_gl_bp_norm = None
+            backward_gl_bp_indices = None
+            backward_gl_bp_norm = None
 
         # Compute group lasso norm of pseudoinverse for convex solution
         bp_gl_norm = float(_gl_loss(exp_X[:, indices]))
@@ -84,6 +90,8 @@ def run_tensor_experiment(data_tensor, constraint_violation=0.0, iterations=None
             "greedy_gl_norm": greedy_gl_norm,
             "greedy_gl_bp_indices": greedy_gl_bp_indices,
             "greedy_gl_bp_norm": greedy_gl_bp_norm,
+            "backward_gl_bp_indices": backward_gl_bp_indices,
+            "backward_gl_bp_norm": backward_gl_bp_norm,
         })
         coefficient_matrices.append(result["beta"])
 

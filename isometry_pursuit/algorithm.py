@@ -65,6 +65,54 @@ def greedy(
     return selected_indices
 
 
+def backward_elimination(
+    matrix,
+    loss,
+    target_dimension=None,
+    selected_indices=None,
+    random_state=None,
+    verbose=False,
+):
+    """Greedily remove columns until ``target_dimension`` columns remain."""
+    if target_dimension is None:
+        target_dimension = matrix.shape[0]
+    if selected_indices is None:
+        selected_indices = list(range(matrix.shape[1]))
+    else:
+        selected_indices = [int(i) for i in selected_indices]
+    if random_state is not None:
+        random.seed(random_state)
+
+    if len(selected_indices) < target_dimension:
+        raise ValueError("selected_indices must contain at least target_dimension columns")
+
+    while len(selected_indices) > target_dimension:
+        candidate_losses = []
+        candidate_subsets = []
+        removal_order = list(range(len(selected_indices)))
+        random.shuffle(removal_order)
+
+        for position in removal_order:
+            candidate_subset = selected_indices[:position] + selected_indices[position + 1 :]
+            candidate_losses.append(
+                loss(
+                    matrix[:, candidate_subset],
+                    indices=np.asarray(candidate_subset, dtype=int),
+                )
+            )
+            candidate_subsets.append(candidate_subset)
+
+        minimum_loss = np.nanmin(candidate_losses)
+        best_positions = np.where(np.asarray(candidate_losses) == minimum_loss)[0]
+        best_position = random.choice(best_positions)
+        selected_indices = candidate_subsets[best_position]
+
+    if verbose:
+        print("backward_elimination", selected_indices)
+
+    return selected_indices
+
+
 from .transformation import exponential_transformation
 
 THRESHOLD = 1e-4
