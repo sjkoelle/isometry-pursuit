@@ -23,6 +23,8 @@ For paper-writing style, prefer copy/paste reorganization of existing prose over
 
 For mathematical writing in the archival paper, make sure formal claims are expressed with the existing `definition`, `proposition`, and `property` environments when appropriate. Keep proofs out of the main paper body; put all proofs in `supplement.tex` and leave the main text focused on statements, intuition, and consequences.
 
+For notation in formulas and pseudocode, index lowercase over the matching uppercase set or cardinality. For example, use `d = 1, \dots, D`, `p = 1, \dots, P`, `r = 1, \dots, R`, and `s \in S`. Avoid unrelated loop letters such as `t` unless the indexed object is actually time or a quantity named `T`; if the natural lowercase index is already in use, choose another lowercase index tied to the same object rather than switching to an unrelated symbol.
+
 For figure edits, check both the Python generator under `isometry_pursuit/exec/` and the LaTeX include path. Prefer preserving figure filenames that are already referenced. Ensure compiled figures are top-of-page floats whenever possible, usually with `\begin{figure}[t]` or `\begin{figure*}[t]`, and adjust surrounding text so figures do not drift awkwardly.
 
 For ICLR-style presentation, make the compiled paper look polished: avoid cramped captions, orphaned headings, overfull boxes, underexplained figures, stale cross-references, and float placement that interrupts the argument. Prefer concise captions that state what the reader should notice.

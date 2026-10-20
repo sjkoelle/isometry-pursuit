@@ -21,11 +21,10 @@ The brute force algorithm is computationally intractable for all but the smalles
 Greedy algorithms are computationally expedient but can get stuck in local optima \citep{Cormen, Russell-09}, even with randomized restarts \citep{Dick2014HowMR}.
 
 \begin{algorithm}[H]
-\caption{\greedy(Matrix ${X} \in \mathbb{R}^{D \times P}$, objective $f$, selected set $S = \emptyset$, current size $d=0$)}
+\caption{\greedy(Matrix ${X} \in \mathbb{R}^{D \times P}$, objective $f$)}
 \begin{algorithmic}[1]
-\IF{$d = D$}
-    \STATE {\bf Return} $S$
-\ELSE
+\STATE {\bf Initialize} $S = \emptyset$
+\WHILE{$|S| < D$}
     \STATE {\bf Initialize} $S_{\text{best}} = S$
     \STATE {\bf Initialize} $f_{\text{best}} = \infty$
     \FOR{each $p \in \{1, 2, \dots, P\} \setminus S$}
@@ -35,8 +34,57 @@ Greedy algorithms are computationally expedient but can get stuck in local optim
             \STATE {\bf Update} $f_{\text{best}} = f(\mathcal{X}_{.(S \cup \{p\})})$
         \ENDIF
     \ENDFOR
-    \STATE {\bf Return} \greedy(${X}$, $f$, $S_{\text{best}}$, $d+1$)
-\ENDIF
+    \STATE {\bf Update} $S = S_{\text{best}}$
+\ENDWHILE
+\STATE {\bf Return} $S$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{\backwardgreedy(Matrix ${X} \in \mathbb{R}^{D \times P}$, objective $f$)}
+\begin{algorithmic}[1]
+\STATE {\bf Initialize} $S = \{1, 2, \dots, P\}$
+\WHILE{$|S| > D$}
+    \STATE {\bf Initialize} $S_{\text{best}} = S$
+    \STATE {\bf Initialize} $f_{\text{best}} = \infty$
+    \FOR{each $p \in S$}
+        \STATE {\bf Evaluate} $f({X}_{.(S \setminus \{p\})})$
+        \IF{$f({X}_{.(S \setminus \{p\})}) < f_{\text{best}}$}
+            \STATE {\bf Update} $S_{\text{best}} = S \setminus \{p\}$
+            \STATE {\bf Update} $f_{\text{best}} = f(\mathcal{X}_{.(S \setminus \{p\})})$
+        \ENDIF
+    \ENDFOR
+    \STATE {\bf Update} $S = S_{\text{best}}$
+\ENDWHILE
+\STATE {\bf Return} $S$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{\forwardbackward(Matrix ${X} \in \mathbb{R}^{D \times P}$, objective $f$)}
+\begin{algorithmic}[1]
+\STATE {\bf Initialize} $S \leftarrow$ \greedy(${X}$, $f$)
+\STATE {\bf Initialize} $f_{\text{current}} \leftarrow f({X}_{.S})$
+\FOR{$p = 1, 2, \dots, P$}
+    \STATE {\bf Initialize} $S_{\text{best}} \leftarrow S$
+    \STATE {\bf Initialize} $f_{\text{best}} \leftarrow f_{\text{current}}$
+    \FOR{each $j \in \{1, 2, \dots, P\} \setminus S$}
+        \FOR{each $q \in S$}
+            \STATE {\bf Initialize} $S_{\text{candidate}} = (S \cup \{j\}) \setminus \{q\}$
+            \STATE {\bf Evaluate} $f({X}_{.S_{\text{candidate}}})$
+            \IF{$f({X}_{.S_{\text{candidate}}}) < f_{\text{best}}$}
+                \STATE {\bf Update} $S_{\text{best}} \leftarrow S_{\text{candidate}}$
+                \STATE {\bf Update} $f_{\text{best}} \leftarrow f({X}_{.S_{\text{candidate}}})$
+            \ENDIF
+        \ENDFOR
+    \ENDFOR
+    \IF{$S_{\text{best}} = S$}
+        \STATE {\bf Break}
+    \ENDIF
+    \STATE {\bf Update} $S \leftarrow S_{\text{best}}$
+    \STATE {\bf Update} $f_{\text{current}} \leftarrow f_{\text{best}}$
+\ENDFOR
+\STATE {\bf Return} $S$
 \end{algorithmic}
 \end{algorithm}
 
@@ -745,7 +793,7 @@ Further investigation into the extreme failure of isometry pursuit to sparsify i
     % Wine
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/wine_cardinalities.png}
+        \includegraphics[width=\textwidth]{../figures/wine_cardinality_histogram.png}
         \caption{Wine }
         \label{fig:wine_cardinalities}
     \end{subfigure}
@@ -753,7 +801,7 @@ Further investigation into the extreme failure of isometry pursuit to sparsify i
     % Iris
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/iris_cardinalities.png}
+        \includegraphics[width=\textwidth]{../figures/iris_cardinality_histogram.png}
         \caption{Iris }
         \label{fig:iris_cardinalities}
     \end{subfigure}
@@ -761,7 +809,7 @@ Further investigation into the extreme failure of isometry pursuit to sparsify i
     % Ethanol
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../figures/ethanol_cardinalities.png}
+        \includegraphics[width=\textwidth]{../figures/ethanol_cardinality_histogram.png}
         \caption{Ethanol }
         \label{fig:ethanol_cardinalities}
     \end{subfigure}

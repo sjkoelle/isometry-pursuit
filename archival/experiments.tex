@@ -2,42 +2,49 @@
 \label{sec:experiments}
 
 Say you are hosting a dinner party, and wish to select a balanced set of wines for drinking and flowers for decoration.
-We demonstrate \tsip~ and \greedy~ on the Iris and Wine datasets \citep{misc_iris_53, misc_wine_109, scikit-learn}.
+We demonstrate \tsip, full-dictionary forward-backward search, and \isometrypursuit-restricted forward-backward search on the Iris and Wine datasets \citep{misc_iris_53, misc_wine_109, scikit-learn}.
 This has an intuitive interpretation as selecting diverse elements that reflects the peculiar structure of the diversification problem.
-Features like \textit{ petal width} are rows in $X$.
+Features like \textit{petal width} are rows in $X$.
 Thus, in diversification, $P = n$.
 Due to differences in scales between features, these are first standardized.
-For the Wine dataset, even \brute~ on $\widehat {S}_{IP}$ is prohibitive in $D=13$, and so we sample our inputs to $D=6$.
+For the Wine dataset, exhaustive \brute~ search is prohibitive in $D=13$, and so we compare practical discrete searches after random downsampling of candidate columns.
 
-%add description of words
 \begin{figure}[t]
    \centering
-    % Row 1: Loss improvement and sparsity convergence
-    % \begin{subfigure}[b]{0.45\textwidth}
-    %     \centering
-    %     \includegraphics[width=\textwidth]{../figures/cross_dataset_comparison.png}
-    %     \caption{Loss improvement across datasets}
-    %     \label{fig:improvement_comparison}
-    % \end{subfigure}
-    % \hfill
-    % \begin{subfigure}[b]{0.6\textwidth}
-    %     \centering
-    %     \includegraphics[width=\textwidth]{../figures/combined_sparsity_convergence_boxplot.png}
-    %     \caption{Sparsity convergence across datasets}
-    %     \label{fig:sparsity_convergence}
-    % \end{subfigure}
-    \caption{Difference in isometry losses $\ell(\widehat{S}_G) - \ell(\widehat{S}_{G \mid IP})$ for Wine, Iris, and Ethanol datasets.
-    The distributions compare full-dictionary greedy supports with supports selected by applying greedy search after restricting to the \isometrypursuit~ support.
-    As shown here and detailed in Table \ref{tab:experiments}, this evaluates the effect of using \isometrypursuit~ as a trimming stage before greedy search.}
-    \label{fig:isometry_losses}
+   \begin{subfigure}[b]{0.48\textwidth}
+       \centering
+       \includegraphics[width=\textwidth]{../figures/identity_experiment_method_comparison_D2.png}
+       \caption{$D=2$}
+   \end{subfigure}
+   \hfill
+   \begin{subfigure}[b]{0.48\textwidth}
+       \centering
+       \includegraphics[width=\textwidth]{../figures/identity_experiment_method_comparison_D4.png}
+       \caption{$D=4$}
+   \end{subfigure}
+   \begin{subfigure}[b]{0.48\textwidth}
+       \centering
+       \includegraphics[width=\textwidth]{../figures/identity_experiment_method_comparison_D8.png}
+       \caption{$D=8$}
+   \end{subfigure}
+   \hfill
+   \begin{subfigure}[b]{0.48\textwidth}
+       \centering
+       \includegraphics[width=\textwidth]{../figures/identity_experiment_method_comparison_D16.png}
+       \caption{$D=16$}
+   \end{subfigure}
+    \caption{Synthetic identity-block experiments.
+    Each matrix contains a planted identity block and lower-rank corrupting blocks.
+    Success denotes exact recovery of the planted $D$ columns.}
+    \label{fig:identity_method_comparison}
 \end{figure}
 
 Our main interpretability dataset is the Ethanol dataset from \citet{Chmiela2018-at, Koelle2022-ju}.
-For this dataset evaluate a dictionary of interpretable features  - bond torsions - for their ability to parameterize the molecular configuration space.
+For this dataset we evaluate a dictionary of interpretable features  - bond torsions - for their ability to parameterize the molecular configuration space.
 In this interpretability use case, columns denote gradients of informative features.
-We compute Jacoban matrices of putative parametrization functions and project them onto estimated tangent spaces (see \citet{Koelle2022-ju} for preprocessing details).
+We compute Jacobian matrices of putative parametrization functions and project them onto estimated tangent spaces (see \citet{Koelle2022-ju} for preprocessing details).
 Rather than selecting between data points, we are selecting between functions which parameterize the data.
-Replicas are created by sampling from data points and their corresponding tangent spaces are estimated in $B = 252$.
+Replicates are created by sampling from data points and their corresponding tangent spaces are estimated in $B = 252$.
 This dataset exemplifies our motivating example - the search for locally isometric embeddings.
 
 \input{generated/experiment_table_rows.tex}
@@ -45,16 +52,17 @@ This dataset exemplifies our motivating example - the search for locally isometr
 \begin{table}[t]
 \tiny
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
 \toprule
-Name & $D$ & $P$ & $R$ & $\ell(X_{.\widehat{S}_{G}})$ & $|\widehat{S}_{IP}|$ & $\ell(X_{.\widehat{S}_{G \mid IP}})$ &
+Name & $D$ & $P$ & $R$ & $\ell(X_{.\widehat{S}_{FB}})$ & $|\widehat{S}_{IP}|$ & $\ell(X_{.\widehat{S}_{FB \mid IP}})$ &
 \begin{tabular}{c}
-$\widehat P (\ell(X_{.\widehat{S}_{G}}) >$ \\
-$\ell(X_{.\widehat{S}_{G \mid IP}}))$
+$\widehat P (\ell(X_{.\widehat{S}_{FB}}) >$ \\
+$\ell(X_{.\widehat{S}_{FB \mid IP}}))$
 \end{tabular} &
 \begin{tabular}{c}
-$\widehat P (\ell(X_{.\widehat{S}_{G}}) =$ \\
-$\ell(X_{.\widehat{S}_{G \mid IP}}))$
+$\widehat P (\ell(X_{.\widehat{S}_{FB}}) =$ \\
+$\ell(X_{.\widehat{S}_{FB \mid IP}}))$
 \end{tabular} &
 \begin{tabular}{c}
 Paired $t$-test \\
@@ -64,18 +72,18 @@ $p$-value
 \experimenttablerows
 \bottomrule
 \end{tabular}
+}
 \caption{Experimental parameters and results.
 For Iris and Wine, probability estimates $\widehat P$ result from random downsampling features $[P]$ by a factor of $2$ to create $R$ replicates, while for Ethanol, replicates correspond to individual data points.
-Distributional probabilities $\widehat P (\ell(X_{.\widehat{S}_{G}}) > \ell(X_{.\widehat{S}_{G \mid IP}}))$ and $\widehat P (\ell(X_{.\widehat{S}_{G}}) = \ell(X_{.\widehat{S}_{G \mid IP}}))$ are empirical across replicates.
-Here $\widehat{S}_{G \mid IP}$ denotes the support selected by applying greedy search after restricting the dictionary to $\widehat{S}_{IP}$.
-The final column reports the one-sided paired $t$-test $p$-value for the alternative that full-dictionary greedy losses exceed restricted greedy losses.
+Distributional probabilities $\widehat P (\ell(X_{.\widehat{S}_{FB}}) > \ell(X_{.\widehat{S}_{FB \mid IP}}))$ and $\widehat P (\ell(X_{.\widehat{S}_{FB}}) = \ell(X_{.\widehat{S}_{FB \mid IP}}))$ are empirical across replicates.
+Here $\widehat{S}_{FB}$ denotes the support selected by full-dictionary forward-backward search, and $\widehat{S}_{FB \mid IP}$ denotes the support selected by forward-backward search after restricting the dictionary to $\widehat{S}_{IP}$.
+The final column reports the one-sided paired $t$-test $p$-value for the alternative that full-dictionary forward-backward losses exceed restricted forward-backward losses.
 }
 \label{tab:experiments}
 \end{table}
 
-Figure \ref{fig:isometry_losses} and Table \ref{tab:experiments} compare the $\ell$ accrued by the subset $\widehat S_{G}$ estimated using full-dictionary \greedy~ with the subset $\widehat S_{G \mid IP}$ estimated by applying \greedy~ after \isometrypursuit.
-This comparison quantifies how much the \isometrypursuit~ trimming stage changes the greedy loss landscape across datasets.
-Generally, the ground truth loss obtained by full-dictionary \greedy~ optimization of $\ell$ is compared with the loss obtained by greedy optimization after \isometrypursuit~ trimming.
-Table \ref{tab:experiments}  and Figure \ref{fig:support_cardinalities} detail intermediate support recovery cardinalities from \isometrypursuit.
-Isometry pursuit substantially reduced the size of the dictionary and made brute search computationally feasible.
+Figure \ref{fig:identity_method_comparison} reports exact recovery rates in the synthetic identity-block experiments.
+Table \ref{tab:experiments} compares the final isometry losses from full-dictionary forward-backward search with losses from forward-backward search inside the \isometrypursuit~ support.
+Table \ref{tab:experiments} and Figure \ref{fig:support_cardinalities} detail intermediate support recovery cardinalities from \isometrypursuit.
+Isometry pursuit substantially reduced the size of the dictionary and made second-stage search computationally feasible.
 Wall-clock runtimes are given in Section \ref{sec:timing}.

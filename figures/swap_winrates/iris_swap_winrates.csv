@@ -1,0 +1,5 @@
+row_method,greedy_swap,backward_swap,ip_greedy_swap,ip_backward_swap
+greedy_swap,0.5,0.36,0.44,0.44
+backward_swap,0.64,0.5,0.66,0.64
+ip_greedy_swap,0.56,0.34,0.5,0.46
+ip_backward_swap,0.56,0.36,0.54,0.5

@@ -11,8 +11,8 @@ from scipy.stats import ttest_rel
 
 REQUIRED_REPLICATE_FIELDS = {
     "support_cardinality",
-    "greedy_gl_norm",
-    "greedy_gl_bp_norm",
+    "forward_backward_gl_norm",
+    "forward_backward_gl_bp_norm",
 }
 
 
@@ -33,7 +33,9 @@ def _format_float(value, precision=2):
     if value == 0:
         return "0"
     text = f"{value:.{precision}g}"
-    return text.rstrip("0").rstrip(".")
+    if "." in text:
+        return text.rstrip("0").rstrip(".")
+    return text
 
 
 def _format_mean_sd(values):
@@ -95,31 +97,31 @@ def summarize_result(path, label, tie_tolerance):
     support_cardinalities = np.array(
         [replicate["support_cardinality"] for replicate in replicates], dtype=float
     )
-    greedy_losses = np.array(
-        [replicate["greedy_gl_norm"] for replicate in replicates], dtype=float
+    foba_losses = np.array(
+        [replicate["forward_backward_gl_norm"] for replicate in replicates], dtype=float
     )
-    tsip_losses = np.array(
-        [replicate["greedy_gl_bp_norm"] for replicate in replicates], dtype=float
+    ip_foba_losses = np.array(
+        [replicate["forward_backward_gl_bp_norm"] for replicate in replicates], dtype=float
     )
 
-    valid = np.isfinite(greedy_losses) & np.isfinite(tsip_losses)
+    valid = np.isfinite(foba_losses) & np.isfinite(ip_foba_losses)
     if not np.all(valid):
-        raise ValueError(f"{path} contains non-finite greedy or two-stage losses")
-    if len(greedy_losses) < 2:
+        raise ValueError(f"{path} contains non-finite FOBA or IP-FOBA losses")
+    if len(foba_losses) < 2:
         raise ValueError(f"{path} needs at least two replicates for a paired t-test")
 
-    greater = greedy_losses > tsip_losses + tie_tolerance
-    equal = np.isclose(greedy_losses, tsip_losses, atol=tie_tolerance, rtol=0.0)
-    p_value = ttest_rel(greedy_losses, tsip_losses, alternative="greater").pvalue
+    greater = foba_losses > ip_foba_losses + tie_tolerance
+    equal = np.isclose(foba_losses, ip_foba_losses, atol=tie_tolerance, rtol=0.0)
+    p_value = ttest_rel(foba_losses, ip_foba_losses, alternative="greater").pvalue
 
     return {
         "label": label,
         "D": D,
         "P": P,
         "R": R,
-        "greedy_loss": _format_mean_sd(greedy_losses),
+        "foba_loss": _format_mean_sd(foba_losses),
         "support_cardinality": _format_mean_sd(support_cardinalities),
-        "tsip_loss": _format_mean_sd(tsip_losses),
+        "ip_foba_loss": _format_mean_sd(ip_foba_losses),
         "prob_greater": _format_probability(float(np.mean(greater))),
         "prob_equal": _format_probability(float(np.mean(equal))),
         "p_value": _format_probability(float(p_value)),
@@ -132,9 +134,9 @@ def row_to_latex(row):
         str(row["D"]),
         str(row["P"]),
         str(row["R"]),
-        row["greedy_loss"],
+        row["foba_loss"],
         row["support_cardinality"],
-        row["tsip_loss"],
+        row["ip_foba_loss"],
         row["prob_greater"],
         row["prob_equal"],
         row["p_value"],

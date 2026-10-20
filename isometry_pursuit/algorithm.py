@@ -105,10 +105,146 @@ def backward_elimination(
         minimum_loss = np.nanmin(candidate_losses)
         best_positions = np.where(np.asarray(candidate_losses) == minimum_loss)[0]
         best_position = random.choice(best_positions)
+        previous_indices = selected_indices
         selected_indices = candidate_subsets[best_position]
+
+        if verbose:
+            removed_indices = sorted(set(previous_indices) - set(selected_indices))
+            print(
+                "backward_elimination",
+                f"{len(previous_indices)} -> {len(selected_indices)}",
+                f"removed={removed_indices}",
+                f"loss={minimum_loss}",
+            )
 
     if verbose:
         print("backward_elimination", selected_indices)
+
+    return selected_indices
+
+
+def greedy_swap(
+    matrix, loss, target_dimension=None, initialization="forward",
+    random_state=None, max_rounds=None, improvement_tol=0.0, verbose=False,
+):
+    """Forward or backward greedy initialization followed by best one-swap search.
+
+    Pass an IP-restricted matrix to keep both stages inside the IP dictionary.
+    Returned indices are local to the matrix passed in. Backward initialization
+    starts with all columns; forward initialization starts empty.
+    """
+    if initialization not in ("forward", "backward"):
+        raise ValueError("initialization must be 'forward' or 'backward'")
+    if target_dimension is None:
+        target_dimension = matrix.shape[0]
+    if not 1 <= target_dimension <= matrix.shape[1] or int(target_dimension) != target_dimension:
+        raise ValueError("target_dimension must be between 1 and the number of columns")
+    return forward_backward(
+        matrix, loss, target_dimension=target_dimension,
+        selected_indices=(list(range(matrix.shape[1])) if initialization == "backward" else []),
+        random_state=random_state, max_rounds=max_rounds,
+        improvement_tol=improvement_tol, verbose=verbose,
+    )
+
+
+def forward_backward(
+    matrix,
+    loss,
+    target_dimension=None,
+    selected_indices=None,
+    random_state=None,
+    max_rounds=None,
+    improvement_tol=0.0,
+    verbose=False,
+):
+    """
+    Fixed-cardinality forward-backward selection.
+
+    First build a target-size support by forward greedy selection. Then repeatedly
+    try one add/delete move and accept it if the target-size loss improves.
+    """
+    if random_state is not None:
+        random.seed(random_state)
+    if target_dimension is None:
+        target_dimension = matrix.shape[0]
+    dictionary_dimension = matrix.shape[1]
+
+    if selected_indices is None:
+        selected_indices = []
+    selected_indices = [int(i) for i in selected_indices]
+
+    if len(selected_indices) > target_dimension:
+        selected_indices = backward_elimination(
+            matrix,
+            loss,
+            target_dimension=target_dimension,
+            selected_indices=selected_indices,
+            random_state=random_state,
+            verbose=verbose,
+        )
+    elif len(selected_indices) < target_dimension:
+        selected_indices = greedy(
+            matrix,
+            loss,
+            target_dimension=target_dimension,
+            selected_indices=selected_indices,
+            verbose=verbose,
+        )
+
+    current_loss = loss(
+        matrix[:, selected_indices],
+        indices=np.asarray(selected_indices, dtype=int),
+    )
+    if max_rounds is None:
+        max_rounds = dictionary_dimension
+
+    for round_index in range(max_rounds):
+        best_loss = current_loss
+        best_indices = selected_indices
+        candidate_additions = [
+            index for index in range(dictionary_dimension) if index not in selected_indices
+        ]
+        random.shuffle(candidate_additions)
+
+        for added_index in candidate_additions:
+            expanded_indices = selected_indices + [added_index]
+            removal_order = list(range(len(expanded_indices)))
+            random.shuffle(removal_order)
+
+            for removal_position in removal_order:
+                candidate_indices = (
+                    expanded_indices[:removal_position]
+                    + expanded_indices[removal_position + 1 :]
+                )
+                if set(candidate_indices) == set(selected_indices):
+                    continue
+                candidate_loss = loss(
+                    matrix[:, candidate_indices],
+                    indices=np.asarray(candidate_indices, dtype=int),
+                )
+                if candidate_loss < best_loss - improvement_tol:
+                    best_loss = candidate_loss
+                    best_indices = candidate_indices
+
+        if best_indices == selected_indices:
+            break
+
+        if verbose:
+            removed_indices = sorted(set(selected_indices) - set(best_indices))
+            added_indices = sorted(set(best_indices) - set(selected_indices))
+            print(
+                "forward_backward",
+                f"round={round_index + 1}",
+                f"added={added_indices}",
+                f"removed={removed_indices}",
+                f"loss={best_loss}",
+            )
+
+        selected_indices = best_indices
+        current_loss = best_loss
+
+    if verbose:
+        print("forward_backward", selected_indices)
 
     return selected_indices
 

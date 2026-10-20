@@ -11,7 +11,7 @@ import pandas as pd
 from scipy.stats import ortho_group
 from tqdm import tqdm
 
-from isometry_pursuit.algorithm import greedy, isometry_pursuit
+from isometry_pursuit.algorithm import forward_backward, greedy, greedy_swap, isometry_pursuit
 from isometry_pursuit.experiment import _gl_loss
 
 
@@ -353,7 +353,8 @@ def run_identity_experiment(
                 try:
                     greedy_full_indices = [
                         int(value)
-                        for value in greedy(X, _gl_loss, target_dimension=dimension)
+                        for value in greedy(X, _gl_loss, target_dimension=dimension,
+                                            random_state=run_seed)
                     ]
                     greedy_full_loss = float(_gl_loss(X[:, greedy_full_indices]))
                     greedy_full_error = None
@@ -362,6 +363,26 @@ def run_identity_experiment(
                     greedy_full_loss = np.nan
                     greedy_full_error = repr(exc)
 
+                try:
+                    forward_backward_full_indices = [
+                        int(value)
+                        for value in forward_backward(
+                            X,
+                            _gl_loss,
+                            target_dimension=dimension,
+                            selected_indices=greedy_full_indices,
+                            random_state=run_seed,
+                        )
+                    ]
+                    forward_backward_full_loss = float(
+                        _gl_loss(X[:, forward_backward_full_indices])
+                    )
+                    forward_backward_full_error = None
+                except Exception as exc:
+                    forward_backward_full_indices = []
+                    forward_backward_full_loss = np.nan
+                    forward_backward_full_error = repr(exc)
+
                 if len(selected_indices) >= dimension:
                     try:
                         selected_X = X[:, selected_indices]
@@ -369,6 +390,7 @@ def run_identity_experiment(
                             selected_X,
                             _gl_loss,
                             target_dimension=dimension,
+                            random_state=run_seed,
                         )
                         greedy_restricted_indices = [
                             int(selected_indices[value]) for value in local_indices
@@ -381,13 +403,42 @@ def run_identity_experiment(
                         greedy_restricted_indices = []
                         greedy_restricted_loss = np.nan
                         greedy_restricted_error = repr(exc)
+
+                    try:
+                        selected_X = X[:, selected_indices]
+                        local_indices = forward_backward(
+                            selected_X,
+                            _gl_loss,
+                            target_dimension=dimension,
+                            selected_indices=local_indices,
+                            random_state=run_seed,
+                        )
+                        forward_backward_restricted_indices = [
+                            int(selected_indices[value]) for value in local_indices
+                        ]
+                        forward_backward_restricted_loss = float(
+                            _gl_loss(X[:, forward_backward_restricted_indices])
+                        )
+                        forward_backward_restricted_error = None
+                    except Exception as exc:
+                        forward_backward_restricted_indices = []
+                        forward_backward_restricted_loss = np.nan
+                        forward_backward_restricted_error = repr(exc)
                 else:
                     greedy_restricted_indices = []
                     greedy_restricted_loss = np.nan
                     greedy_restricted_error = "IP support has fewer than D columns"
+                    forward_backward_restricted_indices = []
+                    forward_backward_restricted_loss = np.nan
+                    forward_backward_restricted_error = "IP support has fewer than D columns"
 
                 greedy_full = _selection_metrics(
                     greedy_full_indices,
+                    true_set,
+                    corrupting_set,
+                )
+                forward_backward_full = _selection_metrics(
+                    forward_backward_full_indices,
                     true_set,
                     corrupting_set,
                 )
@@ -396,8 +447,38 @@ def run_identity_experiment(
                     true_set,
                     corrupting_set,
                 )
+                forward_backward_restricted = _selection_metrics(
+                    forward_backward_restricted_indices,
+                    true_set,
+                    corrupting_set,
+                )
+
+                backward_methods = {}
+                for prefix, dictionary in (
+                    ("backward_swap_full", list(range(X.shape[1]))),
+                    ("backward_swap_restricted", selected_indices),
+                ):
+                    try:
+                        local_indices = greedy_swap(
+                            X[:, dictionary], _gl_loss, target_dimension=dimension,
+                            initialization="backward", random_state=run_seed,
+                        )
+                        chosen = [int(dictionary[j]) for j in local_indices]
+                        method_loss = float(_gl_loss(X[:, chosen]))
+                        method_error = None
+                    except Exception as exc:
+                        chosen, method_loss, method_error = [], np.nan, repr(exc)
+                    metrics = _selection_metrics(chosen, true_set, corrupting_set)
+                    backward_methods.update({
+                        f"{prefix}_indices": chosen,
+                        f"{prefix}_loss": method_loss,
+                        f"{prefix}_strict_success": metrics["strict_success"],
+                        f"{prefix}_contains_true_block": metrics["contains_true_block"],
+                        f"{prefix}_error": method_error,
+                    })
 
                 records.append({
+                    **backward_methods,
                     "run_id": run_id,
                     "trial_id": trial_index,
                     "seed": run_seed,
@@ -433,6 +514,17 @@ def run_identity_experiment(
                     "greedy_full_contains_true_block": greedy_full["contains_true_block"],
                     "greedy_full_contained_in_ip": set(greedy_full_indices).issubset(selected_set),
                     "greedy_full_error": greedy_full_error,
+                    "forward_backward_full_indices": forward_backward_full["indices"],
+                    "forward_backward_full_loss": forward_backward_full_loss,
+                    "forward_backward_full_true_selected": forward_backward_full["true_selected"],
+                    "forward_backward_full_corrupting_selected": forward_backward_full["corrupting_selected"],
+                    "forward_backward_full_missing_true_indices": forward_backward_full["missing_true"],
+                    "forward_backward_full_num_true_selected": forward_backward_full["num_true_selected"],
+                    "forward_backward_full_num_corrupting_selected": forward_backward_full["num_corrupting_selected"],
+                    "forward_backward_full_strict_success": forward_backward_full["strict_success"],
+                    "forward_backward_full_contains_true_block": forward_backward_full["contains_true_block"],
+                    "forward_backward_full_contained_in_ip": set(forward_backward_full_indices).issubset(selected_set),
+                    "forward_backward_full_error": forward_backward_full_error,
                     "greedy_restricted_indices": greedy_restricted["indices"],
                     "greedy_restricted_loss": greedy_restricted_loss,
                     "greedy_restricted_true_selected": greedy_restricted["true_selected"],
@@ -443,6 +535,16 @@ def run_identity_experiment(
                     "greedy_restricted_strict_success": greedy_restricted["strict_success"],
                     "greedy_restricted_contains_true_block": greedy_restricted["contains_true_block"],
                     "greedy_restricted_error": greedy_restricted_error,
+                    "forward_backward_restricted_indices": forward_backward_restricted["indices"],
+                    "forward_backward_restricted_loss": forward_backward_restricted_loss,
+                    "forward_backward_restricted_true_selected": forward_backward_restricted["true_selected"],
+                    "forward_backward_restricted_corrupting_selected": forward_backward_restricted["corrupting_selected"],
+                    "forward_backward_restricted_missing_true_indices": forward_backward_restricted["missing_true"],
+                    "forward_backward_restricted_num_true_selected": forward_backward_restricted["num_true_selected"],
+                    "forward_backward_restricted_num_corrupting_selected": forward_backward_restricted["num_corrupting_selected"],
+                    "forward_backward_restricted_strict_success": forward_backward_restricted["strict_success"],
+                    "forward_backward_restricted_contains_true_block": forward_backward_restricted["contains_true_block"],
+                    "forward_backward_restricted_error": forward_backward_restricted_error,
                     "block_ranges": block_ranges,
                     "error": error,
                 })
@@ -469,10 +571,18 @@ def run_identity_experiment(
                 "greedy_full_true_selected",
                 "greedy_full_corrupting_selected",
                 "greedy_full_missing_true_indices",
+                "forward_backward_full_indices",
+                "forward_backward_full_true_selected",
+                "forward_backward_full_corrupting_selected",
+                "forward_backward_full_missing_true_indices",
                 "greedy_restricted_indices",
                 "greedy_restricted_true_selected",
                 "greedy_restricted_corrupting_selected",
                 "greedy_restricted_missing_true_indices",
+                "forward_backward_restricted_indices",
+                "forward_backward_restricted_true_selected",
+                "forward_backward_restricted_corrupting_selected",
+                "forward_backward_restricted_missing_true_indices",
                 "block_ranges",
             }
         }
@@ -487,10 +597,18 @@ def run_identity_experiment(
             "greedy_full_true_selected",
             "greedy_full_corrupting_selected",
             "greedy_full_missing_true_indices",
+            "forward_backward_full_indices",
+            "forward_backward_full_true_selected",
+            "forward_backward_full_corrupting_selected",
+            "forward_backward_full_missing_true_indices",
             "greedy_restricted_indices",
             "greedy_restricted_true_selected",
             "greedy_restricted_corrupting_selected",
             "greedy_restricted_missing_true_indices",
+            "forward_backward_restricted_indices",
+            "forward_backward_restricted_true_selected",
+            "forward_backward_restricted_corrupting_selected",
+            "forward_backward_restricted_missing_true_indices",
         ]:
             csv_record[key] = _json_list(record[key])
         csv_record["block_ranges_json"] = json.dumps(record["block_ranges"])
@@ -514,8 +632,21 @@ def run_identity_experiment(
             greedy_full_contained_in_ip_rate=("greedy_full_contained_in_ip", "mean"),
             greedy_restricted_strict_success_rate=("greedy_restricted_strict_success", "mean"),
             greedy_restricted_contains_true_block_rate=("greedy_restricted_contains_true_block", "mean"),
+            forward_backward_full_strict_success_rate=("forward_backward_full_strict_success", "mean"),
+            forward_backward_full_contains_true_block_rate=("forward_backward_full_contains_true_block", "mean"),
+            forward_backward_full_contained_in_ip_rate=("forward_backward_full_contained_in_ip", "mean"),
+            forward_backward_restricted_strict_success_rate=("forward_backward_restricted_strict_success", "mean"),
+            forward_backward_restricted_contains_true_block_rate=("forward_backward_restricted_contains_true_block", "mean"),
             mean_greedy_full_loss=("greedy_full_loss", "mean"),
             mean_greedy_restricted_loss=("greedy_restricted_loss", "mean"),
+            mean_forward_backward_full_loss=("forward_backward_full_loss", "mean"),
+            mean_forward_backward_restricted_loss=("forward_backward_restricted_loss", "mean"),
+            backward_swap_full_strict_success_rate=("backward_swap_full_strict_success", "mean"),
+            backward_swap_full_contains_true_block_rate=("backward_swap_full_contains_true_block", "mean"),
+            backward_swap_restricted_strict_success_rate=("backward_swap_restricted_strict_success", "mean"),
+            backward_swap_restricted_contains_true_block_rate=("backward_swap_restricted_contains_true_block", "mean"),
+            mean_backward_swap_full_loss=("backward_swap_full_loss", "mean"),
+            mean_backward_swap_restricted_loss=("backward_swap_restricted_loss", "mean"),
         )
     )
     summary_csv = os.path.join(output_dir, "identity_experiment_summary.csv")
@@ -546,7 +677,10 @@ def run_identity_experiment(
             "contains_true_block": "all true indices were selected, possibly with extras",
             "greedy_full_indices": "greedy-selected D columns from the full dictionary",
             "greedy_restricted_indices": "greedy-selected D columns after restricting to selected_indices",
+            "forward_backward_full_indices": "forward-backward-selected D columns from the full dictionary",
+            "forward_backward_restricted_indices": "forward-backward-selected D columns after restricting to selected_indices",
             "greedy_full_contained_in_ip": "all full-greedy indices are contained in selected_indices",
+            "forward_backward_full_contained_in_ip": "all full-forward-backward indices are contained in selected_indices",
             "true_indices": "columns of the full D-dimensional block",
             "corrupting_indices": "columns from lower-dimensional distractor blocks",
         },

@@ -16,6 +16,54 @@ METRIC_LABELS = {
     "contains_true_block_rate": "Contains true block rate",
 }
 
+METHODS = {
+    "bp": {
+        "label": "BP",
+        "strict_success": "strict_success",
+        "contains_true_block": "contains_true_block",
+    },
+    "greedy": {
+        "label": "Greedy",
+        "strict_success": "greedy_full_strict_success",
+        "contains_true_block": "greedy_full_contains_true_block",
+    },
+    "foba": {
+        "label": "Greedy -> swap",
+        "strict_success": "forward_backward_full_strict_success",
+        "contains_true_block": "forward_backward_full_contains_true_block",
+    },
+    "bp_greedy": {
+        "label": "BP->Greedy",
+        "strict_success": "greedy_restricted_strict_success",
+        "contains_true_block": "greedy_restricted_contains_true_block",
+    },
+    "bp_foba": {
+        "label": "IP -> greedy -> swap",
+        "strict_success": "forward_backward_restricted_strict_success",
+        "contains_true_block": "forward_backward_restricted_contains_true_block",
+    },
+    "backward_swap": {
+        "label": "Backward -> swap",
+        "strict_success": "backward_swap_full_strict_success",
+        "contains_true_block": "backward_swap_full_contains_true_block",
+    },
+    "ip_backward_swap": {
+        "label": "IP -> backward -> swap",
+        "strict_success": "backward_swap_restricted_strict_success",
+        "contains_true_block": "backward_swap_restricted_contains_true_block",
+    },
+}
+
+METHOD_STYLES = {
+    "bp": {"linestyle": "-", "marker": "o"},
+    "greedy": {"linestyle": "--", "marker": "s"},
+    "foba": {"linestyle": "-.", "marker": "^"},
+    "bp_greedy": {"linestyle": ":", "marker": "D"},
+    "bp_foba": {"linestyle": (0, (3, 1, 1, 1)), "marker": "P"},
+    "backward_swap": {"linestyle": "--", "marker": "s"},
+    "ip_backward_swap": {"linestyle": ":", "marker": "D"},
+}
+
 
 def _as_bool_series(series):
     if series.dtype == bool:
@@ -54,13 +102,32 @@ def load_identity_summary(results_dir=None, runs_csv=None, summary_csv=None):
         runs = runs.copy()
         runs["strict_success"] = _as_bool_series(runs["strict_success"])
         runs["contains_true_block"] = _as_bool_series(runs["contains_true_block"])
+        aggregations = {
+            "runs": ("strict_success", "count"),
+            "strict_success_rate": ("strict_success", "mean"),
+            "contains_true_block_rate": ("contains_true_block", "mean"),
+        }
+        optional_bool_columns = [
+            "greedy_full_strict_success",
+            "greedy_full_contains_true_block",
+            "forward_backward_full_strict_success",
+            "forward_backward_full_contains_true_block",
+            "greedy_restricted_strict_success",
+            "greedy_restricted_contains_true_block",
+            "forward_backward_restricted_strict_success",
+            "forward_backward_restricted_contains_true_block",
+            "backward_swap_full_strict_success",
+            "backward_swap_full_contains_true_block",
+            "backward_swap_restricted_strict_success",
+            "backward_swap_restricted_contains_true_block",
+        ]
+        for column in optional_bool_columns:
+            if column in runs.columns:
+                runs[column] = _as_bool_series(runs[column])
+                aggregations[f"{column}_rate"] = (column, "mean")
         return (
             runs.groupby(["D", "corrupting_D", "num_corrupting_matrices"], as_index=False)
-            .agg(
-                runs=("strict_success", "count"),
-                strict_success_rate=("strict_success", "mean"),
-                contains_true_block_rate=("contains_true_block", "mean"),
-            )
+            .agg(**aggregations)
             .sort_values(["D", "corrupting_D", "num_corrupting_matrices"])
         )
 
@@ -76,6 +143,20 @@ def load_identity_summary(results_dir=None, runs_csv=None, summary_csv=None):
     if missing:
         raise ValueError(f"Missing columns in {summary_csv}: {missing}")
     return summary.sort_values(["D", "corrupting_D", "num_corrupting_matrices"])
+
+
+def _method_metric_column(method, metric):
+    if metric == "strict_success_rate":
+        suffix = "strict_success"
+    elif metric == "contains_true_block_rate":
+        suffix = "contains_true_block"
+    else:
+        raise ValueError(f"Unknown metric: {metric}")
+
+    base_column = METHODS[method][suffix]
+    if method == "bp":
+        return f"{base_column}_rate"
+    return f"{base_column}_rate"
 
 
 def plot_identity_summary(
@@ -177,6 +258,115 @@ def plot_identity_summary(
     return output_file
 
 
+def plot_identity_method_comparison(
+    summary,
+    output_file,
+    metric="strict_success_rate",
+    methods=None,
+    title=None,
+    log_x=True,
+):
+    if metric not in METRIC_LABELS:
+        raise ValueError(f"Unknown metric: {metric}")
+    if methods is None:
+        methods = ["bp", "foba", "bp_foba"]
+    unknown_methods = sorted(set(methods) - set(METHODS))
+    if unknown_methods:
+        raise ValueError(f"Unknown methods: {unknown_methods}")
+
+    os.makedirs(os.path.dirname(output_file) or ".", exist_ok=True)
+
+    required_columns = ["D", "corrupting_D", "num_corrupting_matrices"]
+    required_columns.extend(_method_metric_column(method, metric) for method in methods)
+    missing = sorted(set(required_columns) - set(summary.columns))
+    if missing:
+        raise ValueError(
+            "Missing columns for method comparison. Re-run "
+            "`python -m isometry_pursuit.exec.run_identity_experiment` with the "
+            f"updated code. Missing: {missing}"
+        )
+
+    corrupting_dimensions = sorted(summary["corrupting_D"].unique())
+    cmap = plt.get_cmap("tab10")
+    color_by_corrupting_dimension = {
+        dimension: cmap(index % 10)
+        for index, dimension in enumerate(corrupting_dimensions)
+    }
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for corrupting_dimension, group in summary.groupby("corrupting_D"):
+        group = group.sort_values("num_corrupting_matrices")
+        for method in methods:
+            style = METHOD_STYLES[method]
+            ax.plot(
+                group["num_corrupting_matrices"],
+                group[_method_metric_column(method, metric)],
+                color=color_by_corrupting_dimension[corrupting_dimension],
+                linestyle=style["linestyle"],
+                marker=style["marker"],
+                linewidth=1.8,
+                markersize=6,
+                alpha=0.9,
+            )
+
+    x_values = sorted(summary["num_corrupting_matrices"].unique())
+    if log_x:
+        ax.set_xscale("log", base=2)
+    ax.set_xticks(x_values)
+    ax.set_xticklabels([str(int(value)) for value in x_values])
+    ax.set_ylim(-0.03, 1.03)
+    ax.set_xlabel("Number of corrupting matrices")
+    ax.set_ylabel(METRIC_LABELS[metric])
+    if title is not None:
+        ax.set_title(title)
+    ax.grid(True, linestyle="--", linewidth=0.7, alpha=0.35)
+
+    method_handles = [
+        Line2D(
+            [0],
+            [0],
+            color="black",
+            linestyle=METHOD_STYLES[method]["linestyle"],
+            marker=METHOD_STYLES[method]["marker"],
+            linewidth=1.8,
+            markersize=6,
+            label=METHODS[method]["label"],
+        )
+        for method in methods
+    ]
+    first_legend = ax.legend(
+        handles=method_handles,
+        title="Method",
+        loc="lower left",
+        frameon=True,
+    )
+    ax.add_artist(first_legend)
+
+    corrupting_handles = [
+        Line2D(
+            [0],
+            [0],
+            color=color_by_corrupting_dimension[dimension],
+            linewidth=2,
+            label=f"d={dimension}",
+        )
+        for dimension in corrupting_dimensions
+    ]
+    ax.legend(
+        handles=corrupting_handles,
+        title="Corrupting dimension",
+        loc="lower right",
+        frameon=True,
+        ncol=2 if len(corrupting_handles) > 4 else 1,
+    )
+
+    fig.tight_layout()
+    fig.savefig(output_file, dpi=300, bbox_inches="tight")
+    plt.close(fig)
+    return output_file
+
+
 def _dimension_output_file(output_dir, metric, dimension):
     return os.path.join(output_dir, f"identity_experiment_{metric}_D{int(dimension)}.png")
 
@@ -211,6 +401,20 @@ def main():
         action="store_true",
         help="Save one combined plot instead of one plot per full dimension",
     )
+    parser.add_argument(
+        "--compare-methods",
+        action="store_true",
+        help="Plot selected method success rates on the same axes",
+    )
+    parser.add_argument(
+        "--methods",
+        default="bp,foba,bp_foba",
+        help=(
+            "Comma-separated method keys for --compare-methods. "
+            "Available: bp, greedy, foba (greedy + swap), bp_greedy, "
+            "bp_foba (IP + greedy + swap), backward_swap, ip_backward_swap"
+        ),
+    )
     args = parser.parse_args()
 
     summary = load_identity_summary(
@@ -218,36 +422,64 @@ def main():
         runs_csv=args.runs_csv,
         summary_csv=args.summary_csv,
     )
+    methods = [method.strip() for method in args.methods.split(",") if method.strip()]
     if args.combined:
         output_file = args.output_file
         if output_file is None:
-            output_file = os.path.join(args.output_dir, f"identity_experiment_{args.metric}.png")
-        plot_identity_summary(
-            summary=summary,
-            output_file=output_file,
-            metric=args.metric,
-            title=args.title,
-            log_x=not args.linear_x,
-        )
+            suffix = "method_comparison" if args.compare_methods else args.metric
+            output_file = os.path.join(args.output_dir, f"identity_experiment_{suffix}.png")
+        if args.compare_methods:
+            plot_identity_method_comparison(
+                summary=summary,
+                output_file=output_file,
+                metric=args.metric,
+                methods=methods,
+                title=args.title,
+                log_x=not args.linear_x,
+            )
+        else:
+            plot_identity_summary(
+                summary=summary,
+                output_file=output_file,
+                metric=args.metric,
+                title=args.title,
+                log_x=not args.linear_x,
+            )
         print(f"Saved to {output_file}")
         return
 
     for dimension in sorted(summary["D"].unique()):
         dimension_summary = summary[summary["D"] == dimension]
         if args.output_file is None:
-            output_file = _dimension_output_file(args.output_dir, args.metric, dimension)
+            if args.compare_methods:
+                output_file = os.path.join(
+                    args.output_dir,
+                    f"identity_experiment_method_comparison_D{int(dimension)}.png",
+                )
+            else:
+                output_file = _dimension_output_file(args.output_dir, args.metric, dimension)
         else:
             output_file = _suffixed_output_file(args.output_file, dimension)
         title = args.title
         if title is None:
             title = f"D={int(dimension)}"
-        plot_identity_summary(
-            summary=dimension_summary,
-            output_file=output_file,
-            metric=args.metric,
-            title=title,
-            log_x=not args.linear_x,
-        )
+        if args.compare_methods:
+            plot_identity_method_comparison(
+                summary=dimension_summary,
+                output_file=output_file,
+                metric=args.metric,
+                methods=methods,
+                title=title,
+                log_x=not args.linear_x,
+            )
+        else:
+            plot_identity_summary(
+                summary=dimension_summary,
+                output_file=output_file,
+                metric=args.metric,
+                title=title,
+                log_x=not args.linear_x,
+            )
         print(f"Saved to {output_file}")
 
 
