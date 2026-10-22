@@ -39,6 +39,22 @@ For the Wine dataset, exhaustive \brute~ search is prohibitive in $D=13$, and so
     \label{fig:identity_method_comparison}
 \end{figure}
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{../figures/synthetic_regret_grid.pdf}
+    \caption{Mean oracle regret in the synthetic identity-block experiments.
+    Columns give target dimension $D$, rows give the number $b$ of corrupting
+    matrices, and the horizontal axis within each panel gives their dimension
+    $d_c$.  Colors identify the four search methods.
+    Each point averages 25 replicates at the displayed configuration.  We omit
+    backward-initialized results when their arithmetic-work proxy
+    $D^2\sum_{k=D+1}^{P}k(k-1)$ exceeds $10^9$; missing curve segments denote
+    these compute-budget omissions.  Faint dashed continuations toward an
+    off-axis sentinel at $10^2$ mark the omitted method and position and are not
+    loss measurements.}
+    \label{fig:synthetic-oracle-regret}
+\end{figure}
+
 Our main interpretability dataset is the Ethanol dataset from \citet{Chmiela2018-at, Koelle2022-ju}.
 For this dataset we evaluate a dictionary of interpretable features  - bond torsions - for their ability to parameterize the molecular configuration space.
 In this interpretability use case, columns denote gradients of informative features.
@@ -80,6 +96,51 @@ Here $\widehat{S}_{FB}$ denotes the support selected by full-dictionary forward-
 The final column reports the one-sided paired $t$-test $p$-value for the alternative that full-dictionary forward-backward losses exceed restricted forward-backward losses.
 }
 \label{tab:experiments}
+\end{table}
+
+To compare all four practical searches directly, define the replicate-level
+oracle loss as $\ell_r^\star=\min_m \ell_{m,r}$ and the oracle regret of method
+$m$ as $\mathcal R_{m,r}=\ell_{m,r}-\ell_r^\star$.
+Table~\ref{tab:oracle-regret} reports both the empirical probability of attaining
+the oracle loss and the mean oracle regret.
+
+\begin{table}[t]
+\centering
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccc}
+\toprule
+Method & Wine ($P=89$) & Iris ($P=75$) & Ethanol ($P=756$) \\
+\midrule
+Greedy $\rightarrow$ swap
+    & $24.0\%\;/\;3.239$ & $60.0\%\;/\;0.179$
+    & $84.0\%\;/\;0.0188$ \\
+Backward $\rightarrow$ swap
+    & $72.0\%\;/\;0.605$ & $88.0\%\;/\;0.0170$
+    & $96.0\%\;/\;0.00330$ \\
+\isometrypursuit $\rightarrow$ greedy $\rightarrow$ swap
+    & \makecell{$40.0\%\;/\;2.446$\\$26.2/89\;(29.4\%)$}
+    & \makecell{$56.0\%\;/\;0.0814$\\$6.72/75\;(9.0\%)$}
+    & \makecell{$64.0\%\;/\;0.0180$\\$2.80/756\;(0.37\%)$} \\
+\isometrypursuit $\rightarrow$ backward $\rightarrow$ swap
+    & \makecell{$64.0\%\;/\;0.615$\\$26.2/89\;(29.4\%)$}
+    & \makecell{$64.0\%\;/\;0.0545$\\$6.72/75\;(9.0\%)$}
+    & \makecell{$64.0\%\;/\;0.0180$\\$2.80/756\;(0.37\%)$} \\
+\bottomrule
+\end{tabular}
+}
+\caption{Oracle attainment and regret for the four discrete-search pipelines.
+Each entry is
+$\widehat P(\mathcal R_{m,r}=0)\;/\;\overline{\mathcal R}_m$: the percentage
+of replicates on which the method wins or ties for the lowest loss among the
+four methods, followed by its mean oracle regret.
+For the two \isometrypursuit~pipelines, the second line reports
+$\overline{|\widehat S_{IP}|}/P$ and the corresponding retained percentage.
+Losses within $10^{-9}$ are treated as ties.
+Each dataset contains 25 replicates.
+Because loss scales differ across datasets, regret magnitudes should be compared
+within columns.}
+\label{tab:oracle-regret}
 \end{table}
 
 Figure \ref{fig:identity_method_comparison} reports exact recovery rates in the synthetic identity-block experiments.

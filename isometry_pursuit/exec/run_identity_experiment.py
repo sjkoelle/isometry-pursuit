@@ -299,6 +299,8 @@ def run_identity_experiment(
     iterations=None,
     eps=None,
     config_file=None,
+    max_backward_columns=None,
+    max_backward_work=None,
 ):
     os.makedirs(output_dir, exist_ok=True)
 
@@ -458,16 +460,43 @@ def run_identity_experiment(
                     ("backward_swap_full", list(range(X.shape[1]))),
                     ("backward_swap_restricted", selected_indices),
                 ):
-                    try:
-                        local_indices = greedy_swap(
-                            X[:, dictionary], _gl_loss, target_dimension=dimension,
-                            initialization="backward", random_state=run_seed,
+                    backward_work = dimension ** 2 * sum(
+                        k * (k - 1)
+                        for k in range(dimension + 1, len(dictionary) + 1)
+                    )
+                    if (
+                        max_backward_columns is not None
+                        and len(dictionary) > max_backward_columns
+                    ):
+                        chosen, method_loss = [], np.nan
+                        method_error = (
+                            "Skipped: backward initialization has "
+                            f"{len(dictionary)} columns, exceeding the "
+                            f"configured limit of {max_backward_columns}"
                         )
-                        chosen = [int(dictionary[j]) for j in local_indices]
-                        method_loss = float(_gl_loss(X[:, chosen]))
-                        method_error = None
-                    except Exception as exc:
-                        chosen, method_loss, method_error = [], np.nan, repr(exc)
+                    elif (
+                        max_backward_work is not None
+                        and backward_work > max_backward_work
+                    ):
+                        chosen, method_loss = [], np.nan
+                        method_error = (
+                            "Skipped: backward arithmetic-work proxy is "
+                            f"{backward_work}, exceeding the configured limit "
+                            f"of {max_backward_work}"
+                        )
+                    else:
+                        try:
+                            local_indices = greedy_swap(
+                                X[:, dictionary], _gl_loss,
+                                target_dimension=dimension,
+                                initialization="backward",
+                                random_state=run_seed,
+                            )
+                            chosen = [int(dictionary[j]) for j in local_indices]
+                            method_loss = float(_gl_loss(X[:, chosen]))
+                            method_error = None
+                        except Exception as exc:
+                            chosen, method_loss, method_error = [], np.nan, repr(exc)
                     metrics = _selection_metrics(chosen, true_set, corrupting_set)
                     backward_methods.update({
                         f"{prefix}_indices": chosen,
@@ -475,6 +504,7 @@ def run_identity_experiment(
                         f"{prefix}_strict_success": metrics["strict_success"],
                         f"{prefix}_contains_true_block": metrics["contains_true_block"],
                         f"{prefix}_error": method_error,
+                        f"{prefix}_work_proxy": backward_work,
                     })
 
                 records.append({
@@ -490,6 +520,8 @@ def run_identity_experiment(
                     "constraint_violation": constraint_violation,
                     "iterations": iterations,
                     "eps": eps,
+                    "max_backward_columns": max_backward_columns,
+                    "max_backward_work": max_backward_work,
                     "true_indices": true_indices,
                     "corrupting_indices": corrupting_indices,
                     "selected_indices": selected_indices,
@@ -665,6 +697,8 @@ def run_identity_experiment(
             "constraint_violation": constraint_violation,
             "iterations": iterations,
             "eps": eps,
+            "max_backward_columns": max_backward_columns,
+            "max_backward_work": max_backward_work,
             "config_file": config_file,
         },
         "outputs": {
@@ -721,6 +755,18 @@ def main():
     parser.add_argument("--constraint-violation", type=float, default=None)
     parser.add_argument("--iterations", type=int, default=None)
     parser.add_argument("--eps", type=float, default=None)
+    parser.add_argument(
+        "--max-backward-columns",
+        type=int,
+        default=None,
+        help="Skip backward-initialized methods when their dictionary exceeds this size",
+    )
+    parser.add_argument(
+        "--max-backward-work",
+        type=float,
+        default=None,
+        help="Skip backward methods above this arithmetic-work proxy",
+    )
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -735,6 +781,8 @@ def main():
         "constraint_violation": args.constraint_violation,
         "iterations": args.iterations,
         "eps": args.eps,
+        "max_backward_columns": args.max_backward_columns,
+        "max_backward_work": args.max_backward_work,
     }
     for key, value in cli_overrides.items():
         if value is not None:
@@ -759,6 +807,8 @@ def main():
         iterations=config["iterations"],
         eps=config["eps"],
         config_file=args.config,
+        max_backward_columns=config.get("max_backward_columns"),
+        max_backward_work=config.get("max_backward_work"),
     )
 
     print("Identity experiment complete.")

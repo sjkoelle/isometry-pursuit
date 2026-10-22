@@ -71,10 +71,11 @@ show paired differences and their scale before attaching practical importance.
 
 ### Pairwise heatmaps
 
-Keep the 4-by-4 heatmaps as the direct paired comparison. Their current definition
-is P(row has lower loss) + 0.5 P(tie), with absolute tie tolerance 1e-9.
-Call this a tie-adjusted winrate, not a strict-win probability. Label row/column
-orientation explicitly and use a common 0–100% scale.
+Keep the 4-by-4 heatmaps as the direct paired comparison. Define each
+off-diagonal cell as the paired probability of superiority,
+P(row loss < column loss) + 0.5 P(tie), with absolute tie tolerance 1e-9.
+Leave diagonal self-comparisons blank and print the tie percentage beneath each
+effect size on a common 0–100% scale.
 
 Provide strict wins, ties, and losses in an accompanying table or data file, since
 50% could mean all ties or an even split of decisive outcomes. Include a small

@@ -5,7 +5,7 @@
     "ip_greedy_swap",
     "ip_backward_swap"
   ],
-  "definition": "P(row loss < column loss) + 0.5 P(tie)",
+  "definition": "Paired probability of superiority: P(row loss < column loss) + 0.5 P(numerical tie)",
   "tie_tolerance": 1e-09,
   "datasets": {
     "wine": {
@@ -88,7 +88,37 @@
           4,
           25
         ]
-      ]
+      ],
+      "oracle_regret": {
+        "greedy_swap": {
+          "mean_regret": 3.2385455482271857,
+          "median_regret": 2.6444649506820355,
+          "p90_regret": 7.6273778562884536,
+          "max_regret": 9.508144170727746,
+          "zero_regret_rate": 0.24
+        },
+        "backward_swap": {
+          "mean_regret": 0.6045081084876864,
+          "median_regret": 0.0,
+          "p90_regret": 2.478917671863199,
+          "max_regret": 3.5583077064875823,
+          "zero_regret_rate": 0.72
+        },
+        "ip_greedy_swap": {
+          "mean_regret": 2.445665516394032,
+          "median_regret": 1.205285433823292,
+          "p90_regret": 6.445012803399963,
+          "max_regret": 7.376716210974195,
+          "zero_regret_rate": 0.4
+        },
+        "ip_backward_swap": {
+          "mean_regret": 0.6146790153524619,
+          "median_regret": 0.0,
+          "p90_regret": 2.301578573178789,
+          "max_regret": 3.5583077064875823,
+          "zero_regret_rate": 0.64
+        }
+      }
     },
     "iris": {
       "source": "results/iris_swap_comparison.json",
@@ -170,7 +200,37 @@
           19,
           25
         ]
-      ]
+      ],
+      "oracle_regret": {
+        "greedy_swap": {
+          "mean_regret": 0.17853213934651077,
+          "median_regret": 0.0,
+          "p90_regret": 0.5665509479728215,
+          "max_regret": 1.330934590449318,
+          "zero_regret_rate": 0.6
+        },
+        "backward_swap": {
+          "mean_regret": 0.017039631330572434,
+          "median_regret": 0.0,
+          "p90_regret": 0.05330801622140586,
+          "max_regret": 0.23074982840169866,
+          "zero_regret_rate": 0.88
+        },
+        "ip_greedy_swap": {
+          "mean_regret": 0.08135938400193293,
+          "median_regret": 0.0,
+          "p90_regret": 0.20204281234408789,
+          "max_regret": 0.6973054420777229,
+          "zero_regret_rate": 0.56
+        },
+        "ip_backward_swap": {
+          "mean_regret": 0.054459372464746816,
+          "median_regret": 0.0,
+          "p90_regret": 0.16071397842272292,
+          "max_regret": 0.36017104074851325,
+          "zero_regret_rate": 0.64
+        }
+      }
     },
     "ethanol": {
       "source": "results/ethanol_swap_comparison.json",
@@ -252,7 +312,37 @@
           25,
           25
         ]
-      ]
+      ],
+      "oracle_regret": {
+        "greedy_swap": {
+          "mean_regret": 0.018750539939126672,
+          "median_regret": 0.0,
+          "p90_regret": 0.09248669781240208,
+          "max_regret": 0.16871724483710615,
+          "zero_regret_rate": 0.84
+        },
+        "backward_swap": {
+          "mean_regret": 0.0032993540864230653,
+          "median_regret": 0.0,
+          "p90_regret": 0.0,
+          "max_regret": 0.08248385216057663,
+          "zero_regret_rate": 0.96
+        },
+        "ip_greedy_swap": {
+          "mean_regret": 0.018021234033782606,
+          "median_regret": 0.0,
+          "p90_regret": 0.06403092660499965,
+          "max_regret": 0.13196843345546538,
+          "zero_regret_rate": 0.64
+        },
+        "ip_backward_swap": {
+          "mean_regret": 0.018021234033782498,
+          "median_regret": 0.0,
+          "p90_regret": 0.06403092660499912,
+          "max_regret": 0.13196843345546538,
+          "zero_regret_rate": 0.64
+        }
+      }
     },
     "synthetic": {
       "source": "results/identity_swap_comparison_full/identity_experiment_runs.json",
@@ -334,7 +424,37 @@
           246,
           300
         ]
-      ]
+      ],
+      "oracle_regret": {
+        "greedy_swap": {
+          "mean_regret": 0.8112622715125656,
+          "median_regret": 0.0,
+          "p90_regret": 3.020034300026164,
+          "max_regret": 8.513314826092422,
+          "zero_regret_rate": 0.56
+        },
+        "backward_swap": {
+          "mean_regret": 0.21766281601800627,
+          "median_regret": 0.0,
+          "p90_regret": 0.356031900096061,
+          "max_regret": 4.837496182582839,
+          "zero_regret_rate": 0.8133333333333334
+        },
+        "ip_greedy_swap": {
+          "mean_regret": 0.011540493178698171,
+          "median_regret": 0.0,
+          "p90_regret": 0.0,
+          "max_regret": 0.5506411469599346,
+          "zero_regret_rate": 0.9066666666666666
+        },
+        "ip_backward_swap": {
+          "mean_regret": 0.0621075159720791,
+          "median_regret": 0.0,
+          "p90_regret": 0.0,
+          "max_regret": 2.9664422642766617,
+          "zero_regret_rate": 0.9066666666666666
+        }
+      }
     }
   }
 }
