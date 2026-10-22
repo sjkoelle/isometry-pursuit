@@ -36,6 +36,11 @@ DEFAULT_CORRUPTING_DIMS = {
     32: [1, 8, 16, 31],
     64: [1, 16, 32, 63],
 }
+DYADIC_CORRUPTING_DIM_SUPPLEMENTS = {
+    16: [2],
+    32: [2, 4],
+    64: [2, 4, 8],
+}
 DEFAULT_NUM_CORRUPTING = [1, 2, 4, 8, 16]
 
 
@@ -272,6 +277,18 @@ def main():
     ]
     corrupting_dims = _corrupting_dims(args.corrupting_d_values, dimensions)
     trials = _build_trials(dimensions, corrupting_dims, num_corrupting)
+    if args.corrupting_d_values is None:
+        supplemental_dims = {
+            dimension: [
+                value
+                for value in DYADIC_CORRUPTING_DIM_SUPPLEMENTS.get(dimension, [])
+                if value not in corrupting_dims[dimension]
+            ]
+            for dimension in dimensions
+        }
+        trials.extend(_build_trials(dimensions, supplemental_dims, num_corrupting))
+        for dimension, values in supplemental_dims.items():
+            corrupting_dims[dimension].extend(values)
     if args.replicates < 1 or args.workers < 1:
         parser.error("--replicates and --workers must be positive")
 

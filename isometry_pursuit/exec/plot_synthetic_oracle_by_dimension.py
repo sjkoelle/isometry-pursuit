@@ -84,12 +84,25 @@ def main():
                 ax.plot(corrupting_dimensions, regrets, color=color, marker=marker,
                         linewidth=2, markersize=5, label=label)
                 if omitted_dimensions:
-                    omission_regrets = [
-                        1e2 if value in omitted_dimensions else regret
-                        for value, regret in zip(corrupting_dimensions, regrets)
+                    first_omitted = min(
+                        corrupting_dimensions.index(value)
+                        for value in omitted_dimensions
+                    )
+                    anchors = [
+                        (value, regret)
+                        for value, regret in zip(
+                            corrupting_dimensions[:first_omitted],
+                            regrets[:first_omitted],
+                        )
+                        if np.isfinite(regret)
                     ]
+                    anchor_dimension, anchor_regret = (
+                        anchors[-1]
+                        if anchors else (corrupting_dimensions[0], 0.0)
+                    )
                     ax.plot(
-                        corrupting_dimensions, omission_regrets,
+                        [anchor_dimension, corrupting_dimensions[first_omitted]],
+                        [anchor_regret, 1e4],
                         color=color, linewidth=1.5, linestyle='--', alpha=.25,
                     )
 
