@@ -5,6 +5,7 @@ import argparse
 import ast
 import json
 import os
+import time
 
 import numpy as np
 import pandas as pd
@@ -319,6 +320,7 @@ def run_identity_experiment(
                     f"got d_corr={corrupting_dimension}, D={dimension}"
                 )
             for replicate in range(replicates):
+                replicate_started = time.perf_counter()
                 run_seed = seed + run_id
                 rng = np.random.default_rng(run_seed)
                 X, true_indices, corrupting_indices, block_ranges = generate_identity_instance(
@@ -328,6 +330,7 @@ def run_identity_experiment(
                     rng=rng,
                 )
 
+                method_started = time.perf_counter()
                 try:
                     result = isometry_pursuit(
                         X,
@@ -344,6 +347,9 @@ def run_identity_experiment(
                     objective_value = np.nan
                     solver_iterations = None
                     error = repr(exc)
+                isometry_pursuit_runtime_seconds = (
+                    time.perf_counter() - method_started
+                )
 
                 selected_set = set(selected_indices)
                 true_set = set(true_indices)
@@ -352,6 +358,7 @@ def run_identity_experiment(
                 corrupting_selected = sorted(selected_set & corrupting_set)
                 missing_true = sorted(true_set - selected_set)
 
+                method_started = time.perf_counter()
                 try:
                     greedy_full_indices = [
                         int(value)
@@ -364,7 +371,9 @@ def run_identity_experiment(
                     greedy_full_indices = []
                     greedy_full_loss = np.nan
                     greedy_full_error = repr(exc)
+                greedy_full_runtime_seconds = time.perf_counter() - method_started
 
+                method_started = time.perf_counter()
                 try:
                     forward_backward_full_indices = [
                         int(value)
@@ -384,8 +393,12 @@ def run_identity_experiment(
                     forward_backward_full_indices = []
                     forward_backward_full_loss = np.nan
                     forward_backward_full_error = repr(exc)
+                forward_backward_full_runtime_seconds = (
+                    time.perf_counter() - method_started
+                )
 
                 if len(selected_indices) >= dimension:
+                    method_started = time.perf_counter()
                     try:
                         selected_X = X[:, selected_indices]
                         local_indices = greedy(
@@ -405,7 +418,11 @@ def run_identity_experiment(
                         greedy_restricted_indices = []
                         greedy_restricted_loss = np.nan
                         greedy_restricted_error = repr(exc)
+                    greedy_restricted_runtime_seconds = (
+                        time.perf_counter() - method_started
+                    )
 
+                    method_started = time.perf_counter()
                     try:
                         selected_X = X[:, selected_indices]
                         local_indices = forward_backward(
@@ -426,6 +443,9 @@ def run_identity_experiment(
                         forward_backward_restricted_indices = []
                         forward_backward_restricted_loss = np.nan
                         forward_backward_restricted_error = repr(exc)
+                    forward_backward_restricted_runtime_seconds = (
+                        time.perf_counter() - method_started
+                    )
                 else:
                     greedy_restricted_indices = []
                     greedy_restricted_loss = np.nan
@@ -433,6 +453,8 @@ def run_identity_experiment(
                     forward_backward_restricted_indices = []
                     forward_backward_restricted_loss = np.nan
                     forward_backward_restricted_error = "IP support has fewer than D columns"
+                    greedy_restricted_runtime_seconds = np.nan
+                    forward_backward_restricted_runtime_seconds = np.nan
 
                 greedy_full = _selection_metrics(
                     greedy_full_indices,
@@ -460,6 +482,7 @@ def run_identity_experiment(
                     ("backward_swap_full", list(range(X.shape[1]))),
                     ("backward_swap_restricted", selected_indices),
                 ):
+                    method_runtime_seconds = np.nan
                     backward_work = dimension ** 2 * sum(
                         k * (k - 1)
                         for k in range(dimension + 1, len(dictionary) + 1)
@@ -485,6 +508,7 @@ def run_identity_experiment(
                             f"of {max_backward_work}"
                         )
                     else:
+                        method_started = time.perf_counter()
                         try:
                             local_indices = greedy_swap(
                                 X[:, dictionary], _gl_loss,
@@ -497,6 +521,7 @@ def run_identity_experiment(
                             method_error = None
                         except Exception as exc:
                             chosen, method_loss, method_error = [], np.nan, repr(exc)
+                        method_runtime_seconds = time.perf_counter() - method_started
                     metrics = _selection_metrics(chosen, true_set, corrupting_set)
                     backward_methods.update({
                         f"{prefix}_indices": chosen,
@@ -505,8 +530,32 @@ def run_identity_experiment(
                         f"{prefix}_contains_true_block": metrics["contains_true_block"],
                         f"{prefix}_error": method_error,
                         f"{prefix}_work_proxy": backward_work,
+                        f"{prefix}_runtime_seconds": method_runtime_seconds,
                     })
 
+                replicate_runtime_seconds = time.perf_counter() - replicate_started
+                forward_swap_full_runtime_seconds = (
+                    greedy_full_runtime_seconds
+                    + forward_backward_full_runtime_seconds
+                )
+                ip_forward_swap_runtime_seconds = (
+                    isometry_pursuit_runtime_seconds
+                    + greedy_restricted_runtime_seconds
+                    + forward_backward_restricted_runtime_seconds
+                    if np.isfinite(greedy_restricted_runtime_seconds)
+                    and np.isfinite(forward_backward_restricted_runtime_seconds)
+                    else np.nan
+                )
+                ip_backward_swap_runtime_seconds = (
+                    isometry_pursuit_runtime_seconds
+                    + backward_methods["backward_swap_restricted_runtime_seconds"]
+                    if np.isfinite(
+                        backward_methods[
+                            "backward_swap_restricted_runtime_seconds"
+                        ]
+                    )
+                    else np.nan
+                )
                 records.append({
                     **backward_methods,
                     "run_id": run_id,
@@ -535,8 +584,14 @@ def run_identity_experiment(
                     "contains_true_block": true_set.issubset(selected_set),
                     "objective_value": objective_value,
                     "basis_pursuit_iterations": solver_iterations,
+                    "isometry_pursuit_runtime_seconds": isometry_pursuit_runtime_seconds,
+                    "replicate_runtime_seconds": replicate_runtime_seconds,
+                    "forward_swap_full_runtime_seconds": forward_swap_full_runtime_seconds,
+                    "ip_forward_swap_runtime_seconds": ip_forward_swap_runtime_seconds,
+                    "ip_backward_swap_runtime_seconds": ip_backward_swap_runtime_seconds,
                     "greedy_full_indices": greedy_full["indices"],
                     "greedy_full_loss": greedy_full_loss,
+                    "greedy_full_runtime_seconds": greedy_full_runtime_seconds,
                     "greedy_full_true_selected": greedy_full["true_selected"],
                     "greedy_full_corrupting_selected": greedy_full["corrupting_selected"],
                     "greedy_full_missing_true_indices": greedy_full["missing_true"],
@@ -548,6 +603,7 @@ def run_identity_experiment(
                     "greedy_full_error": greedy_full_error,
                     "forward_backward_full_indices": forward_backward_full["indices"],
                     "forward_backward_full_loss": forward_backward_full_loss,
+                    "forward_backward_full_runtime_seconds": forward_backward_full_runtime_seconds,
                     "forward_backward_full_true_selected": forward_backward_full["true_selected"],
                     "forward_backward_full_corrupting_selected": forward_backward_full["corrupting_selected"],
                     "forward_backward_full_missing_true_indices": forward_backward_full["missing_true"],
@@ -559,6 +615,7 @@ def run_identity_experiment(
                     "forward_backward_full_error": forward_backward_full_error,
                     "greedy_restricted_indices": greedy_restricted["indices"],
                     "greedy_restricted_loss": greedy_restricted_loss,
+                    "greedy_restricted_runtime_seconds": greedy_restricted_runtime_seconds,
                     "greedy_restricted_true_selected": greedy_restricted["true_selected"],
                     "greedy_restricted_corrupting_selected": greedy_restricted["corrupting_selected"],
                     "greedy_restricted_missing_true_indices": greedy_restricted["missing_true"],
@@ -569,6 +626,7 @@ def run_identity_experiment(
                     "greedy_restricted_error": greedy_restricted_error,
                     "forward_backward_restricted_indices": forward_backward_restricted["indices"],
                     "forward_backward_restricted_loss": forward_backward_restricted_loss,
+                    "forward_backward_restricted_runtime_seconds": forward_backward_restricted_runtime_seconds,
                     "forward_backward_restricted_true_selected": forward_backward_restricted["true_selected"],
                     "forward_backward_restricted_corrupting_selected": forward_backward_restricted["corrupting_selected"],
                     "forward_backward_restricted_missing_true_indices": forward_backward_restricted["missing_true"],
@@ -679,6 +737,17 @@ def run_identity_experiment(
             backward_swap_restricted_contains_true_block_rate=("backward_swap_restricted_contains_true_block", "mean"),
             mean_backward_swap_full_loss=("backward_swap_full_loss", "mean"),
             mean_backward_swap_restricted_loss=("backward_swap_restricted_loss", "mean"),
+            mean_isometry_pursuit_runtime_seconds=("isometry_pursuit_runtime_seconds", "mean"),
+            mean_greedy_full_runtime_seconds=("greedy_full_runtime_seconds", "mean"),
+            mean_forward_backward_full_runtime_seconds=("forward_backward_full_runtime_seconds", "mean"),
+            mean_greedy_restricted_runtime_seconds=("greedy_restricted_runtime_seconds", "mean"),
+            mean_forward_backward_restricted_runtime_seconds=("forward_backward_restricted_runtime_seconds", "mean"),
+            mean_backward_swap_full_runtime_seconds=("backward_swap_full_runtime_seconds", "mean"),
+            mean_backward_swap_restricted_runtime_seconds=("backward_swap_restricted_runtime_seconds", "mean"),
+            mean_replicate_runtime_seconds=("replicate_runtime_seconds", "mean"),
+            mean_forward_swap_full_runtime_seconds=("forward_swap_full_runtime_seconds", "mean"),
+            mean_ip_forward_swap_runtime_seconds=("ip_forward_swap_runtime_seconds", "mean"),
+            mean_ip_backward_swap_runtime_seconds=("ip_backward_swap_runtime_seconds", "mean"),
         )
     )
     summary_csv = os.path.join(output_dir, "identity_experiment_summary.csv")
@@ -715,6 +784,17 @@ def run_identity_experiment(
             "forward_backward_restricted_indices": "forward-backward-selected D columns after restricting to selected_indices",
             "greedy_full_contained_in_ip": "all full-greedy indices are contained in selected_indices",
             "forward_backward_full_contained_in_ip": "all full-forward-backward indices are contained in selected_indices",
+            "isometry_pursuit_runtime_seconds": "wall-clock seconds for Isometry Pursuit",
+            "greedy_full_runtime_seconds": "wall-clock seconds for full-dictionary greedy initialization",
+            "forward_backward_full_runtime_seconds": "wall-clock seconds for full-dictionary swap refinement",
+            "greedy_restricted_runtime_seconds": "wall-clock seconds for IP-restricted greedy initialization",
+            "forward_backward_restricted_runtime_seconds": "wall-clock seconds for IP-restricted swap refinement",
+            "backward_swap_full_runtime_seconds": "wall-clock seconds for full-dictionary backward initialization and swap refinement",
+            "backward_swap_restricted_runtime_seconds": "wall-clock seconds for IP-restricted backward initialization and swap refinement",
+            "replicate_runtime_seconds": "wall-clock seconds for the complete replicate",
+            "forward_swap_full_runtime_seconds": "end-to-end wall-clock seconds for full-dictionary greedy then swap",
+            "ip_forward_swap_runtime_seconds": "end-to-end wall-clock seconds for IP then restricted greedy and swap",
+            "ip_backward_swap_runtime_seconds": "end-to-end wall-clock seconds for IP then restricted backward initialization and swap",
             "true_indices": "columns of the full D-dimensional block",
             "corrupting_indices": "columns from lower-dimensional distractor blocks",
         },

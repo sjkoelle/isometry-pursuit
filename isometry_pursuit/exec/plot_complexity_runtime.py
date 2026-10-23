@@ -35,7 +35,11 @@ METHOD_COLORS = {
     "backward_greedy": "#54a24b",
 }
 
-DIMENSION_MARKERS = {2: "o", 4: "s", 8: "^", 16: "D"}
+DIMENSION_MARKERS = {
+    2: "o", 4: "s", 8: "^", 16: "D", 32: "P", 64: "h",
+}
+
+BACKWARD_WORK_CUTOFF = 1_000_000_000
 
 REAL_DATASETS = {
     "Iris": "data/iris_standardized_resampled_tensor.npy",
@@ -401,6 +405,7 @@ def plot(summary, output_path):
         fontsize=9,
     )
     fig.savefig(output_path, dpi=200)
+    fig.savefig(os.path.splitext(output_path)[0] + ".pdf")
     plt.close(fig)
 
 
@@ -410,6 +415,7 @@ def plot_overlay(
     real_summary=None,
     early_stopped_summary=None,
     title="Arithmetic-work proxies versus observed runtime",
+    backward_work_cutoff=None,
 ):
     fig, axis = plt.subplots(figsize=(8.2, 5.8))
     fig.subplots_adjust(bottom=0.17)
@@ -484,6 +490,28 @@ def plot_overlay(
                         zorder=3,
                     )
 
+    if backward_work_cutoff is not None:
+        axis.axvline(
+            backward_work_cutoff,
+            color=METHOD_COLORS["backward_greedy"],
+            linestyle="--",
+            linewidth=1.25,
+            alpha=0.8,
+            zorder=1,
+        )
+        axis.text(
+            backward_work_cutoff,
+            0.52,
+            "Backward only: " + r"$10^9$ work budget",
+            transform=axis.get_xaxis_transform(),
+            rotation=90,
+            ha="right",
+            va="center",
+            color=METHOD_COLORS["backward_greedy"],
+            fontsize=8,
+            bbox=dict(facecolor="white", edgecolor="none", alpha=0.75, pad=1),
+        )
+
     method_handles = [
         plt.Line2D(
             [],
@@ -505,6 +533,7 @@ def plot_overlay(
             label=f"D={dimension}",
         )
         for dimension, marker in DIMENSION_MARKERS.items()
+        if dimension in set(summary["D"].astype(int))
     ]
     if real_summary is not None:
         dimension_handles.append(
@@ -549,6 +578,7 @@ def plot_overlay(
         fontsize=9,
     )
     fig.savefig(output_path, dpi=200)
+    fig.savefig(os.path.splitext(output_path)[0] + ".pdf")
     plt.close(fig)
 
 
@@ -719,6 +749,7 @@ def main():
         overlay_no_early_path,
         real_summary=real_summary,
         title="Runtime without early stopping (100k-iteration IP)",
+        backward_work_cutoff=BACKWARD_WORK_CUTOFF,
     )
     if identity_early_summary is not None:
         with_early_summary = pd.concat(
@@ -744,12 +775,14 @@ def main():
             overlay_with_early_path,
             real_summary=with_early_real,
             title="Runtime with task-aware early stopping",
+            backward_work_cutoff=BACKWARD_WORK_CUTOFF,
         )
         plot_overlay(
             with_early_summary,
             overlay_path,
             real_summary=with_early_real,
             title="Runtime with task-aware early stopping",
+            backward_work_cutoff=BACKWARD_WORK_CUTOFF,
         )
     else:
         plot_overlay(

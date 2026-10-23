@@ -8,17 +8,6 @@ We justify this approach in two ways.
 First, we should that this loss and its {\it method of frames} analog have intuitively preferable geometric properties to S-divergence and other singular-value based losses.
 Second, we exhibit the usefulness of this basis pursuit approach for convexifying the coordinate selection problem.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=.86\textwidth]{../figures/loss_1d_all.png}
-\caption{
-One-dimensional candidate loss curves for $X = [[r]]$, showing loss behavior versus vector length.
-The red vertical dashed line marks $r=1$.
-\label{fig:loss_1d_all}
-}
-\end{figure}
-
-
 \subsection{The problem with singular values}
 \label{sec:singular_value_problem}
 
@@ -162,61 +151,47 @@ Figure \ref{fig:loss_landscapes} gives the analogous two-parameter view for $D=2
 
 \begin{figure}[t]
 \centering
-\begingroup
-\setlength{\tabcolsep}{1pt}
-\begin{tabular}{@{}*{2}{c}@{}}
-\subcaptionbox{\label{fig:loss_2d_condition}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_condition_number.png}} &
-\subcaptionbox{\label{fig:loss_2d_sdiv}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_s_divergence_identity.png}} \\
-\subcaptionbox{\label{fig:loss_2d_abs_log_singular}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_absolute_log_singular_values.png}} &
-\subcaptionbox{\label{fig:loss_2d_norm_logdet}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_normalized_logdet_volume.png}} \\
-\subcaptionbox{\label{fig:loss_2d_frob}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_frob_pseudoinverse.png}} &
-\subcaptionbox{\label{fig:loss_2d_gl}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_2d_gl_pseudoinverse.png}}
-\end{tabular}
-\endgroup
-\caption{
-Loss function comparison for $2 \times 2$ matrices.
-Each landscape varies the length ratio $r$ and angle $\theta$ between two column vectors.
-S-divergence and absolute log singular value are shown as representative generic spectral losses.
-The red star marks the ideal orthonormal setting $(r,\theta)=(1,\pi/2)$.
-See Table \ref{tab:loss_functions} for mathematical definitions.
-\label{fig:loss_landscapes}
-}
-\end{figure}
-
-
-\begin{figure}[t]
+\begin{subfigure}[t]{0.49\textwidth}
 \centering
 \begingroup
 \setlength{\tabcolsep}{1pt}
-\begin{tabular}{@{}*{2}{c}@{}}
-\subcaptionbox{\label{fig:loss_3d_equicorr_condition}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_condition_number.png}} &
-\subcaptionbox{\label{fig:loss_3d_equicorr_sdiv}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_s_divergence_identity.png}} \\
-\subcaptionbox{\label{fig:loss_3d_equicorr_abs_log_singular}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_absolute_log_singular_values.png}} &
-\subcaptionbox{\label{fig:loss_3d_equicorr_norm_logdet}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_normalized_logdet_volume.png}} \\
-\subcaptionbox{\label{fig:loss_3d_equicorr_frob}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_frob_pseudoinverse.png}} &
-\subcaptionbox{\label{fig:loss_3d_equicorr_gl}}[0.30\textwidth]
-{\includegraphics[width = \linewidth]{../figures/loss_3d_equicorr_gl_pseudoinverse.png}}
+\begin{tabular}{@{}cc@{}}
+\includegraphics[width=0.48\linewidth]{../figures/loss_2d_condition_number.png} &
+\includegraphics[width=0.48\linewidth]{../figures/loss_2d_s_divergence_identity.png} \\
+\includegraphics[width=0.48\linewidth]{../figures/loss_2d_absolute_log_singular_values.png} &
+\includegraphics[width=0.48\linewidth]{../figures/loss_2d_normalized_logdet_volume.png} \\
+\includegraphics[width=0.48\linewidth]{../figures/loss_2d_frob_pseudoinverse.png} &
+\includegraphics[width=0.48\linewidth]{../figures/loss_2d_gl_pseudoinverse.png}
 \end{tabular}
 \endgroup
-\caption{
-Loss function comparison for 3D equicorrelated matrices, shown as two-dimensional landscapes.
-Each matrix consists of three vectors in $\mathbb R^3$ with lengths $(1,r,1)$ and common pairwise correlation $\rho$.
-The horizontal axis varies the length ratio $r = \|v_2\|_2 / \|v_1\|_2$, while the vertical axis varies $\rho$.
-S-divergence and absolute log singular value are shown as representative generic spectral losses.
-The red star marks the ideal orthonormal setting $(r,\rho)=(1,0)$.
+\caption{$2 \times 2$ matrices.}
+\label{fig:loss_landscapes}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\begingroup
+\setlength{\tabcolsep}{1pt}
+\begin{tabular}{@{}cc@{}}
+\includegraphics[width=0.48\linewidth]{../figures/loss_3d_equicorr_condition_number.png} &
+\includegraphics[width=0.48\linewidth]{../figures/loss_3d_equicorr_s_divergence_identity.png} \\
+\includegraphics[width=0.48\linewidth]{../figures/loss_3d_equicorr_absolute_log_singular_values.png} &
+\includegraphics[width=0.48\linewidth]{../figures/loss_3d_equicorr_normalized_logdet_volume.png} \\
+\includegraphics[width=0.48\linewidth]{../figures/loss_3d_equicorr_frob_pseudoinverse.png} &
+\includegraphics[width=0.48\linewidth]{../figures/loss_3d_equicorr_gl_pseudoinverse.png}
+\end{tabular}
+\endgroup
+\caption{Equicorrelated $3 \times 3$ matrices.}
 \label{fig:loss_3d_equicorr_landscapes}
-}
+\end{subfigure}
+\caption{Loss function comparison. (a) Each landscape varies the length ratio
+$r$ and angle $\theta$ between two column vectors. (b) Each matrix consists of
+three vectors in $\mathbb R^3$ with lengths $(1,r,1)$ and common pairwise
+correlation $\rho$; the horizontal axis varies
+$r=\|v_2\|_2/\|v_1\|_2$ and the vertical axis varies $\rho$.
+S-divergence and absolute log singular value are representative generic
+spectral losses. The red star marks the ideal orthonormal setting:
+$(r,\theta)=(1,\pi/2)$ in (a) and $(r,\rho)=(1,0)$ in (b).
+See Table \ref{tab:loss_functions} for mathematical definitions.}
 \end{figure}
 
 % compares it with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.
