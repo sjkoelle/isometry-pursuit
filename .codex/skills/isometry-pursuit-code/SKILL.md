@@ -5,6 +5,17 @@ description: Work on the isometry_pursuit Python package in this repository. Use
 
 # Isometry Pursuit Code
 
+## Python environment
+
+Before running Python, `pip`, `pytest`, or a Python module, activate the project's canonical Conda environment. Keep activation and the dependent command in the same shell invocation:
+
+```bash
+source activate isometry_pursuit
+python -c 'import sys; print(sys.prefix)'
+```
+
+Never silently use the system interpreter or switch to another environment. If `isometry_pursuit` lacks a dependency, report or install it there.
+
 ## Workflow
 
 Make very sparse edits. Change only the modules, functions, scripts, or behavior the user explicitly asks to change. Do not opportunistically refactor, rename, reformat, modernize style, reorganize imports, migrate result schemas, or touch nearby code unless it is required for the requested change. If an adjacent issue is noticed, mention it as a suggestion instead of editing it.

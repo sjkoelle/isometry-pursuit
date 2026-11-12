@@ -12,49 +12,45 @@ Second, we exhibit the usefulness of this basis pursuit approach for convexifyin
 \label{sec:singular_value_problem}
 
 $D(X^TX, I_D)$ is not the only function of $X$ minimized uniquely by orthonormal matrices and invariant under rotation.
-Consider 
+Consider functions of the form
 \begin{align}
 \label{eq:gt_loss}
-\ell: \mathbb R^{D \times P} &\to \mathbb R^{+} \\
-X &\mapsto \sum_{d = 1}^D g(\sigma_d( X))
+\ell(X) = \sum_{d = 1}^D g(\sigma_d(X)),
 \end{align}
-where
-\begin{align}
-g: \mathbb R^+ &\to \mathbb R^+ \\
-t &\mapsto \log \frac{t + t^{-1}}{2}.
-\end{align}
-Clearly, any $g$ uniquely minimized at $1$ will provide a suitable rescaling of singular values.
-However, there are some nice properties we may also want.
+where $g:\mathbb R^+\to\mathbb R^+$ is a scalar penalty.
+Any $g$ uniquely minimized at $1$ provides a suitable penalty on the singular values.
+The following properties are also desirable.
 \begin{property}[Monotonicity away from one]
 \label{property:scalar_monotonicity}
-\begin{align}
+A scalar penalty $g$ is monotone away from one if
+\[
 g'(t)
 \begin{cases}
 <0 \; : \; 0 < t < 1 \\
 =0 \; : \; t = 1 \\
 >0 \; : \; t > 1.
 \end{cases}
-\end{align}
+\]
 \end{property}
 
-\begin{property}[Log-symmetry]
+\begin{property}[Log symmetry]
 \label{property:log_symmetry}
-\begin{align}
-g(t) = g(1/t).
-\end{align}
+A scalar penalty $g$ is log-symmetric if
+$g(t)=g(t^{-1})$ for every $t>0$.
 \end{property}
 
 \begin{property}[Column-rescaling monotonicity]
 \label{property:pathwise}
-\begin{align}
-\frac{\partial \ell}{\partial \|x_{.d}\|_2}
+A matrix loss $\ell$ is column-rescaling monotone if, for every
+column $x_{.d}$,
+\[
+\frac{\partial\ell}{\partial\|x_{.d}\|_2}
 \begin{cases}
->0 \; : \; \|x_{.d}\|_2 > 1 \\
-=0 \; : \; \|x_{.d}\|_2 = 1 \\ 
-<0 \; : \; \|x_{.d}\|_2 < 1 \\ 
+<0 \; : \; \|x_{.d}\|_2 < 1 \\
+=0 \; : \; \|x_{.d}\|_2 = 1 \\
+>0 \; : \; \|x_{.d}\|_2 > 1.
 \end{cases}
-\end{align}
-for all $X$.
+\]
 \end{property}
 
 Unfortunately, we show the following proposition.
@@ -62,7 +58,7 @@ Unfortunately, we show the following proposition.
 \label{prop:log_svd_bad}
 There does not exist a $g$ such that $\ell = \sum_{d=1}^D g( \sigma_d(X))$ such that $\ell$ satisfies Property \ref{property:pathwise} and Property \ref{property:log_symmetry}.
 \end{proposition}
-A suitable matrix for which no $g$ can be chosen such that a log det divergence satisfies Properties \ref{prop:} and \ref{prop:log_symmetry} is shown in Section \ref{sec:nearly_colinear_singular_values}.
+A suitable matrix for which no $g$ can be chosen such that a log det divergence satisfies Properties \ref{property:pathwise} and \ref{property:log_symmetry} is shown in Section \ref{sec:nearly_colinear_singular_values}.
 Figure \ref{fig:loss_1d_all} gives graphs of candidate losses when $D=1$.
 A view of the loss landscape for this matrix is shown in Figure \ref{fig:loss_3d_equicorr_landscapes}.
 The level sets of the log det losses are not tangent to length at $r = 1$.
@@ -72,82 +68,101 @@ This is an intuitively bad property for a loss that is supposed to prefer orthon
 \subsection{Normalization}
 \label{sec:normalization}
 
-Although starting from singular values is bad in the sense of Proposition \label{prop:log_svd_bad}, other losses do satisfy this property.
-These losses arise from the intuition that we can shrink vectors away from length $1$ in a manner similar to how we selected $g$.
+Although starting from singular values is bad in the sense of Proposition \ref{prop:log_svd_bad}, other losses do satisfy this property.
+These losses arise from the intuition that we can shrink vectors away from length $1$ according to a symmetric scalar penalty.
+Since basis pursuit methods tend to select longer vectors, selection of orthonormal submatrices requires normalization such that both long and short candidate basis vectors are penalized in the subsequent regression.
 Then, we can apply some loss function to the rescaled matrix that satisfies Property \ref{property:pathwise}.
 
-As mentioned in Section \ref{sec:sparse_convex_coordinate_selection}, it is important to normalize the columns of $x$ before applying basis pursuit.
-A similar insight can be applied to the problem of selecting isometric submatrices.
-Since basis pursuit methods tend to select longer vectors, selection of orthonormal submatrices requires normalization such that both long and short candidate basis vectors are penalized in the subsequent regression.
-We introduce the following definition.
+The obvious symmetric penalty for deviation from unit length is
+$\max(t,t^{-1})$, but it is not differentiable at $t=1$.
+We replace the maximum by its smooth LogSumExp relaxation
+\citep{Boyd2004-ql}
+\begin{align}
+a(t)=\log\left(e^t+e^{t^{-1}}\right).
+\end{align}
+This scalar penalty satisfies Properties \ref{property:scalar_monotonicity} and
+\ref{property:log_symmetry}.  Since $a(1)=\log(2e)$, exponentiating its
+negative centered value gives the normalization profile
+\begin{align}
+q(t)
+&=\exp\left(a(1)-a(t)\right)
+=\frac{2e}{e^t+e^{t^{-1}}}.
+\label{eq:normalization}
+\end{align}
+Thus $q(1)=1$, while $q(t)<1$ for $t\neq1$.
 
 \begin{definition}
-Let $g:\mathbb R^+ \to \mathbb R^+$ satisfy Properties
-\ref{property:scalar_monotonicity} and \ref{property:log_symmetry}.
-We define a \textbf{symmetric normalization}
+We define the \textbf{symmetric normalization}
 \begin{align}
-n_g: \mathbb R^D \setminus \{0\} &\to \mathbb R^D \\
-v &\mapsto \frac{g(\|v\|_2)}{\|v\|_2}v .
+n_q: \mathbb R^D \setminus \{0\} &\to \mathbb R^D \\
+v &\mapsto \frac{q(\|v\|_2)}{\|v\|_2}v .
 \end{align}
 \label{def:symmetric_normalization}
 \end{definition}
 
-
-We suggest to choose $g$ as follows.
-\begin{align}
-g: \mathbb R^+  &\to \mathbb R^+ \\
-t  &\mapsto \frac{2e}{e^{t} + e^{t^{-1}}}.
-\label{eq:normalization}
-\end{align}
-
-Besides satisfying the conditions in Definition \ref{def:symmetric_normalization}, this choice of $g$ has some additional nice properties.
-
-\begin{proposition}
-For $g$ defined in \eqref{eq:normalization}, $-\log g$ is convex.
-\end{proposition}
-
-\begin{proposition}
-The function $g$ defined in \eqref{eq:normalization} is smooth on $\mathbb R^+$.
-\end{proposition}
-
-\begin{proposition}
-For $g$ defined in \eqref{eq:normalization}, $\log g(t)$ decays linearly in $t$ as $t \to \infty$ and in $t^{-1}$ as $t \to 0$.
-\end{proposition}
-
 \begin{proposition}
 \label{prop:normalization_logsumexp}
-The inverse normalization $1/g$ in \eqref{eq:normalization} is the normalized exponential of the LogSumExp \citep{Boyd2004-ql} relaxation of $\max(t,t^{-1})$.
+The inverse profile $1/q$ is the normalized exponential of the LogSumExp
+relaxation of $\max(t,t^{-1})$.
+\end{proposition}
+
+This choice of $q$ has some additional useful properties.
+
+\begin{proposition}
+For $q$ defined in \eqref{eq:normalization}, $-\log q$ is convex.
+\end{proposition}
+
+\begin{proposition}
+The function $q$ defined in \eqref{eq:normalization} is smooth on $\mathbb R^+$.
+\end{proposition}
+
+\begin{proposition}
+For $q$ defined in \eqref{eq:normalization}, $\log q(t)$ decays linearly in $t$ as $t \to \infty$ and in $t^{-1}$ as $t \to 0$.
 \end{proposition}
 
 We plot the effect of this normalization on our example data in Figure \ref{fig:normalization}.
 % why are these important
 % Compared with other functions like $\text{cosh}$
 
-\subsection{Normalized trace loss}
+\subsection{Normalized spectral losses}
 
 Many matrix functions applied to suitably normalized matrices are uniquely minimized by orthonormal matrices.
-Two examples are the determinant and also the Frobenius norm of the inverse.
-\begin{proposition}
-    \label{prop:determinant_singular_values}
-    The determinant of the normalized matrix $\propto \sum_{d=1}^D \log \sigma_d$.
+Two examples are the inverse determinant and the Frobenius norm of the inverse.
+Let $N=n_q^{\times D}(X)$ be square and full rank.
+\begin{proposition}[Normalized spectral losses]
+\label{prop:normalized_spectral_losses}
+Let $h:(0,\infty)\to\mathbb R$ be twice differentiable with
+$h'(u)<0$ and $h''(u)>0$ for every $u>0$.  Then
+\begin{align}
+L_h(X)
+=\sum_{d=1}^D h\!\left(\sigma_d(N)^2\right)-D h(1)
+\end{align}
+satisfies $L_h(X)\geq0$, with equality if and only if $X^\top X=I_D$, and
+satisfies Property \ref{property:pathwise}.  In particular, these conclusions
+hold for the losses in Propositions
+\ref{prop:determinant_singular_values} and
+\ref{prop:frobenius_inverse_singular_values}.
 \end{proposition}
-\begin{proposition}
-    \label{prop:frobenius_inverse_singular_values}
-    The Frobenius norm of the inverse $=\sum_{d=1}^D \frac{1}{\sigma_d^2} \propto \sum_{d=1}^D \sigma_d$
+\begin{proposition}[Inverse determinant]
+\label{prop:determinant_singular_values}
+The inverse determinant $|\det N|^{-1}$ induces the same ordering as $L_h$ with $h(u)=-\tfrac12\log u$.
 \end{proposition}
-\begin{proposition}
-The determinant of the normalized matrix satisfies Properties \ref{property:scalar_monotonicity}, \ref{property:log_symmetry}, and \ref{property:pathwise}. 
+\begin{proposition}[Inverse Frobenius norm]
+\label{prop:frobenius_inverse_singular_values}
+The inverse Frobenius norm $\|N^{-1}\|_F$ induces the same ordering as $L_h$ with $h(u)=u^{-1}-1$.
 \end{proposition}
-\begin{proposition}
-The Frobenius norm of the inverse Properties \ref{property:scalar_monotonicity}, \ref{property:log_symmetry}, and \ref{property:pathwise}. 
-\end{proposition}
-
-Unfortunately, we haven't identified a justification for one of these losses over the other beyond taste.
-The determinant will more gently penalize highly divergent singular values, but be less forgiving of small deviations from orthogonality.
+Writing $a_d=-\log\sigma_d(N)$, the determinant loss sums $a_d$, while the
+centered frame loss sums $e^{2a_d}-1$; the two are proportional near
+$a_d=0$, but the frame penalty grows exponentially as a singular direction
+collapses.  The frame objective also extends
+directly to an overcomplete normalized dictionary: replacing $\|B\|_F$ by
+$\|B\|_{1,2}$ under the same constraint $NB=I_D$ yields \isometrypursuit.
 %When the columns of $x$ are so normalized, then both the determinant and trace of $X^TX$ are maximized by orthonormal matrices.
 %By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell$ is uniquely maximized by orthonormal matrices.
 %Moreover, $g$ is convex, and $\ell( X^{-1}) = \ell( X)$ when $X$ is invertible.
-Figure \ref{fig:loss_landscapes} gives the analogous two-parameter view for $D=2$ matrices, and Figure \ref{fig:loss_3d_equicorr_landscapes} extends this comparison to an equicorrelated $D=3$ slice.
+The stationarity equation in $D=2$ is solved by $g(t)=|\log t|$, whereas the
+same $g$ fails in $D=3$, so it would be disingenuous to show the $D=3$
+landscape without introducing the $D=3$ example.
 
 \begin{figure}[t]
 \centering
@@ -200,12 +215,8 @@ See Table \ref{tab:loss_functions} for mathematical definitions.}
 
 We have established that there are losses $\ell$ that satisfy our conditions for a good loss function on square matrices $X \in \mathbb R^{D\times D}$.
 However, the computational identification of such matrices is combinatorial in nature.
-Thus, in the actual application setting of selecting combinations of columns from a larger matrix $X \in \mathbb R^{D \times P}$, we still need to perform many expensive evaluations of singular values or inversions.
-
-To fix this, we follow the well-trodden path of convexifying combinatorial problems by relaxing the problem to a convex optimization problem.
-As mentioned in the previous section, the Frobenius norm of the inverse satisfies our desiderata.
-This loss has a natural relaxation to the high-dimensional setting, namely the Frobenius norm of the Moore-Penrose pseudoinverse, also known as the method-of-frames solution.
-From here, there is an obvious extensive to the sparse basis pursuit objective.
+To avoid this, we reformulate the problem as a sparse convex optimization problem.
+The Frobenius norm of the inverse has a natural relaxation to the high-dimensional setting in the form of basis pursuit.
 
 \subsection{Isometry pursuit}
 

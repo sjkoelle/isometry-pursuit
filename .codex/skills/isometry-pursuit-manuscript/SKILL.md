@@ -5,6 +5,17 @@ description: Edit, reorganize, build, or review the Isometry Pursuit LaTeX manus
 
 # Isometry Pursuit Manuscript
 
+## Python environment
+
+Before running Python, `pip`, `pytest`, or a Python module, activate the project's canonical Conda environment. Keep activation and the dependent command in the same shell invocation:
+
+```bash
+source activate isometry_pursuit
+python -c 'import sys; print(sys.prefix)'
+```
+
+Never silently use the system interpreter or switch to another environment. If `isometry_pursuit` lacks a dependency, report or install it there.
+
 ## Workflow
 
 Make very sparse edits. Change only the text, LaTeX, figure placement, or structure the user explicitly asks to change. Do not opportunistically rewrite neighboring paragraphs, polish unrelated prose, rename labels, reformat files, update generated outputs, or move content unless requested. If an adjacent issue is noticed, mention it as a suggestion instead of editing it.

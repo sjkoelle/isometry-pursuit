@@ -60,6 +60,15 @@ Greedy algorithms are computationally expedient but can get stuck in local optim
 \end{algorithmic}
 \end{algorithm}
 
+Forward-backward greedy methods alternate additions and deletions while
+reoptimizing coefficients on the active support and thus perform a form of
+exchange search \citep{pmlr-v32-liub14}.  Our fixed-cardinality refinement
+restricts this to one-for-one exchanges after a greedy initialization, as in
+local search for cardinality-constrained D-optimal design
+\citep{Wang2025-doptimal}.  This initialization can proceed by sequential
+forward selection or sequential backward elimination
+\citep{Mao2004-forward-backward}.
+
 \begin{algorithm}[H]
 \caption{\forwardbackward(Matrix ${X} \in \mathbb{R}^{D \times P}$, objective $f$)}
 \begin{algorithmic}[1]
@@ -115,8 +124,119 @@ D(X^T X,I_D)^2
 \end{align}
 \end{proof}
 
+\subsubsection{Proof of Proposition \ref{prop:normalized_spectral_losses}}
+\label{proof:normalized_spectral_losses}
+
+\begin{proof}
+Write $u_d=\sigma_d(N)^2$.  Since the $p$th column of $N$ has norm
+$q(\|x_{.p}\|_2)$ and $q(t)\leq1$ with equality only at $t=1$,
+\begin{align}
+\frac{1}{D}\sum_{d=1}^D u_d
+&=\frac{\|N\|_F^2}{D} \\
+&=\frac{1}{D}\sum_{p=1}^D q(\|x_{.p}\|_2)^2
+\leq1.
+\end{align}
+Convexity of $h$ and then its monotonic decrease give
+\begin{align}
+\frac{1}{D}\sum_{d=1}^D h(u_d)
+&\geq h\!\left(\frac{1}{D}\sum_{d=1}^D u_d\right)
+\geq h(1).
+\end{align}
+Hence $L_h(X)\geq0$.  Equality in the first inequality, by strict
+convexity, requires $u_1=\cdots=u_D$, while equality in the second requires
+$D^{-1}\sum_d u_d=1$.  Thus every singular value of $N$ equals one.
+Moreover, equality in $\sum_p q(\|x_{.p}\|_2)^2\leq D$ requires
+$\|x_{.p}\|_2=1$ for every $p$.  Consequently $N=X$ and
+$X^\top X=I_D$.  The converse is immediate.
+
+It remains to verify column-rescaling monotonicity.  Fix all column
+directions and all columns except the $p$th, and let $s>0$ denote the norm of
+the normalized $p$th column.  For a unit vector $v$ in its direction,
+\begin{align}
+N(s)N(s)^\top=A+s^2vv^\top
+\end{align}
+for a fixed positive-semidefinite matrix $A$.  Spectral differentiation gives
+\begin{align}
+\frac{\partial}{\partial s}
+\operatorname{tr}h\!\left(A+s^2vv^\top\right)
+=2s\,v^\top h'\!\left(A+s^2vv^\top\right)v<0,
+\end{align}
+because $h'(u)<0$.  The loss therefore strictly decreases with the normalized
+column length $s=q(\|x_{.p}\|_2)$.  Since $q$ is strictly increasing below
+one, stationary at one, and strictly decreasing above one, the derivative of
+$L_h$ with respect to $\|x_{.p}\|_2$ has exactly the signs in Property
+\ref{property:pathwise}.
+
+Finally,
+\begin{align}
+\frac{d^2}{du^2}\left(-\tfrac12\log u\right)&=\frac{1}{2u^2}, &
+\frac{d^2}{du^2}(u^{-1}-1)&=\frac{2}{u^3},
+\end{align}
+and both functions have negative first derivative on $(0,\infty)$, so both
+satisfy the stated conditions.
+\end{proof}
+
+\subsubsection{Proofs of Propositions
+\ref{prop:determinant_singular_values} and
+\ref{prop:frobenius_inverse_singular_values}}
+
+\begin{proof}
+The determinant is the product of the singular values, so
+\begin{align}
+|\det N|^{-1}
+&=\prod_{d=1}^D\sigma_d(N)^{-1} \\
+&=\exp\left(-\sum_{d=1}^D\log\sigma_d(N)\right).
+\end{align}
+Because the exponential is strictly increasing, this objective induces the
+same ordering as $-\sum_d\log\sigma_d(N)$, which is $L_h$ for
+$h(u)=-\tfrac12\log u$.  This proves Proposition
+\ref{prop:determinant_singular_values}.
+
+Finally, the singular values of $N^{-1}$ are
+$\sigma_d(N)^{-1}$, and hence
+\begin{align}
+\|N^{-1}\|_F
+=\left(\sum_{d=1}^D\sigma_d(N)^{-2}\right)^{1/2}.
+\end{align}
+Because the square root is strictly increasing, this objective induces the
+same ordering as $\sum_d\sigma_d(N)^{-2}-D$, which is $L_h$ for
+$h(u)=u^{-1}-1$.  This proves Proposition
+\ref{prop:frobenius_inverse_singular_values}.
+\end{proof}
+
 \subsubsection{Singular values of nearly colinear vectors}
 \label{sec:nearly_colinear_singular_values}
+
+\paragraph{Why the two-dimensional example is insufficient.}
+For two unit vectors with correlation $0<\rho<1$, scale the second vector by
+$r$ and write
+\begin{align}
+Y_\rho(r)=
+\begin{bmatrix}
+1 & r\rho \\
+0 & r\sqrt{1-\rho^2}
+\end{bmatrix}.
+\end{align}
+At $r=1$, its singular values and their derivatives are
+\begin{align}
+\sigma_1&=\sqrt{1+\rho}, &
+\left.\frac{\partial\sigma_1}{\partial r}\right|_{r=1}
+&=\frac{1}{2}\sigma_1, \\
+\sigma_2&=\sqrt{1-\rho}, &
+\left.\frac{\partial\sigma_2}{\partial r}\right|_{r=1}
+&=\frac{1}{2}\sigma_2.
+\end{align}
+For $g(t)=|\log t|$, we have $g'(\sigma_1)=1/\sigma_1$ and
+$g'(\sigma_2)=-1/\sigma_2$, and hence
+\begin{align}
+\left.\frac{\partial}{\partial r}
+\sum_{d=1}^2 g(\sigma_d(Y_\rho(r)))\right|_{r=1}
+&=\frac{1}{2}-\frac{1}{2}=0.
+\end{align}
+Thus $|\log t|$ solves the $D=2$ stationarity equation.  It is
+nondifferentiable at $t=1$ and therefore does not itself satisfy Property
+\ref{property:scalar_monotonicity}, but its exact cancellation explains why
+the loss landscapes proceed to the three-dimensional example below.
 
 We now exhibit a matrix for which no $g$ can be chosen such that a log det divergence satisfies Properties \ref{prop:} and \ref{prop:log_symmetry}. 
 We parametrize this matrix as
@@ -452,9 +572,9 @@ The exponential of this relaxation is
 &=
 e^t+e^{t^{-1}}.
 \end{align}
-Since $g(1)=1$, its inverse is normalized to equal $1$ at $t=1$:
+Since $q(1)=1$, its inverse is normalized to equal $1$ at $t=1$:
 \begin{align}
-\frac{1}{g(t)}
+\frac{1}{q(t)}
 &=
 \frac{e^t+e^{t^{-1}}}{2e} \\
 &=
@@ -780,6 +900,73 @@ The column-wise gradient is therefore
 \end{align}
 
 \newpage
+
+\subsection{Additional experimental results}
+\label{sec:additional_experimental_results}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.82\textwidth]{../figures/synthetic_support_vs_dictionary.pdf}
+    \caption{Dictionary size $P$ versus the support size returned by
+    \isometrypursuit. Point area encodes target dimension $D$ and color encodes
+    corrupting dimension $d_c$. The dashed diagonal denotes no trimming.
+    Most runs lie below the diagonal, and the horizontal bands at
+    $|\widehat S|=D$ show settings where \isometrypursuit~alone reduces the
+    dictionary to the target cardinality.}
+    \label{fig:synthetic-support-size}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{../figures/synthetic_support_recovery_grid.pdf}
+    \caption{Exact support recovery in the synthetic identity-block experiments.
+    Columns give target dimension $D$, rows give the number $b$ of corrupting
+    matrices, and the horizontal axis gives their dimension $d_c$.
+    Each point is the percentage of 25 replicates for which the selected support
+    equals the planted $D$-column identity block.
+    Faint dashed curves toward an off-axis value of $-100$ mark settings omitted
+    by the backward-search work budget; they are not recovery measurements.}
+    \label{fig:synthetic-support-recovery}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccc}
+\toprule
+Method & Wine ($P=89$) & Iris ($P=75$) & Ethanol ($P=756$) \\
+\midrule
+Greedy $\rightarrow$ swap
+    & $24.0\%\;/\;3.239$ & $60.0\%\;/\;0.179$
+    & $84.0\%\;/\;0.0188$ \\
+Backward $\rightarrow$ swap
+    & $72.0\%\;/\;0.605$ & $88.0\%\;/\;0.0170$
+    & $96.0\%\;/\;0.00330$ \\
+\isometrypursuit $\rightarrow$ greedy $\rightarrow$ swap
+    & \makecell{$40.0\%\;/\;2.446$\\$26.2/89\;(29.4\%)$}
+    & \makecell{$56.0\%\;/\;0.0814$\\$6.72/75\;(9.0\%)$}
+    & \makecell{$64.0\%\;/\;0.0180$\\$2.80/756\;(0.37\%)$} \\
+\isometrypursuit $\rightarrow$ backward $\rightarrow$ swap
+    & \makecell{$64.0\%\;/\;0.615$\\$26.2/89\;(29.4\%)$}
+    & \makecell{$64.0\%\;/\;0.0545$\\$6.72/75\;(9.0\%)$}
+    & \makecell{$64.0\%\;/\;0.0180$\\$2.80/756\;(0.37\%)$} \\
+\bottomrule
+\end{tabular}
+}
+\caption{Oracle attainment and regret for the four discrete-search pipelines.
+Each entry is
+$\widehat P(\mathcal R_{m,r}=0)\;/\;\overline{\mathcal R}_m$: the percentage
+of replicates on which the method wins or ties for the lowest loss among the
+four methods, followed by its mean oracle regret.
+For the two \isometrypursuit~pipelines, the second line reports
+$\overline{|\widehat S_{IP}|}/P$ and the corresponding retained percentage.
+Losses within $10^{-9}$ are treated as ties.
+Each dataset contains 25 replicates.
+Because loss scales differ across datasets, regret magnitudes should be compared
+within columns.}
+\label{tab:oracle-regret}
+\end{table}
 
 \subsection{Support cardinalities}
 \label{sec:support_cardinalities}

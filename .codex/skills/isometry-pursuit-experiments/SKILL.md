@@ -5,6 +5,17 @@ description: Run, inspect, extend, or debug Isometry Pursuit experiments, datase
 
 # Isometry Pursuit Experiments
 
+## Python environment
+
+Before running Python, `pip`, `pytest`, or a Python module, activate the project's canonical Conda environment. Keep activation and the dependent command in the same shell invocation:
+
+```bash
+source activate isometry_pursuit
+python -c 'import sys; print(sys.prefix)'
+```
+
+Never silently use the system interpreter or switch to another environment. If `isometry_pursuit` lacks a dependency, report or install it there.
+
 ## Workflow
 
 Make very sparse edits. Change only the experiment script, command, config, result handling, or figure requested by the user. Do not opportunistically rerun unrelated experiments, regenerate unrelated figures, alter output paths, rename files, or rewrite analysis code unless required for the requested change. If an adjacent issue is noticed, mention it as a suggestion instead of editing it.

@@ -2,7 +2,10 @@
 \label{sec:experiments}
 
 Say you are hosting a dinner party, and wish to select a balanced set of wines for drinking and flowers for decoration.
-We demonstrate \tsip, full-dictionary forward-backward search, and \isometrypursuit-restricted forward-backward search on the Iris and Wine datasets \citep{misc_iris_53, misc_wine_109, scikit-learn}.
+We compare four fixed-cardinality search pipelines: forward greedy and backward greedy initialization, each applied either to the full dictionary or after restriction by \isometrypursuit.
+Each initializer is followed by one-for-one exchange search, which repeatedly replaces one selected column with one unselected column whenever the exchange reduces the loss.
+This is a fixed-cardinality form of forward-backward greedy search \citep{pmlr-v32-liub14}; full algorithmic definitions are given in Section~\ref{sec:algorithms}.
+We evaluate these pipelines on the Iris and Wine datasets \citep{misc_iris_53, misc_wine_109, scikit-learn}.
 This has an intuitive interpretation as selecting diverse elements that reflects the peculiar structure of the diversification problem.
 Features like \textit{petal width} are rows in $X$.
 Thus, in diversification, $P = n$.
@@ -36,31 +39,6 @@ For the Wine dataset, exhaustive \brute~ search is prohibitive in $D=13$, and so
     \isometrypursuit, marker shape gives $D$, and stars denote real data. The
     green dashed line at $10^9$ is the backward-only work budget for the
     expanded synthetic sweep, not a wall-clock cutoff.}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\textwidth]{../figures/synthetic_support_recovery_grid.pdf}
-    \caption{Exact support recovery in the synthetic identity-block experiments.
-    Columns give target dimension $D$, rows give the number $b$ of corrupting
-    matrices, and the horizontal axis gives their dimension $d_c$.
-    Each point is the percentage of 25 replicates for which the selected support
-    equals the planted $D$-column identity block.
-    Faint dashed curves toward an off-axis value of $-100$ mark settings omitted
-    by the backward-search work budget; they are not recovery measurements.}
-    \label{fig:synthetic-support-recovery}
-\end{figure}
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.82\textwidth]{../figures/synthetic_support_vs_dictionary.pdf}
-    \caption{Dictionary size $P$ versus the support size returned by
-    \isometrypursuit. Point area encodes target dimension $D$ and color encodes
-    corrupting dimension $d_c$. The dashed diagonal denotes no trimming.
-    Most runs lie below the diagonal, and the horizontal bands at
-    $|\widehat S|=D$ show settings where \isometrypursuit~alone reduces the
-    dictionary to the target cardinality.}
-    \label{fig:synthetic-support-size}
 \end{figure}
 
 Our main interpretability dataset is the Ethanol dataset from \citet{Chmiela2018-at, Koelle2022-ju}.
@@ -111,45 +89,6 @@ oracle loss as $\ell_r^\star=\min_m \ell_{m,r}$ and the oracle regret of method
 $m$ as $\mathcal R_{m,r}=\ell_{m,r}-\ell_r^\star$.
 Table~\ref{tab:oracle-regret} reports both the empirical probability of attaining
 the oracle loss and the mean oracle regret.
-
-\begin{table}[t]
-\centering
-\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccc}
-\toprule
-Method & Wine ($P=89$) & Iris ($P=75$) & Ethanol ($P=756$) \\
-\midrule
-Greedy $\rightarrow$ swap
-    & $24.0\%\;/\;3.239$ & $60.0\%\;/\;0.179$
-    & $84.0\%\;/\;0.0188$ \\
-Backward $\rightarrow$ swap
-    & $72.0\%\;/\;0.605$ & $88.0\%\;/\;0.0170$
-    & $96.0\%\;/\;0.00330$ \\
-\isometrypursuit $\rightarrow$ greedy $\rightarrow$ swap
-    & \makecell{$40.0\%\;/\;2.446$\\$26.2/89\;(29.4\%)$}
-    & \makecell{$56.0\%\;/\;0.0814$\\$6.72/75\;(9.0\%)$}
-    & \makecell{$64.0\%\;/\;0.0180$\\$2.80/756\;(0.37\%)$} \\
-\isometrypursuit $\rightarrow$ backward $\rightarrow$ swap
-    & \makecell{$64.0\%\;/\;0.615$\\$26.2/89\;(29.4\%)$}
-    & \makecell{$64.0\%\;/\;0.0545$\\$6.72/75\;(9.0\%)$}
-    & \makecell{$64.0\%\;/\;0.0180$\\$2.80/756\;(0.37\%)$} \\
-\bottomrule
-\end{tabular}
-}
-\caption{Oracle attainment and regret for the four discrete-search pipelines.
-Each entry is
-$\widehat P(\mathcal R_{m,r}=0)\;/\;\overline{\mathcal R}_m$: the percentage
-of replicates on which the method wins or ties for the lowest loss among the
-four methods, followed by its mean oracle regret.
-For the two \isometrypursuit~pipelines, the second line reports
-$\overline{|\widehat S_{IP}|}/P$ and the corresponding retained percentage.
-Losses within $10^{-9}$ are treated as ties.
-Each dataset contains 25 replicates.
-Because loss scales differ across datasets, regret magnitudes should be compared
-within columns.}
-\label{tab:oracle-regret}
-\end{table}
 
 Figure \ref{fig:synthetic-support-recovery} reports exact recovery rates in the synthetic identity-block experiments.
 Figure \ref{fig:synthetic-ground-truth-regret} compares losses against the known
