@@ -30,6 +30,21 @@ Read the local `main.tex` and adjacent `config.tex` before making structural edi
 
 For prose edits, keep mathematical claims precise and avoid introducing terminology not already established nearby. For notation edits, update all dependent files and macros together.
 
+For prose and proposed paper sentences, read `../isometry-pursuit-style/SKILL.md`
+and follow its guidance on informative comparisons, grounded terminology, and direct attribution.
+
+For matrix indexing, dimensions, and translations of source formulas, read
+`../isometry-pursuit-notation/SKILL.md` and follow its conventions in both manuscript text and chat explanations.
+
+When verifying or comparing cited methods and guarantees, read
+`../isometry-pursuit-source-verification/SKILL.md` before asserting the connection or adding the citation.
+
+When restating, comparing, or tabulating results from cited work, always translate
+the source's notation into the notation already established in this manuscript.
+Do not import source-specific symbols merely to mirror the source. Preserve the
+source's mathematical meaning, and state the notation mapping only when it is not
+clear from context.
+
 For paper-writing style, prefer copy/paste reorganization of existing prose over inventing new prose when the needed idea is already somewhere in the manuscript. Actively look for redundancy, repeated motivation, duplicated definitions, and claims introduced before their context. When the paper would read better by moving material, suggest the reorganization explicitly, then make the smallest requested or clearly implied move. Aim for a logical flow where each section introduces concepts once, uses them consistently, and points forward to the next part of the argument.
 
 For mathematical writing in the archival paper, make sure formal claims are expressed with the existing `definition`, `proposition`, and `property` environments when appropriate. Keep proofs out of the main paper body; put all proofs in `supplement.tex` and leave the main text focused on statements, intuition, and consequences.
@@ -43,6 +58,20 @@ For ICLR-style presentation, make the compiled paper look polished: avoid crampe
 Do not edit generated PDFs unless the user explicitly asks. Rebuild them from LaTeX instead.
 
 ## Build Checks
+
+The user uses TeXShop on macOS. After completing requested manuscript or
+paper-figure edits, rebuild the affected manuscript's normal `main.pdf` in its
+manuscript directory (`archival/main.pdf` for the archival paper), so the open
+TeXShop preview can detect the updated file. This rebuild is part of the edit
+workflow and does not require another confirmation. Temporary preview builds
+may supplement this check, but do not substitute for updating the normal PDF
+unless the user explicitly requests a preview-only build. Report build failures
+and whether the normal PDF was successfully updated.
+
+Run builds through the shell without opening or activating TeXShop, source,
+log, or PDF windows; preserve the user's window focus and arrangement. If the
+normal PDF updates but TeXShop does not refresh, distinguish the viewer's reload
+behavior from a build failure rather than claiming the preview refreshed.
 
 From the relevant manuscript directory, prefer `latexmk` if available:
 

@@ -59,44 +59,41 @@ if and only if $\phi$ is smooth and is an isometry at every point \citep[Problem
 
 \begin{table}[t]
 \centering
-\scriptsize
+\tiny
 \setlength{\tabcolsep}{2pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\centering\arraybackslash}p{0.075\textwidth}>{\centering\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.32\textwidth}>{\centering\arraybackslash}p{0.065\textwidth}>{\centering\arraybackslash}p{0.075\textwidth}>{\centering\arraybackslash}p{0.08\textwidth}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{\dimexpr0.17\textwidth-1.5\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr0.20\textwidth-1.5\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.46\textwidth-1.5\tabcolsep\relax}>{\centering\arraybackslash}p{\dimexpr0.17\textwidth-1.5\tabcolsep\relax}@{}}
 \toprule
-\textbf{Reference} & \textbf{Algorithm} & \textbf{Variable} & \textbf{Loss} & \textbf{Linearized} & \textbf{Domain} & \textbf{Identifies}  \\
+\textbf{Reference} & \textbf{Variable} & \textbf{Loss} & \textbf{Algorithm} \\
 \midrule
-\citet{NEURIPS2019_6a10bbd4} & GREEDY & $S \in \binom{[P]}{M}$ & $\displaystyle
+\citet{NEURIPS2019_6a10bbd4} & $S \in \binom{[P]}{M}$ & $\displaystyle
 -\frac{1}{N}\sum_{n=1}^N
 \log
 \frac{
-\det\!\left(x_S^T x_S\right)^{1/2}
+\det\!\left(Df_{.S}(\xi_n)^T Df_{.S}(\xi_n)\right)^{1/2}
 }{
-\prod_{s \in S} \|x_S\|_2
-} (\xi_n)$
- & Yes & Dataset & Conformal  \\
-\citet{Kohli2021-lr} & GREEDY & $S \in \binom{[P]}{D}$ & $\begin{aligned}
-\sup_{\substack{\xi',\xi''\in\mathcal N(\xi)\\
-                 \xi'\neq\xi''}}
-r_S(\xi',\xi'')
-\sup_{\substack{\xi',\xi''\in\mathcal N(\xi)\\
-                 \xi'\neq\xi''}}
-r_S(\xi',\xi'')^{-1} \\
-\text{where }
-r_S(\xi',\xi'')
-:= \frac{\|f_{.S}(\xi')-f_{.S}(\xi'')\|_2}
-     { \| \xi' - \xi'' \|_2}. \end{aligned}$ & No & Point & Conformal  \\
-\citet{Koelle2024-no} & FISTA & $\beta \in \mathbb R^{N\times P\times D}$ & $\begin{aligned}
+\prod_{s \in S} \|Df_{.s}(\xi_n)\|_2
+}$
+ & \makecell{BRUTE /\\FORWARD GREEDY} \\
+\citet{Kohli2021-lr} & $S \in \binom{[P]}{D}$ & $\displaystyle
+\frac{\sigma_1(Df_{.S}(\xi))}{\sigma_D(Df_{.S}(\xi))}$ & FORWARD GREEDY \\
+\citet{Koelle2024-no} & $\beta \in \mathbb R^{N\times P\times D}$ & $\begin{aligned}
 \frac{1}{2}\sum_{n=1}^N
 \|I_d- Df (\xi_n) \beta_{n..} \|_F^2 \\ + \lambda \sqrt{ND}\sum_{p=1}^P
 \left(\sum_{n=1}^N \sum_{d=1}^D \beta_{npd}^2\right)^{1/2}
-\end{aligned}$ & Yes & Dataset & Bijection  \\
-% \citet{Koelle2022-lp} & Convex & $\beta \in \mathbb R^{n \times P \times d}$ & $\begin{aligned}
-% \|B\|_{1,2}\\
-% \mathrm{s.t.}\;& X_iB_i=I_d,\; i\in[n]
-% \end{aligned}$ & Yes & No & \makecell{Isometries\\\citep{Koelle2022-lp}} \\
+\end{aligned}$ & FISTA \\
 \bottomrule
 \end{tabular}
-\caption{Dictionary-based manifold learning losses. Note that we set the eigenfunction penalty to $0$ for \citet{NEURIPS2019_6a10bbd4} to emphasize the geometric condition}
+\caption{Dictionary-based manifold learning losses. We set the eigenfunction
+penalty to $0$ for \citet{NEURIPS2019_6a10bbd4} to emphasize the geometric
+condition. Chen--Meil\u{a} normalize the rows of the selected tangent-basis
+matrix in our transposed convention; the resulting criterion favors functional
+independence rather than orthogonality of the selected gradients.
+Chen--Meil\u{a} use brute search at fixed cardinality and also
+give a brute-$D$ initialization followed by forward-greedy additions.
+\citet{Kohli2021-lr} use forward-greedy selection; their loss is shown in
+its infinitesimal form from Proposition~\ref{prop:distortion_is_condition_number}.
+The neighborhood distortion and proof are given in
+Section~\ref{proof:distortion_is_condition_number}.}
 \label{tab:losses}
 \end{table}
 
@@ -124,7 +121,17 @@ where $\ell'$ is now a loss function that measures the orthonormalness of the ma
 Non-linear objectives are often gradient estimators of linearized objectives, and so the distinction is smaller than it may appear.
 \begin{proposition}
 \label{prop:distortion_is_condition_number}
-The distortion loss function of $f_S$ is equal to the condition number \citep{GolubWilkinson-condition,Boyd2004-ql} $\frac{\sigma_1(X)}{\sigma_D(X)}$ of $Df_{.S}(\xi)$ as $\mathcal N(\xi) \to \{\xi\}$.
+If $f_{.S}$ is continuously differentiable near $\xi$ and $Df_{.S}(\xi)$ is
+invertible, then, with $\operatorname{Distortion}$ defined in
+Section~\ref{proof:distortion_is_condition_number} and $B_{\mathcal M}(\xi,\varepsilon)$ denoting
+the geodesic ball of radius $\varepsilon$ centered at $\xi$,
+\begin{align}
+\lim_{\varepsilon\to 0}
+\operatorname{Distortion}\!\left(f_{.S},B_{\mathcal M}(\xi,\varepsilon)\right)
+=\frac{\sigma_1\!\left(Df_{.S}(\xi)\right)}
+       {\sigma_D\!\left(Df_{.S}(\xi)\right)},
+\end{align}
+the condition number of $Df_{.S}(\xi)$ \citep{GolubWilkinson-condition,Boyd2004-ql}.
 \end{proposition}
 \begin{proposition}
 This is minimized by conformal maps.
@@ -146,7 +153,7 @@ We now turn our review to the linear algebra literature.
 \textbf{Loss Function} & \textbf{Definition} & \makecell{\textbf{Unique}\\\textbf{min.}} & \makecell{\textbf{At}\\\textbf{isometry}} & \makecell{\textbf{Unit}\\\textbf{length}} & \makecell{\textbf{Ortho-}\\\textbf{gonal}} \\
 \midrule
 Distortion\\\citep{Kohli2021-lr} & $\sigma_{\max}(X) / \sigma_{\min}(X) - 1$ & No & Yes & No & Yes \\
-Generic spectral loss & $\ell(X)=\sum_{d=1}^D g(\sigma_d(X))$ & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} \\
+Spectral loss & $\sum_{d=1}^D g(\sigma_d(X))$ & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} \\
 Normalized determinant volume & $\left|\det\left(n_q^{\times D}(X)\right)\right|^{-1}-1$ & No & Yes & Yes & Yes \\
 Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F-\sqrt{D}$ & No & Yes & Yes & Yes \\
 \isometrypursuit & $\|n_q^{\times P}(X)^\dagger\|_{1,2}-D$ & Yes & Yes & Yes & Yes \\
@@ -193,6 +200,9 @@ D(X^T X,I_D)^2
 If $X^T X$ is positive definite, then $D(X^T X,I_D)^2$ is uniquely minimized by isometric matrices.
 \end{proposition}
 See \citep{Cichocki2014-logdet} for a more extensive discussion of other matrix divergences.
+% Alpha, beta, and gamma divergences are investigated in more detail in
+% https://chatgpt.com/share/6af66679-66e8-83e8-a7cc-3c64ee5ad07e
+% We omit that discussion here for brevity.
 In Section \ref{sec:method}, we will examine matrix loss functions capable of selecting isometric submatrices based on their singular values from a generic perspective.
 %TODO: explain how works for PSD not just PD.
 

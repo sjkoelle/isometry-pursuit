@@ -60,14 +60,15 @@ Greedy algorithms are computationally expedient but can get stuck in local optim
 \end{algorithmic}
 \end{algorithm}
 
-Forward-backward greedy methods alternate additions and deletions while
-reoptimizing coefficients on the active support and thus perform a form of
-exchange search \citep{pmlr-v32-liub14}.  Our fixed-cardinality refinement
-restricts this to one-for-one exchanges after a greedy initialization, as in
-local search for cardinality-constrained D-optimal design
-\citep{Wang2025-doptimal}.  This initialization can proceed by sequential
-forward selection or sequential backward elimination
-\citep{Mao2004-forward-backward}.
+Our swap search evaluates every selected--unselected column pair and takes the
+best improving swap, as in local search for cardinality-constrained D-optimal
+design \citep{Fedorov1972-optimal,Wang2025-doptimal} and column selection
+\citep{Gu1996-strong-rrqr}.
+Zou et al.\ instead sample an incoming column and evaluate its possible swaps
+for reconstruction-based column selection \citep{Zou2024-swap}.
+We initialize with forward selection or backward elimination
+\citep{Mao2004-forward-backward}; related FoBa methods alternate additions and
+deletions rather than jointly choosing a swap \citep{Zhang2008-foba,pmlr-v32-liub14}.
 
 \begin{algorithm}[H]
 \caption{\forwardbackward(Matrix ${X} \in \mathbb{R}^{D \times P}$, objective $f$)}
@@ -99,6 +100,40 @@ forward selection or sequential backward elimination
 
 \subsection{Proofs}
 \label{sec:proofs}
+
+\subsubsection{Proof of Proposition \ref{prop:distortion_is_condition_number}}
+\label{proof:distortion_is_condition_number}
+
+For a neighborhood $B\subset\mathcal M$, define
+\begin{align}
+r_S(\xi',\xi'')
+&=\frac{\|f_{.S}(\xi')-f_{.S}(\xi'')\|_2}
+        {d_{\mathcal M}(\xi',\xi'')}, \\
+\operatorname{Distortion}(f_{.S},B)
+&=\frac{\sup_{\xi'\ne\xi''\in B}r_S(\xi',\xi'')}
+        {\inf_{\xi'\ne\xi''\in B}r_S(\xi',\xi'')},
+\end{align}
+where $d_{\mathcal M}$ is geodesic distance.
+
+\begin{proof}
+For distinct $\xi',\xi''\in B_{\mathcal M}(\xi,\varepsilon)$, let $u',u''$ be
+their local coordinates, chosen so that the coordinate tangent basis at $\xi$
+is orthonormal. Smoothness of $\mathcal M$ gives
+$d_{\mathcal M}(\xi',\xi'')=\|u'-u''\|_2(1+o(1))$, while continuous
+differentiability of $f_{.S}$ gives
+$f_{.S}(\xi')-f_{.S}(\xi'')=Df_{.S}(\xi)(u'-u'')+o(\|u'-u''\|_2)$,
+uniformly over pairs as $\varepsilon\to0$. Dividing by their separation
+therefore gives
+\begin{align}
+r_S(\xi',\xi'')
+=\frac{\|Df_{.S}(\xi)(u'-u'')\|_2}{\|u'-u''\|_2}+o(1).
+\end{align}
+Thus $\sup r_S\to\sigma_1(Df_{.S}(\xi))$ and
+$\inf r_S\to\sigma_D(Df_{.S}(\xi))$. When the differential is invertible,
+taking their quotient gives
+$\operatorname{Distortion}(f_{.S},B_{\mathcal M}(\xi,\varepsilon))
+\to\sigma_1(Df_{.S}(\xi))/\sigma_D(Df_{.S}(\xi))$.
+\end{proof}
 
 \subsubsection{Proof of Proposition \ref{prop:sdiv_singular_values}}
 \label{proof:sdiv_singular_values}

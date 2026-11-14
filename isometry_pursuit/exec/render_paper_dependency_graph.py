@@ -66,6 +66,7 @@ def render(data: dict, output: Path) -> None:
         "<style>",
         ".edge{fill:none;stroke:#64748b;stroke-width:1.35;opacity:.28;"
         "marker-end:url(#arrow)} .edge:hover{opacity:1;stroke-width:2.5}",
+        ".edge.context{stroke-dasharray:6 4;opacity:.18}",
         ".node-title{font:600 14px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;"
         "fill:#0f172a} .node-detail{font:12px -apple-system,BlinkMacSystemFont,"
         "'Segoe UI',sans-serif;fill:#334155}",
@@ -78,7 +79,7 @@ def render(data: dict, output: Path) -> None:
         '<rect width="100%" height="100%" fill="#f8fafc"/>',
         f'<text x="{margin_x}" y="38" class="heading">{html.escape(data["title"])}</text>',
         f'<text x="{margin_x}" y="64" class="node-detail">'
-        "Arrow direction: prerequisite or defining object → dependent result. "
+        "Solid: prerequisite → dependent result. Dashed: context or consequence. "
         "Hover over an edge for its relation.</text>",
     ]
 
@@ -134,11 +135,13 @@ def render(data: dict, output: Path) -> None:
                 f"{end_x - offset:.1f} {end_y - offset:.1f}, "
                 f"{end_x:.1f} {end_y:.1f}"
             )
+        kind = edge.get("kind", "dependency")
         title = (
-            f'{source["title"]} —[{edge["relation"]}]→ {target["title"]}'
+            f'{kind}: {source["title"]} —[{edge["relation"]}]→ {target["title"]}'
         )
         out.append(
-            f'<path class="edge" d="{path}"><title>{html.escape(title)}</title></path>'
+            f'<path class="edge {html.escape(kind)}" d="{path}">'
+            f'<title>{html.escape(title)}</title></path>'
         )
 
     for node in nodes:
@@ -175,13 +178,15 @@ def render(data: dict, output: Path) -> None:
             f"{html.escape(meta)} · {html.escape(node['source'])}</text>"
         )
         tooltip = f'{node["kind"]}: {node["title"]}\n{node["detail"]}'
+        if node.get("proof_source"):
+            tooltip += f'\nproof: {node["proof_source"]}'
         if node.get("status"):
             tooltip += f'\nstatus: {node["status"]}'
         out.append(f"<title>{html.escape(tooltip)}</title></g>")
 
     out.append(
         f'<text x="{margin_x}" y="{height - 38}" class="node-detail">'
-        f'{len(nodes)} nodes · {len(edges)} dependency edges · '
+        f'{len(nodes)} nodes · {len(edges)} edges (solid dependencies, dashed context) · '
         "red dashed borders identify manuscript cleanup items</text>"
     )
     out.append("</svg>")

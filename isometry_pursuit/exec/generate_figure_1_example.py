@@ -124,7 +124,10 @@ def generate_data_visualization(output_dir="figures", num_vectors=30, seed=2):
     # Save the plot
     os.makedirs(output_dir, exist_ok=True)
     output_file = os.path.join(output_dir, "data.png")
-    plt.savefig(output_file, dpi=300, bbox_inches="tight")
+    ax.set_xlabel(r'$x_{1p}$', fontsize=26, labelpad=0)
+    ax.set_ylabel(r'$x_{2p}$', fontsize=26, labelpad=0)
+    ax.set_position([0.125, 0.11, 0.86, 0.875])
+    plt.savefig(output_file, dpi=300)
     plt.close()
 
     print(f"Data visualization saved to {output_file}")
@@ -286,7 +289,10 @@ def generate_selection_visualization(output_dir="figures", num_vectors=30, seed=
     # Save the plot
     os.makedirs(output_dir, exist_ok=True)
     output_file = os.path.join(output_dir, "selection.png")
-    plt.savefig(output_file, dpi=300, bbox_inches="tight")
+    ax.set_xlabel(r'$x_{1p}$', fontsize=26, labelpad=0)
+    ax.set_ylabel(r'$x_{2p}$', fontsize=26, labelpad=0)
+    ax.set_position([0.125, 0.11, 0.86, 0.875])
+    plt.savefig(output_file, dpi=300)
     plt.close()
 
     print(f"Selection visualization saved to {output_file}")
@@ -455,7 +461,10 @@ def generate_normalization_visualization(output_dir="figures", num_vectors=30, s
     # Save the plot
     os.makedirs(output_dir, exist_ok=True)
     output_file = os.path.join(output_dir, "normalization.png")
-    plt.savefig(output_file, dpi=300, bbox_inches="tight")
+    ax.set_xlabel(r'$x_{1p}$', fontsize=26, labelpad=0)
+    ax.set_ylabel(r'$x_{2p}$', fontsize=26, labelpad=0)
+    ax.set_position([0.125, 0.11, 0.86, 0.875])
+    plt.savefig(output_file, dpi=300)
     plt.close()
 
     print(f"Normalization visualization saved to {output_file}")

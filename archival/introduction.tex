@@ -26,21 +26,33 @@ It is an alternative to greedy coordinate selection approaches such as those in 
 
 \begin{figure}[t]
 \centering
-\subcaptionbox{Raw data\label{fig:data}}[0.18\textwidth]
-{\includegraphics[width=\linewidth]{/Users/samsonkoelle/isometry-pursuit/figures/data.png}}\hfill
-\subcaptionbox{Isometric subset\label{fig:selection}}[0.18\textwidth]
-{\includegraphics[width=\linewidth]{/Users/samsonkoelle/isometry-pursuit/figures/selection.png}}\hfill
-\subcaptionbox{Normalization\label{fig:normalization}}[0.18\textwidth]
-{\includegraphics[width=\linewidth]{/Users/samsonkoelle/isometry-pursuit/figures/normalization.png}}\hfill
-\subcaptionbox{Candidate losses for $D=1$\label{fig:loss_1d_all}}[0.42\textwidth]
-{\includegraphics[width=\linewidth]{../figures/loss_1d_all.png}}
+\begin{subfigure}[t]{0.24\textwidth}
+\vspace{0pt}
+\includegraphics[width=\linewidth]{/Users/samsonkoelle/isometry-pursuit/figures/data.png}
+\caption{Raw data\label{fig:data}}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.24\textwidth}
+\vspace{0pt}
+\includegraphics[width=\linewidth]{/Users/samsonkoelle/isometry-pursuit/figures/selection.png}
+\caption{Isometric subset\label{fig:selection}}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.24\textwidth}
+\vspace{0pt}
+\includegraphics[width=\linewidth]{/Users/samsonkoelle/isometry-pursuit/figures/normalization.png}
+\caption{Normalization\label{fig:normalization}}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.24\textwidth}
+\vspace{0pt}
+\includegraphics[width=\linewidth]{../figures/loss_1d_all.png}
+\caption{Candidate losses for $D=1$\label{fig:loss_1d_all}}
+\end{subfigure}
 \caption{The isometric-submatrix selection problem and candidate losses.
 \ref{fig:data} Raw data $X$.
 \ref{fig:selection} An isometric subset.
 \ref{fig:normalization} Symmetric normalization makes vectors nearest unit
 length the longest.
-\ref{fig:loss_1d_all} One-dimensional candidate losses for $X=[[r]]$; the red
-vertical dashed line marks $r=1$.
+\ref{fig:loss_1d_all} One-dimensional candidate losses as a function of column
+length $\|X_{.p}\|_2$.
 \label{fig:losses}
 }
 \end{figure}

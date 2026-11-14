@@ -3,8 +3,9 @@
 
 Say you are hosting a dinner party, and wish to select a balanced set of wines for drinking and flowers for decoration.
 We compare four fixed-cardinality search pipelines: forward greedy and backward greedy initialization, each applied either to the full dictionary or after restriction by \isometrypursuit.
-Each initializer is followed by one-for-one exchange search, which repeatedly replaces one selected column with one unselected column whenever the exchange reduces the loss.
-This is a fixed-cardinality form of forward-backward greedy search \citep{pmlr-v32-liub14}; full algorithmic definitions are given in Section~\ref{sec:algorithms}.
+Each initializer is followed by swap search, which evaluates all selected--unselected column pairs and takes the swap that most reduces the loss.
+Fedorov and Wang et al.\ use swap search for D-optimal design \citep{Fedorov1972-optimal,Wang2025-doptimal}.
+Full algorithmic definitions are given in Section~\ref{sec:algorithms}.
 We evaluate these pipelines on the Iris and Wine datasets \citep{misc_iris_53, misc_wine_109, scikit-learn}.
 This has an intuitive interpretation as selecting diverse elements that reflects the peculiar structure of the diversification problem.
 Features like \textit{petal width} are rows in $X$.

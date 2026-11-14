@@ -464,7 +464,10 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
     }
 
     # Combined 1D plot
-    fig, ax = plt.subplots(figsize=(9, 5))
+    fig, ax = plt.subplots(figsize=(10, 10))
+    # Match the axes rectangle of Figure 1a-c, not just their canvas size.
+    ax.set_position([0.125, 0.11,
+                     0.86, 0.875])
     for loss_name in combined_1d_loss_names:
         config = loss_configs[loss_name]
         losses_1d = all_1d_losses[loss_name]
@@ -475,19 +478,17 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
             linewidth=2.5,
             linestyle=config.get('linestyle', '-'),
             color=config['color'],
-            label=config['legend_label'],
+            label=config['title'],
         )
-    ax.axvline(x=1.0, color='red', linestyle='--', linewidth=2, alpha=0.7)
     ax.set_xscale('log')
     ax.set_xlim(rs.min(), rs.max())
     ax.set_ylim(-0.05, 8.0)
-    ax.set_title('1D loss comparison', fontsize=16, weight='bold')
-    ax.set_xlabel('Length r', fontsize=14)
-    ax.set_ylabel('Loss value', fontsize=14)
-    ax.tick_params(axis='both', labelsize=12)
+    ax.set_xlabel(r'$\|X_{.p}\|_2$', fontsize=26, labelpad=0)
+    ax.set_ylabel('Loss value', fontsize=26)
+    ax.tick_params(axis='both', labelsize=24)
     ax.grid(True, alpha=0.3)
-    ax.legend(fontsize=12, loc='center left', bbox_to_anchor=(1.02, 0.5))
-    fig.savefig(os.path.join(output_dir, 'loss_1d_all.png'), dpi=300, bbox_inches='tight')
+    ax.legend(fontsize=23, loc='upper right')
+    fig.savefig(os.path.join(output_dir, 'loss_1d_all.png'), dpi=300)
     print("  Saved loss_1d_all.png")
     plt.close()
 

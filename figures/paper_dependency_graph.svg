@@ -8,6 +8,7 @@
 </filter>
 <style>
 .edge{fill:none;stroke:#64748b;stroke-width:1.35;opacity:.28;marker-end:url(#arrow)} .edge:hover{opacity:1;stroke-width:2.5}
+.edge.context{stroke-dasharray:6 4;opacity:.18}
 .node-title{font:600 14px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#0f172a} .node-detail{font:12px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#334155}
 .node-meta{font:10px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#64748b}
 .stage{font:700 17px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#0f172a} .heading{font:700 25px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#0f172a}
@@ -15,7 +16,7 @@
 </defs>
 <rect width="100%" height="100%" fill="#f8fafc"/>
 <text x="55" y="38" class="heading">Isometry Pursuit: definitions, properties, and propositions</text>
-<text x="55" y="64" class="node-detail">Arrow direction: prerequisite or defining object → dependent result. Hover over an edge for its relation.</text>
+<text x="55" y="64" class="node-detail">Solid: prerequisite → dependent result. Dashed: context or consequence. Hover over an edge for its relation.</text>
 <rect x="55" y="82" width="15" height="15" rx="3" fill="#dbeafe" stroke="#2563eb"/>
 <text x="76" y="94" class="node-detail">definition</text>
 <rect x="179" y="82" width="15" height="15" rx="3" fill="#fef3c7" stroke="#d97706"/>
@@ -36,73 +37,77 @@
 <text x="1426.0" y="126" text-anchor="middle" class="stage">Convex program</text>
 <text x="1828.0" y="126" text-anchor="middle" class="stage">Guarantees and limits</text>
 <text x="2230.0" y="126" text-anchor="middle" class="stage">Algorithms and cost</text>
-<path class="edge" d="M 292.6 279.9 C 328.1 315.4, 111.9 290.2, 147.4 325.7"><title>Isometry —[characterized by]→ Spectrum characterizes isometry</title></path>
-<path class="edge" d="M 292.6 279.9 C 347.0 334.3, 93.0 429.0, 147.4 483.4"><title>Isometry —[characterized by]→ Columns characterize isometry</title></path>
-<path class="edge" d="M 292.6 753.2 C 328.1 788.7, 111.9 763.5, 147.4 799.0"><title>Differential Dphi(xi) —[used to define]→ Isometry at a point</title></path>
-<path class="edge" d="M 292.6 279.9 C 384.9 372.2, 55.1 706.7, 147.4 799.0"><title>Isometry —[used to define]→ Isometry at a point</title></path>
-<path class="edge" d="M 292.6 753.2 C 347.0 807.6, 93.0 902.4, 147.4 956.8"><title>Differential Dphi(xi) —[used to define]→ Conformal at a point</title></path>
-<path class="edge" d="M 292.6 911.0 C 347.0 965.4, 93.0 1060.1, 147.4 1114.6"><title>Isometry at a point —[used by]→ Distance preservation iff pointwise isometry</title></path>
-<path class="edge" d="M 292.6 1068.8 C 366.0 1142.1, 74.0 1356.8, 147.4 1430.1"><title>Conformal at a point —[used by]→ Distortion is minimized by conformal maps</title></path>
-<path class="edge" d="M 292.6 1384.3 C 328.1 1419.8, 111.9 1394.6, 147.4 1430.1"><title>Local distortion is condition number —[implies]→ Distortion is minimized by conformal maps</title></path>
-<path class="edge" d="M 694.6 595.4 C 730.1 630.9, 513.9 605.7, 549.4 641.2"><title>S-divergence —[rewritten by]→ S-divergence singular-value form</title></path>
-<path class="edge" d="M 694.6 753.2 C 730.1 788.7, 513.9 763.5, 549.4 799.0"><title>S-divergence singular-value form —[implies]→ S-divergence is minimized by isometries</title></path>
-<path class="edge" d="M 385.0 223.9 C 420.0 223.9, 422.0 855.0, 457.0 855.0"><title>Isometry —[defines minimizers]→ S-divergence is minimized by isometries</title></path>
-<path class="edge" d="M 694.6 911.0 C 794.8 1011.2, 449.2 225.4, 549.4 325.7"><title>S-divergence is minimized by isometries —[establishes]→ Unique isometry minimum</title></path>
-<path class="edge" d="M 694.6 1226.6 C 749.0 1281.0, 495.0 1375.7, 549.4 1430.1"><title>Log-symmetry —[required by]→ Generic spectral-loss impossibility</title></path>
-<path class="edge" d="M 694.6 1384.3 C 730.1 1419.8, 513.9 1394.6, 549.4 1430.1"><title>Column-rescaling monotonicity —[required by]→ Generic spectral-loss impossibility</title></path>
-<path class="edge" d="M 694.6 1068.8 C 749.0 1123.2, 495.0 1217.9, 549.4 1272.3"><title>Monotonicity away from one —[used to define]→ Column-rescaling monotonicity</title></path>
-<path class="edge" d="M 787.0 1012.8 C 822.0 1012.8, 824.0 216.0, 859.0 216.0"><title>Monotonicity away from one —[assumed by]→ Symmetric normalization n_q</title></path>
-<path class="edge" d="M 787.0 1170.6 C 822.0 1170.6, 824.0 216.0, 859.0 216.0"><title>Log-symmetry —[assumed by]→ Symmetric normalization n_q</title></path>
-<path class="edge" d="M 1096.6 414.0 C 1157.1 474.5, 890.9 99.5, 951.4 160.0"><title>Chosen radial factor g —[instantiates]→ Symmetric normalization n_q</title></path>
-<path class="edge" d="M 1096.6 414.0 C 1130.2 447.6, 917.8 410.4, 951.4 444.0"><title>Chosen radial factor g —[used by]→ -log g is convex</title></path>
-<path class="edge" d="M 1096.6 414.0 C 1147.2 464.6, 900.8 535.4, 951.4 586.0"><title>Chosen radial factor g —[used by]→ g is smooth</title></path>
-<path class="edge" d="M 1096.6 414.0 C 1164.3 481.7, 883.7 660.3, 951.4 728.0"><title>Chosen radial factor g —[used by]→ log g has linear tails</title></path>
-<path class="edge" d="M 1096.6 414.0 C 1181.3 498.7, 866.7 785.3, 951.4 870.0"><title>Chosen radial factor g —[used by]→ Inverse normalization is normalized exp-LogSumExp</title></path>
-<path class="edge" d="M 1096.6 272.0 C 1215.4 390.8, 832.6 893.2, 951.4 1012.0"><title>Symmetric normalization n_q —[used to define loss]→ Determinant spectral representation</title></path>
-<path class="edge" d="M 1096.6 272.0 C 1232.4 407.8, 815.6 1018.2, 951.4 1154.0"><title>Symmetric normalization n_q —[used to define loss]→ Inverse-Frobenius spectral representation</title></path>
-<path class="edge" d="M 1096.6 1124.0 C 1147.2 1174.6, 900.8 1245.4, 951.4 1296.0"><title>Determinant spectral representation —[used by]→ Normalized determinant satisfies desiderata</title></path>
-<path class="edge" d="M 1096.6 1266.0 C 1147.2 1316.6, 900.8 1387.4, 951.4 1438.0"><title>Inverse-Frobenius spectral representation —[used by]→ Normalized inverse-Frobenius satisfies desiderata</title></path>
-<path class="edge" d="M 787.0 1012.8 C 822.0 1012.8, 824.0 1352.0, 859.0 1352.0"><title>Monotonicity away from one —[asserted by]→ Normalized determinant satisfies desiderata</title></path>
-<path class="edge" d="M 787.0 1170.6 C 822.0 1170.6, 824.0 1352.0, 859.0 1352.0"><title>Log-symmetry —[asserted by]→ Normalized determinant satisfies desiderata</title></path>
-<path class="edge" d="M 787.0 1328.3 C 822.0 1328.3, 824.0 1352.0, 859.0 1352.0"><title>Column-rescaling monotonicity —[asserted by]→ Normalized determinant satisfies desiderata</title></path>
-<path class="edge" d="M 787.0 1012.8 C 822.0 1012.8, 824.0 1494.0, 859.0 1494.0"><title>Monotonicity away from one —[asserted by]→ Normalized inverse-Frobenius satisfies desiderata</title></path>
-<path class="edge" d="M 787.0 1170.6 C 822.0 1170.6, 824.0 1494.0, 859.0 1494.0"><title>Log-symmetry —[asserted by]→ Normalized inverse-Frobenius satisfies desiderata</title></path>
-<path class="edge" d="M 787.0 1328.3 C 822.0 1328.3, 824.0 1494.0, 859.0 1494.0"><title>Column-rescaling monotonicity —[asserted by]→ Normalized inverse-Frobenius satisfies desiderata</title></path>
-<path class="edge" d="M 1189.0 216.0 C 1224.0 216.0, 1226.0 233.8, 1261.0 233.8"><title>Symmetric normalization n_q —[intended columnwise extension]→ Matrix normalization w(X)</title></path>
-<path class="edge" d="M 1498.6 467.2 C 1536.5 505.1, 1315.5 494.9, 1353.4 532.8"><title>Multitask penalty ||beta||_{1,2} —[objective of]→ Multitask basis-pursuit solution set</title></path>
-<path class="edge" d="M 1498.6 644.8 C 1536.5 682.6, 1315.5 672.4, 1353.4 710.2"><title>Multitask basis-pursuit solution set —[solution set for]→ Minimum-Frobenius MBP selector</title></path>
-<path class="edge" d="M 1498.6 289.8 C 1621.7 412.8, 1230.3 942.2, 1353.4 1065.2"><title>Matrix normalization w(X) —[preprocesses]→ Isometry Pursuit</title></path>
-<path class="edge" d="M 1498.6 822.2 C 1557.8 881.4, 1294.2 1006.1, 1353.4 1065.2"><title>Minimum-Frobenius MBP selector —[defines optimizer]→ Isometry Pursuit</title></path>
-<path class="edge" d="M 1498.6 999.8 C 1536.5 1037.6, 1315.5 1027.4, 1353.4 1065.2"><title>Row-support map S(beta) —[defines output]→ Isometry Pursuit</title></path>
-<path class="edge" d="M 1498.6 467.2 C 1621.7 590.3, 1230.3 1119.7, 1353.4 1242.8"><title>Multitask penalty ||beta||_{1,2} —[used by]→ Group penalty is right-unitary invariant</title></path>
-<path class="edge" d="M 1498.6 1354.8 C 1536.5 1392.6, 1315.5 1382.4, 1353.4 1420.2"><title>Group penalty is right-unitary invariant —[implies]→ MBP solution is basis-equivariant</title></path>
-<path class="edge" d="M 1498.6 644.8 C 1621.7 767.8, 1230.3 1297.2, 1353.4 1420.2"><title>Multitask basis-pursuit solution set —[used by]→ MBP solution is basis-equivariant</title></path>
-<path class="edge" d="M 1591.0 1476.2 C 1626.0 1476.2, 1628.0 246.4, 1663.0 246.4"><title>MBP solution is basis-equivariant —[implies]→ IP support is basis-invariant</title></path>
-<path class="edge" d="M 1591.0 943.8 C 1626.0 943.8, 1628.0 246.4, 1663.0 246.4"><title>Row-support map S(beta) —[used by]→ IP support is basis-invariant</title></path>
-<path class="edge" d="M 1591.0 1121.2 C 1626.0 1121.2, 1628.0 246.4, 1663.0 246.4"><title>Isometry Pursuit —[property of]→ IP support is basis-invariant</title></path>
-<path class="edge" d="M 1900.6 302.4 C 1941.5 343.3, 1714.5 352.4, 1755.4 393.3"><title>IP support is basis-invariant —[reduces basis in proof]→ An isometric subset yields an MBP minimizer</title></path>
-<path class="edge" d="M 1591.0 233.8 C 1626.0 233.8, 1628.0 449.3, 1663.0 449.3"><title>Matrix normalization w(X) —[bounds column norms]→ An isometric subset yields an MBP minimizer</title></path>
-<path class="edge" d="M 1591.0 588.8 C 1626.0 588.8, 1628.0 449.3, 1663.0 449.3"><title>Multitask basis-pursuit solution set —[certifies minimizer]→ An isometric subset yields an MBP minimizer</title></path>
-<path class="edge" d="M 1591.0 766.2 C 1626.0 766.2, 1628.0 652.1, 1663.0 652.1"><title>Minimum-Frobenius MBP selector —[used by]→ Minimum-norm support equals union of minimizing supports</title></path>
-<path class="edge" d="M 1591.0 588.8 C 1626.0 588.8, 1628.0 652.1, 1663.0 652.1"><title>Multitask basis-pursuit solution set —[solution set used by]→ Minimum-norm support equals union of minimizing supports</title></path>
-<path class="edge" d="M 1900.6 505.3 C 1965.8 570.5, 1690.2 733.8, 1755.4 799.0"><title>An isometric subset yields an MBP minimizer —[provides supported minimizer]→ Exact-isometry containment</title></path>
-<path class="edge" d="M 1900.6 708.1 C 1941.5 749.0, 1714.5 758.1, 1755.4 799.0"><title>Minimum-norm support equals union of minimizing supports —[turns existence into containment]→ Exact-isometry containment</title></path>
-<path class="edge" d="M 1900.6 302.4 C 1990.2 392.0, 1665.8 709.4, 1755.4 799.0"><title>IP support is basis-invariant —[used by proof]→ Exact-isometry containment</title></path>
-<path class="edge" d="M 385.0 223.9 C 921.8 223.9, 1126.2 855.0, 1663.0 855.0"><title>Isometry —[hypothesis]→ Exact-isometry containment</title></path>
-<path class="edge" d="M 1591.0 1121.2 C 1626.0 1121.2, 1628.0 855.0, 1663.0 855.0"><title>Isometry Pursuit —[guarantee for]→ Exact-isometry containment</title></path>
-<path class="edge" d="M 1900.6 302.4 C 2014.5 416.4, 1641.5 887.9, 1755.4 1001.9"><title>IP support is basis-invariant —[used by proof]→ Cardinality-D optimum is an isometry</title></path>
-<path class="edge" d="M 385.0 223.9 C 921.8 223.9, 1126.2 1057.9, 1663.0 1057.9"><title>Isometry —[characterizes equality]→ Cardinality-D optimum is an isometry</title></path>
-<path class="edge" d="M 1591.0 411.2 C 1626.0 411.2, 1628.0 1057.9, 1663.0 1057.9"><title>Multitask penalty ||beta||_{1,2} —[defines loss bound]→ Cardinality-D optimum is an isometry</title></path>
-<path class="edge" d="M 1591.0 588.8 C 1626.0 588.8, 1628.0 1260.7, 1663.0 1260.7"><title>Multitask basis-pursuit solution set —[constructs minimizer]→ Mercedes-Benz minimum-norm frame</title></path>
-<path class="edge" d="M 1591.0 411.2 C 1626.0 411.2, 1628.0 1260.7, 1663.0 1260.7"><title>Multitask penalty ||beta||_{1,2} —[attains D]→ Mercedes-Benz minimum-norm frame</title></path>
-<path class="edge" d="M 1900.6 1113.9 C 1941.5 1154.8, 1714.5 1163.8, 1755.4 1204.7"><title>Cardinality-D optimum is an isometry —[contrasted with]→ Mercedes-Benz minimum-norm frame</title></path>
-<path class="edge" d="M 1900.6 1316.7 C 1992.7 1408.8, 1663.3 706.9, 1755.4 799.0"><title>Mercedes-Benz minimum-norm frame —[limits extension beyond exact case]→ Exact-isometry containment</title></path>
-<path class="edge" d="M 1900.6 1316.7 C 1941.5 1357.6, 1714.5 1366.7, 1755.4 1407.6"><title>Mercedes-Benz minimum-norm frame —[unfinished extension]→ Supplementary frame example</title></path>
-<path class="edge" d="M 1591.0 1121.2 C 1790.1 1121.2, 1865.9 381.7, 2065.0 381.7"><title>Isometry Pursuit —[first stage]→ Two-stage Isometry Pursuit</title></path>
-<path class="edge" d="M 1993.0 855.0 C 2028.0 855.0, 2030.0 381.7, 2065.0 381.7"><title>Exact-isometry containment —[justifies]→ Two-stage Isometry Pursuit</title></path>
-<path class="edge" d="M 1189.0 1068.0 C 1556.9 1068.0, 1697.1 855.0, 2065.0 855.0"><title>Determinant spectral representation —[representative spectral kernel]→ Spectral-loss evaluation cost</title></path>
-<path class="edge" d="M 1189.0 1210.0 C 1556.9 1210.0, 1697.1 855.0, 2065.0 855.0"><title>Inverse-Frobenius spectral representation —[representative spectral kernel]→ Spectral-loss evaluation cost</title></path>
-<path class="edge" d="M 1591.0 1121.2 C 1790.1 1121.2, 1865.9 1328.3, 2065.0 1328.3"><title>Isometry Pursuit —[analyzes]→ IP per-step complexity</title></path>
+<path class="edge dependency" d="M 292.6 279.9 C 328.1 315.4, 111.9 290.2, 147.4 325.7"><title>dependency: Isometry —[characterized by]→ Spectrum characterizes isometry</title></path>
+<path class="edge dependency" d="M 292.6 279.9 C 347.0 334.3, 93.0 429.0, 147.4 483.4"><title>dependency: Isometry —[characterized by]→ Columns characterize isometry</title></path>
+<path class="edge dependency" d="M 292.6 753.2 C 328.1 788.7, 111.9 763.5, 147.4 799.0"><title>dependency: Differential Dphi(xi) —[used to define]→ Isometry at a point</title></path>
+<path class="edge dependency" d="M 292.6 279.9 C 384.9 372.2, 55.1 706.7, 147.4 799.0"><title>dependency: Isometry —[used to define]→ Isometry at a point</title></path>
+<path class="edge dependency" d="M 292.6 753.2 C 347.0 807.6, 93.0 902.4, 147.4 956.8"><title>dependency: Differential Dphi(xi) —[used to define]→ Conformal at a point</title></path>
+<path class="edge dependency" d="M 292.6 911.0 C 347.0 965.4, 93.0 1060.1, 147.4 1114.6"><title>dependency: Isometry at a point —[used by]→ Distance preservation iff pointwise isometry</title></path>
+<path class="edge dependency" d="M 292.6 1068.8 C 366.0 1142.1, 74.0 1356.8, 147.4 1430.1"><title>dependency: Conformal at a point —[used by]→ Distortion is minimized by conformal maps</title></path>
+<path class="edge dependency" d="M 292.6 1384.3 C 328.1 1419.8, 111.9 1394.6, 147.4 1430.1"><title>dependency: Local distortion is condition number —[implies]→ Distortion is minimized by conformal maps</title></path>
+<path class="edge dependency" d="M 694.6 595.4 C 730.1 630.9, 513.9 605.7, 549.4 641.2"><title>dependency: S-divergence —[rewritten by]→ S-divergence singular-value form</title></path>
+<path class="edge dependency" d="M 694.6 753.2 C 730.1 788.7, 513.9 763.5, 549.4 799.0"><title>dependency: S-divergence singular-value form —[implies]→ S-divergence is minimized by isometries</title></path>
+<path class="edge dependency" d="M 385.0 223.9 C 420.0 223.9, 422.0 855.0, 457.0 855.0"><title>dependency: Isometry —[defines minimizers]→ S-divergence is minimized by isometries</title></path>
+<path class="edge context" d="M 694.6 911.0 C 794.8 1011.2, 449.2 225.4, 549.4 325.7"><title>context: S-divergence is minimized by isometries —[establishes]→ Unique isometry minimum</title></path>
+<path class="edge dependency" d="M 694.6 1226.6 C 749.0 1281.0, 495.0 1375.7, 549.4 1430.1"><title>dependency: Log-symmetry —[required by]→ Generic spectral-loss impossibility</title></path>
+<path class="edge dependency" d="M 694.6 1384.3 C 730.1 1419.8, 513.9 1394.6, 549.4 1430.1"><title>dependency: Column-rescaling monotonicity —[required by]→ Generic spectral-loss impossibility</title></path>
+<path class="edge dependency" d="M 694.6 1068.8 C 749.0 1123.2, 495.0 1217.9, 549.4 1272.3"><title>dependency: Monotonicity away from one —[used to define]→ Column-rescaling monotonicity</title></path>
+<path class="edge context" d="M 787.0 1012.8 C 822.0 1012.8, 824.0 223.9, 859.0 223.9"><title>context: Monotonicity away from one —[motivates profile choice]→ Symmetric normalization n_q</title></path>
+<path class="edge context" d="M 787.0 1170.6 C 822.0 1170.6, 824.0 223.9, 859.0 223.9"><title>context: Log-symmetry —[motivates profile choice]→ Symmetric normalization n_q</title></path>
+<path class="edge dependency" d="M 1096.6 437.7 C 1159.0 500.0, 889.0 105.5, 951.4 167.9"><title>dependency: Chosen radial profile q —[instantiates]→ Symmetric normalization n_q</title></path>
+<path class="edge dependency" d="M 1096.6 437.7 C 1132.1 473.2, 915.9 448.0, 951.4 483.4"><title>dependency: Chosen radial profile q —[used by]→ -log q is convex</title></path>
+<path class="edge dependency" d="M 1096.6 437.7 C 1151.0 492.1, 897.0 586.8, 951.4 641.2"><title>dependency: Chosen radial profile q —[used by]→ q is smooth</title></path>
+<path class="edge dependency" d="M 1096.6 437.7 C 1170.0 511.0, 878.0 725.6, 951.4 799.0"><title>dependency: Chosen radial profile q —[used by]→ log q has linear tails</title></path>
+<path class="edge dependency" d="M 1096.6 437.7 C 1188.9 530.0, 859.1 864.5, 951.4 956.8"><title>dependency: Chosen radial profile q —[used by]→ Inverse normalization is normalized exp-LogSumExp</title></path>
+<path class="edge dependency" d="M 1096.6 279.9 C 1245.7 429.0, 802.3 1123.2, 951.4 1272.3"><title>dependency: Symmetric normalization n_q —[used to define loss]→ Inverse determinant ordering</title></path>
+<path class="edge dependency" d="M 1096.6 279.9 C 1264.6 447.9, 783.4 1262.1, 951.4 1430.1"><title>dependency: Symmetric normalization n_q —[used to define loss]→ Inverse Frobenius ordering</title></path>
+<path class="edge dependency" d="M 1189.0 223.9 C 1224.0 223.9, 1226.0 233.8, 1261.0 233.8"><title>dependency: Symmetric normalization n_q —[intended columnwise extension]→ Matrix normalization w(X)</title></path>
+<path class="edge dependency" d="M 1498.6 467.2 C 1536.5 505.1, 1315.5 494.9, 1353.4 532.8"><title>dependency: Multitask penalty ||beta||_{1,2} —[objective of]→ Multitask basis-pursuit solution set</title></path>
+<path class="edge dependency" d="M 1498.6 644.8 C 1536.5 682.6, 1315.5 672.4, 1353.4 710.2"><title>dependency: Multitask basis-pursuit solution set —[solution set for]→ Minimum-Frobenius MBP selector</title></path>
+<path class="edge dependency" d="M 1498.6 289.8 C 1621.7 412.8, 1230.3 942.2, 1353.4 1065.2"><title>dependency: Matrix normalization w(X) —[preprocesses]→ Isometry Pursuit</title></path>
+<path class="edge dependency" d="M 1498.6 822.2 C 1557.8 881.4, 1294.2 1006.1, 1353.4 1065.2"><title>dependency: Minimum-Frobenius MBP selector —[defines optimizer]→ Isometry Pursuit</title></path>
+<path class="edge dependency" d="M 1498.6 999.8 C 1536.5 1037.6, 1315.5 1027.4, 1353.4 1065.2"><title>dependency: Row-support map S(beta) —[defines output]→ Isometry Pursuit</title></path>
+<path class="edge dependency" d="M 1498.6 467.2 C 1621.7 590.3, 1230.3 1119.7, 1353.4 1242.8"><title>dependency: Multitask penalty ||beta||_{1,2} —[used by]→ Group penalty is right-unitary invariant</title></path>
+<path class="edge dependency" d="M 1498.6 1354.8 C 1536.5 1392.6, 1315.5 1382.4, 1353.4 1420.2"><title>dependency: Group penalty is right-unitary invariant —[implies]→ MBP solution is basis-equivariant</title></path>
+<path class="edge dependency" d="M 1498.6 644.8 C 1621.7 767.8, 1230.3 1297.2, 1353.4 1420.2"><title>dependency: Multitask basis-pursuit solution set —[used by]→ MBP solution is basis-equivariant</title></path>
+<path class="edge dependency" d="M 1591.0 1476.2 C 1626.0 1476.2, 1628.0 246.4, 1663.0 246.4"><title>dependency: MBP solution is basis-equivariant —[implies]→ IP support is basis-invariant</title></path>
+<path class="edge dependency" d="M 1591.0 943.8 C 1626.0 943.8, 1628.0 246.4, 1663.0 246.4"><title>dependency: Row-support map S(beta) —[used by]→ IP support is basis-invariant</title></path>
+<path class="edge dependency" d="M 1591.0 1121.2 C 1626.0 1121.2, 1628.0 246.4, 1663.0 246.4"><title>dependency: Isometry Pursuit —[property of]→ IP support is basis-invariant</title></path>
+<path class="edge dependency" d="M 1900.6 302.4 C 1941.5 343.3, 1714.5 352.4, 1755.4 393.3"><title>dependency: IP support is basis-invariant —[reduces basis in proof]→ An isometric subset yields an MBP minimizer</title></path>
+<path class="edge dependency" d="M 1591.0 233.8 C 1626.0 233.8, 1628.0 449.3, 1663.0 449.3"><title>dependency: Matrix normalization w(X) —[bounds column norms]→ An isometric subset yields an MBP minimizer</title></path>
+<path class="edge dependency" d="M 1591.0 588.8 C 1626.0 588.8, 1628.0 449.3, 1663.0 449.3"><title>dependency: Multitask basis-pursuit solution set —[certifies minimizer]→ An isometric subset yields an MBP minimizer</title></path>
+<path class="edge dependency" d="M 1591.0 766.2 C 1626.0 766.2, 1628.0 652.1, 1663.0 652.1"><title>dependency: Minimum-Frobenius MBP selector —[used by]→ Minimum-norm support equals union of minimizing supports</title></path>
+<path class="edge dependency" d="M 1591.0 588.8 C 1626.0 588.8, 1628.0 652.1, 1663.0 652.1"><title>dependency: Multitask basis-pursuit solution set —[solution set used by]→ Minimum-norm support equals union of minimizing supports</title></path>
+<path class="edge dependency" d="M 1900.6 505.3 C 1965.8 570.5, 1690.2 733.8, 1755.4 799.0"><title>dependency: An isometric subset yields an MBP minimizer —[provides supported minimizer]→ Exact-isometry containment</title></path>
+<path class="edge dependency" d="M 1900.6 708.1 C 1941.5 749.0, 1714.5 758.1, 1755.4 799.0"><title>dependency: Minimum-norm support equals union of minimizing supports —[turns existence into containment]→ Exact-isometry containment</title></path>
+<path class="edge dependency" d="M 1900.6 302.4 C 1990.2 392.0, 1665.8 709.4, 1755.4 799.0"><title>dependency: IP support is basis-invariant —[used by proof]→ Exact-isometry containment</title></path>
+<path class="edge dependency" d="M 385.0 223.9 C 921.8 223.9, 1126.2 855.0, 1663.0 855.0"><title>dependency: Isometry —[hypothesis]→ Exact-isometry containment</title></path>
+<path class="edge dependency" d="M 1591.0 1121.2 C 1626.0 1121.2, 1628.0 855.0, 1663.0 855.0"><title>dependency: Isometry Pursuit —[guarantee for]→ Exact-isometry containment</title></path>
+<path class="edge dependency" d="M 1900.6 302.4 C 2014.5 416.4, 1641.5 887.9, 1755.4 1001.9"><title>dependency: IP support is basis-invariant —[used by proof]→ Cardinality-D optimum is an isometry</title></path>
+<path class="edge dependency" d="M 385.0 223.9 C 921.8 223.9, 1126.2 1057.9, 1663.0 1057.9"><title>dependency: Isometry —[characterizes equality]→ Cardinality-D optimum is an isometry</title></path>
+<path class="edge dependency" d="M 1591.0 411.2 C 1626.0 411.2, 1628.0 1057.9, 1663.0 1057.9"><title>dependency: Multitask penalty ||beta||_{1,2} —[defines loss bound]→ Cardinality-D optimum is an isometry</title></path>
+<path class="edge dependency" d="M 1591.0 588.8 C 1626.0 588.8, 1628.0 1260.7, 1663.0 1260.7"><title>dependency: Multitask basis-pursuit solution set —[constructs minimizer]→ Mercedes-Benz minimum-norm frame</title></path>
+<path class="edge dependency" d="M 1591.0 411.2 C 1626.0 411.2, 1628.0 1260.7, 1663.0 1260.7"><title>dependency: Multitask penalty ||beta||_{1,2} —[attains D]→ Mercedes-Benz minimum-norm frame</title></path>
+<path class="edge context" d="M 1900.6 1113.9 C 1941.5 1154.8, 1714.5 1163.8, 1755.4 1204.7"><title>context: Cardinality-D optimum is an isometry —[contrasted with]→ Mercedes-Benz minimum-norm frame</title></path>
+<path class="edge context" d="M 1900.6 1316.7 C 1992.7 1408.8, 1663.3 706.9, 1755.4 799.0"><title>context: Mercedes-Benz minimum-norm frame —[limits extension beyond exact case]→ Exact-isometry containment</title></path>
+<path class="edge context" d="M 1900.6 1316.7 C 1941.5 1357.6, 1714.5 1366.7, 1755.4 1407.6"><title>context: Mercedes-Benz minimum-norm frame —[unfinished extension]→ Supplementary frame example</title></path>
+<path class="edge dependency" d="M 1591.0 1121.2 C 1790.1 1121.2, 1865.9 381.7, 2065.0 381.7"><title>dependency: Isometry Pursuit —[first stage]→ Two-stage Isometry Pursuit</title></path>
+<path class="edge dependency" d="M 1993.0 855.0 C 2028.0 855.0, 2030.0 381.7, 2065.0 381.7"><title>dependency: Exact-isometry containment —[justifies]→ Two-stage Isometry Pursuit</title></path>
+<path class="edge dependency" d="M 1189.0 1328.3 C 1556.9 1328.3, 1697.1 855.0, 2065.0 855.0"><title>dependency: Inverse determinant ordering —[representative spectral kernel]→ Spectral-loss evaluation cost</title></path>
+<path class="edge dependency" d="M 1189.0 1486.1 C 1556.9 1486.1, 1697.1 855.0, 2065.0 855.0"><title>dependency: Inverse Frobenius ordering —[representative spectral kernel]→ Spectral-loss evaluation cost</title></path>
+<path class="edge dependency" d="M 1591.0 1121.2 C 1790.1 1121.2, 1865.9 1328.3, 2065.0 1328.3"><title>dependency: Isometry Pursuit —[analyzes]→ IP per-step complexity</title></path>
+<path class="edge dependency" d="M 1096.6 279.9 C 1226.8 410.0, 821.2 984.4, 951.4 1114.6"><title>dependency: Symmetric normalization n_q —[defines normalized matrix]→ Normalized spectral losses</title></path>
+<path class="edge dependency" d="M 1096.6 437.7 C 1207.8 548.9, 840.2 1003.3, 951.4 1114.6"><title>dependency: Chosen radial profile q —[supplies column-length bounds and monotonicity]→ Normalized spectral losses</title></path>
+<path class="edge dependency" d="M 385.0 223.9 C 584.1 223.9, 659.9 1170.6, 859.0 1170.6"><title>dependency: Isometry —[defines equality case]→ Normalized spectral losses</title></path>
+<path class="edge dependency" d="M 787.0 1328.3 C 822.0 1328.3, 824.0 1170.6, 859.0 1170.6"><title>dependency: Column-rescaling monotonicity —[specifies claimed derivative signs]→ Normalized spectral losses</title></path>
+<path class="edge dependency" d="M 1096.6 1226.6 C 1132.1 1262.0, 915.9 1236.8, 951.4 1272.3"><title>dependency: Normalized spectral losses —[specialized by h(u) = -log(u)/2]→ Inverse determinant ordering</title></path>
+<path class="edge dependency" d="M 1096.6 1226.6 C 1151.0 1281.0, 897.0 1375.7, 951.4 1430.1"><title>dependency: Normalized spectral losses —[specialized by h(u) = u^-1 - 1]→ Inverse Frobenius ordering</title></path>
+<path class="edge dependency" d="M 292.6 753.2 C 384.9 845.5, 55.1 1180.0, 147.4 1272.3"><title>dependency: Differential Dphi(xi) —[defines local linear map]→ Local distortion is condition number</title></path>
+<path class="edge dependency" d="M 1498.6 822.2 C 1600.4 924.0, 1251.6 1318.5, 1353.4 1420.2"><title>dependency: Minimum-Frobenius MBP selector —[selector must respect basis change]→ MBP solution is basis-equivariant</title></path>
+<path class="edge dependency" d="M 1591.0 233.8 C 1626.0 233.8, 1628.0 246.4, 1663.0 246.4"><title>dependency: Matrix normalization w(X) —[requires normalization to commute with rotations]→ IP support is basis-invariant</title></path>
+<path class="edge context" d="M 1096.6 1226.6 C 1234.7 1364.7, 411.3 187.6, 549.4 325.7"><title>context: Normalized spectral losses —[establishes for L_h]→ Unique isometry minimum</title></path>
+<path class="edge context" d="M 787.0 223.9 C 1154.9 223.9, 1295.1 246.4, 1663.0 246.4"><title>context: Rotation invariance —[analogous invariance requirement]→ IP support is basis-invariant</title></path>
+<path class="edge context" d="M 694.6 753.2 C 794.8 853.5, 449.2 67.6, 549.4 167.9"><title>context: S-divergence singular-value form —[spectral form exhibits invariance]→ Rotation invariance</title></path>
 <g id="def_isometry">
 <rect x="55.0" y="167.9" width="330" height="112" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="67.0" y="188.9" class="node-title">Isometry</text>
@@ -160,7 +165,7 @@ Global distance preservation iff smooth and isometric at every point</title></g>
 <rect x="55.0" y="1272.3" width="330" height="112" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="67.0" y="1293.3" class="node-title">Local distortion is condition number</text>
 <text x="67.0" y="1329.3" class="node-detail">Distortion tends to sigma_1(Df_S)/sigma_D(Df_S)</text>
-<text x="67.0" y="1374.3" class="node-meta">prop:distortion_is_condition_number · archival/background.tex:125</text>
+<text x="67.0" y="1374.3" class="node-meta">prop:distortion_is_condition_number · archival/background.tex:132</text>
 <title>proposition: Local distortion is condition number
 Distortion tends to sigma_1(Df_S)/sigma_D(Df_S)</title></g>
 <g id="prop_distortion_conformal">
@@ -169,7 +174,7 @@ Distortion tends to sigma_1(Df_S)/sigma_D(Df_S)</title></g>
 <text x="67.0" y="1468.1" class="node-title">maps</text>
 <text x="67.0" y="1488.1" class="node-detail">Condition number is minimized when singular</text>
 <text x="67.0" y="1503.1" class="node-detail">values agree</text>
-<text x="67.0" y="1532.1" class="node-meta">unlabeled · archival/background.tex:129</text>
+<text x="67.0" y="1532.1" class="node-meta">unlabeled · archival/background.tex:145</text>
 <title>proposition: Distortion is minimized by conformal maps
 Condition number is minimized when singular values agree
 status: unlabeled</title></g>
@@ -177,14 +182,14 @@ status: unlabeled</title></g>
 <rect x="457.0" y="167.9" width="330" height="112" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="469.0" y="188.9" class="node-title">Rotation invariance</text>
 <text x="469.0" y="224.9" class="node-detail">ell(UX) = ell(X)</text>
-<text x="469.0" y="269.9" class="node-meta">property:rotation_invariance · archival/background.tex:161</text>
+<text x="469.0" y="269.9" class="node-meta">property:rotation_invariance · archival/background.tex:177</text>
 <title>property: Rotation invariance
 ell(UX) = ell(X)</title></g>
 <g id="property_unique_isometry">
 <rect x="457.0" y="325.7" width="330" height="112" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="469.0" y="346.7" class="node-title">Unique isometry minimum</text>
 <text x="469.0" y="382.7" class="node-detail">arg min ell = {X : XX^T = I_D}</text>
-<text x="469.0" y="427.7" class="node-meta">property:unique_isometry_minimum · archival/background.tex:169</text>
+<text x="469.0" y="427.7" class="node-meta">property:unique_isometry_minimum · archival/background.tex:185</text>
 <title>property: Unique isometry minimum
 arg min ell = {X : XX^T = I_D}</title></g>
 <g id="def_sdiv">
@@ -192,7 +197,7 @@ arg min ell = {X : XX^T = I_D}</title></g>
 <text x="469.0" y="504.4" class="node-title">S-divergence</text>
 <text x="469.0" y="540.4" class="node-detail">Log-determinant divergence on positive-definite</text>
 <text x="469.0" y="555.4" class="node-detail">matrices</text>
-<text x="469.0" y="585.4" class="node-meta">unlabeled · archival/background.tex:177</text>
+<text x="469.0" y="585.4" class="node-meta">unlabeled · archival/background.tex:193</text>
 <title>definition: S-divergence
 Log-determinant divergence on positive-definite matrices
 status: unlabeled</title></g>
@@ -200,28 +205,29 @@ status: unlabeled</title></g>
 <rect x="457.0" y="641.2" width="330" height="112" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="469.0" y="662.2" class="node-title">S-divergence singular-value form</text>
 <text x="469.0" y="698.2" class="node-detail">D(X^T X,I)^2 = sum log((sigma + sigma^-1)/2)</text>
-<text x="469.0" y="743.2" class="node-meta">prop:sdiv_singular_values · archival/background.tex:183</text>
+<text x="469.0" y="743.2" class="node-meta">prop:sdiv_singular_values · archival/background.tex:199</text>
 <title>proposition: S-divergence singular-value form
-D(X^T X,I)^2 = sum log((sigma + sigma^-1)/2)</title></g>
+D(X^T X,I)^2 = sum log((sigma + sigma^-1)/2)
+proof: archival/supplement.tex:104</title></g>
 <g id="prop_sdiv_min">
 <rect x="457.0" y="799.0" width="330" height="112" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="469.0" y="820.0" class="node-title">S-divergence is minimized by isometries</text>
 <text x="469.0" y="856.0" class="node-detail">Unique minimum on full-rank square matrices</text>
-<text x="469.0" y="901.0" class="node-meta">prop:sdiv_minimized_by_isometries · archival/background.tex:191</text>
+<text x="469.0" y="901.0" class="node-meta">prop:sdiv_minimized_by_isometries · archival/background.tex:207</text>
 <title>proposition: S-divergence is minimized by isometries
 Unique minimum on full-rank square matrices</title></g>
 <g id="property_scalar_monotonicity">
 <rect x="457.0" y="956.8" width="330" height="112" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="469.0" y="977.8" class="node-title">Monotonicity away from one</text>
 <text x="469.0" y="1013.8" class="node-detail">g decreases below 1 and increases above 1</text>
-<text x="469.0" y="1058.8" class="node-meta">property:scalar_monotonicity · archival/method.tex:28</text>
+<text x="469.0" y="1058.8" class="node-meta">property:scalar_monotonicity · archival/method.tex:23</text>
 <title>property: Monotonicity away from one
 g decreases below 1 and increases above 1</title></g>
 <g id="property_log_symmetry">
 <rect x="457.0" y="1114.6" width="330" height="112" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="469.0" y="1135.6" class="node-title">Log-symmetry</text>
 <text x="469.0" y="1171.6" class="node-detail">g(t) = g(1/t)</text>
-<text x="469.0" y="1216.6" class="node-meta">property:log_symmetry · archival/method.tex:40</text>
+<text x="469.0" y="1216.6" class="node-meta">property:log_symmetry · archival/method.tex:36</text>
 <title>property: Log-symmetry
 g(t) = g(1/t)</title></g>
 <g id="property_pathwise">
@@ -229,110 +235,98 @@ g(t) = g(1/t)</title></g>
 <text x="469.0" y="1293.3" class="node-title">Column-rescaling monotonicity</text>
 <text x="469.0" y="1329.3" class="node-detail">Each column length is driven toward one with</text>
 <text x="469.0" y="1344.3" class="node-detail">other columns fixed</text>
-<text x="469.0" y="1374.3" class="node-meta">property:pathwise · archival/method.tex:47</text>
+<text x="469.0" y="1374.3" class="node-meta">property:pathwise · archival/method.tex:42</text>
 <title>property: Column-rescaling monotonicity
 Each column length is driven toward one with other columns fixed</title></g>
 <g id="prop_spectral_impossibility">
-<rect x="457.0" y="1430.1" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
+<rect x="457.0" y="1430.1" width="330" height="112" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="469.0" y="1451.1" class="node-title">Generic spectral-loss impossibility</text>
 <text x="469.0" y="1487.1" class="node-detail">No sum g(sigma_d(X)) is both log-symmetric and</text>
 <text x="469.0" y="1502.1" class="node-detail">pathwise monotone</text>
-<text x="469.0" y="1532.1" class="node-meta">prop:log_svd_bad · archival/method.tex:61</text>
+<text x="469.0" y="1532.1" class="node-meta">prop:log_svd_bad · archival/method.tex:57</text>
 <title>proposition: Generic spectral-loss impossibility
-No sum g(sigma_d(X)) is both log-symmetric and pathwise monotone
-status: duplicate-label caused by label/ref typo</title></g>
+No sum g(sigma_d(X)) is both log-symmetric and pathwise monotone</title></g>
 <g id="def_symmetric_normalization">
-<rect x="859.0" y="160.0" width="330" height="112" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4" filter="url(#shadow)"/>
-<text x="871.0" y="181.0" class="node-title">Symmetric normalization n_q</text>
-<text x="871.0" y="217.0" class="node-detail">n_q(v) = q(||v||_2) v / ||v||_2</text>
-<text x="871.0" y="262.0" class="node-meta">def:symmetric_normalization · archival/method.tex</text>
+<rect x="859.0" y="167.9" width="330" height="112" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4" filter="url(#shadow)"/>
+<text x="871.0" y="188.9" class="node-title">Symmetric normalization n_q</text>
+<text x="871.0" y="224.9" class="node-detail">n_q(v) = q(||v||_2) v / ||v||_2</text>
+<text x="871.0" y="269.9" class="node-meta">def:symmetric_normalization · archival/method.tex:94</text>
 <title>definition: Symmetric normalization n_q
 n_q(v) = q(||v||_2) v / ||v||_2</title></g>
 <g id="def_specific_g">
-<rect x="859.0" y="302.0" width="330" height="112" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4" filter="url(#shadow)"/>
-<text x="871.0" y="323.0" class="node-title">Chosen radial factor g</text>
-<text x="871.0" y="359.0" class="node-detail">g(t) = 2e/(e^t + e^(1/t))</text>
-<text x="871.0" y="404.0" class="node-meta">eq:normalization · archival/method.tex:96</text>
-<title>definition: Chosen radial factor g
-g(t) = 2e/(e^t + e^(1/t))</title></g>
+<rect x="859.0" y="325.7" width="330" height="112" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4" filter="url(#shadow)"/>
+<text x="871.0" y="346.7" class="node-title">Chosen radial profile q</text>
+<text x="871.0" y="382.7" class="node-detail">q(t) = 2e/(e^t + e^(1/t))</text>
+<text x="871.0" y="427.7" class="node-meta">eq:normalization · archival/method.tex:90</text>
+<title>definition: Chosen radial profile q
+q(t) = 2e/(e^t + e^(1/t))</title></g>
 <g id="prop_g_convex">
-<rect x="859.0" y="444.0" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
-<text x="871.0" y="465.0" class="node-title">-log g is convex</text>
-<text x="871.0" y="501.0" class="node-detail">Convexity of the chosen radial penalty</text>
-<text x="871.0" y="546.0" class="node-meta">unlabeled · archival/method.tex:105</text>
-<title>proposition: -log g is convex
+<rect x="859.0" y="483.4" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
+<text x="871.0" y="504.4" class="node-title">-log q is convex</text>
+<text x="871.0" y="540.4" class="node-detail">Convexity of the chosen radial penalty</text>
+<text x="871.0" y="585.4" class="node-meta">unlabeled · archival/method.tex:111</text>
+<title>proposition: -log q is convex
 Convexity of the chosen radial penalty
 status: unlabeled</title></g>
 <g id="prop_g_smooth">
-<rect x="859.0" y="586.0" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
-<text x="871.0" y="607.0" class="node-title">g is smooth</text>
-<text x="871.0" y="643.0" class="node-detail">Smoothness on positive reals</text>
-<text x="871.0" y="688.0" class="node-meta">unlabeled · archival/method.tex:109</text>
-<title>proposition: g is smooth
+<rect x="859.0" y="641.2" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
+<text x="871.0" y="662.2" class="node-title">q is smooth</text>
+<text x="871.0" y="698.2" class="node-detail">Smoothness on positive reals</text>
+<text x="871.0" y="743.2" class="node-meta">unlabeled · archival/method.tex:115</text>
+<title>proposition: q is smooth
 Smoothness on positive reals
 status: unlabeled</title></g>
 <g id="prop_g_tail">
-<rect x="859.0" y="728.0" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
-<text x="871.0" y="749.0" class="node-title">log g has linear tails</text>
-<text x="871.0" y="785.0" class="node-detail">Linear decay in t and 1/t at the two extremes</text>
-<text x="871.0" y="830.0" class="node-meta">unlabeled · archival/method.tex:113</text>
-<title>proposition: log g has linear tails
+<rect x="859.0" y="799.0" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
+<text x="871.0" y="820.0" class="node-title">log q has linear tails</text>
+<text x="871.0" y="856.0" class="node-detail">Linear decay in t and 1/t at the two extremes</text>
+<text x="871.0" y="901.0" class="node-meta">unlabeled · archival/method.tex:119</text>
+<title>proposition: log q has linear tails
 Linear decay in t and 1/t at the two extremes
 status: unlabeled</title></g>
 <g id="prop_g_logsumexp">
-<rect x="859.0" y="870.0" width="330" height="112" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4" filter="url(#shadow)"/>
-<text x="871.0" y="891.0" class="node-title">Inverse normalization is normalized</text>
-<text x="871.0" y="908.0" class="node-title">exp-LogSumExp</text>
-<text x="871.0" y="928.0" class="node-detail">1/q is the normalized exponential of</text>
-<text x="871.0" y="943.0" class="node-detail">LogSumExp(t,1/t)</text>
-<text x="871.0" y="972.0" class="node-meta">prop:normalization_logsumexp · archival/method.tex</text>
+<rect x="859.0" y="956.8" width="330" height="112" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4" filter="url(#shadow)"/>
+<text x="871.0" y="977.8" class="node-title">Inverse normalization is normalized</text>
+<text x="871.0" y="994.8" class="node-title">exp-LogSumExp</text>
+<text x="871.0" y="1014.8" class="node-detail">1/q is the normalized exponential of</text>
+<text x="871.0" y="1029.8" class="node-detail">LogSumExp(t,1/t)</text>
+<text x="871.0" y="1058.8" class="node-meta">prop:normalization_logsumexp · archival/method.tex:103</text>
 <title>proposition: Inverse normalization is normalized exp-LogSumExp
-1/q is the normalized exponential of LogSumExp(t,1/t)</title></g>
+1/q is the normalized exponential of LogSumExp(t,1/t)
+proof: archival/supplement.tex:558</title></g>
+<g id="prop_normalized_spectral_losses">
+<rect x="859.0" y="1114.6" width="330" height="112" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4" filter="url(#shadow)"/>
+<text x="871.0" y="1135.6" class="node-title">Normalized spectral losses</text>
+<text x="871.0" y="1171.6" class="node-detail">Decreasing strictly convex h gives a unique</text>
+<text x="871.0" y="1186.6" class="node-detail">isometry minimum and column-rescaling</text>
+<text x="871.0" y="1216.6" class="node-meta">prop:normalized_spectral_losses · archival/method.tex:132</text>
+<title>proposition: Normalized spectral losses
+Decreasing strictly convex h gives a unique isometry minimum and column-rescaling monotonicity
+proof: archival/supplement.tex:128</title></g>
 <g id="prop_det_singular">
-<rect x="859.0" y="1012.0" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
-<text x="871.0" y="1033.0" class="node-title">Determinant spectral representation</text>
-<text x="871.0" y="1069.0" class="node-detail">Current displayed identity is misstated; see</text>
-<text x="871.0" y="1084.0" class="node-detail">MANUSCRIPT_ISSUES.md</text>
-<text x="871.0" y="1114.0" class="node-meta">prop:determinant_singular_values · archival/method.tex:130</text>
-<title>proposition: Determinant spectral representation
-Current displayed identity is misstated; see MANUSCRIPT_ISSUES.md
-status: statement-error</title></g>
+<rect x="859.0" y="1272.3" width="330" height="112" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4" filter="url(#shadow)"/>
+<text x="871.0" y="1293.3" class="node-title">Inverse determinant ordering</text>
+<text x="871.0" y="1329.3" class="node-detail">|det N|^-1 has the same ordering as L_h for h(u)</text>
+<text x="871.0" y="1344.3" class="node-detail">= -log(u)/2</text>
+<text x="871.0" y="1374.3" class="node-meta">prop:determinant_singular_values · archival/method.tex:146</text>
+<title>proposition: Inverse determinant ordering
+|det N|^-1 has the same ordering as L_h for h(u) = -log(u)/2
+proof: archival/supplement.tex:180</title></g>
 <g id="prop_frob_singular">
-<rect x="859.0" y="1154.0" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
-<text x="871.0" y="1175.0" class="node-title">Inverse-Frobenius spectral</text>
-<text x="871.0" y="1192.0" class="node-title">representation</text>
-<text x="871.0" y="1212.0" class="node-detail">Current displayed identity is misstated; see</text>
-<text x="871.0" y="1227.0" class="node-detail">MANUSCRIPT_ISSUES.md</text>
-<text x="871.0" y="1256.0" class="node-meta">prop:frobenius_inverse_singular_values · archival/method.tex:134</text>
-<title>proposition: Inverse-Frobenius spectral representation
-Current displayed identity is misstated; see MANUSCRIPT_ISSUES.md
-status: statement-error</title></g>
-<g id="prop_det_properties">
-<rect x="859.0" y="1296.0" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
-<text x="871.0" y="1317.0" class="node-title">Normalized determinant satisfies</text>
-<text x="871.0" y="1334.0" class="node-title">desiderata</text>
-<text x="871.0" y="1354.0" class="node-detail">Scalar monotonicity, log-symmetry, and pathwise</text>
-<text x="871.0" y="1369.0" class="node-detail">monotonicity</text>
-<text x="871.0" y="1398.0" class="node-meta">unlabeled; needs-proof-review · archival/method.tex:138</text>
-<title>proposition: Normalized determinant satisfies desiderata
-Scalar monotonicity, log-symmetry, and pathwise monotonicity
-status: unlabeled; needs-proof-review</title></g>
-<g id="prop_frob_properties">
-<rect x="859.0" y="1438.0" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
-<text x="871.0" y="1459.0" class="node-title">Normalized inverse-Frobenius satisfies</text>
-<text x="871.0" y="1476.0" class="node-title">desiderata</text>
-<text x="871.0" y="1496.0" class="node-detail">Scalar monotonicity, log-symmetry, and pathwise</text>
-<text x="871.0" y="1511.0" class="node-detail">monotonicity</text>
-<text x="871.0" y="1540.0" class="node-meta">unlabeled; needs-proof-review · archival/method.tex:141</text>
-<title>proposition: Normalized inverse-Frobenius satisfies desiderata
-Scalar monotonicity, log-symmetry, and pathwise monotonicity
-status: unlabeled; needs-proof-review</title></g>
+<rect x="859.0" y="1430.1" width="330" height="112" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4" filter="url(#shadow)"/>
+<text x="871.0" y="1451.1" class="node-title">Inverse Frobenius ordering</text>
+<text x="871.0" y="1487.1" class="node-detail">||N^-1||_F has the same ordering as L_h for h(u)</text>
+<text x="871.0" y="1502.1" class="node-detail">= u^-1 - 1</text>
+<text x="871.0" y="1532.1" class="node-meta">prop:frobenius_inverse_singular_values · archival/method.tex:150</text>
+<title>proposition: Inverse Frobenius ordering
+||N^-1||_F has the same ordering as L_h for h(u) = u^-1 - 1
+proof: archival/supplement.tex:180</title></g>
 <g id="def_matrix_normalization">
 <rect x="1261.0" y="177.8" width="330" height="112" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
 <text x="1273.0" y="198.8" class="node-title">Matrix normalization w(X)</text>
 <text x="1273.0" y="234.8" class="node-detail">Used as the columnwise normalization passed to</text>
 <text x="1273.0" y="249.8" class="node-detail">basis pursuit, but not formally defined</text>
-<text x="1273.0" y="279.8" class="node-meta">missing-definition · archival/method.tex:207-245</text>
+<text x="1273.0" y="279.8" class="node-meta">missing-definition · archival/method.tex:223</text>
 <title>missing: Matrix normalization w(X)
 Used as the columnwise normalization passed to basis pursuit, but not formally defined
 status: missing-definition</title></g>
@@ -340,14 +334,14 @@ status: missing-definition</title></g>
 <rect x="1261.0" y="355.2" width="330" height="112" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="1273.0" y="376.2" class="node-title">Multitask penalty ||beta||_{1,2}</text>
 <text x="1273.0" y="412.2" class="node-detail">Sum of row Euclidean norms</text>
-<text x="1273.0" y="457.2" class="node-meta">eq:bp · archival/method.tex:215</text>
+<text x="1273.0" y="457.2" class="node-meta">eq:bp · archival/method.tex:226</text>
 <title>definition: Multitask penalty ||beta||_{1,2}
 Sum of row Euclidean norms</title></g>
 <g id="def_mbp">
 <rect x="1261.0" y="532.8" width="330" height="112" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="1273.0" y="553.8" class="node-title">Multitask basis-pursuit solution set</text>
 <text x="1273.0" y="589.8" class="node-detail">arg min ||beta||_{1,2} subject to Y = X beta</text>
-<text x="1273.0" y="634.8" class="node-meta">prog:multitask_basis_pursuit · archival/method.tex:221</text>
+<text x="1273.0" y="634.8" class="node-meta">prog:multitask_basis_pursuit · archival/method.tex:232</text>
 <title>definition: Multitask basis-pursuit solution set
 arg min ||beta||_{1,2} subject to Y = X beta</title></g>
 <g id="def_min_norm">
@@ -355,7 +349,7 @@ arg min ||beta||_{1,2} subject to Y = X beta</title></g>
 <text x="1273.0" y="731.2" class="node-title">Minimum-Frobenius MBP selector</text>
 <text x="1273.0" y="767.2" class="node-detail">Chooses the minimum-Frobenius element of the MBP</text>
 <text x="1273.0" y="782.2" class="node-detail">solution set</text>
-<text x="1273.0" y="812.2" class="node-meta">unlabeled; MLP/MBP notation mismatch · archival/method.tex:223</text>
+<text x="1273.0" y="812.2" class="node-meta">unlabeled; MLP/MBP notation mismatch · archival/method.tex:240</text>
 <title>definition: Minimum-Frobenius MBP selector
 Chooses the minimum-Frobenius element of the MBP solution set
 status: unlabeled; MLP/MBP notation mismatch</title></g>
@@ -364,7 +358,7 @@ status: unlabeled; MLP/MBP notation mismatch</title></g>
 <text x="1273.0" y="908.8" class="node-title">Row-support map S(beta)</text>
 <text x="1273.0" y="944.8" class="node-detail">Indices of nonzero rows; current codomain</text>
 <text x="1273.0" y="959.8" class="node-detail">incorrectly fixes size D</text>
-<text x="1273.0" y="989.8" class="node-meta">unlabeled; codomain-error · archival/method.tex:243</text>
+<text x="1273.0" y="989.8" class="node-meta">unlabeled; codomain-error · archival/method.tex:259</text>
 <title>definition: Row-support map S(beta)
 Indices of nonzero rows; current codomain incorrectly fixes size D
 status: unlabeled; codomain-error</title></g>
@@ -373,7 +367,7 @@ status: unlabeled; codomain-error</title></g>
 <text x="1273.0" y="1086.2" class="node-title">Isometry Pursuit</text>
 <text x="1273.0" y="1122.2" class="node-detail">Minimum-norm MBP on w(X) with target I_D,</text>
 <text x="1273.0" y="1137.2" class="node-detail">followed by row support</text>
-<text x="1273.0" y="1167.2" class="node-meta">prog:isometry_pursuit · archival/method.tex:243</text>
+<text x="1273.0" y="1167.2" class="node-meta">prog:isometry_pursuit · archival/method.tex:254</text>
 <title>definition: Isometry Pursuit
 Minimum-norm MBP on w(X) with target I_D, followed by row support</title></g>
 <g id="prop_penalty_invariance">
@@ -381,7 +375,7 @@ Minimum-norm MBP on w(X) with target I_D, followed by row support</title></g>
 <text x="1273.0" y="1263.8" class="node-title">Group penalty is right-unitary</text>
 <text x="1273.0" y="1280.8" class="node-title">invariant</text>
 <text x="1273.0" y="1300.8" class="node-detail">||beta U||_{1,2} = ||beta||_{1,2}</text>
-<text x="1273.0" y="1344.8" class="node-meta">prop:basis_pursuit_loss_equivalence · archival/supplement.tex:472</text>
+<text x="1273.0" y="1344.8" class="node-meta">prop:basis_pursuit_loss_equivalence · archival/supplement.tex:593</text>
 <title>proposition: Group penalty is right-unitary invariant
 ||beta U||_{1,2} = ||beta||_{1,2}
 status: duplicate-label</title></g>
@@ -390,7 +384,7 @@ status: duplicate-label</title></g>
 <text x="1273.0" y="1441.2" class="node-title">MBP solution is basis-equivariant</text>
 <text x="1273.0" y="1477.2" class="node-detail">Current statement omits the apparent transpose;</text>
 <text x="1273.0" y="1492.2" class="node-detail">see MANUSCRIPT_ISSUES.md</text>
-<text x="1273.0" y="1522.2" class="node-meta">prop:basis_pursuit_loss_equivalence · archival/supplement.tex:488</text>
+<text x="1273.0" y="1522.2" class="node-meta">prop:basis_pursuit_loss_equivalence · archival/supplement.tex:609</text>
 <title>proposition: MBP solution is basis-equivariant
 Current statement omits the apparent transpose; see MANUSCRIPT_ISSUES.md
 status: duplicate-label; possible-transpose-error</title></g>
@@ -398,16 +392,17 @@ status: duplicate-label; possible-transpose-error</title></g>
 <rect x="1663.0" y="190.4" width="330" height="112" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="1675.0" y="211.4" class="node-title">IP support is basis-invariant</text>
 <text x="1675.0" y="247.4" class="node-detail">S(beta_hat(UX)) = S(beta_hat(X))</text>
-<text x="1675.0" y="292.4" class="node-meta">prop:basis_pursuit_selection_invariance · archival/method.tex:265</text>
+<text x="1675.0" y="292.4" class="node-meta">prop:basis_pursuit_selection_invariance · archival/method.tex:276</text>
 <title>proposition: IP support is basis-invariant
-S(beta_hat(UX)) = S(beta_hat(X))</title></g>
+S(beta_hat(UX)) = S(beta_hat(X))
+proof: archival/supplement.tex:588</title></g>
 <g id="prop_kkt_isometry">
 <rect x="1663.0" y="393.3" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
 <text x="1675.0" y="414.3" class="node-title">An isometric subset yields an MBP</text>
 <text x="1675.0" y="431.3" class="node-title">minimizer</text>
 <text x="1675.0" y="451.3" class="node-detail">KKT certificate for the solution supported on an</text>
 <text x="1675.0" y="466.3" class="node-detail">orthonormal subset</text>
-<text x="1675.0" y="495.3" class="node-meta">prop:kkt · archival/supplement.tex:509</text>
+<text x="1675.0" y="495.3" class="node-meta">prop:kkt · archival/supplement.tex:630</text>
 <title>proposition: An isometric subset yields an MBP minimizer
 KKT certificate for the solution supported on an orthonormal subset
 status: malformed-statement</title></g>
@@ -417,32 +412,35 @@ status: malformed-statement</title></g>
 <text x="1675.0" y="634.1" class="node-title">minimizing supports</text>
 <text x="1675.0" y="654.1" class="node-detail">The selected minimum-Frobenius solution is</text>
 <text x="1675.0" y="669.1" class="node-detail">asserted to have maximal support</text>
-<text x="1675.0" y="698.1" class="node-meta">prop:support_containment · archival/supplement.tex:569</text>
+<text x="1675.0" y="698.1" class="node-meta">prop:support_containment · archival/supplement.tex:690</text>
 <title>proposition: Minimum-norm support equals union of minimizing supports
 The selected minimum-Frobenius solution is asserted to have maximal support
-status: needs-proof-review</title></g>
+proof: archival/supplement.tex:695
+status: needs-proof-review: row-norm vectors are asserted to form an affine space</title></g>
 <g id="prop_exact_containment">
 <rect x="1663.0" y="799.0" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
 <text x="1675.0" y="820.0" class="node-title">Exact-isometry containment</text>
 <text x="1675.0" y="856.0" class="node-detail">If an orthonormal D-column subset exists, IP</text>
 <text x="1675.0" y="871.0" class="node-detail">contains it</text>
-<text x="1675.0" y="901.0" class="node-meta">prop:unitary_selection · archival/method.tex:269</text>
+<text x="1675.0" y="901.0" class="node-meta">prop:unitary_selection · archival/method.tex:285</text>
 <title>proposition: Exact-isometry containment
 If an orthonormal D-column subset exists, IP contains it
+proof: archival/supplement.tex:625
 status: statement compares set with coefficient matrix</title></g>
 <g id="prop_D_min">
 <rect x="1663.0" y="1001.9" width="330" height="112" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4" filter="url(#shadow)"/>
 <text x="1675.0" y="1022.9" class="node-title">Cardinality-D optimum is an isometry</text>
 <text x="1675.0" y="1058.9" class="node-detail">ell(X_S)=D iff X_S X_S^T=I_D for |S|=D</text>
-<text x="1675.0" y="1103.9" class="node-meta">prop:D_min · archival/method.tex:304</text>
+<text x="1675.0" y="1103.9" class="node-meta">prop:D_min · archival/method.tex:316</text>
 <title>proposition: Cardinality-D optimum is an isometry
-ell(X_S)=D iff X_S X_S^T=I_D for |S|=D</title></g>
+ell(X_S)=D iff X_S X_S^T=I_D for |S|=D
+proof: archival/supplement.tex:706</title></g>
 <g id="example_mercedes">
 <rect x="1663.0" y="1204.7" width="330" height="112" rx="10" fill="#f3e8ff" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
 <text x="1675.0" y="1225.7" class="node-title">Mercedes-Benz minimum-norm frame</text>
 <text x="1675.0" y="1261.7" class="node-detail">A non-isometric tight frame attains the IP lower</text>
 <text x="1675.0" y="1276.7" class="node-detail">bound</text>
-<text x="1675.0" y="1306.7" class="node-meta">prop:the_benzito · archival/method.tex:305</text>
+<text x="1675.0" y="1306.7" class="node-meta">prop:the_benzito · archival/method.tex:322</text>
 <title>example: Mercedes-Benz minimum-norm frame
 A non-isometric tight frame attains the IP lower bound
 status: duplicate-label</title></g>
@@ -450,7 +448,7 @@ status: duplicate-label</title></g>
 <rect x="1663.0" y="1407.6" width="330" height="112" rx="10" fill="#f3e8ff" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
 <text x="1675.0" y="1428.6" class="node-title">Supplementary frame example</text>
 <text x="1675.0" y="1464.6" class="node-detail">An unfinished higher-dimensional frame example</text>
-<text x="1675.0" y="1509.6" class="node-meta">prop:the_benzito · archival/supplement.tex:901</text>
+<text x="1675.0" y="1509.6" class="node-meta">prop:the_benzito · archival/supplement.tex:1034</text>
 <title>example: Supplementary frame example
 An unfinished higher-dimensional frame example
 status: duplicate-label; unfinished</title></g>
@@ -459,7 +457,7 @@ status: duplicate-label; unfinished</title></g>
 <text x="2077.0" y="346.7" class="node-title">Two-stage Isometry Pursuit</text>
 <text x="2077.0" y="382.7" class="node-detail">IP screening followed by cardinality-D discrete</text>
 <text x="2077.0" y="397.7" class="node-detail">search</text>
-<text x="2077.0" y="427.7" class="node-meta">unlabeled · archival/method.tex:287</text>
+<text x="2077.0" y="427.7" class="node-meta">unlabeled · archival/method.tex:304</text>
 <title>algorithm: Two-stage Isometry Pursuit
 IP screening followed by cardinality-D discrete search
 status: unlabeled</title></g>
@@ -467,7 +465,7 @@ status: unlabeled</title></g>
 <rect x="2065.0" y="799.0" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
 <text x="2077.0" y="820.0" class="node-title">Spectral-loss evaluation cost</text>
 <text x="2077.0" y="856.0" class="node-detail">C_ell = O(D^2 P)</text>
-<text x="2077.0" y="901.0" class="node-meta">prop:computational_complexity · archival/method.tex:331</text>
+<text x="2077.0" y="901.0" class="node-meta">prop:computational_complexity · archival/method.tex:348</text>
 <title>proposition: Spectral-loss evaluation cost
 C_ell = O(D^2 P)
 status: duplicate-label</title></g>
@@ -475,9 +473,10 @@ status: duplicate-label</title></g>
 <rect x="2065.0" y="1272.3" width="330" height="112" rx="10" fill="#dcfce7" stroke="#dc2626" stroke-width="2.2" stroke-dasharray="7 4" filter="url(#shadow)"/>
 <text x="2077.0" y="1293.3" class="node-title">IP per-step complexity</text>
 <text x="2077.0" y="1329.3" class="node-detail">Each Isometry Pursuit step is O(D^2 P)</text>
-<text x="2077.0" y="1374.3" class="node-meta">prop:computational_complexity · archival/method.tex:337</text>
+<text x="2077.0" y="1374.3" class="node-meta">prop:computational_complexity · archival/method.tex:354</text>
 <title>proposition: IP per-step complexity
 Each Isometry Pursuit step is O(D^2 P)
+proof: archival/supplement.tex:715
 status: duplicate-label; needs-proof-review</title></g>
-<text x="55" y="1652" class="node-detail">46 nodes · 67 dependency edges · red dashed borders identify manuscript cleanup items</text>
+<text x="55" y="1652" class="node-detail">45 nodes · 71 edges (solid dependencies, dashed context) · red dashed borders identify manuscript cleanup items</text>
 </svg>

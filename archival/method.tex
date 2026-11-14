@@ -298,6 +298,7 @@ We then apply a simple argument to show that the $\ell_2$ minimizing solution is
 Proposition \ref{prop:unitary_selection} suggests the following algorithm, which first uses the convex \isometrypursuit~ algorithm to prune the $P$ candidate features and then applies brute search upon the reduced feature set.
 The proposition says that this approach is guaranteed to select an isometric submatrix should one exist.
 The two-stage approach is standard in the Lasso literature \citep{Meinshausen2007-ey, Hesterberg2008-iy, Koelle2022-ju}, and Proposition \ref{prop:unitary_selection} justifies it in our application.
+Bruckmeier et al.\ also use a convex relaxation to restrict subsequent discrete search \citep{Bruckmeier2023-cube}.
 This method forms our practical isometry estimator, the core advantage of which over purely brute search is a substantially improved computational complexity.
 
 \begin{algorithm}[H]
