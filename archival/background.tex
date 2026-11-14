@@ -150,21 +150,27 @@ We now turn our review to the linear algebra literature.
 \setlength{\tabcolsep}{2pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.31\textwidth}*{4}{>{\centering\arraybackslash}p{0.105\textwidth}}@{}}
 \toprule
-\textbf{Loss Function} & \textbf{Definition} & \makecell{\textbf{Unique}\\\textbf{min.}} & \makecell{\textbf{At}\\\textbf{isometry}} & \makecell{\textbf{Unit}\\\textbf{length}} & \makecell{\textbf{Ortho-}\\\textbf{gonal}} \\
+\textbf{Loss function} & \textbf{Definition} & \makecell{\textbf{Property}\\\textbf{\ref{property:rotation_invariance}}\\Rotation} & \makecell{\textbf{Property}\\\textbf{\ref{property:unique_isometry_minimum}}\\Isometry\\minimum} & \makecell{\textbf{Property}\\\textbf{\ref{property:log_symmetry}}\\Column\\symmetry} & \makecell{\textbf{Property}\\\textbf{\ref{property:pathwise}}\\Column\\mono.} \\
 \midrule
-Distortion\\\citep{Kohli2021-lr} & $\sigma_{\max}(X) / \sigma_{\min}(X) - 1$ & No & Yes & No & Yes \\
-Spectral loss & $\sum_{d=1}^D g(\sigma_d(X))$ & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} & \makecell{Depends\\on $g$} \\
-Normalized determinant volume & $\left|\det\left(n_q^{\times D}(X)\right)\right|^{-1}-1$ & No & Yes & Yes & Yes \\
-Frob. pseudoinverse & $\|n_q^{\times P}(X)^\dagger\|_F-\sqrt{D}$ & No & Yes & Yes & Yes \\
-\isometrypursuit & $\|n_q^{\times P}(X)^\dagger\|_{1,2}-D$ & Yes & Yes & Yes & Yes \\
+\makecell[l]{Distortion\\\citep{Kohli2021-lr}} & $\sigma_1(X) / \sigma_D(X) - 1$ & Yes & No & No & No \\
+Spectral divergence & $\sum_{d=1}^D g(\sigma_d(X))$ & Yes & Yes & No & No \\
+Normalized determinant volume & $\left|\det\left(n_q^{\times D}(X)\right)\right|^{-1}-1$ & Yes & Yes & Yes & Yes \\
+Frob. pseudoinverse & $\|(n_q^{\times D}(X))^{-1}\|_F-\sqrt{D}$ & Yes & Yes & Yes & Yes \\
+\isometrypursuit & $\|(n_q^{\times D}(X))^{-1}\|_{1,2}-D$ & Yes & Yes & Yes & Yes \\
 \bottomrule
 \end{tabular}
-\caption{Matrix loss functions evaluated for isometry pursuit. We evaluate four key properties: whether the loss has a unique minimum, whether it is minimized specifically at orthonormal matrices (isometries), whether it prefers unit-length vectors over scaled versions, and whether it prefers orthogonal (orthonormal) structure.}
+\caption{Matrix losses on square, full-rank matrices $X\in\mathbb R^{D\times D}$,
+$D\geq2$, using the normalization profile $q$ in \eqref{eq:normalization}.
+The last four columns correspond to Properties~\ref{property:rotation_invariance}--\ref{property:pathwise}.
+For the spectral divergence, $g$ is continuously differentiable,
+$g(1)=0$, $g(t)=g(t^{-1})$, and $g'(t)>0$ for $t>1$.
+Its failures of column symmetry and monotonicity are shown in
+Section~\ref{proof:inverse_symmetry_impossibility}.
+Property~\ref{property:unique_isometry_minimum} means that the minimizers are
+exactly the isometries, not that a single matrix minimizes the loss.}
 \label{tab:loss_functions}
 \end{table}
 
-% TODO: These two properties overlap with the ``Unique min.'' and ``At isometry''
-% columns in Table \ref{tab:loss_functions}; consider whether both are needed.
 \begin{property}[Rotation invariance]
 \label{property:rotation_invariance}
 A matrix loss $\ell$ is rotation invariant if, for every orthonormal $U \in \mathbb R^{D \times D}$,

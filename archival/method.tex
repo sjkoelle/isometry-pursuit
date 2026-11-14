@@ -20,23 +20,11 @@ Consider functions of the form
 where $g:\mathbb R^+\to\mathbb R^+$ is a scalar penalty.
 Any $g$ uniquely minimized at $1$ provides a suitable penalty on the singular values.
 The following properties are also desirable.
-\begin{property}[Monotonicity away from one]
-\label{property:scalar_monotonicity}
-A scalar penalty $g$ is monotone away from one if
-\[
-g'(t)
-\begin{cases}
-<0 \; : \; 0 < t < 1 \\
-=0 \; : \; t = 1 \\
->0 \; : \; t > 1.
-\end{cases}
-\]
-\end{property}
-
-\begin{property}[Log symmetry]
+\begin{property}[Column log symmetry]
 \label{property:log_symmetry}
-A scalar penalty $g$ is log-symmetric if
-$g(t)=g(t^{-1})$ for every $t>0$.
+A matrix loss $\ell$ is column log-symmetric if replacing any nonzero column
+$x_{.p}$ by $x_{.p}/\|x_{.p}\|_2^2$, with all other columns fixed, leaves
+$\ell$ unchanged.
 \end{property}
 
 \begin{property}[Column-rescaling monotonicity]
@@ -53,12 +41,25 @@ column $x_{.d}$,
 \]
 \end{property}
 
-Unfortunately, we show the following proposition.
 \begin{proposition}
-\label{prop:log_svd_bad}
-There does not exist a $g$ such that $\ell = \sum_{d=1}^D g( \sigma_d(X))$ such that $\ell$ satisfies Property \ref{property:pathwise} and Property \ref{property:log_symmetry}.
+\label{prop:inverse_symmetry_impossibility}
+For $D\geq2$, no loss on invertible matrices in $\mathbb R^{D\times D}$
+satisfies both $\ell(X)=\ell(X^{-1})$ for every invertible $X$ and
+Property~\ref{property:pathwise}.
 \end{proposition}
-A suitable matrix for which no $g$ can be chosen such that a log det divergence satisfies Properties \ref{property:pathwise} and \ref{property:log_symmetry} is shown in Section \ref{sec:nearly_colinear_singular_values}.
+\begin{proposition}[Log-symmetric spectral losses]
+\label{prop:log_svd_bad}
+Let $D\geq2$ and $\ell(X)=\sum_{d=1}^D g(\sigma_d(X))$ on invertible
+$D\times D$ matrices, where $g(t)=g(t^{-1})$ for every $t>0$.
+\begin{enumerate}
+\item $\ell$ cannot satisfy column-rescaling monotonicity
+(Property~\ref{property:pathwise}).
+\item If $g$ is continuously differentiable and $g'(t)>0$ for $t>1$,
+then $\ell$ also cannot satisfy column log symmetry
+(Property~\ref{property:log_symmetry}).
+\end{enumerate}
+\end{proposition}
+Proofs are given in Section~\ref{proof:inverse_symmetry_impossibility}.
 Figure \ref{fig:loss_1d_all} gives graphs of candidate losses when $D=1$.
 A view of the loss landscape for this matrix is shown in Figure \ref{fig:loss_3d_equicorr_landscapes}.
 The level sets of the log det losses are not tangent to length at $r = 1$.
@@ -80,8 +81,8 @@ We replace the maximum by its smooth LogSumExp relaxation
 \begin{align}
 a(t)=\log\left(e^t+e^{t^{-1}}\right).
 \end{align}
-This scalar penalty satisfies Properties \ref{property:scalar_monotonicity} and
-\ref{property:log_symmetry}.  Since $a(1)=\log(2e)$, exponentiating its
+This scalar penalty decreases on $(0,1)$, increases on $(1,\infty)$, and
+satisfies $a(t)=a(t^{-1})$. Since $a(1)=\log(2e)$, exponentiating its
 negative centered value gives the normalization profile
 \begin{align}
 q(t)
@@ -89,7 +90,7 @@ q(t)
 =\frac{2e}{e^t+e^{t^{-1}}}.
 \label{eq:normalization}
 \end{align}
-Thus $q(1)=1$, while $q(t)<1$ for $t\neq1$.
+Thus $q(1)=1$, while $q(t)<1$ for $t\neq1$, and $q(t)=q(t^{-1})$.
 
 \begin{definition}
 We define the \textbf{symmetric normalization}
@@ -99,6 +100,8 @@ v &\mapsto \frac{q(\|v\|_2)}{\|v\|_2}v .
 \end{align}
 \label{def:symmetric_normalization}
 \end{definition}
+Since $n_q(v)=n_q(v/\|v\|_2^2)$, any loss applied to the columnwise
+normalized matrix satisfies Property~\ref{property:log_symmetry}.
 
 \begin{proposition}
 \label{prop:normalization_logsumexp}
