@@ -16,3 +16,7 @@ Use these conventions in chat as well as manuscript edits.
 When translating another paper, first identify what each source axis indexes, which axis the selected set restricts, and what the denominator's index ranges over. Then translate into our notation while preserving those meanings. Do not identify a source tangent basis with our dictionary merely because a transpose gives matching dimensions: state any actual change of matrix or preprocessing explicitly. Check dimensions before claiming that a formula needs correction. Use source notation temporarily when the user specifically asks what the source indexes.
 
 For additional notation, read the relevant manuscript definitions and follow them; do not invent a new convention.
+
+Use matching lowercase and uppercase letters for indices and cardinalities: sum over `d=1,\ldots,D`, `p=1,\ldots,P`, or `n=1,\ldots,N`; never write a sum such as `\sum_{p=1}^D`.
+Denote the corresponding index set by the calligraphic uppercase letter, such as `\mathcal D` with cardinality `D`, and write `d\in\mathcal D` when summing over that set.
+Preserve established manuscript names for selected subsets, such as `S`, unless the user requests a notation migration.

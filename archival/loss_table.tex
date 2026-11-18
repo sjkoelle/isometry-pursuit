@@ -1,0 +1,23 @@
+\begin{table}[!t]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.31\textwidth}*{4}{>{\centering\arraybackslash}p{0.105\textwidth}}@{}}
+\toprule
+\textbf{Loss function} & \textbf{Definition} & \makecell{\textbf{Property}\\\textbf{\ref{property:rotation_invariance}}\\Rotation} & \makecell{\textbf{Property}\\\textbf{\ref{property:unique_isometry_minimum}}\\Isometry\\minimum} & \makecell{\textbf{Property}\\\textbf{\ref{property:log_symmetry}}\\Column\\symmetry} & \makecell{\textbf{Property}\\\textbf{\ref{property:pathwise}}\\Column\\mono.} \\
+\midrule
+\makecell[l]{Distortion\\\citep{Kohli2021-lr}} & $\sigma_1(X) / \sigma_D(X) - 1$ & Yes & No & No & No \\
+Spectral loss & $\sum_{d=1}^D g(\sigma_d(X))$ & Yes & Yes & No & No \\
+Normalized determinant volume & $\left|\det\left(n_q^{\times D}(X)\right)\right|^{-1}-1$ & Yes & Yes & Yes & Yes \\
+Frob. pseudoinverse & $\|(n_q^{\times D}(X))^{-1}\|_F-\sqrt{D}$ & Yes & Yes & Yes & Yes \\
+\isometrypursuit & $\|(n_q^{\times D}(X))^{-1}\|_{1,2}-D$ & Yes & Yes & Yes & Yes \\
+\bottomrule
+\end{tabular}
+\caption{Matrix losses on square, full-rank matrices $X\in\mathbb R^{D\times D}$, $D\geq2$, using the normalization function $q$ in \eqref{eq:normalization}.
+Each loss is centered to vanish on isometries.
+The last four columns correspond to Properties~\ref{property:rotation_invariance}--\ref{property:pathwise}.
+For the spectral loss, $g$ is continuously differentiable, $g(1)=0$, $g(t)=g(t^{-1})$, and $g'(t)>0$ for $t>1$.
+Its failures of column symmetry and monotonicity are shown in Section~\ref{proof:inverse_symmetry_impossibility}.
+Property~\ref{property:unique_isometry_minimum} means that the minimizers are exactly the isometries, not that a single matrix minimizes the loss.}
+\label{tab:loss_functions}
+\end{table}

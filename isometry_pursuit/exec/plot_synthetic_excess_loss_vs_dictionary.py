@@ -63,9 +63,17 @@ def main():
     )
     scatter = None
     for ax, (title, loss_key) in zip(axes.flat, METHODS):
+        keep = np.ones(len(runs), dtype=bool)
+        if loss_key in ('forward_backward_full_loss', 'backward_swap_full_loss'):
+            seen = set()
+            for i, run in enumerate(runs):
+                shared = run.get('shared_full_search_key')
+                if shared is not None:
+                    keep[i] = shared not in seen
+                    seen.add(shared)
         losses = np.asarray([run[loss_key] for run in runs], dtype=float)
         excess_losses = losses - target_dimensions
-        finite = np.isfinite(excess_losses)
+        finite = np.isfinite(excess_losses) & keep
         plot_order = order[finite[order]]
         scatter = ax.scatter(
             dictionary_sizes[plot_order],
@@ -84,15 +92,23 @@ def main():
         ax.set_yscale("symlog", linthresh=1e-4, linscale=0.7)
         ax.set_ylim(bottom=-3e-5)
         ax.grid(alpha=0.22)
-        omitted = len(runs) - int(finite.sum())
+        omitted = int(keep.sum()) - int(finite.sum())
         if omitted:
+            missing = [runs[i] for i in np.flatnonzero(keep & ~finite)]
+            errors = [str(run.get(loss_key.removesuffix('_loss') + '_error', '')) for run in missing]
+            not_run = sum('Skipped:' in error or 'work_budget' in error for error in errors)
+            timed = sum('time_limit' in error for error in errors)
+            other = omitted - not_run - timed
+            notes = ([f'{not_run:,} not run (original limit)'] if not_run else [])
+            notes += [f'{timed:,} time-limited'] if timed else []
+            notes += [f'{other:,} unavailable'] if other else []
             ax.text(
-                0.98, 0.04, f"{omitted:,} runs not computed",
+                0.98, 0.04, '\n'.join(notes),
                 transform=ax.transAxes, ha="right", va="bottom",
                 color="0.4", fontsize=9,
             )
 
-    fig.supxlabel(r"Dictionary size $P=D+b d$")
+    fig.supxlabel(r"Dictionary size $P$")
     fig.supylabel(r"Excess loss over ground truth $L-D$")
 
     colorbar = fig.colorbar(scatter, ax=axes, pad=0.015)

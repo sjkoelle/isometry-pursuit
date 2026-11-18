@@ -1,0 +1,282 @@
+{
+  "selection": "Ethanol: first saved agreement, improvement, and deterioration of IP-forward versus full-forward. Synthetic: first replicate at 1, 4, and 16 added blocks.",
+  "ethanol": [
+    {
+      "case": "agreement",
+      "id": "ethanol-replicate-0",
+      "ip_support": [
+        103,
+        151,
+        403
+      ],
+      "methods": {
+        "greedy_swap": {
+          "indices": [
+            151,
+            103
+          ],
+          "saved_loss": 2.1965982347485618,
+          "checked_loss": 2.1965982347485618
+        },
+        "backward_swap": {
+          "indices": [
+            103,
+            151
+          ],
+          "saved_loss": 2.1965982347485613,
+          "checked_loss": 2.1965982347485613
+        },
+        "ip_greedy_swap": {
+          "indices": [
+            151,
+            103
+          ],
+          "saved_loss": 2.1965982347485618,
+          "checked_loss": 2.1965982347485618
+        },
+        "ip_backward_swap": {
+          "indices": [
+            103,
+            151
+          ],
+          "saved_loss": 2.1965982347485613,
+          "checked_loss": 2.1965982347485613
+        }
+      }
+    },
+    {
+      "case": "improvement",
+      "id": "ethanol-replicate-3",
+      "ip_support": [
+        13,
+        103,
+        653
+      ],
+      "methods": {
+        "greedy_swap": {
+          "indices": [
+            13,
+            34
+          ],
+          "saved_loss": 2.4586612776562546,
+          "checked_loss": 2.4586612776562546
+        },
+        "backward_swap": {
+          "indices": [
+            103,
+            653
+          ],
+          "saved_loss": 2.2899440328191494,
+          "checked_loss": 2.2899440328191494
+        },
+        "ip_greedy_swap": {
+          "indices": [
+            653,
+            103
+          ],
+          "saved_loss": 2.2899440328191485,
+          "checked_loss": 2.2899440328191485
+        },
+        "ip_backward_swap": {
+          "indices": [
+            103,
+            653
+          ],
+          "saved_loss": 2.2899440328191494,
+          "checked_loss": 2.2899440328191494
+        }
+      }
+    },
+    {
+      "case": "deterioration",
+      "id": "ethanol-replicate-2",
+      "ip_support": [
+        13,
+        175,
+        403
+      ],
+      "methods": {
+        "greedy_swap": {
+          "indices": [
+            175,
+            103
+          ],
+          "saved_loss": 2.325017131545681,
+          "checked_loss": 2.325017131545681
+        },
+        "backward_swap": {
+          "indices": [
+            175,
+            103
+          ],
+          "saved_loss": 2.325017131545681,
+          "checked_loss": 2.325017131545681
+        },
+        "ip_greedy_swap": {
+          "indices": [
+            175,
+            403
+          ],
+          "saved_loss": 2.4569855650011463,
+          "checked_loss": 2.4569855650011463
+        },
+        "ip_backward_swap": {
+          "indices": [
+            175,
+            403
+          ],
+          "saved_loss": 2.4569855650011463,
+          "checked_loss": 2.4569855650011463
+        }
+      }
+    }
+  ],
+  "synthetic": [
+    {
+      "case": "1 added blocks",
+      "id": "synthetic-run-0",
+      "ip_support": [
+        0,
+        1
+      ],
+      "methods": {
+        "greedy_swap": {
+          "indices": [
+            0,
+            1
+          ],
+          "saved_loss": 2.0,
+          "checked_loss": 2.0
+        },
+        "backward_swap": {
+          "indices": [
+            0,
+            1
+          ],
+          "saved_loss": 2.0,
+          "checked_loss": 2.0
+        },
+        "ip_greedy_swap": {
+          "indices": [
+            0,
+            1
+          ],
+          "saved_loss": 2.0,
+          "checked_loss": 2.0
+        },
+        "ip_backward_swap": {
+          "indices": [
+            0,
+            1
+          ],
+          "saved_loss": 2.0,
+          "checked_loss": 2.0
+        }
+      }
+    },
+    {
+      "case": "4 added blocks",
+      "id": "synthetic-run-50",
+      "ip_support": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "methods": {
+        "greedy_swap": {
+          "indices": [
+            0,
+            1
+          ],
+          "saved_loss": 2.0,
+          "checked_loss": 2.0
+        },
+        "backward_swap": {
+          "indices": [
+            3,
+            4
+          ],
+          "saved_loss": 2.024026228404168,
+          "checked_loss": 2.024026228404168
+        },
+        "ip_greedy_swap": {
+          "indices": [
+            0,
+            1
+          ],
+          "saved_loss": 2.0,
+          "checked_loss": 2.0
+        },
+        "ip_backward_swap": {
+          "indices": [
+            3,
+            4
+          ],
+          "saved_loss": 2.024026228404168,
+          "checked_loss": 2.024026228404168
+        }
+      }
+    },
+    {
+      "case": "16 added blocks",
+      "id": "synthetic-run-100",
+      "ip_support": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "methods": {
+        "greedy_swap": {
+          "indices": [
+            17,
+            12
+          ],
+          "saved_loss": 2.000325009451176,
+          "checked_loss": 2.000325009451176
+        },
+        "backward_swap": {
+          "indices": [
+            7,
+            16
+          ],
+          "saved_loss": 2.002556226462148,
+          "checked_loss": 2.002556226462148
+        },
+        "ip_greedy_swap": {
+          "indices": [
+            17,
+            12
+          ],
+          "saved_loss": 2.000325009451176,
+          "checked_loss": 2.000325009451176
+        },
+        "ip_backward_swap": {
+          "indices": [
+            7,
+            16
+          ],
+          "saved_loss": 2.002556226462148,
+          "checked_loss": 2.002556226462148
+        }
+      }
+    }
+  ]
+}

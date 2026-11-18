@@ -7,6 +7,10 @@ description: Verify cited algorithms, mathematical claims, and literature compar
 
 Verify the specific connection a citation is meant to support. A shared title, problem name, or use of additions and deletions is not enough to establish algorithmic equivalence.
 
+## Prefer published journal versions
+
+Whenever citing or verifying a preprint, always check whether a journal version has appeared. Prefer the journal version and verify the cited claim against that version, since statements and theorem numbering may have changed. Use the existing journal bibliography entry when available, and update active citations to an older preprint of the same work rather than introducing duplicate references. Retain a preprint citation only when no journal version is found or the needed material appears only in the preprint; make that distinction clear when relevant. Do not treat an unsuccessful search as proof that no journal version exists.
+
 ## Read the evidence for the claim
 
 Use the original paper's definitions, algorithm, or theorem and record the relevant section, page, or equation when useful. An abstract can establish broad relevance, but it does not verify a detailed update rule or theorem hypothesis. Distinguish what the source states from our own deduction. If access is incomplete, say exactly what was verified rather than filling gaps from memory. Check existing manuscript citations before recommending a new entry.

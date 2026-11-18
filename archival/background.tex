@@ -1,60 +1,59 @@
 \section{Background}
 
+% Place Table 2 at the top of page 4.
+\newcommand{\placelosstable}{%
+\ifnum\value{page}<4
+\afterpage{\placelosstable}%
+\else
+\input{loss_table.tex}%
+\fi}
+\afterpage{\placelosstable}
+
+
 Our goal is, given a matrix $ X \in \mathbb R^{D \times P}$, to select a subset $ S \subset [P]$ with $| S| = D$ such that $X_{.  S}$ is as orthonormal as possible in a computationally efficient way.
-Figure \ref{fig:data} and \ref{fig:selection} provide a visual depiction of this problem when $D=2$ and $P=30$.
+Figures \ref{fig:data} and \ref{fig:selection} provide a visual depiction of this problem.
 We motivate this problem from the perspective of non-linear embeddings.
 
 \subsection{Isometry}
 
-Isometries are a classical object in numerical linear algebra and geometry.
-They preserve distances and angles, and such can be used faithfully for subsequent human or algorithmic analysis.
-This motivates embedding algorithms such as Local Tangent Space Alignment \citep{ZhangZ:04}, Multidimensional Scaling \citep{ChenBuja:localMDS09}, and Isomap \citep{tenenbaum2000ggf}.
+Isometries preserve distances and angles, and so can be used faithfully for subsequent human or algorithmic analysis \citep{ZhangZ:04,ChenBuja:localMDS09,tenenbaum2000ggf}.
 
-\begin{definition}
+\begin{definition}{\citet{golub2013matrix}}
 \label{def:isometry}
-A matrix $X \in \mathbb R^{D \times D}$ is an \textbf{isometry} or, equivalently, \textbf{unitary} if
-$X X^T = I_D$.
+A matrix $X \in \mathbb R^{D \times D}$ is an \textbf{isometry} or, equivalently, \textbf{unitary} if $X X^T = I_D$.
 
 \end{definition}
 
-\begin{proposition}
+\begin{proposition}{\citet{golub2013matrix}}
 \label{prop:orthonormal_spectrum}
 The singular values $\sigma_1(X) \dots \sigma_D(X)$ are equal to $1$ if and only if $X$ is an isometry.
 \end{proposition}
-\begin{proposition}
+\begin{proposition}{\citet{golub2013matrix}}
 \label{prop:orthonormal_basis}
-If $P = D$, the component vectors $X_{.1} \dots X_{.D} \in \mathbb R^D$ form an isometry if and only if, for all $d, d' \in [D], \langle X_{.d}, X_{.d'} \rangle = \begin{cases}
-1 \; d = d' \\ 
-0 \; d \neq d' 
+If $P = D$, the component vectors $X_{.1} \dots X_{.D} \in \mathbb R^D$ form an isometry if and only if, for all $d, d' \in [D], \langle X_{.d}, X_{.d'} \rangle = \begin{cases} 1 \; d = d' \\ 0 \; d \neq d'
 \end{cases}$.
 \end{proposition}
 
-\begin{definition}
-The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ between $D$ dimensional manifolds $\M \subseteq \mathbb R^B$ and $\N \subseteq \mathbb R^P$ is a map in tangent bases $x_1 \dots x_{D}$ of $T_\xi \M$ and $y_1 \dots y_{D}$ of $T_{\phi(\xi)} \N$ consisting of entries
-\begin{align}
-\label{eq:diff}
-D\phi(\xi)_{ij} = \langle y_i, \frac{\partial \phi}{\partial x_j} \rangle (\xi)
-\end{align}
+\begin{definition}{\citet{Lee2018-rm}}
+The \textbf{differential} of a smooth map $\phi:\mathcal M \to \mathcal N$ between $D$ dimensional manifolds $\M \subseteq \mathbb R^B$ and $\N \subseteq \mathbb R^P$ is a map in orthonormal tangent bases $x_1 \dots x_{D}$ of $T_\xi \M$ and $y_1 \dots y_{D}$ of $T_{\phi(\xi)} \N$ consisting of entries $D\phi(\xi)_{ij} = \langle y_i, \frac{\partial \phi}{\partial x_j} \rangle (\xi)$.
+% Source locator: Lee2018-rm, Appendix A, p. 377.
 \end{definition}
 
-\begin{definition}
+\begin{definition}{\citet{Lee2018-rm}}
 \label{def:isometric_at_a_point}
 A map $\phi$ between $D$ dimensional submanifolds is an \textbf{isometry at a point} $\xi \in \mathcal M$ if $D \phi (\xi)$ is an isometry.
 \end{definition}
 
-\begin{definition}
+\begin{definition}{\citet{Lee2018-rm}}
 \label{def:conformal_at_a_point}
-A map $\phi$ between $D$ dimensional submanifolds is \textbf{conformal at a point} $\xi \in \mathcal M$ if there exists a scalar $\lambda(\xi) > 0$ such that
-${D \phi (\xi)}^T D \phi (\xi) = \lambda(\xi) I_D$.
+A map $\phi$ between $D$ dimensional submanifolds is \textbf{conformal at a point} $\xi \in \mathcal M$ if there exists a scalar $\lambda(\xi) > 0$ such that ${D \phi (\xi)}^T D \phi (\xi) = \lambda(\xi) I_D$.
 \end{definition}
 
-\begin{proposition}
+\begin{proposition}{\citet{Lee2018-rm}}
 \label{prop:distance_differential_isometry}
 Let $\phi:\mathcal M \to \mathcal N$ be a bijection between connected $D$-dimensional Riemannian submanifolds.
-\begin{align}
-d_\mathcal N(\phi(\xi), \phi(\xi')) = d_\mathcal M(\xi, \xi'),
-\end{align}
-if and only if $\phi$ is smooth and is an isometry at every point \citep[Problem~6-7]{Lee2018-rm}.
+Then $d_\mathcal N(\phi(\xi), \phi(\xi')) = d_\mathcal M(\xi, \xi')$ if and only if $\phi$ is smooth and is an isometry at every point.
+% Source locator: Lee2018-rm, Problem 6-7.
 \end{proposition}
 
 \begin{table}[t]
@@ -65,17 +64,16 @@ if and only if $\phi$ is smooth and is an isometry at every point \citep[Problem
 \toprule
 \textbf{Reference} & \textbf{Variable} & \textbf{Loss} & \textbf{Algorithm} \\
 \midrule
-\citet{NEURIPS2019_6a10bbd4} & $S \in \binom{[P]}{M}$ & $\displaystyle
--\frac{1}{N}\sum_{n=1}^N
-\log
+\citet{NEURIPS2019_6a10bbd4} & \makecell{$S \subseteq [P]$\\$1\in S,\ |S|\geq D$} & $\displaystyle
+-\log
 \frac{
-\det\!\left(Df_{.S}(\xi_n)^T Df_{.S}(\xi_n)\right)^{1/2}
+\det\!\left(X_{.S}X_{.S}^T\right)^{1/2}
 }{
-\prod_{s \in S} \|Df_{.s}(\xi_n)\|_2
-}$
+\prod_{d=1}^D \|X_{dS}\|_2
+}$ (Section~\ref{sec:chen_meila_loss})
  & \makecell{BRUTE /\\FORWARD GREEDY} \\
 \citet{Kohli2021-lr} & $S \in \binom{[P]}{D}$ & $\displaystyle
-\frac{\sigma_1(Df_{.S}(\xi))}{\sigma_D(Df_{.S}(\xi))}$ & FORWARD GREEDY \\
+\frac{\sigma_1(Df_{.S}(\xi))}{\sigma_D(Df_{.S}(\xi))}$ (Section~\ref{proof:distortion_is_condition_number}) & FORWARD GREEDY \\
 \citet{Koelle2024-no} & $\beta \in \mathbb R^{N\times P\times D}$ & $\begin{aligned}
 \frac{1}{2}\sum_{n=1}^N
 \|I_d- Df (\xi_n) \beta_{n..} \|_F^2 \\ + \lambda \sqrt{ND}\sum_{p=1}^P
@@ -83,123 +81,64 @@ if and only if $\phi$ is smooth and is an isometry at every point \citep[Problem
 \end{aligned}$ & FISTA \\
 \bottomrule
 \end{tabular}
-\caption{Dictionary-based manifold learning losses. We set the eigenfunction
-penalty to $0$ for \citet{NEURIPS2019_6a10bbd4} to emphasize the geometric
-condition. Chen--Meil\u{a} normalize the rows of the selected tangent-basis
-matrix in our transposed convention; the resulting criterion favors functional
-independence rather than orthogonality of the selected gradients.
-Chen--Meil\u{a} use brute search at fixed cardinality and also
-give a brute-$D$ initialization followed by forward-greedy additions.
-\citet{Kohli2021-lr} use forward-greedy selection; their loss is shown in
-its infinitesimal form from Proposition~\ref{prop:distortion_is_condition_number}.
-The neighborhood distortion and proof are given in
-Section~\ref{proof:distortion_is_condition_number}.}
+\caption{Dictionary-based manifold learning losses.
+We show the Chen--Meil\u{a} loss at a single point, omitting the average over observations.
+Chen--Meil\u{a} use brute search at fixed cardinality and also give a brute-$D$ initialization followed by forward-greedy additions.
+\citet{Kohli2021-lr} use forward-greedy selection; their loss is shown in its infinitesimal form, derived in Section~\ref{proof:distortion_is_condition_number}.}
 \label{tab:losses}
 \end{table}
 
 \subsection{Coordinate selection}
+\label{sec:sparse_convex_coordinate_selection}
 
-More recently, methods for selecting $D$ coordinates from a dictionary $f_{1:P}$ of candidate features have emerged \citep{Kohli2021-lr, Koelle2022-ju, Koelle2024-}.
-Loss functions for isometry vary along many axes.
-For example, functions may be measured at a single point \citep{Kohli2021-lr} or over an entire dataset \citep{Koelle2022-ju, Koelle2024-no, NEURIPS2019_6a10bbd4}.
-The loss function may make use of either linearized or non-linearized objectives.
-Objectives can be computed analytically or from numerical methods.
-Isometry may be relaxed as optimization target to the weaker notion of conformalness or embedding.
-
-The dictionary-based coordinate search problem best subset selection problem is
+Best subset selection algorithms for selecting $D$ coordinates from a dictionary $f_{1:P}$ of candidate features vary along several axes\citep{Kohli2021-lr, Koelle2022-ju, Koelle2024-no}.
+Depending on the loss function used for selection, we can select coordinates that target various metric properties like isometry, conformality, or other well-conditionedness.
+Loss functions can input manifold distances or tangent space differentials, although within an asymptotically shrinking neighborhood, this distinction becomes less important.
+Gradients can be computed analytically or numerically, and the loss can be evaluated at a single point or over an entire dataset.
+Regardless, the dictionary-based coordinate search problem best subset selection problem is
 \begin{align}
 \label{prog:function_best_subset_selection}
 \arg \min_{ S \in \binom{[P]}{D}} \ell ( f_{. S})
 \end{align}
 where $\ell$ is some loss function that measures isometricness of a selected functional subset $f_{. S}$.
-Often, this problem is linearized via defining a loss at a point $\xi$ as 
+
+Greedy algorithms are a standard approach to problems of the form~\eqref{prog:function_best_subset_selection}, but need not find a global minimum.
+\brute~finds a global minimum at cost $O(C_\ell\binom{P}{D})$, where $C_\ell$ is the cost of evaluating $\ell$.
+\greedy~adds the column giving the smallest resulting loss until $D$ columns remain selected; \backwardgreedy~starts with all columns and removes the column giving the smallest resulting loss until $D$ remain.
+\forwardbackward~then takes the best improving selected--unselected column exchange until no exchange reduces the loss.
+Formal algorithms are given in Section~\ref{sec:algorithms}.
+
+Convex relaxation provides another approach to subset selection \citep{Liberti2004-iu, Abdi2013-th, Zhou2021-zz}.
+For example, consider the overcomplete regression problem \citep{Chen2001-hh}
 \begin{align}
-\label{prog:linearized_best_subset_selection}
-\ell  = \ell'(D f_{. S}(\xi))
+\arg \min_{\beta \in \mathbb R^P : y  = X\beta} \ell(\beta),
 \end{align}
-where $\ell'$ is now a loss function that measures the orthonormalness of the matrix $D f_{. S}(\xi)$.
-Non-linear objectives are often gradient estimators of linearized objectives, and so the distinction is smaller than it may appear.
-\begin{proposition}
-\label{prop:distortion_is_condition_number}
-If $f_{.S}$ is continuously differentiable near $\xi$ and $Df_{.S}(\xi)$ is
-invertible, then, with $\operatorname{Distortion}$ defined in
-Section~\ref{proof:distortion_is_condition_number} and $B_{\mathcal M}(\xi,\varepsilon)$ denoting
-the geodesic ball of radius $\varepsilon$ centered at $\xi$,
-\begin{align}
-\lim_{\varepsilon\to 0}
-\operatorname{Distortion}\!\left(f_{.S},B_{\mathcal M}(\xi,\varepsilon)\right)
-=\frac{\sigma_1\!\left(Df_{.S}(\xi)\right)}
-       {\sigma_D\!\left(Df_{.S}(\xi)\right)},
-\end{align}
-the condition number of $Df_{.S}(\xi)$ \citep{GolubWilkinson-condition,Boyd2004-ql}.
-\end{proposition}
-\begin{proposition}
-This is minimized by conformal maps.
-\end{proposition}
-Furthermore, linearization can have computational advantages.
-For example, \citet{Koelle2024-no} computes $Df_{.S}(\xi)$ via automatic differentiation.
+where $P>D$ and the solution $\beta$ is not unique.
+When $\ell(\beta) = \|\beta\|_0$, this non-convex problem searches directly for a sparsest representing subset.
+However, when $\ell(\beta) =\|\beta\|_1$, the problem is a convex relaxation and may be solved efficiently.
+Because the $\ell_1$ objective is scale-sensitive, this relaxation is geometrically meaningful for coordinate selection only after normalizing the columns of $X$ so that sparsity is not confounded with column length.
 
 \subsection{Isometry losses}
 
-So far in this section, we have established the notion and desireableness of isometric embedding, and reviewed algorithms used for selecting column-submatrices that for conditions weaker than isometry.
-We now turn our review to the linear algebra literature.
-
-\begin{table}[t]
-\centering
-\scriptsize
-\setlength{\tabcolsep}{2pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.31\textwidth}*{4}{>{\centering\arraybackslash}p{0.105\textwidth}}@{}}
-\toprule
-\textbf{Loss function} & \textbf{Definition} & \makecell{\textbf{Property}\\\textbf{\ref{property:rotation_invariance}}\\Rotation} & \makecell{\textbf{Property}\\\textbf{\ref{property:unique_isometry_minimum}}\\Isometry\\minimum} & \makecell{\textbf{Property}\\\textbf{\ref{property:log_symmetry}}\\Column\\symmetry} & \makecell{\textbf{Property}\\\textbf{\ref{property:pathwise}}\\Column\\mono.} \\
-\midrule
-\makecell[l]{Distortion\\\citep{Kohli2021-lr}} & $\sigma_1(X) / \sigma_D(X) - 1$ & Yes & No & No & No \\
-Spectral divergence & $\sum_{d=1}^D g(\sigma_d(X))$ & Yes & Yes & No & No \\
-Normalized determinant volume & $\left|\det\left(n_q^{\times D}(X)\right)\right|^{-1}-1$ & Yes & Yes & Yes & Yes \\
-Frob. pseudoinverse & $\|(n_q^{\times D}(X))^{-1}\|_F-\sqrt{D}$ & Yes & Yes & Yes & Yes \\
-\isometrypursuit & $\|(n_q^{\times D}(X))^{-1}\|_{1,2}-D$ & Yes & Yes & Yes & Yes \\
-\bottomrule
-\end{tabular}
-\caption{Matrix losses on square, full-rank matrices $X\in\mathbb R^{D\times D}$,
-$D\geq2$, using the normalization profile $q$ in \eqref{eq:normalization}.
-The last four columns correspond to Properties~\ref{property:rotation_invariance}--\ref{property:pathwise}.
-For the spectral divergence, $g$ is continuously differentiable,
-$g(1)=0$, $g(t)=g(t^{-1})$, and $g'(t)>0$ for $t>1$.
-Its failures of column symmetry and monotonicity are shown in
-Section~\ref{proof:inverse_symmetry_impossibility}.
-Property~\ref{property:unique_isometry_minimum} means that the minimizers are
-exactly the isometries, not that a single matrix minimizes the loss.}
-\label{tab:loss_functions}
-\end{table}
+One family of losses consists of linearized objectives that apply matrix loss functions to the differential $Df_{.S}(\xi)$.
+For $D$ selected functions, isometry at $\xi$ is equivalent to orthonormality of the matrix $Df_{.S}(\xi)$.
 
 \begin{property}[Rotation invariance]
 \label{property:rotation_invariance}
-A matrix loss $\ell$ is rotation invariant if, for every orthonormal $U \in \mathbb R^{D \times D}$,
-\begin{align}
-\ell(UX) = \ell(X).
-\end{align}
+A matrix loss $\ell$ is rotation invariant if, for every orthonormal $U \in \mathbb R^{D \times D}$, $\ell(UX) = \ell(X)$.
 \end{property}
 
 \begin{property}[Unique isometry minimum]
 \label{property:unique_isometry_minimum}
-A matrix loss $\ell$ is uniquely minimized by isometries if
-\begin{align}
-\arg \min_X \ell(X) = \{X : XX^T = I_D\}.
-\end{align}
+A matrix loss $\ell$ is uniquely minimized by isometries if $\arg \min_X \ell(X) = \{X : XX^T = I_D\}$.
 \end{property}
 
 \begin{definition}{\citet{Sra2011-sdivergence}}
-The \textbf{S-divergence} $D(P,P')$ on positive definite matrices $P,P'$ is given by 
-\begin{align}
-D(P,P') = (\log \det (\frac{P + P'}{2}) - \frac{1}{2}\log \det(PP'))^{\frac{1}{2}}.
-\end{align}
+The \textbf{S-divergence} $D(P,P')$ on positive definite matrices $P,P'$ is given by $D(P,P') = (\log \det (\frac{P + P'}{2}) - \frac{1}{2}\log \det(PP'))^{\frac{1}{2}}$.
 \end{definition}
 \begin{proposition}
 \label{prop:sdiv_singular_values}
-If $X^T X$ is positive definite, then
-\begin{align}
-D(X^T X,I_D)^2
-&= \sum_{d=1}^D \log \frac{\sigma_d(X) + \sigma_d(X)^{-1}}{2}.
-\end{align}
+If $X^T X$ is positive definite, then $D(X^T X,I_D)^2 = \sum_{d=1}^D \log \frac{\sigma_d(X) + \sigma_d(X)^{-1}}{2}$.
 \end{proposition}
 \begin{proposition}
 \label{prop:sdiv_minimized_by_isometries}
@@ -209,25 +148,6 @@ See \citep{Cichocki2014-logdet} for a more extensive discussion of other matrix 
 % Alpha, beta, and gamma divergences are investigated in more detail in
 % https://chatgpt.com/share/6af66679-66e8-83e8-a7cc-3c64ee5ad07e
 % We omit that discussion here for brevity.
-In Section \ref{sec:method}, we will examine matrix loss functions capable of selecting isometric submatrices based on their singular values from a generic perspective.
+We call a loss of the form $\ell(X)=\sum_{d=1}^D g(\sigma_d(X))$ a \emph{spectral loss}, where $g:(0,\infty)\to\mathbb R$ is a scalar function and $\sigma_d(X)$ are the singular values of $X$; Table~\ref{tab:loss_functions} includes a spectral loss of this form.
+Figure~\ref{fig:loss_1d_all} gives graphs of candidate losses when $D=1$.
 %TODO: explain how works for PSD not just PD.
-
-\subsection{Sparse convex coordinate selection}
-\label{sec:sparse_convex_coordinate_selection}
-
-Equipped with a function $\ell$ that is minimized by an isometry, objective functions like \ref{prog:function_best_subset_selection} may be optimized in a variety of ways.
-Brute force algorithms consider all possible solutions are guaranteed to find the global minimum, but have the often prohibitive time complexity $O(C_\ell P^D)$ where $C_\ell$ is the cost of evaluating $\ell$.
-In contrast, greedy algorithms consist of iteratively adding one element at a time to $ S$.
-This algorithms have time complexity $O(C_\ell PD)$ and so are computationally more efficient than brute force algorithms, but can get stuck in local minima.
-Formal definitions are given in Section \ref{sec:algorithms}.
-
-Sometimes, it is possible to introduce an objective which convexifies problems of the above form \citep{Liberti2004-iu, Abdi2013-th, Zhou2021-zz}.
-\begin{align}
-\arg \min_{\beta \in \mathbb R^P : y  = X\beta} \rho(\beta) 
-\end{align}
-for an overcomplete regression problem $y = X \beta$ is a classic example \citep{Chen2001-hh}.
-Overcomplete regression problems are distinguished by the fact that $P > D$ and so the solution $\beta$ is not unique.
-When $\rho(\beta) = \|\beta\|_0$, this non-convex problem searches directly for a sparsest representing subset.
-However, when $\rho(\beta) =\|\beta\|_1$, the problem is a convex relaxation and may be solved efficiently e.g. via interior-point methods.
-Because the $\ell_1$ objective is scale-sensitive, this relaxation is geometrically meaningful for coordinate selection only after normalizing the columns of $X$ so that sparsity is not confounded with column length.
-See \citet{JMLR:v23:21-0420} for a recent discussion.

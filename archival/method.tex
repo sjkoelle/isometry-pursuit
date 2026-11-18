@@ -1,216 +1,98 @@
 \section{Method}
 \label{sec:method}
 
-The contributions of this paper is that we introduce an $\ell$ uniquely minimized by isometries that is convex in its parameters, induces sparsity, and is more appropriate than S-divergence when an isometric submatrix is not present in that it always favors vectors of unit length.
-We call this $\ell$ multitask basis pursuit rather than group basis pursuite \citep{Koelle2022-ju,Szeghy2022-ri} since grouping is dependent only on the structure of matrix-valued response variable $I_D$.
-We show that this approach, used to select independent dictionary elements in \citet{Koelle2022-ju, Koelle2024-no}, is in fact capable of usefully solving the more specific problem of selecting pointwise isometries from a dictionary.
-We justify this approach in two ways.
-First, we should that this loss and its {\it method of frames} analog have intuitively preferable geometric properties to S-divergence and other singular-value based losses.
-Second, we exhibit the usefulness of this basis pursuit approach for convexifying the coordinate selection problem.
+We combine column normalization with multitask basis pursuit to select isometric column-submatrices.
+
+% Pin the loss comparison to the top of page 5.
+\newcommand{\placelossfigure}{%
+\ifnum\value{page}<5
+\afterpage{\placelossfigure}%
+\else
+\input{loss_comparison_figure.tex}%
+\fi}
+\afterpage{\placelossfigure}
+
+% Keep the experimental figure at the top of page 7.
+\newcommand{\placeexperimentfigure}{%
+\ifnum\value{page}<7
+\afterpage{\placeexperimentfigure}%
+\else
+\input{experiment_figure.tex}%
+\fi}
+\afterpage{\placeexperimentfigure}
 
 \subsection{The problem with singular values}
 \label{sec:singular_value_problem}
 
-$D(X^TX, I_D)$ is not the only function of $X$ minimized uniquely by orthonormal matrices and invariant under rotation.
-Consider functions of the form
-\begin{align}
-\label{eq:gt_loss}
-\ell(X) = \sum_{d = 1}^D g(\sigma_d(X)),
-\end{align}
-where $g:\mathbb R^+\to\mathbb R^+$ is a scalar penalty.
-Any $g$ uniquely minimized at $1$ provides a suitable penalty on the singular values.
-The following properties are also desirable.
+We consider two additional properties that are intuitively desirable for selecting orthonormal submatrices.
 \begin{property}[Column log symmetry]
 \label{property:log_symmetry}
-A matrix loss $\ell$ is column log-symmetric if replacing any nonzero column
-$x_{.p}$ by $x_{.p}/\|x_{.p}\|_2^2$, with all other columns fixed, leaves
-$\ell$ unchanged.
+A matrix loss $\ell$ is column log-symmetric if replacing any nonzero column $x_{.p}$ by $x_{.p}/\|x_{.p}\|_2^2$, with all other columns fixed, leaves $\ell$ unchanged.
 \end{property}
 
 \begin{property}[Column-rescaling monotonicity]
 \label{property:pathwise}
-A matrix loss $\ell$ is column-rescaling monotone if, for every
-column $x_{.d}$,
-\[
-\frac{\partial\ell}{\partial\|x_{.d}\|_2}
-\begin{cases}
-<0 \; : \; \|x_{.d}\|_2 < 1 \\
-=0 \; : \; \|x_{.d}\|_2 = 1 \\
->0 \; : \; \|x_{.d}\|_2 > 1.
-\end{cases}
-\]
+A matrix loss $\ell$ is column-rescaling monotone if, for every column $x_{.d}$, $\frac{\partial\ell}{\partial\|x_{.d}\|_2}$ is negative, zero, or positive when $\|x_{.d}\|_2<1$, $\|x_{.d}\|_2=1$, or $\|x_{.d}\|_2>1$, respectively.
 \end{property}
 
 \begin{proposition}
 \label{prop:inverse_symmetry_impossibility}
-For $D\geq2$, no loss on invertible matrices in $\mathbb R^{D\times D}$
-satisfies both $\ell(X)=\ell(X^{-1})$ for every invertible $X$ and
-Property~\ref{property:pathwise}.
-\end{proposition}
-\begin{proposition}[Log-symmetric spectral losses]
 \label{prop:log_svd_bad}
-Let $D\geq2$ and $\ell(X)=\sum_{d=1}^D g(\sigma_d(X))$ on invertible
-$D\times D$ matrices, where $g(t)=g(t^{-1})$ for every $t>0$.
-\begin{enumerate}
-\item $\ell$ cannot satisfy column-rescaling monotonicity
-(Property~\ref{property:pathwise}).
-\item If $g$ is continuously differentiable and $g'(t)>0$ for $t>1$,
-then $\ell$ also cannot satisfy column log symmetry
-(Property~\ref{property:log_symmetry}).
-\end{enumerate}
+For $D\geq2$, no loss on invertible matrices in $\mathbb R^{D\times D}$ satisfies both $\ell(X)=\ell(X^{-1})$ for every invertible $X$ and Property~\ref{property:pathwise}.
+In particular, a spectral loss with $g(t)=g(t^{-1})$ for every $t>0$ cannot satisfy column-rescaling monotonicity (Property~\ref{property:pathwise}).
+If $g$ is also continuously differentiable and $g'(t)>0$ for $t>1$, then $\ell$ also cannot satisfy Property~\ref{property:log_symmetry}.
 \end{proposition}
-Proofs are given in Section~\ref{proof:inverse_symmetry_impossibility}.
-Figure \ref{fig:loss_1d_all} gives graphs of candidate losses when $D=1$.
-A view of the loss landscape for this matrix is shown in Figure \ref{fig:loss_3d_equicorr_landscapes}.
-The level sets of the log det losses are not tangent to length at $r = 1$.
-This means that given an angle loss can actually be decreased by shrinking a vector away from length $1$.
-This is an intuitively bad property for a loss that is supposed to prefer orthonormal matrices.
+Figure~\ref{fig:loss_comparison} illustrates Proposition~\ref{prop:inverse_symmetry_impossibility}.
 
-\subsection{Normalization}
+\subsection{Losses of normalized matrices}
 \label{sec:normalization}
 
-Although starting from singular values is bad in the sense of Proposition \ref{prop:log_svd_bad}, other losses do satisfy this property.
-These losses arise from the intuition that we can shrink vectors away from length $1$ according to a symmetric scalar penalty.
-Since basis pursuit methods tend to select longer vectors, selection of orthonormal submatrices requires normalization such that both long and short candidate basis vectors are penalized in the subsequent regression.
-Then, we can apply some loss function to the rescaled matrix that satisfies Property \ref{property:pathwise}.
-
-The obvious symmetric penalty for deviation from unit length is
-$\max(t,t^{-1})$, but it is not differentiable at $t=1$.
-We replace the maximum by its smooth LogSumExp relaxation
-\citep{Boyd2004-ql}
-\begin{align}
-a(t)=\log\left(e^t+e^{t^{-1}}\right).
-\end{align}
-This scalar penalty decreases on $(0,1)$, increases on $(1,\infty)$, and
-satisfies $a(t)=a(t^{-1})$. Since $a(1)=\log(2e)$, exponentiating its
-negative centered value gives the normalization profile
-\begin{align}
-q(t)
-&=\exp\left(a(1)-a(t)\right)
-=\frac{2e}{e^t+e^{t^{-1}}}.
-\label{eq:normalization}
-\end{align}
-Thus $q(1)=1$, while $q(t)<1$ for $t\neq1$, and $q(t)=q(t^{-1})$.
+We introduce losses satisfying Properties~\ref{property:rotation_invariance}--\ref{property:pathwise} by normalizing the columns.
 
 \begin{definition}
-We define the \textbf{symmetric normalization}
-\begin{align}
-n_q: \mathbb R^D \setminus \{0\} &\to \mathbb R^D \\
-v &\mapsto \frac{q(\|v\|_2)}{\|v\|_2}v .
-\end{align}
 \label{def:symmetric_normalization}
+For a function $q:(0,\infty)\to(0,\infty)$ satisfying $q(1)=1$ and $q(t)=q(t^{-1})$, define $n_q:\mathbb R^D\setminus\{0\}\to\mathbb R^D$ by $n_q(v)=\frac{q(\|v\|_2)}{\|v\|_2}v$.
 \end{definition}
-Since $n_q(v)=n_q(v/\|v\|_2^2)$, any loss applied to the columnwise
-normalized matrix satisfies Property~\ref{property:log_symmetry}.
+
+We use $n_q^{\times D}(X)$ to denote column broadcasting of the normalization function, applying $n_q$ to each of the $D$ columns of $X$.
+The obvious choice is $q(t)=\exp(1-\max(t,t^{-1}))$, but it is not differentiable at $t=1$.
+We replace the maximum by its LogSumExp relaxation \citep{Boyd2004-ql} and rescale the resulting function so that $q(1)=1$.
 
 \begin{proposition}
 \label{prop:normalization_logsumexp}
-The inverse profile $1/q$ is the normalized exponential of the LogSumExp
-relaxation of $\max(t,t^{-1})$.
-\end{proposition}
-
-This choice of $q$ has some additional useful properties.
-
-\begin{proposition}
-For $q$ defined in \eqref{eq:normalization}, $-\log q$ is convex.
-\end{proposition}
-
-\begin{proposition}
-The function $q$ defined in \eqref{eq:normalization} is smooth on $\mathbb R^+$.
+For $t>0$, let $a(t)=\operatorname{LogSumExp}(t,t^{-1})=\log(e^t+e^{t^{-1}})$.
+Normalizing $\exp(-a(t))$ to equal one at $t=1$ gives
+\begin{align}
+q(t)=\frac{\exp(-a(t))}{\exp(-a(1))}=\frac{2e}{e^t+e^{t^{-1}}}.
+\label{eq:normalization}
+\end{align}
 \end{proposition}
 
 \begin{proposition}
-For $q$ defined in \eqref{eq:normalization}, $\log q(t)$ decays linearly in $t$ as $t \to \infty$ and in $t^{-1}$ as $t \to 0$.
+For $q$ defined in \eqref{eq:normalization}, $-\log q$ is convex, $q$ is smooth on $(0,\infty)$, and $\log q(t)$ decays linearly in $t$ as $t\to\infty$ and in $t^{-1}$ as $t\to0$.
 \end{proposition}
 
-We plot the effect of this normalization on our example data in Figure \ref{fig:normalization}.
 % why are these important
 % Compared with other functions like $\text{cosh}$
 
-\subsection{Normalized spectral losses}
-
 Many matrix functions applied to suitably normalized matrices are uniquely minimized by orthonormal matrices.
 Two examples are the inverse determinant and the Frobenius norm of the inverse.
-Let $N=n_q^{\times D}(X)$ be square and full rank.
+Figure~\ref{fig:loss_comparison} illustrates the loss characterizations in Table~\ref{tab:loss_functions}.
 \begin{proposition}[Normalized spectral losses]
 \label{prop:normalized_spectral_losses}
-Let $h:(0,\infty)\to\mathbb R$ be twice differentiable with
-$h'(u)<0$ and $h''(u)>0$ for every $u>0$.  Then
-\begin{align}
-L_h(X)
-=\sum_{d=1}^D h\!\left(\sigma_d(N)^2\right)-D h(1)
-\end{align}
-satisfies $L_h(X)\geq0$, with equality if and only if $X^\top X=I_D$, and
-satisfies Property \ref{property:pathwise}.  In particular, these conclusions
-hold for the losses in Propositions
-\ref{prop:determinant_singular_values} and
-\ref{prop:frobenius_inverse_singular_values}.
+For full-rank $X\in\mathbb R^{D\times D}$, let $g:(0,\infty)\to\mathbb R$ be twice differentiable with $g(1)=0$, $g'(t)<0$, and $t g''(t)>g'(t)$ for every $t>0$.
+Then $\ell_g(X)=\sum_{d=1}^D g\!\left(\sigma_d(n_q^{\times D}(X))\right)$ is nonnegative and satisfies Properties~\ref{property:rotation_invariance}--\ref{property:pathwise}.
 \end{proposition}
 \begin{proposition}[Inverse determinant]
 \label{prop:determinant_singular_values}
-The inverse determinant $|\det N|^{-1}$ induces the same ordering as $L_h$ with $h(u)=-\tfrac12\log u$.
+For $g(t)=-\log t$, the centered inverse determinant satisfies $|\det(n_q^{\times D}(X))|^{-1}-1=\exp(\ell_g(X))-1$.
 \end{proposition}
 \begin{proposition}[Inverse Frobenius norm]
 \label{prop:frobenius_inverse_singular_values}
-The inverse Frobenius norm $\|N^{-1}\|_F$ induces the same ordering as $L_h$ with $h(u)=u^{-1}-1$.
+For $g(t)=t^{-2}-1$, the centered inverse Frobenius norm satisfies $\|(n_q^{\times D}(X))^{-1}\|_F-\sqrt D=\sqrt{\ell_g(X)+D}-\sqrt D$.
 \end{proposition}
-Writing $a_d=-\log\sigma_d(N)$, the determinant loss sums $a_d$, while the
-centered frame loss sums $e^{2a_d}-1$; the two are proportional near
-$a_d=0$, but the frame penalty grows exponentially as a singular direction
-collapses.  The frame objective also extends
-directly to an overcomplete normalized dictionary: replacing $\|B\|_F$ by
-$\|B\|_{1,2}$ under the same constraint $NB=I_D$ yields \isometrypursuit.
-%When the columns of $x$ are so normalized, then both the determinant and trace of $X^TX$ are maximized by orthonormal matrices.
-%By Proposition \ref{prop:orthonormal_spectrum}, we can see that $\ell$ is uniquely maximized by orthonormal matrices.
-%Moreover, $g$ is convex, and $\ell( X^{-1}) = \ell( X)$ when $X$ is invertible.
-The stationarity equation in $D=2$ is solved by $g(t)=|\log t|$, whereas the
-same $g$ fails in $D=3$, so it would be disingenuous to show the $D=3$
-landscape without introducing the $D=3$ example.
 
-\begin{figure}[t]
-\centering
-\begin{subfigure}[t]{0.49\textwidth}
-\centering
-\begingroup
-\setlength{\tabcolsep}{1pt}
-\begin{tabular}{@{}cc@{}}
-\includegraphics[width=0.48\linewidth]{../figures/loss_2d_condition_number.png} &
-\includegraphics[width=0.48\linewidth]{../figures/loss_2d_s_divergence_identity.png} \\
-\includegraphics[width=0.48\linewidth]{../figures/loss_2d_absolute_log_singular_values.png} &
-\includegraphics[width=0.48\linewidth]{../figures/loss_2d_normalized_logdet_volume.png} \\
-\includegraphics[width=0.48\linewidth]{../figures/loss_2d_frob_pseudoinverse.png} &
-\includegraphics[width=0.48\linewidth]{../figures/loss_2d_gl_pseudoinverse.png}
-\end{tabular}
-\endgroup
-\caption{$2 \times 2$ matrices.}
-\label{fig:loss_landscapes}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.49\textwidth}
-\centering
-\begingroup
-\setlength{\tabcolsep}{1pt}
-\begin{tabular}{@{}cc@{}}
-\includegraphics[width=0.48\linewidth]{../figures/loss_3d_equicorr_condition_number.png} &
-\includegraphics[width=0.48\linewidth]{../figures/loss_3d_equicorr_s_divergence_identity.png} \\
-\includegraphics[width=0.48\linewidth]{../figures/loss_3d_equicorr_absolute_log_singular_values.png} &
-\includegraphics[width=0.48\linewidth]{../figures/loss_3d_equicorr_normalized_logdet_volume.png} \\
-\includegraphics[width=0.48\linewidth]{../figures/loss_3d_equicorr_frob_pseudoinverse.png} &
-\includegraphics[width=0.48\linewidth]{../figures/loss_3d_equicorr_gl_pseudoinverse.png}
-\end{tabular}
-\endgroup
-\caption{Equicorrelated $3 \times 3$ matrices.}
-\label{fig:loss_3d_equicorr_landscapes}
-\end{subfigure}
-\caption{Loss function comparison. (a) Each landscape varies the length ratio
-$r$ and angle $\theta$ between two column vectors. (b) Each matrix consists of
-three vectors in $\mathbb R^3$ with lengths $(1,r,1)$ and common pairwise
-correlation $\rho$; the horizontal axis varies
-$r=\|v_2\|_2/\|v_1\|_2$ and the vertical axis varies $\rho$.
-S-divergence and absolute log singular value are representative generic
-spectral losses. The red star marks the ideal orthonormal setting:
-$(r,\theta)=(1,\pi/2)$ in (a) and $(r,\rho)=(1,0)$ in (b).
-See Table \ref{tab:loss_functions} for mathematical definitions.}
-\end{figure}
+
 
 % compares it with that produced by basis pursuit after normalization as in Section \ref{sec:normalization}.
 % NOTE (Sam): Do we need proofs of maximized by orthonormal matrices and convex?
@@ -219,148 +101,90 @@ See Table \ref{tab:loss_functions} for mathematical definitions.}
 We have established that there are losses $\ell$ that satisfy our conditions for a good loss function on square matrices $X \in \mathbb R^{D\times D}$.
 However, the computational identification of such matrices is combinatorial in nature.
 To avoid this, we reformulate the problem as a sparse convex optimization problem.
-The Frobenius norm of the inverse has a natural relaxation to the high-dimensional setting in the form of basis pursuit.
+
 
 \subsection{Isometry pursuit}
 
 Isometry pursuit is the application of multitask basis pursuit to the normalized design matrix $w(X)$ to identify submatrices of $ X$ that are as orthonormal as possible.
-Define the multitask basis pursuit penalty 
-\begin{align}
-\label{eq:bp}
-\| \cdot \|_{1,2}: \mathbb R^{P \times D} &\to \mathbb R^+ \\ 
-\beta &\mapsto  \sum_{p=1}^P  \|\beta_{p.}\|_2.
-\end{align}
-Given a matrix $Y \in \mathbb R^{D \times D}$, the multitask basis pursuit solutions are
-\begin{align}
-\label{prog:multitask_basis_pursuit}
-\widehat {\mathcal {\beta}}_{MBP} (X, Y)  := \arg \min_{\beta \in \mathbb R^{P \times D}} \| \beta \|_{1,2} \; : \;Y =  X \beta.
-\end{align}
-
-The multitask basis pursuit solution is often not unique.
-See \citet{Schneider2022-hi} for more details on uniqueness of basis pursuit solutions, for which the uniqueness condition is less strict than in the multitask case.
-We therefore define
-\begin{align}
-\widehat \beta^{\ell_2}_{MLP} (X,Y) := \arg \min \|\beta\|_F : \beta \in \mathcal \beta_{MBP} (X, Y) .
-\end{align}
-By the strong convexity of the $\ell_2$ norm, $\widehat \beta^{\ell_2}_{MLP} (X,Y)$ is well defined.
-% 
-% Given a design matrix $X$, there exists a response variable $y$ such that basis pursuit admits a non-unique solution if and only if the rowspan of the design matrix $X$ contains a sufficient codimension edge of the $p$ dimensional hypercube \citep{Schneider2022-hi}.
-% For multitask basis pursuit non-unique solutions may occur even when this condition is satisfied.
-
-This implicit regularization assumption is reasonable.
-% Mishkin2023-yt is broken
-For example, in \citet{Tibshirani2012-vw} the implicit selection of the minimum $\ell_2$ norm solution among the lasso solutions was proven for the Least Angle Regression Selection (LARS) algorithm for solving the lasso, while \citet{Mishkin2022-yf}  assumes that the group lasso solution is in fact min-norm prior to subsequent theoretical analyses.
-Empirically, the Splitting Conic Solver type method (which is itself a variant of the Alternating Direction Method of Multilpliers) \citep{O-Donoghue2013-wf} stably estimates the min-norm solution when initialized at $0$, but besides a brief exploration in Section \ref{sec:deep_dive} we leave theoretical and experimental proof of this feature of the feature our optimization approach for future work, and instead make the ability of our optimizer to obtain the min-norm solution an assumption of our eventual proposition.
-
-Isometry pursuit is then given by
+For $\beta\in\mathbb R^{P\times D}$, define $\|\beta\|_{1,2}=\sum_{p=1}^P\|\beta_{p.}\|_2$.
+The set of isometry pursuit solutions is
 \begin{align}
 \label{prog:isometry_pursuit}
-\widehat \beta ( X) := \widehat \beta_{MBP}^{\ell_2} ( w(X), I_D )
+\mathcal B(X):=\arg\min_{\beta\in\mathbb R^{P\times D}}\|\beta\|_{1,2}\;:\;I_D=w(X)\beta.
 \end{align}
-where $I_D$ is the $D$ dimensional identity matrix and recovered functions are the indices of the dictionary elements with non-zero coefficients.
-That is, they are given by $S(\beta)$ where
-\begin{align}
-S: \mathbb{R}^{P \times D} &\to \binom{[P]}{D} \\
-\beta &\mapsto \left\{ p \in [P] :  \|\beta_{p.}\| > 0 \right\}.
-\end{align}
+
+Recovered functions are the indices of the dictionary elements with non-zero coefficients.
+That is, they are given by $S(\beta)$, where $S:\mathbb R^{P\times D}\to 2^{[P]}$ is defined by $S(\beta)=\{p\in[P]:\|\beta_{p.}\|_2>0\}$.
 \begin{algorithm}[H]
 \caption{\isometrypursuit(Matrix ${X} \in \mathbb{R}^{D \times P}$)}
 \begin{algorithmic}[1]
 \STATE {Normalize} $X' = w({X})$
-\STATE {Optimize} $\widehat \beta = \widehat \beta_{MBP}^{\ell_2} (X', I_D)$
+\STATE {Optimize} $\widehat \beta \in \mathcal B(X)$
 \STATE {\bf Output} $\widehat{S} = S (\widehat \beta)$
+\end{algorithmic}
+\end{algorithm}
+
+The multitask basis pursuit solution need not be unique \citep{JMLR:v23:21-0420} or cardinality $D$.
+However, Proposition~\ref{prop:unitary_selection} guarantees that the union of supports of all minimizers contains any orthonormal subset.
+Since the recovered support need not have cardinality $D$, we first apply \isometrypursuit~ to prune the $P$ candidate features, then apply \textsc{Greedy} to the reduced dictionary.
+The two-stage approach is standard in the Lasso literature \citep{Meinshausen2007-ey, Hesterberg2008-iy, Koelle2022-ju, Bruckmeier2023-cube}.
+Here \textsc{Greedy} denotes \greedy~or \backwardgreedy~followed by \forwardbackward, as described in Section~\ref{sec:sparse_convex_coordinate_selection}.
+In practice, selection of $\beta\in\mathcal B(X)$ depends on the optimizer (we use SCS \citep{O-Donoghue2013-wf}).
+We empirically assess the supports and greedy searches obtained numerically in Section~\ref{sec:experiments}.
+
+\begin{algorithm}[H]
+\caption{\tsip(Matrix ${X} \in \mathbb{R}^{D \times P}$)}
+\begin{algorithmic}[1]
+\STATE $\widehat{S}_{IP} = \text{\isometrypursuit}(X)$
+\STATE $\widehat{S} = \text{\textsc{Greedy}}({X}_{.\widehat{S}_{IP}}, \ell, D)$ \COMMENT{Return original column indices.}
+\STATE {\bf Output} $\widehat{S}$
 \end{algorithmic}
 \end{algorithm}
 
 \subsection{Theory}
 
 The intuition behind our application of multitask basis pursuit is that submatrices consisting of vectors which are closer to 1 in length and more orthogonal will have smaller loss.
-A key theoretical assertion is that \isometrypursuit~ is invariant to choice of basis for $ X$.
+The collection of optimal supports is invariant to the orthonormal basis used for $X$.
 \begin{proposition}
 \label{prop:basis_pursuit_selection_invariance}
 Let $U \in \mathbb R^{D \times D}$ be orthonormal.
-Then $S(\widehat \beta  (U  X)) = S(\widehat \beta ( X))$.
+Then $\mathcal B(UX)=\{\beta U^\top:\beta\in\mathcal B(X)\}$.
 \end{proposition}
-This proposition establishes the basis-independence of Isometry Pursuit and that we may replace $I_D$ in the constraint by any orthonormal $D \times D$ matrix.
-It is also essential for showing the following main theoretical result.
+Thus the collection of optimal supports is independent of the orthonormal basis.
 
-When a rank $D$ orthonormal column-submatrix $X_{.S}$ exists, the output of Program \ref{prog:isometry_pursuit} will contain $S$.
 \begin{proposition}
-Let $X \in \mathbb R^{D \times P}$ have a rank $D$ orthonormal column submatrix $X_{.S}$.
-Then $S \subseteq \widehat \beta ( X)$.
 \label{prop:unitary_selection}
+Let $X\in\mathbb R^{D\times P}$ contain an orthonormal column-submatrix $X_{.S}$.
+Then $S\subseteq\bigcup_{\beta\in\mathcal B(X)}S(\beta)$.
 \end{proposition}
 
-Proofs of these propositions are given in Section \ref{sec:proofs}, with corresponding experimental results in Section \ref{sec:experiments}.
-The proof mostly relies on the KKT conditions \citep{Hastie2015-qa} being used to verify that an isometric subset yields a corresponding basis pursuit solution for an appropriate normalized matrix.
-This is a formalization of our intuition that longer and more orthogonal vectors will minimize loss.
-We then apply a simple argument to show that the $\ell_2$ minimizing solution is the least sparse solution, which means that it contains the isometry solution, should it exist.
+The orthonormal subset supports a minimizer, but a numerical minimizer need not contain the union of supports.
 
-\subsection{Two-stage isometry pursuit}
-
-Proposition \ref{prop:unitary_selection} suggests the following algorithm, which first uses the convex \isometrypursuit~ algorithm to prune the $P$ candidate features and then applies brute search upon the reduced feature set.
-The proposition says that this approach is guaranteed to select an isometric submatrix should one exist.
-The two-stage approach is standard in the Lasso literature \citep{Meinshausen2007-ey, Hesterberg2008-iy, Koelle2022-ju}, and Proposition \ref{prop:unitary_selection} justifies it in our application.
-Bruckmeier et al.\ also use a convex relaxation to restrict subsequent discrete search \citep{Bruckmeier2023-cube}.
-This method forms our practical isometry estimator, the core advantage of which over purely brute search is a substantially improved computational complexity.
-
-\begin{algorithm}[H]
-\caption{\tsip(Matrix ${X} \in \mathbb{R}^{D \times P}$)}
-\begin{algorithmic}[1]
-\STATE $\widehat{S}_{IP} = \text{\isometrypursuit}( X)$
-\STATE $\widehat{S} = \text {\brute}({X}_{.\widehat{S}_{IP}}, \ell)$
-\STATE {\bf Output} $\widehat{S}$
-\end{algorithmic}
-\end{algorithm}
-
-\subsection{Non-uniqueness}
+\subsubsection{Non-uniqueness}
 
 The isometric solution is optimum among cardinality $D$ solutions.
 \begin{proposition}
 \label{prop:D_min}
 $\ell (X_S) = D , |S| = D \Leftrightarrow X_S X_S^T = I_D$
 \end{proposition}
-However, there exist Isometry Pursuit solutions of minimum norm that are not isometries.
-For example, \textit{Mercedes-Benz frame} matrix $X$ achieves minimium norm.
-\begin{example}
-    Let $D = 2, P = 3$.
-\label{prop:the_benzito}
-Let 
-$X_{S} = \begin{bmatrix}
-0 & \frac{\sqrt{3}}{2}  &  - \frac{\sqrt{3}}{2}\\
-1 & -\frac{1}{2} & -\frac{1}{2} 
-\end{bmatrix},
-    \beta = 
-    \begin{bmatrix}
-    0 & \frac{2}{3} \\
-    \frac{1}{\sqrt{3}}  & - \frac{1}{3} \\
-    - \frac{1}{\sqrt{3}} & - \frac{1}{3}
-    \end{bmatrix}$
-Then $X \beta = I_D$ and $\|\beta\|_{1,2} = \frac{2}{3} + \frac{2}{3} + \frac{2}{3} = 2 = D$.
-Since the identity matrix is a solution regardless of $X_{-S}$, this is a non-isometric minimum loss solution.
-\end{example}
-
-The upshot of this example is that \isometrypursuit~ can select solutions that are relatively non-isometric.
-The Mercedes-Benz frame is an example of a tight frame - a frame whose non-zero singular values are equal.
-While there are non-tight frames that have minimizing solutions, we do not here resolve whether there exist tight frames with unit norm columns that have minimum norm solutions.
-
-\subsection{Computation complexity}
-
-\isometrypursuit~ is more computationally efficient than \brute~ search for the minimizer of $\ell$.
-Interestingly, their asymptotic per-iteration complexities are the same.
 \begin{proposition}
-    \label{prop:computational_complexity}
-    The computational complexity $C_\ell$ of \ref{eq:gt_loss} is $ O(D^2P)$.
+\label{prop:loss_without_isometry}
+Without $|S|=D$, $\ell(X_{.S})=D$ does not imply that $X_{.S}$ contains an orthonormal column-submatrix.
+\end{proposition}
+
+\subsubsection{Computational complexity}
+
+\begin{proposition}
+\label{prop:pseudoinverse_cost}
+For $X\in\mathbb R^{D\times P}$, evaluating $\|X^\dagger\|_{1,2}$ costs $C_\ell=O(DP\min(D,P))$, which is $O(D^2P)$ when $P\geq D$.
 \end{proposition}
 The above proposition follows immediately from the computational complexity of singular value decomposition \citep{Liang2016-qb}.
-The per-iteration complexity of \isometrypursuit~ is also limited by the computational complexity of singular value decomposition, albeit in the more intricate manner described in Section \ref{proof:computational_complexity}.
 \begin{proposition}
 \label{prop:computational_complexity}
 The computational complexity of each step of Isometry Pursuit is $O(D^2P)$.
 \end{proposition}
 
-The difference therefore lies in the relation of the number of iterations required to achieve a given error tolerance with \isometrypursuit~ and \brute.
-To optimize, we use the SCS interior point solver \citep{ocpb:16} from CVXPY \citep{diamond2016cvxpy, agrawal2018rewriting}, which is able to push sparse values arbitrarily close to 0 \citep{cvxpy_sparse_solution}.
-SCS (aka ADMM) has asymptotic (in error) accuracy $\epsilon < O(\frac{1}{\mathcal S})$, where $\mathcal S$ is the number of iterations \citep{He2012-fi}.
-This means that the number of iterations required to achieve a given error tolerance scales inversely with the desired level of accuracy.
-We examine the effect of iteration number on the convergence to a sparse solution in Section \ref{sec:experiments}.
+For $\mathcal S$ iterations of \isometrypursuit, the arithmetic-work proxy is $\mathcal S D^2P$.
+We use the observed iteration count when comparing this proxy with runtime in Figure~\ref{fig:complexity-runtime-early-stop}.
+For \greedy~and \backwardgreedy, we sum the loss-evaluation costs over all candidate additions or deletions.
+We solve the convex optimization problem using SCS \citep{ocpb:16} through CVXPY \citep{diamond2016cvxpy, agrawal2018rewriting}.

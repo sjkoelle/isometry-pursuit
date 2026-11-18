@@ -1,5 +1,9 @@
 \newtheorem{definition}{Definition}
 \newtheorem{proposition}{Proposition}
+\newtheorem{repeatedproposition}{Proposition}
+\newenvironment{restatedproposition}[1]{%
+\renewcommand{\therepeatedproposition}{\ref{#1}}%
+\begin{repeatedproposition}}{\end{repeatedproposition}}
 \newtheorem{property}{Property}
 \newtheorem{example}{Example}
 \usepackage{amsmath}
@@ -8,7 +12,7 @@
 \newcommand{\brute}{{\sc BruteSearch}}
 \newcommand{\greedy}{{\sc GreedySearch}}
 \newcommand{\backwardgreedy}{{\sc BackwardGreedySearch}}
-\newcommand{\forwardbackward}{{\sc ForwardBackwardSearch}}
+\newcommand{\forwardbackward}{{\sc SwapSearch}}
 \newcommand{\tsip}{{\sc TwoStageIsometryPursuit}}
 \usepackage[font=small]{caption}
 \captionsetup[algorithm]{labelformat=empty}
@@ -27,3 +31,5 @@
 \usepackage{xcolor}         % colors
 \usepackage{tikz-cd}
 \newenvironment{proof}{\paragraph{Proof:}}{\hfill$\square$}
+
+\usepackage{afterpage}

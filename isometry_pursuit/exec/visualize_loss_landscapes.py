@@ -312,7 +312,7 @@ def compute_3d_simplex_losses(x):
     return losses
 
 
-def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ratio=3.0):
+def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ratio=3.0, only_1d=False):
     """Generate combined figures with 1D plots on top and 2D heatmaps below."""
     os.makedirs(output_dir, exist_ok=True)
 
@@ -352,6 +352,14 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
         'frob_pseudoinverse',
         'gl_pseudoinverse',
     ]
+    formula_labels = {
+        'condition_number': r'$\sigma_1(X)/\sigma_D(X)-1$',
+        's_divergence_identity': r'$D(X^\top X,I_D)^2$',
+        'absolute_log_singular_values': r'$\sum_d |\log\sigma_d(X)|$',
+        'normalized_determinant': r'$|\det(n_q^{\times D}(X))|^{-1}-1$',
+        'frob_pseudoinverse': r'$\|(n_q^{\times D}(X))^{-1}\|_F-\sqrt{D}$',
+        'gl_pseudoinverse': r'$\|(n_q^{\times D}(X))^{-1}\|_{1,2}-D$',
+    }
 
     loss_configs = {
         'condition_number': {
@@ -438,7 +446,7 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
     from tqdm import tqdm
     total = n_ratio * n_angle
     with tqdm(total=total, desc="Computing grids") as pbar:
-        for i, theta in enumerate(angles):
+        for i, theta in enumerate([] if only_1d else angles):
             for j, r in enumerate(ratios):
                 losses = compute_2d_losses(r, theta)
                 for key in all_loss_names:
@@ -478,7 +486,7 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
             linewidth=2.5,
             linestyle=config.get('linestyle', '-'),
             color=config['color'],
-            label=config['title'],
+            label=formula_labels[loss_name],
         )
     ax.set_xscale('log')
     ax.set_xlim(rs.min(), rs.max())
@@ -491,6 +499,9 @@ def generate_combined_plots(output_dir="figures", n_ratio=60, n_angle=60, max_ra
     fig.savefig(os.path.join(output_dir, 'loss_1d_all.png'), dpi=300)
     print("  Saved loss_1d_all.png")
     plt.close()
+
+    if only_1d:
+        return
 
     for loss_name in all_loss_names:
         config = loss_configs[loss_name]
@@ -978,6 +989,7 @@ def generate_3d_simplex_plots(output_dir="figures", n_simplex=80):
 def main():
     parser = argparse.ArgumentParser(description="Visualize loss function landscapes")
     parser.add_argument("--output-dir", default="figures", help="Output directory")
+    parser.add_argument("--only-1d", action="store_true", help="Regenerate only Figure 1d")
     parser.add_argument("--n-ratio", type=int, default=60, help="2D grid resolution (ratio)")
     parser.add_argument("--n-angle", type=int, default=60, help="2D grid resolution (angle)")
     parser.add_argument("--n-rho", type=int, default=60, help="3D equicorrelation grid resolution (rho)")
@@ -990,7 +1002,9 @@ def main():
     args = parser.parse_args()
 
     print("Generating loss landscape visualizations...\n")
-    generate_combined_plots(args.output_dir, args.n_ratio, args.n_angle)
+    generate_combined_plots(args.output_dir, args.n_ratio, args.n_angle, only_1d=args.only_1d)
+    if args.only_1d:
+        return
     if not args.skip_3d_equicorr:
         generate_3d_equicorrelation_plots(args.output_dir, args.n_ratio, args.n_rho)
     if not args.skip_3d_equicorr_length:

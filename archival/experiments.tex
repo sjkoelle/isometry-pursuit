@@ -1,107 +1,19 @@
 \section{Experiments}
 \label{sec:experiments}
 
-Say you are hosting a dinner party, and wish to select a balanced set of wines for drinking and flowers for decoration.
-We compare four fixed-cardinality search pipelines: forward greedy and backward greedy initialization, each applied either to the full dictionary or after restriction by \isometrypursuit.
-Each initializer is followed by swap search, which evaluates all selected--unselected column pairs and takes the swap that most reduces the loss.
-Fedorov and Wang et al.\ use swap search for D-optimal design \citep{Fedorov1972-optimal,Wang2025-doptimal}.
-Full algorithmic definitions are given in Section~\ref{sec:algorithms}.
-We evaluate these pipelines on the Iris and Wine datasets \citep{misc_iris_53, misc_wine_109, scikit-learn}.
-This has an intuitive interpretation as selecting diverse elements that reflects the peculiar structure of the diversification problem.
-Features like \textit{petal width} are rows in $X$.
-Thus, in diversification, $P = n$.
-Due to differences in scales between features, these are first standardized.
-For the Wine dataset, exhaustive \brute~ search is prohibitive in $D=13$, and so we compare practical discrete searches after random downsampling of candidate columns.
+We study diversification with Iris and Wine \citep{misc_iris_53, misc_wine_109, scikit-learn} and coordinate selection with Ethanol \citep{Chmiela2018-at, Koelle2022-ju}.
+For Iris and Wine, columns of $X$ represent observations and rows represent standardized features; we create replicates by randomly retaining half the columns.
+For Ethanol, we project bond-torsion gradients onto estimated tangent spaces in ambient dimension $B=252$ to form the columns of $X$, and sample molecular configurations for replicates (see \citet{Koelle2022-ju} for preprocessing).
+We also design synthetic dictionaries to exhibit the strengths of \isometrypursuit~and challenge greedy selection: we augment a planted identity block with randomly oriented orthonormal blocks of dimension $d_c<D$.
+All columns have unit length, so initial single-column choices cannot distinguish the planted columns from the added columns, although the planted block provides a known optimum $\ell=D$.
+Figure~\ref{fig:experiment-datasets} reports dataset dimensions and replicate counts.
+We compare the forward and backward greedy initializations followed by swap search defined in Section~\ref{sec:sparse_convex_coordinate_selection}, each applied to the full dictionary or after restriction by \isometrypursuit.
+For synthetic datasets, regret is $\mathcal R_{m,r}=\ell_{m,r}-D$ relative to the known optimum; for real datasets, we use the best observed optimizer on each replicate, $\ell_r^\star=\min_m\ell_{m,r}$, and define regret as $\mathcal R_{m,r}=\ell_{m,r}-\ell_r^\star$.
 
-\begin{figure}[t]
-    \centering
-    \begin{subfigure}[t]{0.49\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{../figures/synthetic_excess_loss_vs_dictionary.png}
-        \caption{Synthetic ground-truth regret.}
-        \label{fig:synthetic-ground-truth-regret}
-    \end{subfigure}\hfill
-    \begin{subfigure}[t]{0.49\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{../figures/complexity_runtime/complexity_vs_runtime_overlay_with_early_stopping.png}
-        \caption{Arithmetic work versus runtime.}
-        \label{fig:complexity-runtime-early-stop}
-    \end{subfigure}
-    \caption{Statistical and computational behavior of the four search
-    pipelines. (a) Ground-truth regret versus dictionary size in the synthetic
-    identity-block experiments. The planted identity block attains raw loss
-    $D$, so the vertical axis is $L-D$ and zero denotes optimal loss. Panels
-    give the four search methods, point area encodes target dimension $D$, and
-    color encodes corrupting dimension $d_c$. Each point is one replicate;
-    text within the backward panels reports runs omitted by the arithmetic-work
-    budget. (b) Arithmetic-work proxies versus measured wall-clock time for
-    the pure forward, \isometrypursuit, and backward initializers; the common
-    swap refinement is omitted. Synthetic points use task-aware stopping for
-    \isometrypursuit, marker shape gives $D$, and stars denote real data. The
-    green dashed line at $10^9$ is the backward-only work budget for the
-    expanded synthetic sweep, not a wall-clock cutoff.}
-\end{figure}
-
-Our main interpretability dataset is the Ethanol dataset from \citet{Chmiela2018-at, Koelle2022-ju}.
-For this dataset we evaluate a dictionary of interpretable features  - bond torsions - for their ability to parameterize the molecular configuration space.
-In this interpretability use case, columns denote gradients of informative features.
-We compute Jacobian matrices of putative parametrization functions and project them onto estimated tangent spaces (see \citet{Koelle2022-ju} for preprocessing details).
-Rather than selecting between data points, we are selecting between functions which parameterize the data.
-Replicates are created by sampling from data points and their corresponding tangent spaces are estimated in $B = 252$.
-This dataset exemplifies our motivating example - the search for locally isometric embeddings.
-
-\input{generated/experiment_table_rows.tex}
-
-\begin{table}[t]
-\tiny
-\centering
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
-\toprule
-Name & $D$ & $P$ & $R$ & $\ell(X_{.\widehat{S}_{FB}})$ & $|\widehat{S}_{IP}|$ & $\ell(X_{.\widehat{S}_{FB \mid IP}})$ &
-\begin{tabular}{c}
-$\widehat P (\ell(X_{.\widehat{S}_{FB}}) >$ \\
-$\ell(X_{.\widehat{S}_{FB \mid IP}}))$
-\end{tabular} &
-\begin{tabular}{c}
-$\widehat P (\ell(X_{.\widehat{S}_{FB}}) =$ \\
-$\ell(X_{.\widehat{S}_{FB \mid IP}}))$
-\end{tabular} &
-\begin{tabular}{c}
-Paired $t$-test \\
-$p$-value
-\end{tabular} \\
-\midrule
-\experimenttablerows
-\bottomrule
-\end{tabular}
-}
-\caption{Experimental parameters and results.
-For Iris and Wine, probability estimates $\widehat P$ result from random downsampling features $[P]$ by a factor of $2$ to create $R$ replicates, while for Ethanol, replicates correspond to individual data points.
-Distributional probabilities $\widehat P (\ell(X_{.\widehat{S}_{FB}}) > \ell(X_{.\widehat{S}_{FB \mid IP}}))$ and $\widehat P (\ell(X_{.\widehat{S}_{FB}}) = \ell(X_{.\widehat{S}_{FB \mid IP}}))$ are empirical across replicates.
-Here $\widehat{S}_{FB}$ denotes the support selected by full-dictionary forward-backward search, and $\widehat{S}_{FB \mid IP}$ denotes the support selected by forward-backward search after restricting the dictionary to $\widehat{S}_{IP}$.
-The final column reports the one-sided paired $t$-test $p$-value for the alternative that full-dictionary forward-backward losses exceed restricted forward-backward losses.
-}
-\label{tab:experiments}
-\end{table}
-
-To compare all four practical searches directly, define the replicate-level
-oracle loss as $\ell_r^\star=\min_m \ell_{m,r}$ and the oracle regret of method
-$m$ as $\mathcal R_{m,r}=\ell_{m,r}-\ell_r^\star$.
-Table~\ref{tab:oracle-regret} reports both the empirical probability of attaining
-the oracle loss and the mean oracle regret.
-
-Figure \ref{fig:synthetic-support-recovery} reports exact recovery rates in the synthetic identity-block experiments.
-Figure \ref{fig:synthetic-ground-truth-regret} compares losses against the known
-ground-truth optimum, while Figure \ref{fig:synthetic-support-size} shows how
-aggressively \isometrypursuit~screens the candidate dictionary.
-Table \ref{tab:experiments} compares the final isometry losses from full-dictionary forward-backward search with losses from forward-backward search inside the \isometrypursuit~ support.
-Table \ref{tab:experiments} and Figure \ref{fig:support_cardinalities} detail intermediate support recovery cardinalities from \isometrypursuit.
-Isometry pursuit substantially reduced the size of the dictionary and made second-stage search computationally feasible.
-Figure \ref{fig:complexity-runtime-early-stop} shows that the arithmetic-work
-proxies track observed runtime and that task-aware stopping substantially reduces
-the \isometrypursuit~cost.  The $10^9$ backward-search boundary is a conservative
-aggregate budget for the replicated sweep: individual problems just beyond it
-may still be inexpensive, whereas the largest omitted settings exceed it by
-more than an order of magnitude. Additional wall-clock summaries are given in
-Section \ref{sec:timing}.
+\isometrypursuit~improves accuracy and initialization time on the large-$D$ synthetic dictionaries, and sometimes improves selections on every dataset, making it useful alongside the other searches.
+At $D=64$, both IP pipelines attain the optimum on all $875$ matrices, compared with $526/875$ for full-dictionary forward initialization and swaps and $799/800$ completed cases for backward initialization and swaps (Figure~\ref{fig:synthetic-ground-truth-regret}).
+For $D=32,64$, IP uses about one-tenth of the aggregate backward-initialization time, while $75$ backward initializations reach the time limit (Figure~\ref{fig:complexity-runtime-early-stop}); these timings exclude swap refinement.
+IP also improves on the baseline of \backwardgreedy~followed by \forwardbackward~on some replicates of every dataset: IP followed by the same searches wins on $4\%$ of replicates in each of Iris, Wine, and Ethanol, and on $4.9\%$ of paired synthetic runs (Figure~\ref{fig:real-search-regrets}).
+The supplementary real-data benchmark also shows competitive IP initialization times (Figure~\ref{fig:optimizer_parameter_sweep}).
+Since no pipeline wins uniformly, we can run multiple pipelines and retain the subset with the lowest observed loss.
+The supplement reports support cardinalities (Figures~\ref{fig:synthetic-support-size} and~\ref{fig:support_cardinalities}) and sensitivity to optimizer settings (Section~\ref{sec:optimizer_sensitivity}).

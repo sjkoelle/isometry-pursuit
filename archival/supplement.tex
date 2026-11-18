@@ -5,19 +5,6 @@ This section contains algorithms, proofs, and experiments in support of the main
 \subsection{Algorithms}
 \label{sec:algorithms}
 
-We give definitions of the brute and greedy algorithms for the combinatorial problem studied in this paper.
-The brute force algorithm is computationally intractable for all but the smallest problems, but always finds the global minima.
-
-\begin{algorithm}[H]
-\caption{\brute(Matrix ${X} \in \mathbb{R}^{D \times P}$, objective $f$)}
-\begin{algorithmic}[1]
-\FOR{each combination $S \subseteq \{1, 2, \dots, P\}$ with $|S| = D$}
-    \STATE Evaluate $f({X}_{.S})$
-\ENDFOR
-\STATE {\bf Output} the combination $S^*$ that minimizes $f({X}_{.S})$
-\end{algorithmic}
-\end{algorithm}
-
 Greedy algorithms are computationally expedient but can get stuck in local optima \citep{Cormen, Russell-09}, even with randomized restarts \citep{Dick2014HowMR}.
 
 \begin{algorithm}[H]
@@ -60,15 +47,9 @@ Greedy algorithms are computationally expedient but can get stuck in local optim
 \end{algorithmic}
 \end{algorithm}
 
-Our swap search evaluates every selected--unselected column pair and takes the
-best improving swap, as in local search for cardinality-constrained D-optimal
-design \citep{Fedorov1972-optimal,Wang2025-doptimal} and column selection
-\citep{Gu1996-strong-rrqr}.
-Zou et al.\ instead sample an incoming column and evaluate its possible swaps
-for reconstruction-based column selection \citep{Zou2024-swap}.
-We initialize with forward selection or backward elimination
-\citep{Mao2004-forward-backward}; related FoBa methods alternate additions and
-deletions rather than jointly choosing a swap \citep{Zhang2008-foba,pmlr-v32-liub14}.
+Our swap search evaluates every selected--unselected column pair and takes the best improving swap, as in local search for cardinality-constrained D-optimal design \citep{Fedorov1972-optimal,Wang2025-doptimal} and column selection \citep{Gu1996-strong-rrqr}.
+Zou et al.\ instead sample an incoming column and evaluate its possible swaps for reconstruction-based column selection \citep{Zou2024-swap}.
+We initialize with forward selection or backward elimination \citep{Mao2004-forward-backward}; related FoBa methods alternate additions and deletions rather than jointly choosing a swap \citep{Zhang2008-foba,pmlr-v32-liub14}.
 
 \begin{algorithm}[H]
 \caption{\forwardbackward(Matrix ${X} \in \mathbb{R}^{D \times P}$, objective $f$)}
@@ -101,42 +82,75 @@ deletions rather than jointly choosing a swap \citep{Zhang2008-foba,pmlr-v32-liu
 \subsection{Proofs}
 \label{sec:proofs}
 
-\subsubsection{Proof of Proposition \ref{prop:distortion_is_condition_number}}
-\label{proof:distortion_is_condition_number}
+\subsubsection{Proofs in support of Table~\ref{tab:losses}}
+\label{sec:table1_proofs}
 
-For a neighborhood $B\subset\mathcal M$, define
+\paragraph{Chen--Meil\u{a}.}
+\label{sec:chen_meila_loss}
+Chen--Meil\u{a} denote the manifold dimension by $d$ and the number of candidate functions by $m$; these are our $D$ and $P$.
+We retain $S$ for the selected index set and drop the observation index and averaging to compare losses at a single point.
+They write $U(i)\in\mathbb R^{m\times d}$ for an orthonormal basis of the embedded tangent space at observation $i$, $U_S(i)$ for its rows indexed by $S$, and $u_k^S(i)$ for column $k$ of $U_S(i)$.
+In our notation, $X=U(i)^T\in\mathbb R^{D\times P}$, so $U_S(i)=X_{.S}^T$ and $\|u_d^S(i)\|_2=\|X_{dS}\|_2$.
+Their candidate functions are Laplacian eigenfunctions; we denote them by $f_p$ and their eigenvalues by $\lambda_p$.
+For $|S|\geq D$ and $1\in S$, their objective averages the following quantity over observations \citep[Eq.~(2)]{NEURIPS2019_6a10bbd4}:
 \begin{align}
-r_S(\xi',\xi'')
-&=\frac{\|f_{.S}(\xi')-f_{.S}(\xi'')\|_2}
-        {d_{\mathcal M}(\xi',\xi'')}, \\
+\mathcal L_i(S;\zeta)
+&=\frac12\log\det(U_S(i)^TU_S(i))-\sum_{d=1}^D\log\|u_d^S(i)\|_2-\zeta\sum_{p\in S}\lambda_p.
+\end{align}
+Setting $\zeta=0$ and negating their objective gives the loss in Table~\ref{tab:losses}:
+\begin{align}
+-\mathcal L_i(S;0)
+&=-\frac12\log\det(X_{.S}X_{.S}^T)+\sum_{d=1}^D\log\|X_{dS}\|_2\\
+&=-\log\frac{\det(X_{.S}X_{.S}^T)^{1/2}}{\prod_{d=1}^D\|X_{dS}\|_2}.
+\end{align}
+
+\paragraph{Kohli et al.}
+\label{proof:distortion_is_condition_number}
+\citet[Eqs.~(1)--(3)]{Kohli2021-lr} define neighborhood distortion as the product of the largest distance expansion and the largest distance contraction:
+\begin{align}
 \operatorname{Distortion}(f_{.S},B)
-&=\frac{\sup_{\xi'\ne\xi''\in B}r_S(\xi',\xi'')}
-        {\inf_{\xi'\ne\xi''\in B}r_S(\xi',\xi'')},
+&=\left(\sup_{\xi'\ne\xi''\in B}\frac{\|f_{.S}(\xi')-f_{.S}(\xi'')\|_2}{d_{\mathcal M}(\xi',\xi'')}\right)
+\left(\sup_{\xi'\ne\xi''\in B}\frac{d_{\mathcal M}(\xi',\xi'')}{\|f_{.S}(\xi')-f_{.S}(\xi'')\|_2}\right)\\
+&=\frac{\sup_{\xi'\ne\xi''\in B}r_S(\xi',\xi'')}{\inf_{\xi'\ne\xi''\in B}r_S(\xi',\xi'')},
+\qquad r_S(\xi',\xi'')=\frac{\|f_{.S}(\xi')-f_{.S}(\xi'')\|_2}{d_{\mathcal M}(\xi',\xi'')},
 \end{align}
 where $d_{\mathcal M}$ is geodesic distance.
 
+\begin{proposition}
+\label{prop:distortion_is_condition_number}
+If $f_{.S}$ is continuously differentiable near $\xi$ and $Df_{.S}(\xi)$ is invertible, then, with $\operatorname{Distortion}$ defined above and $B_{\mathcal M}(\xi,\varepsilon)$ denoting the geodesic ball of radius $\varepsilon$ centered at $\xi$,
+\begin{align}
+\lim_{\varepsilon\to 0}
+\operatorname{Distortion}\!\left(f_{.S},B_{\mathcal M}(\xi,\varepsilon)\right)
+=\frac{\sigma_1\!\left(Df_{.S}(\xi)\right)}
+       {\sigma_D\!\left(Df_{.S}(\xi)\right)},
+\end{align}
+the condition number of $Df_{.S}(\xi)$ \citep{GolubWilkinson-condition,Boyd2004-ql}.
+\end{proposition}
+
 \begin{proof}
-For distinct $\xi',\xi''\in B_{\mathcal M}(\xi,\varepsilon)$, let $u',u''$ be
-their local coordinates, chosen so that the coordinate tangent basis at $\xi$
-is orthonormal. Smoothness of $\mathcal M$ gives
-$d_{\mathcal M}(\xi',\xi'')=\|u'-u''\|_2(1+o(1))$, while continuous
-differentiability of $f_{.S}$ gives
-$f_{.S}(\xi')-f_{.S}(\xi'')=Df_{.S}(\xi)(u'-u'')+o(\|u'-u''\|_2)$,
-uniformly over pairs as $\varepsilon\to0$. Dividing by their separation
-therefore gives
+For distinct $\xi',\xi''\in B_{\mathcal M}(\xi,\varepsilon)$, let $u',u''$ be their local coordinates, chosen so that the coordinate tangent basis at $\xi$ is orthonormal.
+Smoothness of $\mathcal M$ gives $d_{\mathcal M}(\xi',\xi'')=\|u'-u''\|_2(1+o(1))$, while continuous differentiability of $f_{.S}$ gives $f_{.S}(\xi')-f_{.S}(\xi'')=Df_{.S}(\xi)(u'-u'')+o(\|u'-u''\|_2)$, uniformly over pairs as $\varepsilon\to0$.
+Dividing by their separation therefore gives
 \begin{align}
 r_S(\xi',\xi'')
 =\frac{\|Df_{.S}(\xi)(u'-u'')\|_2}{\|u'-u''\|_2}+o(1).
 \end{align}
-Thus $\sup r_S\to\sigma_1(Df_{.S}(\xi))$ and
-$\inf r_S\to\sigma_D(Df_{.S}(\xi))$. When the differential is invertible,
-taking their quotient gives
-$\operatorname{Distortion}(f_{.S},B_{\mathcal M}(\xi,\varepsilon))
-\to\sigma_1(Df_{.S}(\xi))/\sigma_D(Df_{.S}(\xi))$.
+Thus $\sup r_S\to\sigma_1(Df_{.S}(\xi))$ and $\inf r_S\to\sigma_D(Df_{.S}(\xi))$.
+When the differential is invertible, taking their quotient gives $\operatorname{Distortion}(f_{.S},B_{\mathcal M}(\xi,\varepsilon)) \to\sigma_1(Df_{.S}(\xi))/\sigma_D(Df_{.S}(\xi))$.
 \end{proof}
+
+\begin{proposition}
+The condition number is minimized by conformal maps.
+\end{proposition}
+
 
 \subsubsection{Proof of Proposition \ref{prop:sdiv_singular_values}}
 \label{proof:sdiv_singular_values}
+
+\begin{restatedproposition}{prop:sdiv_singular_values}
+If $X^T X$ is positive definite, then $D(X^T X,I_D)^2 = \sum_{d=1}^D \log \frac{\sigma_d(X) + \sigma_d(X)^{-1}}{2}$.
+\end{restatedproposition}
 
 \begin{proof}
 First,
@@ -162,86 +176,149 @@ D(X^T X,I_D)^2
 \subsubsection{Proof of Proposition \ref{prop:normalized_spectral_losses}}
 \label{proof:normalized_spectral_losses}
 
+\begin{restatedproposition}{prop:normalized_spectral_losses}
+For full-rank $X\in\mathbb R^{D\times D}$, let $g:(0,\infty)\to\mathbb R$ be twice differentiable with $g(1)=0$, $g'(t)<0$, and $t g''(t)>g'(t)$ for every $t>0$.
+Then $\ell_g(X)=\sum_{d=1}^D g\!\left(\sigma_d(n_q^{\times D}(X))\right)$ is nonnegative and satisfies Properties~\ref{property:rotation_invariance}--\ref{property:pathwise}.
+\end{restatedproposition}
+
 \begin{proof}
-Write $u_d=\sigma_d(N)^2$.  Since the $p$th column of $N$ has norm
-$q(\|x_{.p}\|_2)$ and $q(t)\leq1$ with equality only at $t=1$,
+\paragraph{Property~\ref{property:rotation_invariance} (Rotation invariance).}
+\emph{``A matrix loss $\ell$ is rotation invariant if, for every orthonormal $U\in\mathbb R^{D\times D}$, $\ell(UX)=\ell(X)$.''}
+
+We first check that column normalization commutes with orthonormal transformations.
+For orthonormal $U$, column normalization gives $n_q^{\times D}(UX)=U n_q^{\times D}(X)$.
+Since $U n_q^{\times D}(X)$ and $n_q^{\times D}(X)$ have the same singular values, $\ell_g(UX)=\ell_g(X)$, which proves Property~\ref{property:rotation_invariance}.
+
+\paragraph{Property~\ref{property:unique_isometry_minimum} (Unique isometry minimum).}
+\emph{``A matrix loss $\ell$ is uniquely minimized by isometries if $\arg\min_X\ell(X)=\{X:XX^T=I_D\}$.''}
+
+\textbf{Nonnegativity: $\ell_g(X)\geq0$.}
+We first bound the average squared singular value of $n_q^{\times D}(X)$ by one.
+Write $u_d=\sigma_d(n_q^{\times D}(X))^2$.
+The squared singular values of a matrix are the eigenvalues of its Gram matrix, so their sum equals its trace and hence its squared Frobenius norm.
+Since the $d$th column of $n_q^{\times D}(X)$ has norm $q(\|x_{.d}\|_2)$ and $q(t)\leq1$ with equality only at $t=1$,
 \begin{align}
 \frac{1}{D}\sum_{d=1}^D u_d
-&=\frac{\|N\|_F^2}{D} \\
-&=\frac{1}{D}\sum_{p=1}^D q(\|x_{.p}\|_2)^2
-\leq1.
+&=\frac{\|n_q^{\times D}(X)\|_F^2}{D} \\
+&=\frac{1}{D}\sum_{d=1}^D q(\|x_{.d}\|_2)^2 \\
+&\leq1.
 \end{align}
-Convexity of $h$ and then its monotonic decrease give
-\begin{align}
-\frac{1}{D}\sum_{d=1}^D h(u_d)
-&\geq h\!\left(\frac{1}{D}\sum_{d=1}^D u_d\right)
-\geq h(1).
-\end{align}
-Hence $L_h(X)\geq0$.  Equality in the first inequality, by strict
-convexity, requires $u_1=\cdots=u_D$, while equality in the second requires
-$D^{-1}\sum_d u_d=1$.  Thus every singular value of $N$ equals one.
-Moreover, equality in $\sum_p q(\|x_{.p}\|_2)^2\leq D$ requires
-$\|x_{.p}\|_2=1$ for every $p$.  Consequently $N=X$ and
-$X^\top X=I_D$.  The converse is immediate.
 
-It remains to verify column-rescaling monotonicity.  Fix all column
-directions and all columns except the $p$th, and let $s>0$ denote the norm of
-the normalized $p$th column.  For a unit vector $v$ in its direction,
+We next show that $\widetilde g(u)=g(\sqrt u)$ is strictly convex and decreasing on $(0,\infty)$.
+Then $\widetilde g(1)=0$, and
 \begin{align}
-N(s)N(s)^\top=A+s^2vv^\top
+\widetilde g'(u)&=\frac{g'(\sqrt u)}{2\sqrt u} \\
+&<0, \\
+\widetilde g''(u)&=\frac{\sqrt u\,g''(\sqrt u)-g'(\sqrt u)}{4u^{3/2}} \\
+&>0.
 \end{align}
-for a fixed positive-semidefinite matrix $A$.  Spectral differentiation gives
-\begin{align}
-\frac{\partial}{\partial s}
-\operatorname{tr}h\!\left(A+s^2vv^\top\right)
-=2s\,v^\top h'\!\left(A+s^2vv^\top\right)v<0,
-\end{align}
-because $h'(u)<0$.  The loss therefore strictly decreases with the normalized
-column length $s=q(\|x_{.p}\|_2)$.  Since $q$ is strictly increasing below
-one, stationary at one, and strictly decreasing above one, the derivative of
-$L_h$ with respect to $\|x_{.p}\|_2$ has exactly the signs in Property
-\ref{property:pathwise}.
 
-Finally,
+We now use this bound to show that the loss is nonnegative.
+The loss evaluates these squared singular values through $\widetilde g$, since $\ell_g(X)=\sum_{d=1}^D\widetilde g(u_d)$.
+Jensen's inequality for the strictly convex function $\widetilde g$, followed by its monotonic decrease, gives
 \begin{align}
-\frac{d^2}{du^2}\left(-\tfrac12\log u\right)&=\frac{1}{2u^2}, &
-\frac{d^2}{du^2}(u^{-1}-1)&=\frac{2}{u^3},
+\frac{1}{D}\sum_{d=1}^D \widetilde g(u_d)
+&\geq \widetilde g\!\left(\frac{1}{D}\sum_{d=1}^D u_d\right) \label{eq:normalized_spectral_jensen} \\
+&\geq \widetilde g(1) \label{eq:normalized_spectral_decreasing_bound} \\
+&=0.
 \end{align}
-and both functions have negative first derivative on $(0,\infty)$, so both
-satisfy the stated conditions.
+Hence $\ell_g(X)\geq0$.
+
+\textbf{Zero loss implies $X^\top X=I_D$.}
+We determine when equality holds in the nonnegativity bound.
+Equality in Jensen's inequality~\eqref{eq:normalized_spectral_jensen}, by strict convexity, requires $u_1=\cdots=u_D$, while equality in~\eqref{eq:normalized_spectral_decreasing_bound} requires $D^{-1}\sum_d u_d=1$.
+Thus every singular value of $n_q^{\times D}(X)$ equals one.
+Zero loss forces equality throughout the nonnegativity bound, so the identity between squared singular values and squared column norms gives $\sum_{d=1}^D q(\|x_{.d}\|_2)^2=D$.
+Moreover, equality in $\sum_{d=1}^D q(\|x_{.d}\|_2)^2\leq D$ requires $\|x_{.d}\|_2=1$ for every $d$.
+Consequently $n_q^{\times D}(X)=X$ and $X^\top X=I_D$.
+
+\textbf{$X^\top X=I_D$ implies zero loss.}
+Conversely, if $X^\top X=I_D$, every column has unit norm, so $n_q^{\times D}(X)=X$.
+Every singular value then equals one, and $g(1)=0$ gives $\ell_g(X)=0$.
+Thus the loss is nonnegative and equals zero if and only if $X^\top X=I_D$, proving Property~\ref{property:unique_isometry_minimum}.
+
+
+\paragraph{Property~\ref{property:log_symmetry} (Column log symmetry).}
+\emph{``A matrix loss $\ell$ is column log-symmetric if replacing any nonzero column $x_{.p}$ by $x_{.p}/\|x_{.p}\|_2^2$, with all other columns fixed, leaves $\ell$ unchanged.''}
+
+We check that reciprocating a column length leaves its normalized value unchanged.
+$q(t)=q(t^{-1})$ gives $n_q(v)=n_q(v/\|v\|_2^2)$.
+Reciprocating any column's length therefore leaves $n_q^{\times D}(X)$ unchanged, which proves Property~\ref{property:log_symmetry}.
+
+
+\paragraph{Property~\ref{property:pathwise} (Column-rescaling monotonicity).}
+\emph{``A matrix loss $\ell$ is column-rescaling monotone if, for every column $x_{.d}$, $\frac{\partial\ell}{\partial\|x_{.d}\|_2}$ is negative, zero, or positive when $\|x_{.d}\|_2<1$, $\|x_{.d}\|_2=1$, or $\|x_{.d}\|_2>1$, respectively.''}
+
+We determine the sign of the loss derivative as one column length varies.
+Fix all column directions and all columns except the $p$th, and write $r=\|x_{.p}\|_2$.
+For a unit vector $v$ in its direction,
+\begin{align}
+n_q^{\times D}(X)n_q^{\times D}(X)^\top=A+q(r)^2vv^\top
+\end{align}
+for a fixed positive-semidefinite matrix $A$.
+Spectral differentiation gives
+\begin{align}
+\frac{\partial\ell_g(X)}{\partial r}
+=2q(r)q'(r)\,v^\top\widetilde g'\!\left(A+q(r)^2vv^\top\right)v.
+\end{align}
+Since $\widetilde g'(u)<0$ and $q(r)>0$, this derivative has the opposite sign to $q'(r)$.
+Since $q$ is strictly increasing below one, stationary at one, and strictly decreasing above one, the derivative of $\ell_g$ with respect to $\|x_{.p}\|_2$ has exactly the signs in Property \ref{property:pathwise}.
+
+
+\paragraph{The two example losses.}
+Finally, for $g(t)=-\log t$,
+\begin{align}
+tg''(t)-g'(t)&=\frac{2}{t} \\
+&>0.
+\end{align}
+For $g(t)=t^{-2}-1$,
+\begin{align}
+tg''(t)-g'(t)&=\frac{8}{t^3} \\
+&>0.
+\end{align}
+Both functions vanish at one and have negative first derivative on $(0,\infty)$.
+The increasing transformations in Propositions~\ref{prop:determinant_singular_values} and~\ref{prop:frobenius_inverse_singular_values} preserve the minimizers and Properties~\ref{property:rotation_invariance}--\ref{property:pathwise}.
 \end{proof}
 
 \subsubsection{Proofs of Propositions
-\ref{prop:determinant_singular_values} and
-\ref{prop:frobenius_inverse_singular_values}}
+\ref{prop:determinant_singular_values} and \ref{prop:frobenius_inverse_singular_values}}
+
+\begin{restatedproposition}{prop:determinant_singular_values}
+For $g(t)=-\log t$, the centered inverse determinant satisfies $|\det(n_q^{\times D}(X))|^{-1}-1=\exp(\ell_g(X))-1$.
+\end{restatedproposition}
+
+\begin{restatedproposition}{prop:frobenius_inverse_singular_values}
+For $g(t)=t^{-2}-1$, the centered inverse Frobenius norm satisfies $\|(n_q^{\times D}(X))^{-1}\|_F-\sqrt D=\sqrt{\ell_g(X)+D}-\sqrt D$.
+\end{restatedproposition}
 
 \begin{proof}
+Write $N=n_q^{\times D}(X)$.
 The determinant is the product of the singular values, so
 \begin{align}
-|\det N|^{-1}
-&=\prod_{d=1}^D\sigma_d(N)^{-1} \\
-&=\exp\left(-\sum_{d=1}^D\log\sigma_d(N)\right).
+|\det N|^{-1}-1
+&=\prod_{d=1}^D\sigma_d(N)^{-1}-1 \\
+&=\exp\left(-\sum_{d=1}^D\log\sigma_d(N)\right)-1
+=\exp(\ell_g(X))-1
 \end{align}
-Because the exponential is strictly increasing, this objective induces the
-same ordering as $-\sum_d\log\sigma_d(N)$, which is $L_h$ for
-$h(u)=-\tfrac12\log u$.  This proves Proposition
-\ref{prop:determinant_singular_values}.
+for $g(t)=-\log t$.
 
-Finally, the singular values of $N^{-1}$ are
-$\sigma_d(N)^{-1}$, and hence
+Finally, the singular values of $N^{-1}$ are $\sigma_d(N)^{-1}$, and hence
 \begin{align}
-\|N^{-1}\|_F
-=\left(\sum_{d=1}^D\sigma_d(N)^{-2}\right)^{1/2}.
+\|N^{-1}\|_F-\sqrt D
+&=\left(\sum_{d=1}^D\sigma_d(N)^{-2}\right)^{1/2}-\sqrt D \\
+&=\sqrt{\ell_g(X)+D}-\sqrt D
 \end{align}
-Because the square root is strictly increasing, this objective induces the
-same ordering as $\sum_d\sigma_d(N)^{-2}-D$, which is $L_h$ for
-$h(u)=u^{-1}-1$.  This proves Proposition
-\ref{prop:frobenius_inverse_singular_values}.
+for $g(t)=t^{-2}-1$.
 \end{proof}
 
-\subsubsection{Proofs of Propositions \ref{prop:inverse_symmetry_impossibility}
-and \ref{prop:log_svd_bad}}
+\subsubsection{Proof of Proposition \ref{prop:inverse_symmetry_impossibility}}
 \label{proof:inverse_symmetry_impossibility}
+
+\begin{restatedproposition}{prop:inverse_symmetry_impossibility}
+For $D\geq2$, no loss on invertible matrices in $\mathbb R^{D\times D}$ satisfies both $\ell(X)=\ell(X^{-1})$ for every invertible $X$ and Property~\ref{property:pathwise}.
+In particular, a spectral loss with $g(t)=g(t^{-1})$ for every $t>0$ cannot satisfy column-rescaling monotonicity (Property~\ref{property:pathwise}).
+If $g$ is also continuously differentiable and $g'(t)>0$ for $t>1$, then $\ell$ also cannot satisfy Property~\ref{property:log_symmetry}.
+\end{restatedproposition}
 
 \begin{proof}
 Let
@@ -254,31 +331,30 @@ Property~\ref{property:pathwise} and $\ell(X)=\ell(X^{-1})$ therefore give
 \begin{align}
 \ell(X)<\ell(2X)=\ell(Z)<\ell(2Z)=\ell(X),
 \end{align}
-a contradiction. For $D>2$, use $\operatorname{diag}(X,I_{D-2})$ and
-$\operatorname{diag}(Z,I_{D-2})$ and double only their first two columns.
-This proves Proposition~\ref{prop:inverse_symmetry_impossibility}.
+a contradiction.
+For $D>2$, use $\operatorname{diag}(X,I_{D-2})$ and $\operatorname{diag}(Z,I_{D-2})$ and double only their first two columns.
+This proves the first claim.
 
-For part 1 of Proposition~\ref{prop:log_svd_bad}, the singular values of
-$X^{-1}$ are the reciprocals of
-those of $X$, so
+For a spectral loss with $g(t)=g(t^{-1})$, the singular values of $X^{-1}$ are the reciprocals of those of $X$, so
 \begin{align}
 \ell(X^{-1})
 =\sum_{d=1}^D g(\sigma_d(X)^{-1})
 =\sum_{d=1}^D g(\sigma_d(X))
 =\ell(X).
 \end{align}
-Proposition~\ref{prop:inverse_symmetry_impossibility} now applies.
-For part 2, let
+The first claim now rules out Property~\ref{property:pathwise}.
+For the column log symmetry claim, let
 \begin{align}
 X(t)=\begin{bmatrix}t&1\\0&1\end{bmatrix},\qquad
 a=\frac{1+\sqrt5}{2}.
 \end{align}
-Write $s_d(t)=\sigma_d(X(t))$. Their squares are the eigenvalues of
+Write $s_d(t)=\sigma_d(X(t))$.
+Their squares are the eigenvalues of
 \begin{align}
 X(t)^\top X(t)=\begin{bmatrix}t^2&t\\t&2\end{bmatrix}.
 \end{align}
-The sum of these eigenvalues is the trace $t^2+2$, and their product is
-the determinant $t^2$. Since $t>0$, this gives
+The sum of these eigenvalues is the trace $t^2+2$, and their product is the determinant $t^2$.
+Since $t>0$, this gives
 \begin{align}
 s_1(t)^2+s_2(t)^2&=t^2+2, & s_1(t)s_2(t)&=t.
 \end{align}
@@ -298,21 +374,27 @@ The chain rule therefore gives
 &=g'(a)s_1'(1)+g'(a^{-1})s_2'(1) \\
 &=\frac{a}{1+a^2}\bigl[g'(a)+g'(a^{-1})\bigr].
 \end{align}
-Differentiating $g(t)=g(t^{-1})$ gives
-$g'(t)=-t^{-2}g'(t^{-1})$, so $g'(a^{-1})=-a^2g'(a)$.
+Differentiating $g(t)=g(t^{-1})$ gives $g'(t)=-t^{-2}g'(t^{-1})$, so $g'(a^{-1})=-a^2g'(a)$.
 Substituting yields
 \begin{align}
 \left.\frac{d}{dt}\ell(X(t))\right|_{t=1}
 =\frac{1-a^2}{1+a^2}\,a g'(a)<0.
 \end{align}
 The inequality follows from $a>1$ and $g'(a)>0$.
-Column log symmetry would require $\ell(X(t))=\ell(X(t^{-1}))$,
-and hence a zero derivative at $t=1$, a contradiction. For $D>2$,
-adjoin $I_{D-2}$.
+Column log symmetry would require $\ell(X(t))=\ell(X(t^{-1}))$, and hence a zero derivative at $t=1$, a contradiction.
+For $D>2$, adjoin $I_{D-2}$.
 \end{proof}
 
 \subsubsection{Proof of Proposition \ref{prop:normalization_logsumexp}}
 \label{proof:normalization_logsumexp}
+
+\begin{restatedproposition}{prop:normalization_logsumexp}
+For $t>0$, let $a(t)=\operatorname{LogSumExp}(t,t^{-1})=\log(e^t+e^{t^{-1}})$.
+Normalizing $\exp(-a(t))$ to equal one at $t=1$ gives
+\begin{align}
+q(t)=\frac{\exp(-a(t))}{\exp(-a(1))}=\frac{2e}{e^t+e^{t^{-1}}}.
+\end{align}
+\end{restatedproposition}
 
 \begin{proof}
 The LogSumExp relaxation of $\max(t,t^{-1})$ is
@@ -337,129 +419,221 @@ Since $q(1)=1$, its inverse is normalized to equal $1$ at $t=1$:
 &=
 \exp\left(\operatorname{LSE}(t,t^{-1}) - 1 - \log 2\right),
 \end{align}
-which is the normalized exponential of the LogSumExp relaxation.
+which gives \eqref{eq:normalization}.
+Writing $a(t)=\log(e^t+e^{t^{-1}})$, we have
+\begin{align}
+a'(t)=\frac{e^t-t^{-2}e^{t^{-1}}}{e^t+e^{t^{-1}}}.
+\end{align}
+This is negative for $t<1$ and positive for $t>1$, so $q$ is uniquely maximized at $1$, with $q(1)=1$.
+The identity $q(t)=q(t^{-1})$ follows directly from its formula and gives $n_q(v)=n_q(v/\|v\|_2^2)$.
+Thus reciprocating any column's length leaves the normalized matrix, and hence any loss applied to it, unchanged.
 \end{proof}
 
 
 \subsubsection{Proof of Proposition \ref{prop:basis_pursuit_selection_invariance}}
 \label{proof:basis_pursuit_program_invariance}
 
-In this proof we first show that the penalty $\|\beta\|_{1,2}$ is unchanged by unitary transformation of $\beta$.
-
- \begin{proposition}
- \label{prop:basis_pursuit_loss_equivalence}
- Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $\|\beta\|_{1,2} = \|\beta U \|$.
-\end{proposition}
+\begin{restatedproposition}{prop:basis_pursuit_selection_invariance}
+Let $U \in \mathbb R^{D \times D}$ be orthonormal.
+Then $\mathcal B(UX)=\{\beta U^\top:\beta\in\mathcal B(X)\}$.
+\end{restatedproposition}
 
 \begin{proof}
-\begin{align}
-\|\beta U \|_{1,2} &= \sum_{p = 1}^P \| \beta_{p.} U \| \\
-&= \sum_{p = 1}^P \| \beta_{p.} \| \\
-&= \|\beta \|_{1,2}
-\end{align}
+Normalization commutes with orthogonal transformations: $w(UX)=Uw(X)$.
+If $w(X)\beta=I_D$, then $w(UX)\beta U^\top=I_D$.
+Right multiplication by $U^\top$ preserves every row norm and hence both the loss and support.
+The inverse map is right multiplication by $U$, giving the stated correspondence.
 \end{proof}
 
-We then show that this implies that the resultant loss is unchanged by unitary transformation of $ X$.
-
-\begin{proposition}
- \label{prop:basis_pursuit_loss_equivalence}
- Let $U \in \mathbb R^{D \times D}$ be unitary.
- Then $\widehat \beta  (U  X) = \widehat \beta  (  X) U$.
-\end{proposition}
-
-\begin{proof}
-\begin{align}
-\widehat \beta  (U  X)  &= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta\|_{1,2}  \; : \; I_{D} = U X \beta \\
-&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta\|_{1,2}  \; : \; U^{-1} U = U^{-1} U X \beta U \\
-&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta\|_{1,2}  \; : \;  I_D = X \beta U \\
-&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta U \|_{1,2}  \; : \;  I_D = X \beta U \\
-&= \arg \min_{\beta \in \mathbb R^{P \times D}} \|\beta \|_{1,2}  \; : \;  I_D = X \beta.
-\end{align}
-\end{proof}
-
-\subsubsection{Proof of Proposition \ref{prop:unitary_selection}}
+\subsubsection{Proof of Proposition~\ref{prop:unitary_selection}}
 \label{proof:unitary_selection}
 
-In this proof we first show that the orthonormal submatrix $X_{.S}$ is contained within the set $\widehat { \mathcal \beta}_{MBP} (w(X), I_D)$.
+\begin{restatedproposition}{prop:unitary_selection}
+Let $X\in\mathbb R^{D\times P}$ contain an orthonormal column-submatrix $X_{.S}$.
+Then $S\subseteq\bigcup_{\beta\in\mathcal B(X)}S(\beta)$.
+\end{restatedproposition}
 
+Write $N=w(X)$, so $\|N_{.p}\|_2\leq1$ for every $p$.
 \begin{proposition}
 \label{prop:kkt}
-Let $X_{.S}$ be a rank $D$ orthonormal submatrix of $X$.
-Then $S \in S(\beta) : \beta \in \widehat{ \mathcal \beta}_{MBP} (w(X), I_D))$.
- \end{proposition}
- 
- \begin{proof}
- 
- By Proposition \ref{prop:basis_pursuit_selection_invariance} without loss of generality, let $X_{.S} = I_D$.
- Also, without loss of generality let $S = \{1 \dotsc D\}$.
- We show that $\beta = [I_D \; 0]$ satisfies the KKT conditions for $X = [I_D \; X_{-S}]$.
- 
-Recall that the KKT conditions for a convex optimization problem are a set of conditions on an element of the domain of the optimization algorithm that, if satisfied, certify that the element is a solution.
-To write out the KKT conditions, we define the Lagrangian
-\begin{align}
-\mathcal L(X,\beta,\nu) = \|\beta\|_{1,2} + \nu^T (I_D - w(X) \beta)
-\end{align}
-where $\nu \in \mathbb R^{D\times D}$ is the dual variable.
-
-The KKT conditions are then
-\begin{itemize}
-\item Primal feasibility: $w(X) \beta = I_D$
-\item Stationarity: there exists a dual variable $\nu$ such that $0 \in \partial \|\beta\|_{1,2} - w(X)^T \nu$  where $\partial$ is the subdifferential operator.
-\end{itemize}
-where dual feasibility and complementary slackness are ignorable by virtue of the absence of inequality constraints.
-
-First note that in our case, primal feasibility is satisfied by $X$ being rank $D$ and $w$ not effecting the rank of the transformed matrix since it only rescales length and not direction.
-
-For stationarity, recall that 
-\begin{align}
-\|\beta\|_{1,2} = \sum_{p = 1}^P \|\beta_{p.}\|_2.
-\end{align}
-Then, by the definition of subdifferential
-\begin{align}
-\partial \|\beta\|_{1,2} = \begin{bmatrix}
-I_D \\
-v_{d+1} \\
-\dotsc \\
-v_P
-\end{bmatrix}
-\end{align}
-where $v_p \in \mathbb R^{D}$ can be any vector satisfying $\|v_p\|_2 \leq 1$.
-
-We therefore must show that there exists a $\nu$ that satisfies
-\begin{align}
-\begin{bmatrix}
-I_D \\
-w(X_{-S})^T
-\end{bmatrix}\nu  = \begin{bmatrix}
-I_D \\
-V_{-S}
-\end{bmatrix}.
-\end{align}
-At this point we can see that in fact $I_D$ is an appropriate choice of $\nu$ since normalization by $w$ leads to vectors satisfying $\|w(X)\|_2 \leq 1$.
-
-Since for this $\beta$, $S(\beta) = S$, we have shown that $S$ is the support of a solution to $\beta_{MBP} (w(X), I_D)$.
+If $X_{.S}$ is orthonormal, some minimizer in $\mathcal B(X)$ has support exactly $S$.
+\end{proposition}
+\begin{proof}
+Set $\beta_{S.}=X_{.S}^\top$ and all other rows to zero.
+Since normalization preserves unit columns, $N\beta=I_D$ and $\|\beta\|_{1,2}=D$.
+Every feasible $\gamma$ satisfies
+\[
+D=\operatorname{tr}(N\gamma)
+=\sum_p\gamma_{p.}N_{.p}
+\leq\sum_p\|\gamma_{p.}\|_2\|N_{.p}\|_2
+\leq\|\gamma\|_{1,2}.
+\]
+Thus $\beta$ is a minimizer supported on $S$.
 \end{proof}
-
-The next part of the proof handles the presence of non-unique solutions.
 
 \begin{proposition}
 \label{prop:support_containment}
-$S(\widehat \beta ( X)) = \cup \; S(\beta) \; : \;  \beta \in  \mathcal \beta_{MBP} (w(X), I_D)$
- \end{proposition}
+Some minimizer $\beta^{\cup}$ satisfies
+\[
+S(\beta^{\cup})
+=\bigcup_{\beta\in\mathcal B(X)}S(\beta).
+\]
+\end{proposition}
+\begin{proof}
+Let $\beta,\gamma$ be minimizers with loss $L_*$.
+Their average is feasible, and
+\[
+L_*\leq\left\|\frac{\beta+\gamma}{2}\right\|_{1,2}
+\leq\frac{\|\beta\|_{1,2}+\|\gamma\|_{1,2}}{2}=L_*.
+\]
+Equality holds in the triangle inequality for each row, so two nonzero rows with the same index are nonnegative multiples of one another.
+Consequently the average has support $S(\beta)\cup S(\gamma)$.
+For each row in the union of supports, choose a minimizer containing that row.
+There are at most $P$ such rows; repeatedly averaging these minimizers gives a minimizer whose support is their union.
+Combining this with Proposition~\ref{prop:kkt} proves Proposition~\ref{prop:unitary_selection}.
+\end{proof}
+
+\subsubsection{Scalar uniqueness and multitask non-uniqueness}
+\label{sec:rotation_nonuniqueness}
+
+\citet[Theorem~2]{JMLR:v23:21-0420} characterize uniqueness of scalar basis pursuit for every response: $\operatorname{row}(X)$ must avoid faces of the dual hypercube $[-1,1]^P$ with codimension greater than $\operatorname{rank}(X)$.
+A face with $k$ coordinates fixed at $\pm1$ has codimension $k$.
+The following example satisfies this condition while the multitask problem has multiple minimizers.
+
+\begin{example}[Four-column rotation]
+\label{example:rotation_nonuniqueness}
+Let $u_\theta=(\cos\theta,\sin\theta)^\top$ and $X_\theta=[e_1,e_2,u_\theta,u_{2\theta}]$, where $e_1,e_2$ are the standard basis vectors of $\mathbb R^2$.
+For $0<\theta<\pi/2$, $\theta\neq\pi/4$, scalar basis pursuit with design $X_\theta$ has a unique minimizer for every response.
+The multitask problem $\mathcal B(X_\theta)$ has a unique minimizer for $0<\theta<\pi/4$ and infinitely many minimizers for $\pi/4<\theta<\pi/2$.
+\end{example}
 
 \begin{proof}
-The proposition follows from geometric properties of the solution set.
-We ignore the case for singleton solutions, for which the proposition is self-evident.
-Recall that $\widehat \beta ( X) := \widehat \beta_{MBP}^{\ell_2} ( w(X), I_D ) =  \arg \min_{\beta \in \mathbb R^{P \times D} } \|\beta\|_F : \beta \in \widehat {\mathcal \beta}_{MBP}(X, I_D)  $.
-By definition of $\widehat {\mathcal \beta}_{MBP} (X, I_D) $, $\|\beta_{p.} \|_2 : \beta \in  \widehat { \mathcal \beta}_{MBP} (X, I_D) $ is an affine linear subspace of $\mathbb R^{P}.$
-The projection of the vector of minimum $\ell_2$ distance from the origin to a affine space intersects that space perpendicularly.
-However, for all $\|\beta_{.p}\|_2$ such that $\beta$ is on the intersection of this affine space with the coordinate hyperplanes formed by fixing any choices of $\|\beta_{.p}\|_2 = 0$, this vector doesn't intersect this space perpendicularly.
-Thus, $\widehat \beta ( X)$ is not on the intersection of the solution polytope $ \widehat {\mathcal \beta}_{MBP} (w(X), I_D)$ with the coordinate hyperplanes.
-It is therefore maximally non-sparse with respect to any of the minimizing solutions.
+The eight signed columns are distinct points on the unit circle.
+If $X_\theta^\top y\in[-1,1]^4$ had three coordinates equal to $\pm1$, three distinct signed columns would lie on the line $y^\top v=1$.
+A line meets the unit circle in at most two points.
+Thus $\operatorname{row}(X_\theta)$ meets no cube face of codimension greater than $2=\operatorname{rank}(X_\theta)$, proving scalar uniqueness.
+
+All columns have unit length, so $w(X_\theta)=X_\theta$.
+The identity-supported solution has loss $2$, and every feasible $\beta$ satisfies
+\begin{align}
+2=\operatorname{tr}(X_\theta\beta)
+=\sum_{p=1}^4\beta_{p.}(X_\theta)_{.p}
+\leq\sum_{p=1}^4\|\beta_{p.}\|_2.
+\end{align}
+Equality requires $\beta_{p.}=c_p(X_\theta)_{.p}^\top$ with $c_p\geq0$.
+Consequently, the minimizers are exactly $\beta=\operatorname{diag}(c)X_\theta^\top$ satisfying $\sum_p c_p(X_\theta)_{.p}(X_\theta)_{.p}^\top=I_2$.
+The off-diagonal equation is
+\begin{align}
+c_3\sin(2\theta)+c_4\sin(4\theta)=0.
+\end{align}
+For $0<\theta<\pi/4$, both sines are positive, forcing $c_3=c_4=0$ and $c_1=c_2=1$.
+For $\pi/4<\theta<\pi/2$, write
+\begin{align}
+q_\theta&=-\frac{\sin(2\theta)}{\sin(4\theta)}>0, &
+a_\theta&=\cos^2\theta+q_\theta\cos^2(2\theta), &
+b_\theta&=\sin^2\theta+q_\theta\sin^2(2\theta).
+\end{align}
+The full set of optimal weights is
+\begin{align}
+c(t)&=(1-a_\theta t,\;1-b_\theta t,\;t,\;q_\theta t), &
+0\leq t&\leq\min\{a_\theta^{-1},b_\theta^{-1}\}.
+\end{align}
+This interval has positive length.
+At $\theta=\pi/3$, it becomes $c(t)=(1-t/2,1-3t/2,t,t)$, $0\leq t\leq2/3$.
+\end{proof}
+
+Once the added columns bracket the $y$-axis, their off-diagonal contributions can cancel, allowing nonzero coefficients without changing the loss.
+The scalar dual unit ball is a hypercube; the dual unit ball for $\|\cdot\|_{1,2}$ is $\{Z\in\mathbb R^{P\times D}:\max_p\|Z_{p.}\|_2\leq1\}$, a product of Euclidean balls.
+The scalar hypercube condition therefore does not characterize uniqueness of the multitask problem.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{../figures/rotation_sweep/four_column_rotation_sweep.pdf}
+\caption{Four-column rotation in Example~\ref{example:rotation_nonuniqueness}.
+Top: total row norm assigned to the two added columns.
+Shading gives its exact range over all minimizers; curves show SCS (scale $0.1$) and direct ADMM ($\rho=1$), both initialized at zero with absolute and relative tolerances $10^{-9}$.
+Every optimum has loss $2$.
+One added column coincides with a basis column at $\theta=\pi/4$; this angle is excluded from the scalar uniqueness claim and numerical sweep.
+Bottom: dictionaries before and after the added columns bracket the $y$-axis.
+Scalar basis pursuit remains unique on both open angle intervals.}
+    \label{fig:rotation-nonuniqueness}
+\end{figure}
+
+\subsubsection{Failure of minimum-Frobenius support containment}
+\label{sec:min_norm_support_failure}
+
+The union of supports of all minimizers contains every orthonormal subset, but the numerical solver need not recover this union.
+\citet{Tibshirani2012TheLP} proves minimum-$\ell_2$-norm selection for an extended least-angle regression algorithm for the Lasso, and \citet{Mishkin2023-yt} characterize minimum-norm group Lasso solutions.
+We do not impose minimum-Frobenius selection; developing an algorithm that selects such a minimizer or recovers the union of supports is future work.
+Even selecting the minimum-Frobenius minimizer does not ensure this containment (Example~\ref{example:min_norm_support_failure}).
+We are not aware of a computationally efficient method for reliably recovering the union of supports at the scales considered here, although one may exist.
+Our experiments evaluate the supports returned by the solver directly.
+The empirical comparisons do not require minimum-Frobenius selection or recovery of the union of supports, and Figure~\ref{fig:optimizer_support_stability} checks support stability on selected real-data replicates.
+
+\begin{example}
+\label{example:min_norm_support_failure}
+Let $D=2$, $P=10$, and
+\begin{align}
+u&=\begin{bmatrix}\sqrt3/2\\1/2\end{bmatrix}, &
+v&=\begin{bmatrix}\sqrt3/2\\-1/2\end{bmatrix}, &
+X&=[e_1,e_2,\underbrace{u,u,u,u}_{4},\underbrace{v,v,v,v}_{4}],
+\end{align}
+where $e_1,e_2$ are the standard basis vectors of $\mathbb R^2$.
+All columns have unit length, so $w(X)=X$.
+The matrix $\beta^{(0)}=[I_2\;0]^\top$ is a basis-pursuit minimizer supported on $\{1,2\}$.
+However, the unique minimum-Frobenius basis-pursuit minimizer is
+\begin{align}
+\beta^*&=\operatorname{diag}(c^*)X^\top, &
+c^*&=(0,2/3,1/6,1/6,1/6,1/6,1/6,1/6,1/6,1/6)^\top.
+\end{align}
+Thus $S(\beta^*)=\{2,\ldots,10\}$ does not contain the orthonormal subset $\{1,2\}$.
+The weights $c_1=1/4$, $c_2=3/4$, and $c_3=\cdots=c_{10}=1/8$ give another minimizer with all ten rows nonzero.
+\end{example}
+
+\begin{proof}
+For any feasible $\beta$, unit column lengths give
+\begin{align}
+2=\operatorname{tr}(X\beta)
+=\sum_{p=1}^{10}\beta_{p.}x_{.p}
+\leq\sum_{p=1}^{10}\|\beta_{p.}\|_2.
+\end{align}
+Since $\beta^{(0)}$ attains $2$, the minimum group norm is $2$.
+Equality requires $\beta_{p.}=c_p x_{.p}^\top$ with $c_p\geq0$ for every $p$.
+Hence every minimizer satisfies
+\begin{align}
+\sum_{p=1}^{10}c_p x_{.p}x_{.p}^\top=I_2,
+\qquad \|\beta\|_F^2=\sum_{p=1}^{10}c_p^2.
+\end{align}
+The off-diagonal constraint gives $\sum_{p=3}^6c_p=\sum_{p=7}^{10}c_p$.
+Write this common sum as $4s$.
+The two diagonal constraints then give
+\begin{align}
+c_1=1-6s,\qquad c_2=1-2s,\qquad 0\leq s\leq1/6.
+\end{align}
+The repeated columns need not have equal coefficients.
+Nevertheless, Cauchy--Schwarz gives
+\begin{align}
+\sum_{p=3}^6c_p^2\geq\frac{(4s)^2}{4}=4s^2,
+\qquad
+\sum_{p=7}^{10}c_p^2\geq4s^2,
+\end{align}
+with equality only when all coefficients within each group equal $s$.
+Consequently every minimizer satisfies
+\begin{align}
+\|\beta\|_F^2
+&\geq(1-6s)^2+(1-2s)^2+8s^2 \\
+&=\frac23+48\left(s-\frac16\right)^2
+\geq\frac23.
+\end{align}
+The matrix $\beta^*$ attains equality: $X\beta^*=I_2$, $\|\beta^*\|_{1,2}=2$, and $\|\beta^*\|_F^2=2/3$.
+Equality forces $s=1/6$ and equal coefficients within both repeated groups, so $\beta^*$ is the unique minimum-Frobenius minimizer.
 \end{proof}
 
 \subsubsection{Proof of Proposition \ref{prop:D_min}}
+
+\begin{restatedproposition}{prop:D_min}
+$\ell (X_S) = D , |S| = D \Leftrightarrow X_S X_S^T = I_D$
+\end{restatedproposition}
 
 $X_S$ admits a QR decomposition $X_S = QR$ where $Q$ is orthogonal and $R$ is upper triangular.
 By Proposition \ref{prop:basis_pursuit_selection_invariance}, we can assume without loss of generality that $Q = I_D$.
@@ -468,37 +642,72 @@ Thus, $\beta = X_S^{-1}$ is upper triangular with diagonal elements $\beta_{dd} 
 $\|\beta_{d.}\|_2 \geq \beta_{dd}$, with equality only occurring when the off-diagonal elements are $0$.
 Therefore, $\|\beta_{1,2}\| \geq D$ with equality occurring only when $\beta = I_D$.
 
+\subsubsection{Proof of Proposition \ref{prop:loss_without_isometry}}
+
+\begin{restatedproposition}{prop:loss_without_isometry}
+Without $|S|=D$, $\ell(X_{.S})=D$ does not imply that $X_{.S}$ contains an orthonormal column-submatrix.
+\end{restatedproposition}
+
+\begin{proof}
+For $D=2$, take the Mercedes-Benz frame
+\begin{align}
+X&=\begin{bmatrix}
+0&\sqrt3/2&-\sqrt3/2\\
+1&-1/2&-1/2
+\end{bmatrix}, &
+\beta&=\frac23 X^\top.
+\end{align}
+Its columns have unit length, so $w(X)=X$, and $XX^\top=\frac32 I_2$ gives $X\beta=I_2$ and $\|\beta\|_{1,2}=3\cdot\frac23=2=D$.
+For every feasible $B$, $2=\operatorname{tr}(XB)=\sum_{p=1}^3\langle X_{.p},B_{p.}^\top\rangle \leq\sum_{p=1}^3\|B_{p.}\|_2$, so $\ell(X)=D$.
+Every pair of distinct columns has inner product $-1/2$, so no pair is orthonormal.
+\end{proof}
+
 \subsubsection{Proof of Proposition \ref{prop:computational_complexity}}
 \label{proof:computational_complexity}
 
+\begin{restatedproposition}{prop:computational_complexity}
+The computational complexity of each step of Isometry Pursuit is $O(D^2P)$.
+\end{restatedproposition}
+
+% TODO: Replace the direct-ADMM derivation below with the SCS cached linear-solve and cone-projection analysis for the runtime panel of Figure 3, distinguishing setup from per-iteration work.
 \begin{proof}
-    The augmented split Lagrangian minimized by ADMM is
+The augmented split Lagrangian minimized by ADMM is
     \begin{align}
     \mathcal L_{\rho,\gamma, \nu} (X,\beta,z) = \|z\|_{1,2} + \text{tr}(\nu^T (I_D - w(X) \beta)) + \rho \|I_D - w(X) \beta\|_F^2 + \gamma \|\beta - z\|_F^2
     \end{align}
-    This minimization problem is
+This minimization problem is
     \begin{align}
         \arg \min_{\beta,z \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta,z)
     \end{align}
-    For a more detailed explanation of the reasons to prefer optimizing the split augmented Lagrangian over direct optimization of Equation \ref{eq:bp} see \citet{Boyd2010-jd}.
+For a more detailed explanation of the reasons to prefer optimizing the split augmented Lagrangian over direct optimization of Equation \ref{prog:isometry_pursuit} see \citet{Boyd2010-jd}.
     
-    The three main subroutines ( \ref{eq:beta_update} - \ref{eq:nu_update}) called by ADMM determine the per iteration complexity.
-    The update rules of the ADMM algorithm used to optimize the augmented split Lagrangian are
+The three main subroutines ( \ref{eq:beta_update} - \ref{eq:nu_update}) called by ADMM determine the per iteration complexity.
+The update rules of the ADMM algorithm used to optimize the augmented split Lagrangian are
     \begin{align}
     \beta^{k+1} = \arg \min_{\beta \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta,z^k) \\
     z^{k+1} = \arg \min_{z \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta^{k+1},z) \\
     \nu^{k+1} = \nu^k + \rho (I_D - w(X) \beta^{k+1})
     \end{align}
-    We will analyze the computational complexity of each of these steps by rewriting the update rules according to the specifics of the isometry pursuit problem.
+We will analyze the computational complexity of each of these steps by rewriting the update rules according to the specifics of the isometry pursuit problem.
 
 The beta update Equation \ref{eq:beta_update} projects the solution onto the feasible set.
 \begin{align}
     \label{eq:beta_update}
     \beta^{k+1} &= \arg \min_{\beta \in P \times D}  \text{tr}({\nu^k}^T (I_D - w(X) \beta)) + \rho \|I_D - w(X) \beta\|_2^2 + \gamma \|\beta - z^k\|_2^2 \\
-    &= (\rho \, w(X)^T w(X) + \gamma I_D)^{-1} (\rho \, w(X)^T I_D + \gamma z^k + w(X)^T \nu^k)
+    &= (\rho \, w(X)^T w(X) + \gamma I_P)^{-1} (\rho \, w(X)^T I_D + \gamma z^k + w(X)^T \nu^k)
     \end{align}
 % This is accomplished through computation of the pseudo-inverse of the linear regression solution $(w(X)^T w(X))^{-1} w(X)^T I_D$.
-The computational complexity of this computation is dominated by the inverse - that is, $O(D^2P)$.
+Write $N=w(X)$.
+The Woodbury identity gives
+\begin{align}
+(\gamma I_P+\rho N^\top N)^{-1}
+=\gamma^{-1}\left[I_P-\rho N^\top
+(\gamma I_D+\rho NN^\top)^{-1}N\right].
+\end{align}
+For fixed $N$, $\rho>0$, and $\gamma>0$, forming $NN^\top$ and factoring $\gamma I_D+\rho NN^\top$ costs $O(PD^2+D^3)$ once.
+To apply the inverse to a $P\times D$ right-hand side $R$, compute $NR$, solve $(\gamma I_D+\rho NN^\top)Z=NR$ using the cached factorization, and return $\gamma^{-1}(R-\rho N^\top Z)$.
+The two matrix products cost $O(PD^2)$ and the solve costs $O(D^3)$.
+Forming the right-hand side of the coefficient update also costs $O(PD^2)$, so the per-iteration cost is $O(PD^2)$ when $P\geq D$.
 
 Subsequently, the z update Equation \ref{eq:z_update} is soft-thresholding operation onto a contracted level set $\|\|_{1,2}$ ball.
 \begin{align}
@@ -536,8 +745,7 @@ For a scalar loss $L(X)$, write
 All formulas are stated on smooth strata: rank deficient matrices, repeated singular values, and zero rows of pseudoinverse factors should be handled using subgradients.
 
 We will use two common identities.
-First, if $X = U \operatorname{diag}(\sigma) V^\top$ is a singular value decomposition and
-$L(X) = \sum_{d=1}^D \phi(\sigma_d(X))$, then
+First, if $X = U \operatorname{diag}(\sigma) V^\top$ is a singular value decomposition and $L(X) = \sum_{d=1}^D \phi(\sigma_d(X))$, then
 \begin{align}
 \nabla_X L = U \operatorname{diag}(\phi'(\sigma_1),\dotsc,\phi'(\sigma_D)) V^\top .
 \label{eq:spectral_gradient_identity}
@@ -664,25 +872,20 @@ The column-wise gradient is therefore
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.82\textwidth]{../figures/synthetic_support_vs_dictionary.pdf}
-    \caption{Dictionary size $P$ versus the support size returned by
-    \isometrypursuit. Point area encodes target dimension $D$ and color encodes
-    corrupting dimension $d_c$. The dashed diagonal denotes no trimming.
-    Most runs lie below the diagonal, and the horizontal bands at
-    $|\widehat S|=D$ show settings where \isometrypursuit~alone reduces the
-    dictionary to the target cardinality.}
+\caption{Dictionary size $P$ versus the support size returned by \isometrypursuit.
+Point area encodes target dimension $D$ and color encodes corrupting dimension $d_c$.
+The dashed diagonal denotes no trimming.
+Most runs lie below the diagonal, and the horizontal bands at $|\widehat S|=D$ show settings where \isometrypursuit~alone reduces the dictionary to the target cardinality.}
     \label{fig:synthetic-support-size}
 \end{figure}
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\textwidth]{../figures/synthetic_support_recovery_grid.pdf}
-    \caption{Exact support recovery in the synthetic identity-block experiments.
-    Columns give target dimension $D$, rows give the number $b$ of corrupting
-    matrices, and the horizontal axis gives their dimension $d_c$.
-    Each point is the percentage of 25 replicates for which the selected support
-    equals the planted $D$-column identity block.
-    Faint dashed curves toward an off-axis value of $-100$ mark settings omitted
-    by the backward-search work budget; they are not recovery measurements.}
+\caption{Exact support recovery in the synthetic identity-block experiments.
+Columns give target dimension $D$, rows give the number $b$ of corrupting matrices, and the horizontal axis gives their dimension $d_c$.
+Each point is the percentage of 25 replicates for which the selected support equals the planted $D$-column identity block.
+Faint dashed curves toward an off-axis value of $-100$ mark settings omitted by the backward-search work budget; they are not recovery measurements.}
     \label{fig:synthetic-support-recovery}
 \end{figure}
 
@@ -712,23 +915,123 @@ Backward $\rightarrow$ swap
 \end{tabular}
 }
 \caption{Oracle attainment and regret for the four discrete-search pipelines.
-Each entry is
-$\widehat P(\mathcal R_{m,r}=0)\;/\;\overline{\mathcal R}_m$: the percentage
-of replicates on which the method wins or ties for the lowest loss among the
-four methods, followed by its mean oracle regret.
-For the two \isometrypursuit~pipelines, the second line reports
-$\overline{|\widehat S_{IP}|}/P$ and the corresponding retained percentage.
+Each entry is $\widehat P(\mathcal R_{m,r}=0)\;/\;\overline{\mathcal R}_m$: the percentage of replicates on which the method wins or ties for the lowest loss among the four methods, followed by its mean oracle regret.
+For the two \isometrypursuit~pipelines, the second line reports $\overline{|\widehat S_{IP}|}/P$ and the corresponding retained percentage.
 Losses within $10^{-9}$ are treated as ties.
 Each dataset contains 25 replicates.
-Because loss scales differ across datasets, regret magnitudes should be compared
-within columns.}
+Because loss scales differ across datasets, regret magnitudes should be compared within columns.}
 \label{tab:oracle-regret}
 \end{table}
+
+\clearpage
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../figures/selection_examples/ethanol_selection_examples.pdf}
+\caption{Ethanol tangent-space dictionaries.}
+    \end{subfigure}
+\par\medskip
+    \begin{subfigure}[t]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../figures/selection_examples/synthetic_selection_examples.pdf}
+\caption{Synthetic identity-block dictionaries.}
+    \end{subfigure}
+\caption{Selections by the four search methods on $D=2$ dictionaries.
+Each panel overlays all four methods on the original column coordinates.
+Black rings mark the \isometrypursuit~support; colored markers show the final selected pairs, with overlapping markers indicating shared selections.
+Gray lines connect selected columns to the origin, and the dashed circle marks unit length.
+F and B denote forward and backward initialization, respectively; all four methods include swap refinement.
+The reported losses are evaluated after column normalization.
+(a) The first saved Ethanol examples where screening leaves the forward loss unchanged, improves it, and worsens it (replicates 1, 4, and 3).
+(b) The first synthetic replicate with 1, 4, and 16 added one-dimensional blocks; stars mark the planted orthonormal pair.
+These are illustrative examples from the saved experiments.}
+    \label{fig:selection-examples}
+\end{figure}
+
+\subsection{Sparsity versus iteration count}
+\label{sec:sparsity_iterations}
+
+We compare independently initialized SCS solves at iteration limits from $1$ to $25{,}000$ on the same $25$ replicates of each real dataset.
+We fix the SCS scale at $0.1$, disable adaptive scaling and acceleration, and set absolute and relative tolerances to $10^{-12}$.
+We zero coefficient entries below $10^{-6}$ in magnitude and retain rows with norm above $10^{-4}$.
+Figure~\ref{fig:sparsity_iterations} shows the retained fraction and exact agreement with the saved reference supports.
+For all subsequent tested limits, every Wine replicate matches its reference support from $100$ iterations onward, every Iris replicate from $1{,}000$, and every Ethanol replicate from $2{,}500$.
+These observations concern thresholded numerical supports, rather than a guarantee of finite support identification.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{../figures/scs_early_stop/sparsity_iterations.pdf}
+\caption{Sparsity as a function of the SCS iteration limit on Iris, Wine, and Ethanol.
+The left panel shows the median retained fraction across $25$ replicates per dataset; the right panel shows the fraction matching the saved reference support exactly.
+Each point summarizes independent cold starts at the indicated limit; the solver may terminate before reaching that limit.}
+\label{fig:sparsity_iterations}
+\end{figure}
+
+\subsection{Sensitivity to optimizer settings}
+\label{sec:optimizer_sensitivity}
+
+We fix the first replicate from each real dataset and compare SCS scales and direct ADMM parameters $\rho\in\{0.01,0.1,1,10,100\}$, initializing both optimizers at zero.
+Direct ADMM alternates projection onto $N\beta=I_D$, rowwise soft thresholding, and a scaled dual update.
+We set absolute and relative solver tolerances to $10^{-8}$ and allow $10^5$ iterations, with a 25-second solve limit.
+We zero coefficient entries with magnitude below $10^{-6}$ and retain rows with norm above $10^{-4}$.
+For the three Ethanol SCS settings that reach the iteration limit, we also run up to $5\times10^5$ iterations with a 240-second limit.
+These checks use the saved input matrices and do not rerun the main experiments.
+
+For the large synthetic cases, we freeze the first replicate of each of the $65$ conditions at $D=32,64$ and compare both solvers at the same five parameter values, giving $650$ solver runs.
+Both start at zero, with absolute and relative tolerances $10^{-8}$, at most $5\times10^5$ iterations, and a 240-second solve limit.
+We use SCS at scale $0.1$ in the main large-case comparison: it converges on all $65$ matrices and has the lowest total runtime among the tested SCS settings.
+Separate Lambda tasks then run the greedy searches on the saved matrices and supports.
+Full-dictionary searches are shared across optimizer settings; identical candidate supports also share a search.
+The search seed is the original simulation seed.
+These unit-column dictionaries are scored using $\|(X_{.S})^\dagger\|_{1,2}$, where $\dagger$ denotes the Moore--Penrose pseudoinverse, rather than solving basis pursuit at each deletion.
+The initial search batch uses a 240-second limit and a $10^9$ backward-initialization work budget.
+We rerun all 28 searches excluded by that work budget without an arithmetic cutoff, using a 245.37-second limit equal to the longest observed IP runtime.
+Of these, 23 complete and five reach the time limit: four during backward elimination and one during swap refinement.
+We rerun the last case with the cutoff applied only to initialization; elimination takes 208.9 seconds and swaps take 36.7 seconds, giving 24 completed replacements and four capped initializers.
+Figure~\ref{fig:synthetic-ground-truth-regret} includes completed replacements for SCS at scale $0.1$; Figure~\ref{fig:complexity-runtime-early-stop} also includes capped backward initializers.
+There is no additional column-count limit.
+All large-case solver and search timings use 3072 MB Lambda workers; the smaller-case and real-data timings are local.
+Figure~\ref{fig:optimizer_parameter_sweep} includes final searches from all ten settings, including settings whose solver reached a limit.
+
+\begin{figure}[t]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+\includegraphics[width=\linewidth]{../figures/optimizer_parameter_sweep/synthetic_regret_all_settings.pdf}
+\caption{Ground-truth regret across optimizer settings.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\includegraphics[width=\linewidth]{../figures/complexity_runtime/complexity_vs_runtime_overlay_with_early_stopping.pdf}
+\caption{Arithmetic work versus runtime.}
+\end{subfigure}
+\caption{Full parameter comparison for the synthetic cloud experiments.
+At $D=32,64$, we compare SCS scales and ADMM parameters in $\{0.01,0.1,1,10,100\}$ on the same fixed matrices.
+Full-dictionary searches are shared across settings; smaller dimensions use the original replicates.
+The runtime panel shows pure initializers, with swaps omitted; large-case timings are from Lambda and other timings are local.
+Work for SCS and ADMM is the observed iteration count times $D^2P$, which does not distinguish their per-iteration constants.
+Open markers denote capped runs; capped backward points show elapsed time against the work required for full elimination.
+The dashed line marks the longest observed cloud IP runtime.}
+\label{fig:optimizer_parameter_sweep}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{../figures/optimizer_support_stability.pdf}
+\caption{Support stability on one fixed replicate from each real dataset.
+We compare each retained support $S$ with its originally reported support $S_0$ using $|S\cap S_0|/|S\cup S_0|$.
+SCS uses a green--blue color map and direct ADMM an orange--red color map; darker shades denote larger parameters.
+Circles indicate identical supports and crosses indicate a difference.
+Iris and Wine retain the same 7 and 28 columns, respectively, in all ten settings.
+Nine initial Ethanol settings retain the same 3 columns; SCS at scale 100 initially retains one extra column, which disappears in the longer run (arrow).
+The Ethanol SCS runs at scales 0.1, 10, and 100 reach their iteration limit even in the longer runs and are included here.
+This is a stability check on the selected replicates, not a support-recovery guarantee.}
+    \label{fig:optimizer_support_stability}
+\end{figure}
 
 \subsection{Support cardinalities}
 \label{sec:support_cardinalities}
 
-Figure \ref{fig:support_cardinalities} plots the distribution of $|\widehat{S}_{IP}|$ from Table \ref{tab:experiments} in order to contextualize the reported means.
+Figure~\ref{fig:support_cardinalities} reports the distribution of retained candidate-dictionary sizes $|\widehat{S}_{IP}|$ across the real-data replicates.
 While typically $|\widehat{S}_{IP}| << P$, there are cases for Ethanol where this is not the case that drive up the means.
 Further investigation into the extreme failure of isometry pursuit to sparsify in the the minor chunk of the bimodal Ethanol support cardinality distribution is warranted.
 
@@ -738,7 +1041,7 @@ Further investigation into the extreme failure of isometry pursuit to sparsify i
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/wine_cardinality_histogram.png}
-        \caption{Wine }
+\caption{Wine }
         \label{fig:wine_cardinalities}
     \end{subfigure}
     \hfill
@@ -746,7 +1049,7 @@ Further investigation into the extreme failure of isometry pursuit to sparsify i
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/iris_cardinality_histogram.png}
-        \caption{Iris }
+\caption{Iris }
         \label{fig:iris_cardinalities}
     \end{subfigure}
     \hfill
@@ -754,11 +1057,11 @@ Further investigation into the extreme failure of isometry pursuit to sparsify i
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../figures/ethanol_cardinality_histogram.png}
-        \caption{Ethanol }
+\caption{Ethanol }
         \label{fig:ethanol_cardinalities}
     \end{subfigure}
 
-    \caption{Support cardinalities for each dataset after \isometrypursuit.}
+\caption{Support cardinalities for each dataset after \isometrypursuit.}
     \label{fig:support_cardinalities}
 \end{figure}
 
@@ -801,42 +1104,41 @@ Ethanol & 8.38 ± 0.57 & 0.55 ± 1.08 & 0.07 ± 0.01 \\
 
 
 \begin{proof}
-    Let
+Let
     
-    By 
-    Given the symmetry of the second and third columns around the y axis, the loss will not change regardless of whether we upweight one or downweight the other, these changes necessarily being in conjunction.
-    We therefore assume that their loadings with respect to the second column of the target matrix (the $D$ dimensional identity) are the same.
-    Clearly, they will both then have value of $\frac{1}{\sqrt{3}}$.
-    The question then becomes, what should the values of the first column in the loading matrix $\beta$ be?
+By Given the symmetry of the second and third columns around the y axis, the loss will not change regardless of whether we upweight one or downweight the other, these changes necessarily being in conjunction.
+We therefore assume that their loadings with respect to the second column of the target matrix (the $D$ dimensional identity) are the same.
+Clearly, they will both then have value of $\frac{1}{\sqrt{3}}$.
+The question then becomes, what should the values of the first column in the loading matrix $\beta$ be?
     
-    We can answer this question with a simple differential equation.
-    Let $b$ denote the constraint violation $1 - X_{1.} \beta_{.1}$.
+We can answer this question with a simple differential equation.
+Let $b$ denote the constraint violation $1 - X_{1.} \beta_{.1}$.
     
-    Then
+Then
     \begin{align}
         \frac{\partial b}{\partial \beta_{11}} = \frac{\partial b}{\partial\beta_{21}} \\
         &= \frac{1}{2}
     \end{align}
-    On the other hand, due to the value of $\frac{1}{\sqrt{3}}$ already assumed for the second loading of the second and third features,
+On the other hand, due to the value of $\frac{1}{\sqrt{3}}$ already assumed for the second loading of the second and third features,
     \begin{align}
         \frac{\partial l}{\partial \beta_{11}} &= \frac{\partial l}{\partial\beta_{21}} \\
         &= \frac{\partial }{\partial x}{\sqrt{\frac{1}{3} + x^2}} \\
         &= \frac{1}{2}(\frac{1}{3} + x^2)^{-\frac{1}{2}}(2x) \\
         &= \frac{x}{\sqrt{\frac{1}{3} + x^2}}.
     \end{align}
-    This means that the tradeoff
+This means that the tradeoff
     \begin{align}
         \frac{\partial l}{\partial b} = \frac{1}{2x}\sqrt{\frac{1}{3} + x^2}.\
     \end{align}
-    In contrast, $\frac{\partial l}{\partial \beta_{11}} = 1$ and similarly for its constraint violation.
-    Solving for the equilibrium, we get
+In contrast, $\frac{\partial l}{\partial \beta_{11}} = 1$ and similarly for its constraint violation.
+Solving for the equilibrium, we get
     \begin{align}
         \frac{1}{2x}\sqrt{\frac{1}{3} + x^2} = 1 \\
         \frac{1}{3} + x^2 = 4x^2 \\
         \frac{1}{3} = 3x^2 \\
         x = \frac{1}{\sqrt{3}}.
     \end{align}
-    This leads to a value for $l$ of 
+This leads to a value for $l$ of
     \begin{align}
         \sqrt{\frac{1}{3} + \frac{1}{9}} + \sqrt{\frac{1}{3} + \frac{1}{9}} + \frac{2}{3} \\
         &=\sqrt{\frac{4}{9}} + \sqrt{\frac{4}{9}} + \frac{2}{3} \\

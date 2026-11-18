@@ -59,6 +59,13 @@ Do not edit generated PDFs unless the user explicitly asks. Rebuild them from La
 
 ## Build Checks
 
+This checkout has a macOS LaunchAgent, `org.isometry-pursuit.manuscript-watch`,
+running `latexmk -pdf -pvc -view=none` for `archival/main.tex`.
+See `infra/latex/README.md` for installation and control commands.
+When it is running, let it rebuild after dependency changes and verify completion
+in `archival/automatic-build.log`; do not start a competing build.
+It updates the PDF without opening or activating any windows.
+
 The user uses TeXShop on macOS. After completing requested manuscript or
 paper-figure edits, rebuild the affected manuscript's normal `main.pdf` in its
 manuscript directory (`archival/main.pdf` for the archival paper), so the open

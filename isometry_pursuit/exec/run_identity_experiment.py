@@ -9,11 +9,11 @@ import time
 
 import numpy as np
 import pandas as pd
-from scipy.stats import ortho_group
 from tqdm import tqdm
 
 from isometry_pursuit.algorithm import forward_backward, greedy, greedy_swap, isometry_pursuit
 from isometry_pursuit.experiment import _gl_loss
+from isometry_pursuit.simulation import generate_identity_instance
 
 
 DEFAULT_CORRUPTING_DIMS = {
@@ -188,56 +188,6 @@ def _normalize_trials(raw_trials):
             "num_corrupting_matrices": int(trial["num_corrupting_matrices"]),
         })
     return normalized
-
-
-def _random_orthonormal_block(ambient_dimension, block_dimension, rng):
-    if block_dimension == ambient_dimension:
-        return ortho_group.rvs(ambient_dimension, random_state=rng)
-
-    basis = np.zeros((ambient_dimension, block_dimension))
-    if block_dimension == 1:
-        basis[0, 0] = rng.choice([-1.0, 1.0])
-    else:
-        basis[:block_dimension, :] = ortho_group.rvs(block_dimension, random_state=rng)
-    rotation = ortho_group.rvs(ambient_dimension, random_state=rng)
-    return rotation @ basis
-
-
-def generate_identity_instance(
-    dimension,
-    corrupting_dimension,
-    num_corrupting,
-    rng,
-):
-    """Generate one matrix with one true full-D block and lower-rank distractors."""
-    true_block = np.eye(dimension)
-    blocks = [true_block]
-    block_ranges = []
-    start = 0
-    block_ranges.append({
-        "kind": "true",
-        "dimension": dimension,
-        "start": start,
-        "stop": start + dimension,
-    })
-    start += dimension
-
-    for block_index in range(num_corrupting):
-        block = _random_orthonormal_block(dimension, corrupting_dimension, rng)
-        blocks.append(block)
-        block_ranges.append({
-            "kind": "corrupting",
-            "dimension": corrupting_dimension,
-            "block_index": block_index,
-            "start": start,
-            "stop": start + corrupting_dimension,
-        })
-        start += corrupting_dimension
-
-    matrix = np.column_stack(blocks)
-    true_indices = list(range(dimension))
-    corrupting_indices = list(range(dimension, matrix.shape[1]))
-    return matrix, true_indices, corrupting_indices, block_ranges
 
 
 def _json_list(values):

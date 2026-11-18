@@ -2,7 +2,6 @@ from itertools import combinations
 
 import numpy as np
 import cvxpy as cp
-from sklearn.linear_model import MultiTaskLasso
 from tqdm import tqdm
 
 import random

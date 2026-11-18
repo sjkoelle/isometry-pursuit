@@ -7,6 +7,12 @@ description: Write or revise Isometry Pursuit manuscript prose and proposed pape
 
 Every sentence should advance the argument or explain a connection the reader needs. A citation alone is not a reason to add a sentence.
 
+Always use active voice in manuscript prose. Name who or what performs the action; for our constructions and experiments, use “we.” For example, write “We augment a planted identity block with randomly oriented orthonormal blocks,” not “A planted identity block is augmented with randomly oriented orthonormal blocks.”
+
+Write each prose sentence on its own physical line in the LaTeX source. Do not hard-wrap sentences at a fixed column width. Preserve blank lines between paragraphs and the structure of display equations, tables, and algorithms. Source-formatting changes must preserve the rendered paper.
+
+Always use round parentheses `()` for parenthetical grouping and function arguments in prose and mathematics; do not substitute square brackets `[]`. For example, write `\exp(-a(t))`, not `\exp[-a(t)]`. Square brackets retain their distinct mathematical uses, such as indexing and closed intervals.
+
 Keep related-work additions proportional to their role. A citation supporting an already-defined algorithm often needs only a citation or a few words, not a new paragraph. Do not turn a request to add a source into a survey of its methods, qualifications, and guarantees. Use Discussion for optional extensions; keep the algorithm and experiment descriptions centered on what we actually run. Include additional explanation only when it changes how the reader should understand our method or claims. Concise treatment can still cite several relevant sources when the user wants them.
 
 Ground comparisons in concepts already introduced in the surrounding text. State the specific shared mechanism, meaningful difference, or consequence for our method. Do not introduce a list of unfamiliar algorithms or problem settings merely to acknowledge a paper. If explaining the connection requires a distracting detour, omit the sentence or keep a source comment instead, as the task warrants.
@@ -18,6 +24,17 @@ Prefer active, direct attribution when describing prior work: name who does what
 > Backward elimination and alternating addition–deletion procedures have also been studied for least-squares subset selection.
 
 This sentence gives the reader no useful insight, introduces several topics without grounding them in the surrounding argument, and hides the contribution behind passive voice. Do not use it or an equivalent generic literature sentence. Before proposing a replacement, identify the exact point the citation supports and explain it using the manuscript's established terms. If there is no useful point to make, leave it out.
+
+Use at most one relational sign per line of displayed mathematics.
+Split chains of equalities or inequalities into aligned lines, with one relation on each line; do not place separate relational statements side by side on the same line.
+
+Before a mathematical derivation, write a short declarative sentence stating what the calculation establishes.
+For longer proofs, briefly outline the key steps at the beginning; introduce each subsequent calculation by its purpose rather than leaving the reader to infer the argument from algebra.
+When quoting a property before proving it, put the quoted statement in its own paragraph, separated from the proof text.
+
+Keep established mathematical expressions explicit rather than introducing temporary names merely to shorten them.
+For example, continue writing $n_q^{\times D}(X)$ instead of declaring $N=n_q^{\times D}(X)$ and making the reader translate back.
+Introduce new notation only when it represents a distinct mathematical construction needed for the argument, rather than an abbreviation for an expression already defined.
 
 Keep prose concise, but do not confuse a short sentence with an informative one. Follow the user's requested scope; this style guidance does not authorize unrelated rewrites.
 

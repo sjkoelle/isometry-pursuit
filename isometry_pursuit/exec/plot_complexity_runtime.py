@@ -409,6 +409,30 @@ def plot(summary, output_path):
     plt.close(fig)
 
 
+def add_saved_large_timings(summary, runs_path):
+    """Add condition medians from the saved D=32/64 main experiments."""
+    runs = pd.read_csv(runs_path)
+    runs = runs[runs['D'] >= 32].copy()
+    additions = []
+    keys = ['D', 'total_columns', 'corrupting_D', 'num_corrupting_matrices']
+    for method, column in (
+        ('isometry_pursuit', 'isometry_pursuit_runtime_seconds'),
+        ('forward_greedy', 'greedy_full_runtime_seconds'),
+    ):
+        for condition, group in runs.groupby(keys):
+            d, p, dc, blocks = map(int, condition)
+            times = group[column].dropna()
+            if times.empty:
+                continue
+            proxy = (group['basis_pursuit_iterations'] * d * d * p).median() if method == 'isometry_pursuit' else forward_proxy(d, p)
+            additions.append(dict(method=method, D=d, P=p, corrupting_D=dc,
+                                  num_corrupting_matrices=blocks,
+                                  arithmetic_work_proxy=proxy, repeats=len(times),
+                                  median_runtime_seconds=times.median(),
+                                  min_runtime_seconds=times.min(), max_runtime_seconds=times.max()))
+    return pd.concat([summary, pd.DataFrame(additions)], ignore_index=True, sort=False)
+
+
 def plot_overlay(
     summary,
     output_path,
@@ -502,7 +526,7 @@ def plot_overlay(
         axis.text(
             backward_work_cutoff,
             0.52,
-            "Backward only: " + r"$10^9$ work budget",
+            "max work budget",
             transform=axis.get_xaxis_transform(),
             rotation=90,
             ha="right",
@@ -601,6 +625,8 @@ def main():
         "--real-records-csv",
         help="Add existing pure-method real-dataset benchmark records.",
     )
+    parser.add_argument('--saved-large-runs-csv',
+                        help='Add saved D=32/64 IP and pure forward timings to the early-stopped overlay.')
     parser.add_argument(
         "--benchmark-real",
         action="store_true",
@@ -760,6 +786,8 @@ def main():
             ignore_index=True,
             sort=False,
         )
+        if args.saved_large_runs_csv:
+            with_early_summary = add_saved_large_timings(with_early_summary, args.saved_large_runs_csv)
         with_early_real = real_summary
         if real_summary is not None and early_stopped_summary is not None:
             with_early_real = pd.concat(

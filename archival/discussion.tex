@@ -1,50 +1,19 @@
 \section{Discussion}
 \label{sec:discussion}
 
-We have shown that multitask basis pursuit can help select isometric submatrices from appropriately normalized wide matrices.
-This approach - \isometrypursuit~ - is a convex alternative to greedy methods for selection of orthonormalized features from within a dictionary.
-Isometry pursuit can be applied to diversification and geometrically-faithful coordinate estimation.
-Our results exemplify these applications, but more can be done.
+We have shown that column normalization and multitask basis pursuit can help select isometric submatrices from wide dictionaries, both by improving selections and by reducing the cost of subsequent search.
+The normalization favors unit-length candidates, while multitask basis pursuit favors orthogonality.
+Many full-rank $D$-column submatrices can represent $I_D$, so our objective distinguishes geometric quality among representations of the same cardinality, extending the usual sparse-recovery perspective of greedy and convex basis pursuit \citep{Mallat93-wi, Tropp05-ml, Chen2001-hh, Tropp06-sg}.
+Compared with Sparse PCA \citep{DAspremont2007-aq, Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, we select existing columns rather than linear combinations of them.
+A multitask Lasso extension could vary sparsity along a regularization path, while selecting fewer than $D$ columns and using response matrices other than $I_D$ would extend the coordinate-selection problem \citep{Hastie2015-qa, Mishkin2022-yf}.
+Sampling incoming columns could reduce swap costs, while beam search could retain several candidate subsets at each step to explore competing selection paths on either the full or screened dictionary \citep{Zou2024-swap, Fraiman2022-beam}.
 
-On the theoretical side, a critical unresolved question is the relation of the brute force and \isometrypursuit~ minimizers.
-Essentially, there are two things that can go wrong.
-First, \isometrypursuit~ may trim insufficiently for brute force search to be computationally feasible.
-Second, the recovered support may not contain the true minimizer.
-While we have ruled out the second problem in the case where an isometric solution does exist, in practice we often see greedy recovery defeat \isometrypursuit.
-Characterization of support recovery here is somewhat different from existing analysis of greedy \citep{Mallat93-wi, Mallat, Pati-93, Tropp05-ml} and convex \citep{Chen2001-hh, Tropp06-sg,Chen2006TheoreticalRO} basis pursuit formulations.
-Partly, this is because we use the $\ell_1$ minimizer to distinguish between $\ell_0$ optima rather than to identify them. 
-Also, \isometrypursuit~ can generate non-unique solutions even when the design matrix satisfies general position, which is not true for the univariate formulation \citep{Osborne2000OnTL, DOSSAL2012117, Chrtien2011OnTG, Tibshirani2012TheLP, Ewald2017OnTD, Ali2018TheGL, Schneider2020-qt, Mishkin2022TheSP,Dupuis2019TheGO,Debarre2020OnTU,Everink2024TheGA}, but 
-
-The principal algorithmic variant of interest is the combination of the multitask lasso \citep{ Hastie2015-qa} extension of our estimator with $D$ function selection within $\mathbb R^B$.
-First, introducing a Lasso penalty may ameliorate \isometrypursuit's reliance on the second stage of coordinate selection to complete the estimation process.
-Using the Lasso penalty, we can smoothly move between the multitask basis pursuit solution and more sparse solutions \citep{Mishkin2022-yf}.
-Second, we often may want to select some orthonormal subset of dimension much less than $D$.
-Finally, response matrices may be extended beyond the identity.
-
-Sampling incoming columns could reduce the cost of swap search \citep{Zou2024-swap}.
-Beam search could retain several candidate subsets at each greedy step, either on the full dictionary or after restriction by \isometrypursuit, to explore competing selection paths at additional computational cost \citep{Fraiman2022-beam}.
-
-The alpha--beta and gamma log-determinant families offer further choices of geometric criterion \citep{Cichocki2014-logdet}.
-Alpha--beta divergences penalize departures from isometry, whereas gamma mean-ratio criteria are invariant to common scaling and measure departures from conformality.
-The smooth alpha--beta penalties remain stationary at unit singular values, so they retain the tangency issue motivating our normalization.
-
-These extensions may faciliate an interesting set of applications diversification in recommendation \citep{Carbonell2017-gi, Wu2019-uk, Langchain} and retrieval \citep{Gao2023-cn, Pickett2024-ad, In2024-um, Weiss2024-xm, Vectara}.
-Maximum cosine similarity used in retrieval corresponds to the first coefficient of the Lasso regularization path \citep{Koelle2022-ju}.
-Greedy algorithms predominate in diversification \citep{Carbonell1998-ji, Barioni, Drosou, Qin2012-ok, KUNAVER2017154, Guo-shengbo, Abdool,Yu2016AGA,  Huang2024-wr, Pickett2024-ad, 5895106, Zhu2020-vb}, and convex reformulations have been studied to add speed and convergence to a global minima.
-% TODO (koelle): mention Colbert
-%However, we note that the standard max-sum diversity formulation that seeks to identify datapoints that are as far apart as possible is substantially different from the notion of diversity selected for by isometry pursuit \citep{Kuo1993-zy, Ghosh1996-id, Alfonso-Cevallos-Friedrich-Eisenbrand-and-Rico-Zenklusen2016-ai, Ashkan2015-jv}.
-
-Compared with Sparse PCA \citep{DAspremont2007-aq, Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, we seek a low-dimensional representation from the set of these column vectors rather than their span.
-
-Diversification.
-
-While other applications like diversification are possible and potentially , the embedding
-
-
-Diversification may be framed an a kind of orthogonal selection problem.
-Cosine similarity 
-Colbert
-
-%When the equality constraint is relaxed, Lagrangian duality may be used to reformulate as a so-called Lasso problem, which leads to an even richer set of optimization algorithms \citep{Hastie2016-cn}. % cite FISTA< glmnet, coordinate descent
-
-% Standard lasso theory is for undercomplete or noisy case and so does not apply.
+Our experiments illustrate two applications of the same column-selection problem: diversification selects observations, while interpretable coordinate estimation selects functions through their tangent-space gradients.
+Recommendation and retrieval, including document selection for language-model question answering \citep{Chen2024-esrag}, provide further settings for selecting observations or embedding vectors.
+\citet{Okajima2026-nnn} select documents by reconstructing the query embedding as a sparse nonnegative combination of document embeddings, giving a direct example of convex selection for retrieval.
+With unit-norm embeddings, the first nonzero coefficients on this nonnegative elastic-net regularization path select documents with maximum positive cosine similarity to the query.
+% KKT at zero gives X_{.p}^T y <= lambda_1; positive maximizers enter first as lambda_1 decreases, with lambda_2 fixed.
+ColBERT, for example, represents queries and documents with token embeddings and sums the maximum similarity of each query embedding to a document embedding \citep{Khattab2020-colbert}.
+This supplies a concrete setting in which to investigate whether selecting less redundant embedding vectors can preserve retrieval quality while reducing the number of vectors compared.
+Greedy diversification methods already seek to reduce redundancy in retrieved results \citep{Carbonell1998-ji}; our results motivate testing convex screening alongside such searches, with the geometric criterion and selected dictionary adapted to the application.
+% TODO (Sam): Add a citation supporting diversification applications in recommendation.
