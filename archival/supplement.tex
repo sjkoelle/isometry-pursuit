@@ -178,7 +178,8 @@ D(X^T X,I_D)^2
 
 \begin{restatedproposition}{prop:normalized_spectral_losses}
 For full-rank $X\in\mathbb R^{D\times D}$, let $g:(0,\infty)\to\mathbb R$ be twice differentiable with $g(1)=0$, $g'(t)<0$, and $t g''(t)>g'(t)$ for every $t>0$.
-Then $\ell_g(X)=\sum_{d=1}^D g\!\left(\sigma_d(n_q^{\times D}(X))\right)$ is nonnegative and satisfies Properties~\ref{property:rotation_invariance}--\ref{property:pathwise}.
+Use $q$ from~\eqref{eq:normalization}.
+Then $\ell_{g,q}(X)=\sum_{d=1}^D g\!\left(\sigma_d(n_q^{\times D}(X))\right)$ is nonnegative and satisfies Properties~\ref{property:rotation_invariance}--\ref{property:pathwise}.
 \end{restatedproposition}
 
 \begin{proof}
@@ -187,12 +188,12 @@ Then $\ell_g(X)=\sum_{d=1}^D g\!\left(\sigma_d(n_q^{\times D}(X))\right)$ is non
 
 We first check that column normalization commutes with orthonormal transformations.
 For orthonormal $U$, column normalization gives $n_q^{\times D}(UX)=U n_q^{\times D}(X)$.
-Since $U n_q^{\times D}(X)$ and $n_q^{\times D}(X)$ have the same singular values, $\ell_g(UX)=\ell_g(X)$, which proves Property~\ref{property:rotation_invariance}.
+Since $U n_q^{\times D}(X)$ and $n_q^{\times D}(X)$ have the same singular values, $\ell_{g,q}(UX)=\ell_{g,q}(X)$, which proves Property~\ref{property:rotation_invariance}.
 
 \paragraph{Property~\ref{property:unique_isometry_minimum} (Unique isometry minimum).}
 \emph{``A matrix loss $\ell$ is uniquely minimized by isometries if $\arg\min_X\ell(X)=\{X:XX^T=I_D\}$.''}
 
-\textbf{Nonnegativity: $\ell_g(X)\geq0$.}
+\textbf{Nonnegativity: $\ell_{g,q}(X)\geq0$.}
 We first bound the average squared singular value of $n_q^{\times D}(X)$ by one.
 Write $u_d=\sigma_d(n_q^{\times D}(X))^2$.
 The squared singular values of a matrix are the eigenvalues of its Gram matrix, so their sum equals its trace and hence its squared Frobenius norm.
@@ -214,7 +215,7 @@ Then $\widetilde g(1)=0$, and
 \end{align}
 
 We now use this bound to show that the loss is nonnegative.
-The loss evaluates these squared singular values through $\widetilde g$, since $\ell_g(X)=\sum_{d=1}^D\widetilde g(u_d)$.
+The loss evaluates these squared singular values through $\widetilde g$, since $\ell_{g,q}(X)=\sum_{d=1}^D\widetilde g(u_d)$.
 Jensen's inequality for the strictly convex function $\widetilde g$, followed by its monotonic decrease, gives
 \begin{align}
 \frac{1}{D}\sum_{d=1}^D \widetilde g(u_d)
@@ -222,7 +223,7 @@ Jensen's inequality for the strictly convex function $\widetilde g$, followed by
 &\geq \widetilde g(1) \label{eq:normalized_spectral_decreasing_bound} \\
 &=0.
 \end{align}
-Hence $\ell_g(X)\geq0$.
+Hence $\ell_{g,q}(X)\geq0$.
 
 \textbf{Zero loss implies $X^\top X=I_D$.}
 We determine when equality holds in the nonnegativity bound.
@@ -234,7 +235,7 @@ Consequently $n_q^{\times D}(X)=X$ and $X^\top X=I_D$.
 
 \textbf{$X^\top X=I_D$ implies zero loss.}
 Conversely, if $X^\top X=I_D$, every column has unit norm, so $n_q^{\times D}(X)=X$.
-Every singular value then equals one, and $g(1)=0$ gives $\ell_g(X)=0$.
+Every singular value then equals one, and $g(1)=0$ gives $\ell_{g,q}(X)=0$.
 Thus the loss is nonnegative and equals zero if and only if $X^\top X=I_D$, proving Property~\ref{property:unique_isometry_minimum}.
 
 
@@ -256,59 +257,50 @@ For a unit vector $v$ in its direction,
 n_q^{\times D}(X)n_q^{\times D}(X)^\top=A+q(r)^2vv^\top
 \end{align}
 for a fixed positive-semidefinite matrix $A$.
+We compute the derivative using the eigenvalues $\lambda_d$ and orthonormal eigenvectors $z_d$ of $A+q(r)^2vv^\top$.
 Spectral differentiation gives
 \begin{align}
-\frac{\partial\ell_g(X)}{\partial r}
-=2q(r)q'(r)\,v^\top\widetilde g'\!\left(A+q(r)^2vv^\top\right)v.
+\frac{\partial\ell_{g,q}(X)}{\partial r}
+=2q(r)q'(r)\sum_{d=1}^D\widetilde g'(\lambda_d)(z_d^\top v)^2.
 \end{align}
-Since $\widetilde g'(u)<0$ and $q(r)>0$, this derivative has the opposite sign to $q'(r)$.
-Since $q$ is strictly increasing below one, stationary at one, and strictly decreasing above one, the derivative of $\ell_g$ with respect to $\|x_{.p}\|_2$ has exactly the signs in Property \ref{property:pathwise}.
+Each $\widetilde g'(\lambda_d)$ is negative, and $\sum_{d=1}^D(z_d^\top v)^2=1$ because the eigenvectors form an orthonormal basis and $v$ has unit norm.
+The sum is therefore strictly negative, so the derivative has the opposite sign to $q'(r)$.
+Since $q$ is strictly increasing below one, stationary at one, and strictly decreasing above one, the derivative of $\ell_{g,q}$ with respect to $\|x_{.p}\|_2$ has exactly the signs in Property \ref{property:pathwise}.
 
 
-\paragraph{The two example losses.}
-Finally, for $g(t)=-\log t$,
-\begin{align}
-tg''(t)-g'(t)&=\frac{2}{t} \\
-&>0.
-\end{align}
-For $g(t)=t^{-2}-1$,
-\begin{align}
-tg''(t)-g'(t)&=\frac{8}{t^3} \\
-&>0.
-\end{align}
-Both functions vanish at one and have negative first derivative on $(0,\infty)$.
-The increasing transformations in Propositions~\ref{prop:determinant_singular_values} and~\ref{prop:frobenius_inverse_singular_values} preserve the minimizers and Properties~\ref{property:rotation_invariance}--\ref{property:pathwise}.
 \end{proof}
 
 \subsubsection{Proofs of Propositions
 \ref{prop:determinant_singular_values} and \ref{prop:frobenius_inverse_singular_values}}
 
 \begin{restatedproposition}{prop:determinant_singular_values}
-For $g(t)=-\log t$, the centered inverse determinant satisfies $|\det(n_q^{\times D}(X))|^{-1}-1=\exp(\ell_g(X))-1$.
+For full-rank $X\in\mathbb R^{D\times D}$, the centered inverse determinant $|\det(n_q^{\times D}(X))|^{-1}-1$ ranks candidate matrices in the same order as $\ell_{g,q}(X)$ with $g(t)=-\log t$.
 \end{restatedproposition}
 
 \begin{restatedproposition}{prop:frobenius_inverse_singular_values}
-For $g(t)=t^{-2}-1$, the centered inverse Frobenius norm satisfies $\|(n_q^{\times D}(X))^{-1}\|_F-\sqrt D=\sqrt{\ell_g(X)+D}-\sqrt D$.
+For full-rank $X\in\mathbb R^{D\times D}$, the centered inverse Frobenius norm $\|(n_q^{\times D}(X))^{-1}\|_F-\sqrt D$ ranks candidate matrices in the same order as $\ell_{g,q}(X)$ with $g(t)=t^{-2}-1$.
 \end{restatedproposition}
 
 \begin{proof}
-Write $N=n_q^{\times D}(X)$.
 The determinant is the product of the singular values, so
 \begin{align}
-|\det N|^{-1}-1
-&=\prod_{d=1}^D\sigma_d(N)^{-1}-1 \\
-&=\exp\left(-\sum_{d=1}^D\log\sigma_d(N)\right)-1
-=\exp(\ell_g(X))-1
+|\det(n_q^{\times D}(X))|^{-1}-1
+&=\prod_{d=1}^D\sigma_d(n_q^{\times D}(X))^{-1}-1 \\
+&=\exp\left(-\sum_{d=1}^D\log\sigma_d(n_q^{\times D}(X))\right)-1 \\
+&=\exp(\ell_{g,q}(X))-1
 \end{align}
 for $g(t)=-\log t$.
+Since $t\mapsto\exp(t)-1$ is strictly increasing, comparing the centered inverse determinants gives exactly the same ranking as comparing $\ell_{g,q}$.
 
-Finally, the singular values of $N^{-1}$ are $\sigma_d(N)^{-1}$, and hence
+For the inverse Frobenius norm, the singular values of $(n_q^{\times D}(X))^{-1}$ are $\sigma_d(n_q^{\times D}(X))^{-1}$, and hence
 \begin{align}
-\|N^{-1}\|_F-\sqrt D
-&=\left(\sum_{d=1}^D\sigma_d(N)^{-2}\right)^{1/2}-\sqrt D \\
-&=\sqrt{\ell_g(X)+D}-\sqrt D
+\|(n_q^{\times D}(X))^{-1}\|_F-\sqrt D
+&=\left(\sum_{d=1}^D\sigma_d(n_q^{\times D}(X))^{-2}\right)^{1/2}-\sqrt D \\
+&=\sqrt{\ell_{g,q}(X)+D}-\sqrt D
 \end{align}
 for $g(t)=t^{-2}-1$.
+Since $t\mapsto\sqrt{t+D}-\sqrt D$ is strictly increasing for $t>-D$, these losses also rank candidates in the same order.
+
 \end{proof}
 
 \subsubsection{Proof of Proposition \ref{prop:inverse_symmetry_impossibility}}
@@ -321,32 +313,48 @@ If $g$ is also continuously differentiable and $g'(t)>0$ for $t>1$, then $\ell$ 
 \end{restatedproposition}
 
 \begin{proof}
+\paragraph{Inversion symmetry and Property~\ref{property:pathwise} are incompatible.}
+\emph{``For $D\geq2$, no loss on invertible matrices in $\mathbb R^{D\times D}$ satisfies both $\ell(X)=\ell(X^{-1})$ for every invertible $X$ and Property~\ref{property:pathwise}.''}
+
+We construct two unit-column matrices whose inverses give a contradictory ordering.
 Let
 \begin{align}
-X&=\begin{bmatrix}\sqrt3/2&1/2\\1/2&\sqrt3/2\end{bmatrix}, &
+X&=\begin{bmatrix}\sqrt3/2&1/2\\1/2&\sqrt3/2\end{bmatrix}, \\
 Z&=\begin{bmatrix}\sqrt3/2&-1/2\\-1/2&\sqrt3/2\end{bmatrix}.
 \end{align}
 Both matrices have unit-length columns, and $X^{-1}=2Z$, $Z^{-1}=2X$.
 Property~\ref{property:pathwise} and $\ell(X)=\ell(X^{-1})$ therefore give
 \begin{align}
-\ell(X)<\ell(2X)=\ell(Z)<\ell(2Z)=\ell(X),
+\ell(X)&<\ell(2X) \\
+&=\ell(Z) \\
+&<\ell(2Z) \\
+&=\ell(X),
 \end{align}
 a contradiction.
 For $D>2$, use $\operatorname{diag}(X,I_{D-2})$ and $\operatorname{diag}(Z,I_{D-2})$ and double only their first two columns.
 This proves the first claim.
 
+\paragraph{Spectral losses fail Property~\ref{property:pathwise}.}
+\emph{``A spectral loss with $g(t)=g(t^{-1})$ for every $t>0$ cannot satisfy column-rescaling monotonicity (Property~\ref{property:pathwise}).''}
+
+We show that scalar reciprocal symmetry implies matrix inversion symmetry and apply the first part.
 For a spectral loss with $g(t)=g(t^{-1})$, the singular values of $X^{-1}$ are the reciprocals of those of $X$, so
 \begin{align}
 \ell(X^{-1})
-=\sum_{d=1}^D g(\sigma_d(X)^{-1})
-=\sum_{d=1}^D g(\sigma_d(X))
-=\ell(X).
+&=\sum_{d=1}^D g(\sigma_d(X)^{-1}) \\
+&=\sum_{d=1}^D g(\sigma_d(X)) \\
+&=\ell(X).
 \end{align}
 The first claim now rules out Property~\ref{property:pathwise}.
-For the column log symmetry claim, let
+
+\paragraph{Spectral losses fail Property~\ref{property:log_symmetry}.}
+\emph{``If $g$ is also continuously differentiable and $g'(t)>0$ for $t>1$, then $\ell$ also cannot satisfy Property~\ref{property:log_symmetry}.''}
+
+We vary one column length and show that the derivative at unit length is nonzero, contradicting Property~\ref{property:log_symmetry}.
+Let
 \begin{align}
-X(t)=\begin{bmatrix}t&1\\0&1\end{bmatrix},\qquad
-a=\frac{1+\sqrt5}{2}.
+X(t)&=\begin{bmatrix}t&1\\0&1\end{bmatrix}, \\
+a&=\frac{1+\sqrt5}{2}.
 \end{align}
 Write $s_d(t)=\sigma_d(X(t))$.
 Their squares are the eigenvalues of
@@ -356,7 +364,8 @@ X(t)^\top X(t)=\begin{bmatrix}t^2&t\\t&2\end{bmatrix}.
 The sum of these eigenvalues is the trace $t^2+2$, and their product is the determinant $t^2$.
 Since $t>0$, this gives
 \begin{align}
-s_1(t)^2+s_2(t)^2&=t^2+2, & s_1(t)s_2(t)&=t.
+s_1(t)^2+s_2(t)^2&=t^2+2, \\
+s_1(t)s_2(t)&=t.
 \end{align}
 At $t=1$, these identities give $s_1(1)=a$ and $s_2(1)=a^{-1}$.
 Differentiating at $t=1$ gives
@@ -366,19 +375,22 @@ a^{-1}s_1'(1)+a s_2'(1)&=1.
 \end{align}
 Subtracting shows $s_1'(1)=s_2'(1)$, and hence
 \begin{align}
-s_1'(1)=s_2'(1)=\frac{1}{a+a^{-1}}=\frac{a}{1+a^2}.
+s_1'(1)&=s_2'(1) \\
+&=\frac{1}{a+a^{-1}} \\
+&=\frac{a}{1+a^2}.
 \end{align}
 The chain rule therefore gives
 \begin{align}
 \left.\frac{d}{dt}\ell(X(t))\right|_{t=1}
 &=g'(a)s_1'(1)+g'(a^{-1})s_2'(1) \\
-&=\frac{a}{1+a^2}\bigl[g'(a)+g'(a^{-1})\bigr].
+&=\frac{a}{1+a^2}\bigl(g'(a)+g'(a^{-1})\bigr).
 \end{align}
 Differentiating $g(t)=g(t^{-1})$ gives $g'(t)=-t^{-2}g'(t^{-1})$, so $g'(a^{-1})=-a^2g'(a)$.
 Substituting yields
 \begin{align}
 \left.\frac{d}{dt}\ell(X(t))\right|_{t=1}
-=\frac{1-a^2}{1+a^2}\,a g'(a)<0.
+&=\frac{1-a^2}{1+a^2}\,a g'(a) \\
+&<0.
 \end{align}
 The inequality follows from $a>1$ and $g'(a)>0$.
 Column log symmetry would require $\ell(X(t))=\ell(X(t^{-1}))$, and hence a zero derivative at $t=1$, a contradiction.
@@ -394,6 +406,8 @@ Normalizing $\exp(-a(t))$ to equal one at $t=1$ gives
 \begin{align}
 q(t)=\frac{\exp(-a(t))}{\exp(-a(1))}=\frac{2e}{e^t+e^{t^{-1}}}.
 \end{align}
+This function is positive, satisfies $q(1)=1$ and $q(t)=q(t^{-1})$, and has $q'(t)$ positive, zero, or negative when $t<1$, $t=1$, or $t>1$, respectively.
+Consequently, any matrix loss applied to $n_q^{\times D}(X)$ satisfies Property~\ref{property:log_symmetry}.
 \end{restatedproposition}
 
 \begin{proof}
@@ -439,10 +453,19 @@ Then $\mathcal B(UX)=\{\beta U^\top:\beta\in\mathcal B(X)\}$.
 \end{restatedproposition}
 
 \begin{proof}
-Normalization commutes with orthogonal transformations: $w(UX)=Uw(X)$.
-If $w(X)\beta=I_D$, then $w(UX)\beta U^\top=I_D$.
-Right multiplication by $U^\top$ preserves every row norm and hence both the loss and support.
-The inverse map is right multiplication by $U$, giving the stated correspondence.
+We first show that rotation preserves feasibility under the map $\beta\mapsto\beta U^\top$.
+Since $U$ preserves column lengths, normalization gives $n_q^{\times P}(UX)=U n_q^{\times P}(X)$.
+For $\beta\in\mathcal B(X)$,
+\begin{align}
+n_q^{\times P}(UX)\beta U^\top
+&=U n_q^{\times P}(X)\beta U^\top \\
+&=UI_DU^\top \\
+&=I_D.
+\end{align}
+We next show that this map preserves the objective and support.
+For every $p$, orthogonality gives $\|\beta_{p.}U^\top\|_2=\|\beta_{p.}\|_2$.
+Thus the sum of row norms and the set of nonzero rows remain unchanged.
+Right multiplication by $U$ reverses the map and also preserves feasibility and the objective, so it gives a bijection between the minimizer sets.
 \end{proof}
 
 \subsubsection{Proof of Proposition~\ref{prop:unitary_selection}}
@@ -453,24 +476,46 @@ Let $X\in\mathbb R^{D\times P}$ contain an orthonormal column-submatrix $X_{.S}$
 Then $S\subseteq\bigcup_{\beta\in\mathcal B(X)}S(\beta)$.
 \end{restatedproposition}
 
-Write $N=w(X)$, so $\|N_{.p}\|_2\leq1$ for every $p$.
+We use the KKT conditions to show that each orthonormal subset supports a minimizer, which places that subset in the union of optimal supports and proves Proposition~\ref{prop:unitary_selection}.
+We then prove the stronger statement that one minimizer realizes the entire union, by showing that averaging minimizers preserves the union of their supports.
+
+\paragraph{An orthonormal subset supports a minimizer.}
 \begin{proposition}
 \label{prop:kkt}
 If $X_{.S}$ is orthonormal, some minimizer in $\mathcal B(X)$ has support exactly $S$.
 \end{proposition}
 \begin{proof}
+We construct a coefficient matrix supported on $S$ and certify its optimality using the Karush--Kuhn--Tucker (KKT) conditions.
 Set $\beta_{S.}=X_{.S}^\top$ and all other rows to zero.
-Since normalization preserves unit columns, $N\beta=I_D$ and $\|\beta\|_{1,2}=D$.
-Every feasible $\gamma$ satisfies
-\[
-D=\operatorname{tr}(N\gamma)
-=\sum_p\gamma_{p.}N_{.p}
-\leq\sum_p\|\gamma_{p.}\|_2\|N_{.p}\|_2
-\leq\|\gamma\|_{1,2}.
-\]
-Thus $\beta$ is a minimizer supported on $S$.
+For a dual variable $\Lambda\in\mathbb R^{D\times D}$, the scalar Lagrangian is
+\begin{align}
+\mathcal L(\beta,\Lambda)
+=\|\beta\|_{1,2}+\operatorname{tr}\!\left(\Lambda^\top(I_D-n_q^{\times P}(X)\beta)\right).
+\end{align}
+The KKT conditions require primal feasibility and stationarity:
+\begin{align}
+n_q^{\times P}(X)\beta&=I_D, \\
+0&\in\partial\|\beta\|_{1,2}-(n_q^{\times P}(X))^\top\Lambda.
+\end{align}
+Here $\partial\|\beta\|_{1,2}$ is the set of subgradient matrices: at a nonzero row $\beta_{p.}$, the subgradient row is $\beta_{p.}/\|\beta_{p.}\|_2$; at a zero row, any row with norm at most one is admissible.
+Because the objective is convex and the constraints are affine, satisfying these conditions certifies a global minimizer.
+
+We first verify primal feasibility.
+Normalization preserves the orthonormal columns indexed by $S$, so
+\begin{align}
+n_q^{\times P}(X)\beta
+&=X_{.S}X_{.S}^\top \\
+&=I_D.
+\end{align}
+
+We verify stationarity with $\Lambda=I_D$.
+For $p\in S$, row $p$ of $(n_q^{\times P}(X))^\top\Lambda$ equals $X_{.p}^\top$, which is also $\beta_{p.}/\|\beta_{p.}\|_2$.
+For $p\notin S$, the coefficient row is zero.
+Since $q(t)\leq1$, row $p$ of $(n_q^{\times P}(X))^\top\Lambda$ has norm at most one, so it is an admissible subgradient row.
+Thus stationarity holds, and $\beta$ is a minimizer supported exactly on $S$.
 \end{proof}
 
+\paragraph{A minimizer realizes the union of optimal supports.}
 \begin{proposition}
 \label{prop:support_containment}
 Some minimizer $\beta^{\cup}$ satisfies
@@ -480,17 +525,21 @@ S(\beta^{\cup})
 \]
 \end{proposition}
 \begin{proof}
-Let $\beta,\gamma$ be minimizers with loss $L_*$.
+We first show that averaging two minimizers preserves both optimality and the union of their supports.
+Let $\beta,\gamma$ be minimizers with common minimum objective $L_*$.
 Their average is feasible, and
-\[
-L_*\leq\left\|\frac{\beta+\gamma}{2}\right\|_{1,2}
-\leq\frac{\|\beta\|_{1,2}+\|\gamma\|_{1,2}}{2}=L_*.
-\]
+\begin{align}
+L_*&\leq\left\|\frac{\beta+\gamma}{2}\right\|_{1,2} \\
+&\leq\frac{\|\beta\|_{1,2}+\|\gamma\|_{1,2}}{2} \\
+&=L_*.
+\end{align}
 Equality holds in the triangle inequality for each row, so two nonzero rows with the same index are nonnegative multiples of one another.
 Consequently the average has support $S(\beta)\cup S(\gamma)$.
+
+We extend this construction to the union of all optimal supports.
 For each row in the union of supports, choose a minimizer containing that row.
 There are at most $P$ such rows; repeatedly averaging these minimizers gives a minimizer whose support is their union.
-Combining this with Proposition~\ref{prop:kkt} proves Proposition~\ref{prop:unitary_selection}.
+Together with Proposition~\ref{prop:kkt}, this shows that one minimizer contains every orthonormal subset in its support.
 \end{proof}
 
 \subsubsection{Scalar uniqueness and multitask non-uniqueness}
@@ -513,7 +562,7 @@ If $X_\theta^\top y\in[-1,1]^4$ had three coordinates equal to $\pm1$, three dis
 A line meets the unit circle in at most two points.
 Thus $\operatorname{row}(X_\theta)$ meets no cube face of codimension greater than $2=\operatorname{rank}(X_\theta)$, proving scalar uniqueness.
 
-All columns have unit length, so $w(X_\theta)=X_\theta$.
+All columns have unit length, so $n_q^{\times4}(X_\theta)=X_\theta$.
 The identity-supported solution has loss $2$, and every feasible $\beta$ satisfies
 \begin{align}
 2=\operatorname{tr}(X_\theta\beta)
@@ -579,7 +628,7 @@ v&=\begin{bmatrix}\sqrt3/2\\-1/2\end{bmatrix}, &
 X&=[e_1,e_2,\underbrace{u,u,u,u}_{4},\underbrace{v,v,v,v}_{4}],
 \end{align}
 where $e_1,e_2$ are the standard basis vectors of $\mathbb R^2$.
-All columns have unit length, so $w(X)=X$.
+All columns have unit length, so $n_q^{\times P}(X)=X$.
 The matrix $\beta^{(0)}=[I_2\;0]^\top$ is a basis-pursuit minimizer supported on $\{1,2\}$.
 However, the unique minimum-Frobenius basis-pursuit minimizer is
 \begin{align}
@@ -657,7 +706,7 @@ X&=\begin{bmatrix}
 \end{bmatrix}, &
 \beta&=\frac23 X^\top.
 \end{align}
-Its columns have unit length, so $w(X)=X$, and $XX^\top=\frac32 I_2$ gives $X\beta=I_2$ and $\|\beta\|_{1,2}=3\cdot\frac23=2=D$.
+Its columns have unit length, so $n_q^{\times P}(X)=X$, and $XX^\top=\frac32 I_2$ gives $X\beta=I_2$ and $\|\beta\|_{1,2}=3\cdot\frac23=2=D$.
 For every feasible $B$, $2=\operatorname{tr}(XB)=\sum_{p=1}^3\langle X_{.p},B_{p.}^\top\rangle \leq\sum_{p=1}^3\|B_{p.}\|_2$, so $\ell(X)=D$.
 Every pair of distinct columns has inner product $-1/2$, so no pair is orthonormal.
 \end{proof}
@@ -673,7 +722,7 @@ The computational complexity of each step of Isometry Pursuit is $O(D^2P)$.
 \begin{proof}
 The augmented split Lagrangian minimized by ADMM is
     \begin{align}
-    \mathcal L_{\rho,\gamma, \nu} (X,\beta,z) = \|z\|_{1,2} + \text{tr}(\nu^T (I_D - w(X) \beta)) + \rho \|I_D - w(X) \beta\|_F^2 + \gamma \|\beta - z\|_F^2
+    \mathcal L_{\rho,\gamma, \nu} (X,\beta,z) = \|z\|_{1,2} + \text{tr}(\nu^T (I_D - n_q^{\times P}(X) \beta)) + \rho \|I_D - n_q^{\times P}(X) \beta\|_F^2 + \gamma \|\beta - z\|_F^2
     \end{align}
 This minimization problem is
     \begin{align}
@@ -686,18 +735,18 @@ The update rules of the ADMM algorithm used to optimize the augmented split Lagr
     \begin{align}
     \beta^{k+1} = \arg \min_{\beta \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta,z^k) \\
     z^{k+1} = \arg \min_{z \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta^{k+1},z) \\
-    \nu^{k+1} = \nu^k + \rho (I_D - w(X) \beta^{k+1})
+    \nu^{k+1} = \nu^k + \rho (I_D - n_q^{\times P}(X) \beta^{k+1})
     \end{align}
 We will analyze the computational complexity of each of these steps by rewriting the update rules according to the specifics of the isometry pursuit problem.
 
 The beta update Equation \ref{eq:beta_update} projects the solution onto the feasible set.
 \begin{align}
     \label{eq:beta_update}
-    \beta^{k+1} &= \arg \min_{\beta \in P \times D}  \text{tr}({\nu^k}^T (I_D - w(X) \beta)) + \rho \|I_D - w(X) \beta\|_2^2 + \gamma \|\beta - z^k\|_2^2 \\
-    &= (\rho \, w(X)^T w(X) + \gamma I_P)^{-1} (\rho \, w(X)^T I_D + \gamma z^k + w(X)^T \nu^k)
+    \beta^{k+1} &= \arg \min_{\beta \in P \times D}  \text{tr}({\nu^k}^T (I_D - n_q^{\times P}(X) \beta)) + \rho \|I_D - n_q^{\times P}(X) \beta\|_2^2 + \gamma \|\beta - z^k\|_2^2 \\
+    &= (\rho \, n_q^{\times P}(X)^T n_q^{\times P}(X) + \gamma I_P)^{-1} (\rho \, n_q^{\times P}(X)^T I_D + \gamma z^k + n_q^{\times P}(X)^T \nu^k)
     \end{align}
-% This is accomplished through computation of the pseudo-inverse of the linear regression solution $(w(X)^T w(X))^{-1} w(X)^T I_D$.
-Write $N=w(X)$.
+% This is accomplished through computation of the pseudo-inverse of the linear regression solution $(n_q^{\times P}(X)^T n_q^{\times P}(X))^{-1} n_q^{\times P}(X)^T I_D$.
+Write $N=n_q^{\times P}(X)$.
 The Woodbury identity gives
 \begin{align}
 (\gamma I_P+\rho N^\top N)^{-1}
@@ -721,11 +770,11 @@ The computational complexity of this operation is $O(PD)$.
 
 Finally, the $\nu$ update Equation \ref{eq:nu_update} increases the squeezing of the $z$ and $\beta$ variables towards to each other.
 \begin{align}
-\nu^{k+1} = \nu^k + \rho (I_D - w(X) \beta^{k+1})
+\nu^{k+1} = \nu^k + \rho (I_D - n_q^{\times P}(X) \beta^{k+1})
 \label{eq:nu_update}
 \end{align}
 In this step, the dual variable $\nu$ that controls the penalty accrued by the splitting is updated in the direction of the constraint violation.
-The computational complexity of this operation is dominated by that of the matrix multiplication $w(X) \beta^{k+1}$.
+The computational complexity of this operation is dominated by that of the matrix multiplication $n_q^{\times P}(X) \beta^{k+1}$.
 That is, it is $O(D^2P)$.
 \end{proof}
 

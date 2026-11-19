@@ -20,3 +20,13 @@ For additional notation, read the relevant manuscript definitions and follow the
 Use matching lowercase and uppercase letters for indices and cardinalities: sum over `d=1,\ldots,D`, `p=1,\ldots,P`, or `n=1,\ldots,N`; never write a sum such as `\sum_{p=1}^D`.
 Denote the corresponding index set by the calligraphic uppercase letter, such as `\mathcal D` with cardinality `D`, and write `d\in\mathcal D` when summing over that set.
 Preserve established manuscript names for selected subsets, such as `S`, unless the user requests a notation migration.
+
+## Check domains, codomains, and ranges
+
+Before writing or accepting a mathematical expression, check the domain and codomain of each function, the range of its inputs, and the dimensions and mathematical types of all objects.
+Check that function compositions, derivatives, products, inverses, and evaluations are defined under the stated hypotheses; distinguish scalar, vector, matrix, set-valued, and operator-valued objects.
+Do not apply a scalar function to a matrix without explicitly defining the matrix operation and verifying its domain.
+For example, if $g:(0,\infty)\to\mathbb R$, do not write $g'(A)$ for a matrix $A$ as though scalar evaluation already defines it.
+Prefer an explicit sum over positive eigenvalues and orthonormal eigenvectors when that states the argument directly; if matrix functional calculus is necessary, define it before use and state the spectral assumptions.
+Make necessary domain and codomain information visible to the reader when introducing unfamiliar notation or an operation whose meaning is otherwise ambiguous.
+Do not silently extend notation beyond its definition merely because an expert could infer an intended interpretation.

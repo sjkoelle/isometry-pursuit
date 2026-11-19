@@ -54,7 +54,7 @@ We introduce losses satisfying Properties~\ref{property:rotation_invariance}--\r
 For a function $q:(0,\infty)\to(0,\infty)$ satisfying $q(1)=1$ and $q(t)=q(t^{-1})$, define $n_q:\mathbb R^D\setminus\{0\}\to\mathbb R^D$ by $n_q(v)=\frac{q(\|v\|_2)}{\|v\|_2}v$.
 \end{definition}
 
-We use $n_q^{\times D}(X)$ to denote column broadcasting of the normalization function, applying $n_q$ to each of the $D$ columns of $X$.
+We use $n_q^{\times P}(X)$ to denote column broadcasting of the normalization function, applying $n_q$ to each of the $P$ columns of $X\in\mathbb R^{D\times P}$; for square matrices, we write $n_q^{\times D}(X)$.
 The obvious choice is $q(t)=\exp(1-\max(t,t^{-1}))$, but it is not differentiable at $t=1$.
 We replace the maximum by its LogSumExp relaxation \citep{Boyd2004-ql} and rescale the resulting function so that $q(1)=1$.
 
@@ -66,6 +66,8 @@ Normalizing $\exp(-a(t))$ to equal one at $t=1$ gives
 q(t)=\frac{\exp(-a(t))}{\exp(-a(1))}=\frac{2e}{e^t+e^{t^{-1}}}.
 \label{eq:normalization}
 \end{align}
+This function is positive, satisfies $q(1)=1$ and $q(t)=q(t^{-1})$, and has $q'(t)$ positive, zero, or negative when $t<1$, $t=1$, or $t>1$, respectively.
+Consequently, any matrix loss applied to $n_q^{\times D}(X)$ satisfies Property~\ref{property:log_symmetry}.
 \end{proposition}
 
 \begin{proposition}
@@ -81,15 +83,16 @@ Figure~\ref{fig:loss_comparison} illustrates the loss characterizations in Table
 \begin{proposition}[Normalized spectral losses]
 \label{prop:normalized_spectral_losses}
 For full-rank $X\in\mathbb R^{D\times D}$, let $g:(0,\infty)\to\mathbb R$ be twice differentiable with $g(1)=0$, $g'(t)<0$, and $t g''(t)>g'(t)$ for every $t>0$.
-Then $\ell_g(X)=\sum_{d=1}^D g\!\left(\sigma_d(n_q^{\times D}(X))\right)$ is nonnegative and satisfies Properties~\ref{property:rotation_invariance}--\ref{property:pathwise}.
+Use $q$ from~\eqref{eq:normalization}.
+Then $\ell_{g,q}(X)=\sum_{d=1}^D g\!\left(\sigma_d(n_q^{\times D}(X))\right)$ is nonnegative and satisfies Properties~\ref{property:rotation_invariance}--\ref{property:pathwise}.
 \end{proposition}
 \begin{proposition}[Inverse determinant]
 \label{prop:determinant_singular_values}
-For $g(t)=-\log t$, the centered inverse determinant satisfies $|\det(n_q^{\times D}(X))|^{-1}-1=\exp(\ell_g(X))-1$.
+For full-rank $X\in\mathbb R^{D\times D}$, the centered inverse determinant $|\det(n_q^{\times D}(X))|^{-1}-1$ ranks candidate matrices in the same order as $\ell_{g,q}(X)$ with $g(t)=-\log t$.
 \end{proposition}
 \begin{proposition}[Inverse Frobenius norm]
 \label{prop:frobenius_inverse_singular_values}
-For $g(t)=t^{-2}-1$, the centered inverse Frobenius norm satisfies $\|(n_q^{\times D}(X))^{-1}\|_F-\sqrt D=\sqrt{\ell_g(X)+D}-\sqrt D$.
+For full-rank $X\in\mathbb R^{D\times D}$, the centered inverse Frobenius norm $\|(n_q^{\times D}(X))^{-1}\|_F-\sqrt D$ ranks candidate matrices in the same order as $\ell_{g,q}(X)$ with $g(t)=t^{-2}-1$.
 \end{proposition}
 
 
@@ -105,12 +108,23 @@ To avoid this, we reformulate the problem as a sparse convex optimization proble
 
 \subsection{Isometry pursuit}
 
-Isometry pursuit is the application of multitask basis pursuit to the normalized design matrix $w(X)$ to identify submatrices of $ X$ that are as orthonormal as possible.
+Isometry pursuit is the application of multitask basis pursuit to the normalized design matrix $n_q^{\times P}(X)$ to identify submatrices of $ X$ that are as orthonormal as possible.
 For $\beta\in\mathbb R^{P\times D}$, define $\|\beta\|_{1,2}=\sum_{p=1}^P\|\beta_{p.}\|_2$.
 The set of isometry pursuit solutions is
 \begin{align}
 \label{prog:isometry_pursuit}
-\mathcal B(X):=\arg\min_{\beta\in\mathbb R^{P\times D}}\|\beta\|_{1,2}\;:\;I_D=w(X)\beta.
+% TODO (Sam): Center the IP objective by subtracting D and strengthen Property 2
+% to require nonnegativity, with zero loss exactly at isometries. Do not implement yet.
+% Update the IP optimization definition; the loss-D statements in Propositions 14--15
+% and their supplemental restatements; and the corresponding proofs and examples.
+% Preserve raw norm identities such as ||beta||_{1,2}=D, while calling their centered loss zero.
+% Remove Proposition 9's separate nonnegativity claim in both statements and update
+% the quoted Property 2 in its proof and the Property 2 explanation in Table 2.
+% Update the synthetic optimum and regret definitions in Experiments, Figure 3's
+% caption and plot labels, and any other displayed raw-loss conventions.
+% Keep saved numerical results as raw norms and subtract D for presented losses;
+% supports, rankings, regrets, and runtimes do not change, so no reruns are needed.
+\mathcal B(X):=\arg\min_{\beta\in\mathbb R^{P\times D}}\|\beta\|_{1,2}\;:\;I_D=n_q^{\times P}(X)\beta.
 \end{align}
 
 Recovered functions are the indices of the dictionary elements with non-zero coefficients.
@@ -118,7 +132,7 @@ That is, they are given by $S(\beta)$, where $S:\mathbb R^{P\times D}\to 2^{[P]}
 \begin{algorithm}[H]
 \caption{\isometrypursuit(Matrix ${X} \in \mathbb{R}^{D \times P}$)}
 \begin{algorithmic}[1]
-\STATE {Normalize} $X' = w({X})$
+\STATE {Normalize} $X' = n_q^{\times P}(X)$
 \STATE {Optimize} $\widehat \beta \in \mathcal B(X)$
 \STATE {\bf Output} $\widehat{S} = S (\widehat \beta)$
 \end{algorithmic}
@@ -167,6 +181,7 @@ The isometric solution is optimum among cardinality $D$ solutions.
 \label{prop:D_min}
 $\ell (X_S) = D , |S| = D \Leftrightarrow X_S X_S^T = I_D$
 \end{proposition}
+\par\penalty-100
 \begin{proposition}
 \label{prop:loss_without_isometry}
 Without $|S|=D$, $\ell(X_{.S})=D$ does not imply that $X_{.S}$ contains an orthonormal column-submatrix.
