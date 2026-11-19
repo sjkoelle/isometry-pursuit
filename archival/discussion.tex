@@ -5,6 +5,7 @@ We have shown that column normalization and multitask basis pursuit can help sel
 The normalization favors unit-length candidates, while multitask basis pursuit favors orthogonality.
 Many full-rank $D$-column submatrices can represent $I_D$, so our objective distinguishes geometric quality among representations of the same cardinality, extending the usual sparse-recovery perspective of greedy and convex basis pursuit \citep{Mallat93-wi, Tropp05-ml, Chen2001-hh, Tropp06-sg}.
 Compared with Sparse PCA \citep{DAspremont2007-aq, Dey2017-mx, Bertsimas2022-qo, Bertsimas2022-dv}, we select existing columns rather than linear combinations of them.
+Finding a least-sparse minimizer is important because its support would contain every orthonormal subset; developing an efficient algorithm that guarantees such a minimizer remains future work.
 A multitask Lasso extension could vary sparsity along a regularization path, while selecting fewer than $D$ columns and using response matrices other than $I_D$ would extend the coordinate-selection problem \citep{Hastie2015-qa, Mishkin2022-yf}.
 Sampling incoming columns could reduce swap costs, while beam search could retain several candidate subsets at each step to explore competing selection paths on either the full or screened dictionary \citep{Zou2024-swap, Fraiman2022-beam}.
 

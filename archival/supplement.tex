@@ -476,8 +476,8 @@ Let $X\in\mathbb R^{D\times P}$ contain an orthonormal column-submatrix $X_{.S}$
 Then $S\subseteq\bigcup_{\beta\in\mathcal B(X)}S(\beta)$.
 \end{restatedproposition}
 
-We use the KKT conditions to show that each orthonormal subset supports a minimizer, which places that subset in the union of optimal supports and proves Proposition~\ref{prop:unitary_selection}.
-We then prove the stronger statement that one minimizer realizes the entire union, by showing that averaging minimizers preserves the union of their supports.
+We construct a coefficient matrix supported on the given orthonormal subset and verify the KKT conditions.
+This proves that the subset supports a minimizer and therefore belongs to the union of optimal supports.
 
 \paragraph{An orthonormal subset supports a minimizer.}
 \begin{proposition}
@@ -515,32 +515,39 @@ Since $q(t)\leq1$, row $p$ of $(n_q^{\times P}(X))^\top\Lambda$ has norm at most
 Thus stationarity holds, and $\beta$ is a minimizer supported exactly on $S$.
 \end{proof}
 
-\paragraph{A minimizer realizes the union of optimal supports.}
-\begin{proposition}
-\label{prop:support_containment}
-Some minimizer $\beta^{\cup}$ satisfies
-\[
-S(\beta^{\cup})
-=\bigcup_{\beta\in\mathcal B(X)}S(\beta).
-\]
-\end{proposition}
-\begin{proof}
-We first show that averaging two minimizers preserves both optimality and the union of their supports.
-Let $\beta,\gamma$ be minimizers with common minimum objective $L_*$.
-Their average is feasible, and
-\begin{align}
-L_*&\leq\left\|\frac{\beta+\gamma}{2}\right\|_{1,2} \\
-&\leq\frac{\|\beta\|_{1,2}+\|\gamma\|_{1,2}}{2} \\
-&=L_*.
-\end{align}
-Equality holds in the triangle inequality for each row, so two nonzero rows with the same index are nonnegative multiples of one another.
-Consequently the average has support $S(\beta)\cup S(\gamma)$.
+The constructed minimizer has support exactly $S$, proving Proposition~\ref{prop:unitary_selection}.
 
-We extend this construction to the union of all optimal supports.
-For each row in the union of supports, choose a minimizer containing that row.
-There are at most $P$ such rows; repeatedly averaging these minimizers gives a minimizer whose support is their union.
-Together with Proposition~\ref{prop:kkt}, this shows that one minimizer contains every orthonormal subset in its support.
-\end{proof}
+% Additional averaging result retained for possible future use; not part of Proposition 13.
+% \subsubsection{A minimizer realizes the union of optimal supports}
+% \label{sec:union_support_minimizer}
+% 
+% We additionally show that averaging minimizers can produce one minimizer whose support equals the entire union of optimal supports.
+% \begin{proposition}
+% \label{prop:support_containment}
+% Some minimizer $\beta^{\cup}$ satisfies
+% \[
+% S(\beta^{\cup})
+% =\bigcup_{\beta\in\mathcal B(X)}S(\beta).
+% \]
+% \end{proposition}
+% \begin{proof}
+% We first show that averaging two minimizers preserves both optimality and the union of their supports.
+% Let $\beta,\gamma$ be minimizers with common minimum objective $L_*$.
+% Their average is feasible, and
+% \begin{align}
+% L_*&\leq\left\|\frac{\beta+\gamma}{2}\right\|_{1,2} \\
+% &\leq\frac{\|\beta\|_{1,2}+\|\gamma\|_{1,2}}{2} \\
+% &=L_*.
+% \end{align}
+% Equality holds in the triangle inequality for each row, so two nonzero rows with the same index are nonnegative multiples of one another.
+% Consequently the average has support $S(\beta)\cup S(\gamma)$.
+% 
+% We extend this construction to the union of all optimal supports.
+% For each row in the union of supports, choose a minimizer containing that row.
+% There are at most $P$ such rows; repeatedly averaging these minimizers gives a minimizer whose support is their union.
+% Together with Proposition~\ref{prop:kkt}, this shows that one minimizer contains every orthonormal subset in its support.
+% \end{proof}
+% 
 
 \subsubsection{Scalar uniqueness and multitask non-uniqueness}
 \label{sec:rotation_nonuniqueness}
