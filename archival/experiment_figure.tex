@@ -51,9 +51,10 @@
     \end{subfigure}
 \caption{Statistical and computational behavior of the four search pipelines.
 (a) Dataset parameters.
-(b,c) The same $3250$ fixed synthetic matrices cover $130$ conditions at $D=2,4,8,16,32,64$, with $25$ replicates per condition and IP using SCS at scale $0.1$.
+(b,c) Synthetic points use the same $3250$ fixed matrices covering $130$ conditions at $D=2,4,8,16,32,64$, with $25$ replicates per condition and IP using SCS at scale $0.1$.
 (b) Final-search regret relative to the raw-loss optimum $D$; text reports time-limited pipelines.
-(c) Arithmetic-work proxies versus Lambda runtime for pure initializers, excluding swaps.
+(c) Arithmetic-work proxies versus runtime for pure initializers, excluding swaps.
+Synthetic timings come from Lambda; stars show the saved local real-data benchmarks.
 Open markers indicate backward initializers reaching the $245$-second limit (dashed line), plotted against full-elimination work.
 (d) Strict pairwise defeat frequencies for Synthetic, Iris, Wine, and Ethanol, each with $25$ replicates per condition or real dataset.
 Each cell uses only runs where both searches completed, so denominators vary when searches timed out; ties earn no win credit.}

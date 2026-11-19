@@ -1,0 +1,72 @@
+% Historical ADMM derivation retained as a style reference.
+% Source: archival/supplement.tex at commit b2c83675f3a1cc78dcc4696a9aa85279927c4288.
+% This file is not included in the manuscript.
+% Preserve this historical copy; revise the active proof in supplement.tex.
+
+\subsubsection{Proof of Proposition \ref{prop:computational_complexity}}
+\label{proof:computational_complexity}
+
+\begin{restatedproposition}{prop:computational_complexity}
+The computational complexity of each step of Isometry Pursuit is $O(D^2P)$.
+\end{restatedproposition}
+
+% TODO: Replace the direct-ADMM derivation below with the SCS cached linear-solve and cone-projection analysis for the runtime panel of Figure 3, distinguishing setup from per-iteration work.
+\begin{proof}
+The augmented split Lagrangian minimized by ADMM is
+    \begin{align}
+    \mathcal L_{\rho,\gamma, \nu} (X,\beta,z) = \|z\|_{1,2} + \text{tr}(\nu^T (I_D - n_q^{\times P}(X) \beta)) + \rho \|I_D - n_q^{\times P}(X) \beta\|_F^2 + \gamma \|\beta - z\|_F^2
+    \end{align}
+This minimization problem is
+    \begin{align}
+        \arg \min_{\beta,z \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta,z)
+    \end{align}
+For a more detailed explanation of the reasons to prefer optimizing the split augmented Lagrangian over direct optimization of Equation \ref{prog:isometry_pursuit} see \citet{Boyd2010-jd}.
+    
+The three main subroutines ( \ref{eq:beta_update} - \ref{eq:nu_update}) called by ADMM determine the per iteration complexity.
+The update rules of the ADMM algorithm used to optimize the augmented split Lagrangian are
+    \begin{align}
+    \beta^{k+1} = \arg \min_{\beta \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta,z^k) \\
+    z^{k+1} = \arg \min_{z \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta^{k+1},z) \\
+    \nu^{k+1} = \nu^k + \rho (I_D - n_q^{\times P}(X) \beta^{k+1})
+    \end{align}
+We will analyze the computational complexity of each of these steps by rewriting the update rules according to the specifics of the isometry pursuit problem.
+
+The beta update Equation \ref{eq:beta_update} projects the solution onto the feasible set.
+\begin{align}
+    \label{eq:beta_update}
+    \beta^{k+1} &= \arg \min_{\beta \in P \times D}  \text{tr}({\nu^k}^T (I_D - n_q^{\times P}(X) \beta)) + \rho \|I_D - n_q^{\times P}(X) \beta\|_2^2 + \gamma \|\beta - z^k\|_2^2 \\
+    &= (\rho \, n_q^{\times P}(X)^T n_q^{\times P}(X) + \gamma I_P)^{-1} (\rho \, n_q^{\times P}(X)^T I_D + \gamma z^k + n_q^{\times P}(X)^T \nu^k)
+    \end{align}
+% This is accomplished through computation of the pseudo-inverse of the linear regression solution $(n_q^{\times P}(X)^T n_q^{\times P}(X))^{-1} n_q^{\times P}(X)^T I_D$.
+Write $N=n_q^{\times P}(X)$.
+The Woodbury identity gives
+\begin{align}
+(\gamma I_P+\rho N^\top N)^{-1}
+=\gamma^{-1}\left[I_P-\rho N^\top
+(\gamma I_D+\rho NN^\top)^{-1}N\right].
+\end{align}
+For fixed $N$, $\rho>0$, and $\gamma>0$, forming $NN^\top$ and factoring $\gamma I_D+\rho NN^\top$ costs $O(PD^2+D^3)$ once.
+To apply the inverse to a $P\times D$ right-hand side $R$, compute $NR$, solve $(\gamma I_D+\rho NN^\top)Z=NR$ using the cached factorization, and return $\gamma^{-1}(R-\rho N^\top Z)$.
+The two matrix products cost $O(PD^2)$ and the solve costs $O(D^3)$.
+Forming the right-hand side of the coefficient update also costs $O(PD^2)$, so the per-iteration cost is $O(PD^2)$ when $P\geq D$.
+
+Subsequently, the z update Equation \ref{eq:z_update} is soft-thresholding operation onto a contracted level set $\|\|_{1,2}$ ball.
+\begin{align}
+    \label{eq:z_update}
+    z^{k+1} &= \arg \min_{z \in P \times D} \|z\|_{1,2} + \gamma \|z - \beta^{k+1}\|_2^2 \\
+    &= \begin{cases} (1 - \frac{1}{\gamma\|\beta_{j.}^{k+1}\|_2}) (\beta_{j.}^{k+1}) \; \text{if} \; \|\beta_{j.}^{k+1}\|_2 > \frac{1}{\gamma}\\
+        0 \; \text{otherwise}
+    \end{cases}
+\end{align}
+The computational complexity of this operation is $O(PD)$.
+
+Finally, the $\nu$ update Equation \ref{eq:nu_update} increases the squeezing of the $z$ and $\beta$ variables towards to each other.
+\begin{align}
+\nu^{k+1} = \nu^k + \rho (I_D - n_q^{\times P}(X) \beta^{k+1})
+\label{eq:nu_update}
+\end{align}
+In this step, the dual variable $\nu$ that controls the penalty accrued by the splitting is updated in the direction of the constraint violation.
+The computational complexity of this operation is dominated by that of the matrix multiplication $n_q^{\times P}(X) \beta^{k+1}$.
+That is, it is $O(D^2P)$.
+\end{proof}
+

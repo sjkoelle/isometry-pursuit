@@ -8,12 +8,15 @@ We also design synthetic dictionaries to exhibit the strengths of \isometrypursu
 All columns have unit length, so initial single-column choices cannot distinguish the planted columns from the added columns, although the planted block provides a known optimum $\ell=D$.
 Figure~\ref{fig:experiment-datasets} reports dataset dimensions and replicate counts.
 We compare the forward and backward greedy initializations followed by swap search defined in Section~\ref{sec:sparse_convex_coordinate_selection}, each applied to the full dictionary or after restriction by \isometrypursuit.
+Backward elimination scores each candidate using $\|(X_{.S})^\dagger\|_{1,2}$, where $\dagger$ denotes the Moore--Penrose pseudoinverse, rather than solving basis pursuit at each deletion.
 For synthetic datasets, regret is $\mathcal R_{m,r}=\ell_{m,r}-D$ relative to the known optimum; for real datasets, we use the best observed optimizer on each replicate, $\ell_r^\star=\min_m\ell_{m,r}$, and define regret as $\mathcal R_{m,r}=\ell_{m,r}-\ell_r^\star$.
 
 \isometrypursuit~improves accuracy and initialization time on the large-$D$ synthetic dictionaries, and sometimes improves selections on every dataset, making it useful alongside the other searches.
 At $D=64$, both IP pipelines attain the optimum on all $875$ matrices, compared with $526/875$ for full-dictionary forward initialization and swaps and $799/800$ completed cases for backward initialization and swaps (Figure~\ref{fig:synthetic-ground-truth-regret}).
+Figure~\ref{fig:synthetic-support-recovery} reports exact recovery of the planted subset; IP screening improves aggregate recovery rates for both search directions at $D\geq4$.
 For $D=32,64$, IP uses about one-tenth of the aggregate backward-initialization time, while $75$ backward initializations reach the time limit (Figure~\ref{fig:complexity-runtime-early-stop}); these timings exclude swap refinement.
 IP also improves on the baseline of \backwardgreedy~followed by \forwardbackward~on some replicates of every dataset: IP followed by the same searches wins on $4\%$ of replicates in each of Iris, Wine, and Ethanol, and on $4.9\%$ of paired synthetic runs (Figure~\ref{fig:real-search-regrets}).
 The supplementary real-data benchmark also shows competitive IP initialization times (Figure~\ref{fig:optimizer_parameter_sweep}).
 Since no pipeline wins uniformly, we can run multiple pipelines and retain the subset with the lowest observed loss.
-The supplement reports support cardinalities (Figures~\ref{fig:synthetic-support-size} and~\ref{fig:support_cardinalities}) and sensitivity to optimizer settings (Section~\ref{sec:optimizer_sensitivity}).
+Figure~\ref{fig:selection-examples} overlays the subsets selected by all four pipelines on $D=2$ Ethanol and synthetic dictionaries.
+The supplement reports support cardinalities (Figure~\ref{fig:synthetic-support-size}) and sensitivity to optimizer settings (Section~\ref{sec:optimizer_sensitivity}).

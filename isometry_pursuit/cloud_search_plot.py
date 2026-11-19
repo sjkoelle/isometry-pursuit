@@ -187,15 +187,14 @@ def plot_updated_runtime(root,solvers,searches,main=False,ax=None):
         style=dict(facecolors='none',edgecolors=colors[method]) if capped else dict(color=colors[method])
         ax.scatter([r['work'] for r in group],[r['seconds'] for r in group],
                    marker=markers[dimension],s=34,alpha=.25 if main and not capped else .5,linewidths=.8,**style)
-    if not main:
-        real=pd.read_csv(folder/'complexity_runtime_real_summary.csv')
-        re=pd.read_csv(folder/'complexity_runtime_early_stopped_ip_summary.csv')
-        real=pd.concat([real[real.method!='isometry_pursuit'],re],ignore_index=True)
-        for r in real.itertuples():
-            ax.scatter(r.arithmetic_work_proxy,r.median_runtime_seconds,marker='*',s=130,
-                       color=colors[r.method],edgecolors='black',linewidths=.6,zorder=5)
-            ax.annotate(r.dataset,(r.arithmetic_work_proxy,r.median_runtime_seconds),xytext=(4,5),
-                        textcoords='offset points',fontsize=7)
+    real=pd.read_csv(folder/'complexity_runtime_real_summary.csv')
+    re=pd.read_csv(folder/'complexity_runtime_early_stopped_ip_summary.csv')
+    real=pd.concat([real[real.method!='isometry_pursuit'],re],ignore_index=True)
+    for r in real.itertuples():
+        ax.scatter(r.arithmetic_work_proxy,r.median_runtime_seconds,marker='*',s=130,
+                   color=colors[r.method],edgecolors='black',linewidths=.6,zorder=5)
+        ax.annotate(r.dataset,(r.arithmetic_work_proxy,r.median_runtime_seconds),xytext=(4,5),
+                    textcoords='offset points',fontsize=7)
     cutoff=245.36574106800015
     ax.axhline(cutoff,color=colors['backward_greedy'],linestyle='--',alpha=.8,linewidth=1.25)
     ax.annotate('backward time limit',xy=(.98,cutoff),xycoords=ax.get_yaxis_transform(),
@@ -207,7 +206,7 @@ def plot_updated_runtime(root,solvers,searches,main=False,ax=None):
                     loc='upper left',fontsize=8,title='Method',title_fontsize=9)
     ax.add_artist(first)
     ax.legend(handles=[Line2D([],[],color='.35',marker=marker,linestyle='none',label=f'D={d}') for d,marker in markers.items()]
-              +([] if main else [Line2D([],[],color='.35',marker='*',linestyle='none',label='Real dataset')]),
+              +[Line2D([],[],color='.35',marker='*',linestyle='none',label='Real dataset')],
               loc='lower right',fontsize=8,title='Dimension',title_fontsize=9)
     ax.set(xscale='log',yscale='log',xlabel='Arithmetic-work proxy',ylabel='Wall-clock time (s)',
            title='Arithmetic work versus runtime')

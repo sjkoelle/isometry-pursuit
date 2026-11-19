@@ -194,50 +194,45 @@ Since $U n_q^{\times D}(X)$ and $n_q^{\times D}(X)$ have the same singular value
 \emph{``A matrix loss $\ell$ is uniquely minimized by isometries if $\arg\min_X\ell(X)=\{X:XX^T=I_D\}$.''}
 
 \textbf{Nonnegativity: $\ell_{g,q}(X)\geq0$.}
-We first bound the average squared singular value of $n_q^{\times D}(X)$ by one.
-Write $u_d=\sigma_d(n_q^{\times D}(X))^2$.
-The squared singular values of a matrix are the eigenvalues of its Gram matrix, so their sum equals its trace and hence its squared Frobenius norm.
-Since the $d$th column of $n_q^{\times D}(X)$ has norm $q(\|x_{.d}\|_2)$ and $q(t)\leq1$ with equality only at $t=1$,
+We first bound $g$ below by a quadratic.
+The hypothesis gives
 \begin{align}
-\frac{1}{D}\sum_{d=1}^D u_d
-&=\frac{\|n_q^{\times D}(X)\|_F^2}{D} \\
-&=\frac{1}{D}\sum_{d=1}^D q(\|x_{.d}\|_2)^2 \\
-&\leq1.
-\end{align}
-
-We next show that $\widetilde g(u)=g(\sqrt u)$ is strictly convex and decreasing on $(0,\infty)$.
-Then $\widetilde g(1)=0$, and
-\begin{align}
-\widetilde g'(u)&=\frac{g'(\sqrt u)}{2\sqrt u} \\
-&<0, \\
-\widetilde g''(u)&=\frac{\sqrt u\,g''(\sqrt u)-g'(\sqrt u)}{4u^{3/2}} \\
+\frac{d}{dt}\left(\frac{g'(t)}t\right)
+&=\frac{tg''(t)-g'(t)}{t^2} \\
 &>0.
 \end{align}
-
-We now use this bound to show that the loss is nonnegative.
-The loss evaluates these squared singular values through $\widetilde g$, since $\ell_{g,q}(X)=\sum_{d=1}^D\widetilde g(u_d)$.
-Jensen's inequality for the strictly convex function $\widetilde g$, followed by its monotonic decrease, gives
+Thus $g'(t)/t$ is strictly increasing, so the derivative of $g(t)-\frac12g'(1)(t^2-1)$ is negative below one and positive above one.
+Since this difference vanishes at one,
 \begin{align}
-\frac{1}{D}\sum_{d=1}^D \widetilde g(u_d)
-&\geq \widetilde g\!\left(\frac{1}{D}\sum_{d=1}^D u_d\right) \label{eq:normalized_spectral_jensen} \\
-&\geq \widetilde g(1) \label{eq:normalized_spectral_decreasing_bound} \\
-&=0.
+g(t)&\geq\frac{g'(1)}2(t^2-1),
+\label{eq:normalized_spectral_quadratic_bound}
 \end{align}
-Hence $\ell_{g,q}(X)\geq0$.
+with equality only at $t=1$.
+
+We apply this bound to the normalized singular values.
+Their squared sum equals the squared Frobenius norm, and normalization gives
+\begin{align}
+\|n_q^{\times D}(X)\|_F^2
+&=\sum_{d=1}^D q(\|x_{.d}\|_2)^2 \\
+&\leq D.
+\end{align}
+Summing~\eqref{eq:normalized_spectral_quadratic_bound} and using $g'(1)<0$ therefore gives
+\begin{align}
+\ell_{g,q}(X)
+&\geq\frac{g'(1)}2\left(\|n_q^{\times D}(X)\|_F^2-D\right) \\
+&\geq0.
+\end{align}
 
 \textbf{Zero loss implies $X^\top X=I_D$.}
-We determine when equality holds in the nonnegativity bound.
-Equality in Jensen's inequality~\eqref{eq:normalized_spectral_jensen}, by strict convexity, requires $u_1=\cdots=u_D$, while equality in~\eqref{eq:normalized_spectral_decreasing_bound} requires $D^{-1}\sum_d u_d=1$.
-Thus every singular value of $n_q^{\times D}(X)$ equals one.
-Zero loss forces equality throughout the nonnegativity bound, so the identity between squared singular values and squared column norms gives $\sum_{d=1}^D q(\|x_{.d}\|_2)^2=D$.
-Moreover, equality in $\sum_{d=1}^D q(\|x_{.d}\|_2)^2\leq D$ requires $\|x_{.d}\|_2=1$ for every $d$.
-Consequently $n_q^{\times D}(X)=X$ and $X^\top X=I_D$.
+Zero loss forces equality in both bounds.
+Equality in~\eqref{eq:normalized_spectral_quadratic_bound} requires every normalized singular value to equal one.
+Their squared sum is then $D$, so the sum of squared normalized column norms is also $D$.
+Each normalized column has norm at most one, so every normalized column must have norm one.
+Since $q(t)=1$ only at $t=1$, every original column has unit norm, giving $n_q^{\times D}(X)=X$ and $X^\top X=I_D$.
 
 \textbf{$X^\top X=I_D$ implies zero loss.}
-Conversely, if $X^\top X=I_D$, every column has unit norm, so $n_q^{\times D}(X)=X$.
-Every singular value then equals one, and $g(1)=0$ gives $\ell_{g,q}(X)=0$.
-Thus the loss is nonnegative and equals zero if and only if $X^\top X=I_D$, proving Property~\ref{property:unique_isometry_minimum}.
-
+Conversely, an isometry has unit-length columns, so normalization leaves it unchanged.
+Its singular values all equal one, and $g(1)=0$ gives $\ell_{g,q}(X)=0$, proving Property~\ref{property:unique_isometry_minimum}.
 
 \paragraph{Property~\ref{property:log_symmetry} (Column log symmetry).}
 \emph{``A matrix loss $\ell$ is column log-symmetric if replacing any nonzero column $x_{.p}$ by $x_{.p}/\|x_{.p}\|_2^2$, with all other columns fixed, leaves $\ell$ unchanged.''}
@@ -251,6 +246,12 @@ Reciprocating any column's length therefore leaves $n_q^{\times D}(X)$ unchanged
 \emph{``A matrix loss $\ell$ is column-rescaling monotone if, for every column $x_{.d}$, $\frac{\partial\ell}{\partial\|x_{.d}\|_2}$ is negative, zero, or positive when $\|x_{.d}\|_2<1$, $\|x_{.d}\|_2=1$, or $\|x_{.d}\|_2>1$, respectively.''}
 
 We determine the sign of the loss derivative as one column length varies.
+To express the loss in terms of squared singular values, define $\widetilde g(u)=g(\sqrt u)$ for $u>0$.
+Its derivative satisfies
+\begin{align}
+\widetilde g'(u)&=\frac{g'(\sqrt u)}{2\sqrt u} \\
+&<0.
+\end{align}
 Fix all column directions and all columns except the $p$th, and write $r=\|x_{.p}\|_2$.
 For a unit vector $v$ in its direction,
 \begin{align}
@@ -718,268 +719,187 @@ For every feasible $B$, $2=\operatorname{tr}(XB)=\sum_{p=1}^3\langle X_{.p},B_{p
 Every pair of distinct columns has inner product $-1/2$, so no pair is orthonormal.
 \end{proof}
 
+% Unfinished larger-frame draft, formerly Example 3 at the end of the supplement.
+% The Mercedes-Benz example used in the paper is the D=2 frame proved above.
+% \begin{example}
+%     \begin{align}
+%         \label{prop:the_benzito}
+%         X_{S} = \begin{bmatrix}
+%         \frac{1}{2} & \frac{-1}{2} & \frac{1}{2} & \frac{-1}{2}  & \frac{1}{2} & \frac{-1}{2} \\
+%         \frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} &0 & 0 \\
+%         0 & 0 &\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2}  & 0& 0\\
+%         0& 0 0 & 0 &\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} \\
+%         \end{bmatrix}.
+%         \end{align}
+% \end{example}
+% 
+% 
+% \begin{proof}
+% Let
+%     
+% By Given the symmetry of the second and third columns around the y axis, the loss will not change regardless of whether we upweight one or downweight the other, these changes necessarily being in conjunction.
+% We therefore assume that their loadings with respect to the second column of the target matrix (the $D$ dimensional identity) are the same.
+% Clearly, they will both then have value of $\frac{1}{\sqrt{3}}$.
+% The question then becomes, what should the values of the first column in the loading matrix $\beta$ be?
+%     
+% We can answer this question with a simple differential equation.
+% Let $b$ denote the constraint violation $1 - X_{1.} \beta_{.1}$.
+%     
+% Then
+%     \begin{align}
+%         \frac{\partial b}{\partial \beta_{11}} = \frac{\partial b}{\partial\beta_{21}} \\
+%         &= \frac{1}{2}
+%     \end{align}
+% On the other hand, due to the value of $\frac{1}{\sqrt{3}}$ already assumed for the second loading of the second and third features,
+%     \begin{align}
+%         \frac{\partial l}{\partial \beta_{11}} &= \frac{\partial l}{\partial\beta_{21}} \\
+%         &= \frac{\partial }{\partial x}{\sqrt{\frac{1}{3} + x^2}} \\
+%         &= \frac{1}{2}(\frac{1}{3} + x^2)^{-\frac{1}{2}}(2x) \\
+%         &= \frac{x}{\sqrt{\frac{1}{3} + x^2}}.
+%     \end{align}
+% This means that the tradeoff
+%     \begin{align}
+%         \frac{\partial l}{\partial b} = \frac{1}{2x}\sqrt{\frac{1}{3} + x^2}.\
+%     \end{align}
+% In contrast, $\frac{\partial l}{\partial \beta_{11}} = 1$ and similarly for its constraint violation.
+% Solving for the equilibrium, we get
+%     \begin{align}
+%         \frac{1}{2x}\sqrt{\frac{1}{3} + x^2} = 1 \\
+%         \frac{1}{3} + x^2 = 4x^2 \\
+%         \frac{1}{3} = 3x^2 \\
+%         x = \frac{1}{\sqrt{3}}.
+%     \end{align}
+% This leads to a value for $l$ of
+%     \begin{align}
+%         \sqrt{\frac{1}{3} + \frac{1}{9}} + \sqrt{\frac{1}{3} + \frac{1}{9}} + \frac{2}{3} \\
+%         &=\sqrt{\frac{4}{9}} + \sqrt{\frac{4}{9}} + \frac{2}{3} \\
+%         &=\frac{2}{3} + \frac{2}{3} + \frac{2}{3} 
+%     \end{align}
+%     \end{proof}
+
+
 \subsubsection{Proof of Proposition \ref{prop:computational_complexity}}
 \label{proof:computational_complexity}
 
 \begin{restatedproposition}{prop:computational_complexity}
-The computational complexity of each step of Isometry Pursuit is $O(D^2P)$.
+For full-row-rank $X\in\mathbb R^{D\times P}$ with $P\geq D$ and nonzero columns, SCS for \isometrypursuit~admits an implementation costing $O(D^2P)$ per iteration after factorization.
 \end{restatedproposition}
 
-% TODO: Replace the direct-ADMM derivation below with the SCS cached linear-solve and cone-projection analysis for the runtime panel of Figure 3, distinguishing setup from per-iteration work.
 \begin{proof}
-The augmented split Lagrangian minimized by ADMM is
-    \begin{align}
-    \mathcal L_{\rho,\gamma, \nu} (X,\beta,z) = \|z\|_{1,2} + \text{tr}(\nu^T (I_D - n_q^{\times P}(X) \beta)) + \rho \|I_D - n_q^{\times P}(X) \beta\|_F^2 + \gamma \|\beta - z\|_F^2
-    \end{align}
-This minimization problem is
-    \begin{align}
-        \arg \min_{\beta,z \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta,z)
-    \end{align}
-For a more detailed explanation of the reasons to prefer optimizing the split augmented Lagrangian over direct optimization of Equation \ref{prog:isometry_pursuit} see \citet{Boyd2010-jd}.
-    
-The three main subroutines ( \ref{eq:beta_update} - \ref{eq:nu_update}) called by ADMM determine the per iteration complexity.
-The update rules of the ADMM algorithm used to optimize the augmented split Lagrangian are
-    \begin{align}
-    \beta^{k+1} = \arg \min_{\beta \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta,z^k) \\
-    z^{k+1} = \arg \min_{z \in P \times D} \mathcal L_{\rho,\gamma,\nu} (X,\beta^{k+1},z) \\
-    \nu^{k+1} = \nu^k + \rho (I_D - n_q^{\times P}(X) \beta^{k+1})
-    \end{align}
-We will analyze the computational complexity of each of these steps by rewriting the update rules according to the specifics of the isometry pursuit problem.
+SCS alternates a linear solve, a cone projection, and a correction update \citep[Section~3.2, Eq.~(17)]{ocpb:16}.
+We count these three operations for \isometrypursuit.
 
-The beta update Equation \ref{eq:beta_update} projects the solution onto the feasible set.
+We first express the objective using one additional variable per coefficient row.
+Introducing $t\in\mathbb R^P$ gives the equivalent problem
 \begin{align}
-    \label{eq:beta_update}
-    \beta^{k+1} &= \arg \min_{\beta \in P \times D}  \text{tr}({\nu^k}^T (I_D - n_q^{\times P}(X) \beta)) + \rho \|I_D - n_q^{\times P}(X) \beta\|_2^2 + \gamma \|\beta - z^k\|_2^2 \\
-    &= (\rho \, n_q^{\times P}(X)^T n_q^{\times P}(X) + \gamma I_P)^{-1} (\rho \, n_q^{\times P}(X)^T I_D + \gamma z^k + n_q^{\times P}(X)^T \nu^k)
-    \end{align}
-% This is accomplished through computation of the pseudo-inverse of the linear regression solution $(n_q^{\times P}(X)^T n_q^{\times P}(X))^{-1} n_q^{\times P}(X)^T I_D$.
-Write $N=n_q^{\times P}(X)$.
-The Woodbury identity gives
-\begin{align}
-(\gamma I_P+\rho N^\top N)^{-1}
-=\gamma^{-1}\left[I_P-\rho N^\top
-(\gamma I_D+\rho NN^\top)^{-1}N\right].
+\min_{\beta\in\mathbb R^{P\times D},\,t\in\mathbb R^P}
+&\quad\sum_{p=1}^P t_p \notag\\
+\text{subject to}&\quad n_q^{\times P}(X)\beta=I_D, \\
+&\quad\|\beta_{p.}\|_2\leq t_p.
 \end{align}
-For fixed $N$, $\rho>0$, and $\gamma>0$, forming $NN^\top$ and factoring $\gamma I_D+\rho NN^\top$ costs $O(PD^2+D^3)$ once.
-To apply the inverse to a $P\times D$ right-hand side $R$, compute $NR$, solve $(\gamma I_D+\rho NN^\top)Z=NR$ using the cached factorization, and return $\gamma^{-1}(R-\rho N^\top Z)$.
-The two matrix products cost $O(PD^2)$ and the solve costs $O(D^3)$.
-Forming the right-hand side of the coefficient update also costs $O(PD^2)$, so the per-iteration cost is $O(PD^2)$ when $P\geq D$.
+We impose the last constraint for each $p\in\{1,\ldots,P\}$.
+Minimization sets each $t_p$ to its row norm, so this formulation has the same objective and minimizers as~\eqref{prog:isometry_pursuit}.
+Each pair $(t_p,\beta_{p.})$ lies in a second-order cone: the set of scalar--vector pairs for which the scalar bounds the vector's Euclidean norm.
 
-Subsequently, the z update Equation \ref{eq:z_update} is soft-thresholding operation onto a contracted level set $\|\|_{1,2}$ ball.
-\begin{align}
-    \label{eq:z_update}
-    z^{k+1} &= \arg \min_{z \in P \times D} \|z\|_{1,2} + \gamma \|z - \beta^{k+1}\|_2^2 \\
-    &= \begin{cases} (1 - \frac{1}{\gamma\|\beta_{j.}^{k+1}\|_2}) (\beta_{j.}^{k+1}) \; \text{if} \; \|\beta_{j.}^{k+1}\|_2 > \frac{1}{\gamma}\\
-        0 \; \text{otherwise}
-    \end{cases}
-\end{align}
-The computational complexity of this operation is $O(PD)$.
+\citet[Section~3.2]{ocpb:16} show that an SCS iteration has the same computational cost as applying ADMM directly to the cone program.
+We therefore count the three steps for that formulation.
+Let $z\in\mathbb R^{P\times D}$ and $s\in\mathbb R^P$ be copies of $\beta$ and $t$.
+The correction variables $\nu\in\mathbb R^{P\times D}$ and $\eta\in\mathbb R^P$ accumulate the differences between these copies.
+We penalize disagreement by $\frac12\|\beta-z\|_F^2+\frac12\|t-s\|_2^2$.
 
-Finally, the $\nu$ update Equation \ref{eq:nu_update} increases the squeezing of the $z$ and $\beta$ variables towards to each other.
+\paragraph{Linear solve.}
+The first step projects the coefficients onto the reconstruction constraint and updates the bounds $t$:
 \begin{align}
-\nu^{k+1} = \nu^k + \rho (I_D - n_q^{\times P}(X) \beta^{k+1})
-\label{eq:nu_update}
+\beta^{k+1}&=z^k-\nu^k \notag\\
+&\quad+(n_q^{\times P}(X))^\top
+\left(n_q^{\times P}(X)(n_q^{\times P}(X))^\top\right)^{-1}
+\left(I_D-n_q^{\times P}(X)(z^k-\nu^k)\right), \\
+t^{k+1}&=s^k-\eta^k-\mathbf 1_P.
 \end{align}
-In this step, the dual variable $\nu$ that controls the penalty accrued by the splitting is updated in the direction of the constraint violation.
-The computational complexity of this operation is dominated by that of the matrix multiplication $n_q^{\times P}(X) \beta^{k+1}$.
-That is, it is $O(D^2P)$.
+Here $\mathbf 1_P\in\mathbb R^P$ has every entry equal to one; subtracting it minimizes $\sum_p t_p$ plus the quadratic penalty on agreement with $s^k-\eta^k$.
+We form $n_q^{\times P}(X)(n_q^{\times P}(X))^\top$ and factor it into triangular matrices once, at cost $O(PD^2+D^3)$.
+We apply the inverse using these factors.
+The two matrix products cost $O(PD^2)$, and solving the $D\times D$ system for $D$ columns costs $O(D^3)$.
+Updating $t$ costs $O(P)$.
+Thus the linear step costs $O(PD^2+D^3)$ per iteration after factorization.
+
+\paragraph{Cone projection.}
+We update each bound $s_p$ and coefficient row $z_{p.}$ together so that $\|z_{p.}\|_2\leq s_p$.
+First compute the current row length
+\begin{align}
+r_p=\|\beta_{p.}^{k+1}+\nu_{p.}^k\|_2.
+\end{align}
+If $r_p\leq t_p^{k+1}+\eta_p^k$, the row already satisfies the bound, and we keep both inputs:
+\begin{align}
+s_p^{k+1}&=t_p^{k+1}+\eta_p^k, \\
+z_{p.}^{k+1}&=\beta_{p.}^{k+1}+\nu_{p.}^k.
+\end{align}
+If $r_p\leq-t_p^{k+1}-\eta_p^k$, we set both to zero:
+\begin{align}
+s_p^{k+1}&=0, \\
+z_{p.}^{k+1}&=0.
+\end{align}
+Otherwise, we adjust the bound and rescale the row to have exactly that length:
+\begin{align}
+s_p^{k+1}&=\frac{r_p+t_p^{k+1}+\eta_p^k}{2}, \\
+z_{p.}^{k+1}&=\frac{s_p^{k+1}}{r_p}\left(\beta_{p.}^{k+1}+\nu_{p.}^k\right).
+\end{align}
+The last case has $r_p>0$, so the division is defined.
+Each row requires a norm and at most one rescaling, costing $O(D)$; all $P$ rows cost $O(PD)$.
+
+\paragraph{Correction update.}
+We add the differences between the two copies to the correction variables:
+\begin{align}
+\nu^{k+1}&=\nu^k+\beta^{k+1}-z^{k+1}, \\
+\eta^{k+1}&=\eta^k+t^{k+1}-s^{k+1}.
+\end{align}
+These updates cost $O(PD)$.
+Since $P\geq D$, the linear step dominates, giving $O(PD^2)$ per iteration.
+The cost equivalence of \citet[Section~3.2]{ocpb:16} gives the same order for SCS.
 \end{proof}
 
-\subsection{Partial derivatives of candidate losses}
-\label{sec:loss_derivatives}
-
-We summarize the column-wise derivatives of the losses in Table \ref{tab:loss_functions}.
-Throughout this section let $X = [x_1,\dotsc,x_D] \in \mathbb R^{D \times D}$ be full rank.
-For a scalar loss $L(X)$, write
-\begin{align}
-\nabla_X L = \left[
-\frac{\partial L}{\partial x_1},
-\dotsc,
-\frac{\partial L}{\partial x_D}
-\right].
-\end{align}
-All formulas are stated on smooth strata: rank deficient matrices, repeated singular values, and zero rows of pseudoinverse factors should be handled using subgradients.
-
-We will use two common identities.
-First, if $X = U \operatorname{diag}(\sigma) V^\top$ is a singular value decomposition and $L(X) = \sum_{d=1}^D \phi(\sigma_d(X))$, then
-\begin{align}
-\nabla_X L = U \operatorname{diag}(\phi'(\sigma_1),\dotsc,\phi'(\sigma_D)) V^\top .
-\label{eq:spectral_gradient_identity}
-\end{align}
-Second, for normalized losses let $N = n_q^{\times D}(X)$.
-If $M = \nabla_N L$, then the column-wise chain rule is
-\begin{align}
-\frac{\partial L}{\partial x_p} = \mathrm{D}n_q(x_p)^\top M_{.p}.
-\label{eq:column_chain_rule}
-\end{align}
-For $r=\|x\|_2$, write $n_q(x)=s(r)x$ with $s(r)=q(r)/r$.
-Then
-\begin{align}
-\mathrm{D}n_q(x) &= s(r) I_D + \frac{s'(r)}{r}xx^\top, \\
-s'(r) &= \frac{q'(r)}{r} - \frac{q(r)}{r^2}, \\
-q'(r) &= -\frac{2e(e^r-r^{-2}e^{1/r})}{(e^r+e^{1/r})^2}.
-\label{eq:normalization_jacobian}
-\end{align}
-Since $\mathrm{D}n_q(x)$ is symmetric, the transpose in this chain rule may be omitted.
-
-\paragraph{Distortion.}
-Let $\sigma_1=\sigma_{\max}(X)$ and $\sigma_D=\sigma_{\min}(X)$ with corresponding singular vectors $u_1,v_1$ and $u_D,v_D$.
-For
-\begin{align}
-L_{\mathrm{dist}}(X)=\frac{\sigma_1}{\sigma_D}-1,
-\end{align}
-The spectral gradient identity gives
-\begin{align}
-\nabla_X L_{\mathrm{dist}}
-= \frac{u_1v_1^\top}{\sigma_D}
-- \frac{\sigma_1}{\sigma_D^2}u_Dv_D^\top .
-\end{align}
-The derivative is insensitive to uniform rescaling, which is the sense in which this loss does not prefer unit length.
-
-\paragraph{Isometry loss.}
-For
-\begin{align}
-L_{\mathrm{iso}}(X)=\sum_{d=1}^D g(\sigma_d(X))-D,
-\end{align}
-we have
-\begin{align}
-g'(t) = \frac{e^t - t^{-2}e^{1/t}}{2e}.
-\end{align}
-Thus
-\begin{align}
-\nabla_X L_{\mathrm{iso}}
-= U \operatorname{diag}(g'(\sigma_1),\dotsc,g'(\sigma_D))V^\top .
-\end{align}
-
-\paragraph{S-divergence to identity.}
-Let $G=X^\top X$ and
-\begin{align}
-L_{\mathrm{sdiv}}(X)
-= \log\det\left(\frac{G+I_D}{2}\right)
--\frac{1}{2}\log\det(G).
-\end{align}
-The constant $\log\det(1/2)$ does not contribute to the derivative.
-Using $d\log\det A = \operatorname{tr}(A^{-1}dA)$ and $dG=dX^\top X+X^\top dX$,
-\begin{align}
-\nabla_X L_{\mathrm{sdiv}}
-= 2X(G+I_D)^{-1} - XG^{-1}.
-\end{align}
-
-\paragraph{Normalized log-det volume.}
-Let $N=n_q^{\times D}(X)$ and
-\begin{align}
-L_{\mathrm{nld}}(X)= -\sum_{d=1}^D \log\sigma_d(N).
-\end{align}
-For square full-rank $N$, this is $-\log|\det N|$, so
-\begin{align}
-\nabla_N L_{\mathrm{nld}} = -N^{-\top}.
-\end{align}
-Therefore, by the column-wise chain rule,
-\begin{align}
-\frac{\partial L_{\mathrm{nld}}}{\partial x_p}
-= -\mathrm{D}n_q(x_p)^\top (N^{-\top})_{.p}.
-\end{align}
-
-\paragraph{Frobenius pseudoinverse.}
-Let $N=n_q^{\times D}(X)$ and $B=N^{-1}$.
-For
-\begin{align}
-L_{\mathrm{frob}}(X)=\|N^{-1}\|_F-\sqrt{D},
-\end{align}
-the differential identity $dB=-B(dN)B$ gives
-\begin{align}
-\nabla_N L_{\mathrm{frob}}
-= -\frac{N^{-\top}N^{-1}N^{-\top}}{\|N^{-1}\|_F}.
-\end{align}
-Thus
-\begin{align}
-\frac{\partial L_{\mathrm{frob}}}{\partial x_p}
-= \mathrm{D}n_q(x_p)^\top
-\left(
--\frac{N^{-\top}N^{-1}N^{-\top}}{\|N^{-1}\|_F}
-\right)_{.p}.
-\end{align}
-
-\paragraph{Isometry pursuit proxy.}
-Let $N=n_q^{\times D}(X)$ and $B=N^{-1}$.
-The differentiable proxy for the \isometrypursuit~ table row is
-\begin{align}
-L_{\mathrm{ip}}(X)=\|N^{-1}\|_{1,2}-D.
-\end{align}
-Define $R \in \mathbb R^{D\times D}$ by
-\begin{align}
-R_{p.}=\frac{B_{p.}}{\|B_{p.}\|_2}.
-\end{align}
-Then $R \in \partial \|B\|_{1,2}$ on the smooth stratum where every row of $B$ is nonzero, and
-\begin{align}
-\nabla_N L_{\mathrm{ip}} = -B^\top R B^\top.
-\end{align}
-The column-wise gradient is therefore
-\begin{align}
-\frac{\partial L_{\mathrm{ip}}}{\partial x_p}
-= \mathrm{D}n_q(x_p)^\top (-B^\top R B^\top)_{.p}.
-\end{align}
-
-\newpage
-
+\clearpage
 \subsection{Additional experimental results}
 \label{sec:additional_experimental_results}
 
-\begin{figure}[t]
+\subsubsection{Synthetic support recovery}
+
+We distinguish the support retained by \isometrypursuit~before search (Figure~\ref{fig:synthetic-support-size}) from exact recovery of the planted subset after search (Figure~\ref{fig:synthetic-support-recovery}).
+Both figures use the same $3{,}250$ fixed synthetic Lambda matrices, with $25$ replicates per condition and SCS scale $0.1$.
+Figure~\ref{fig:synthetic-support-size} also overlays retained-support sizes from the saved real-data Lambda runs.
+
+\begin{figure}[!t]
     \centering
     \includegraphics[width=0.82\textwidth]{../figures/synthetic_support_vs_dictionary.pdf}
 \caption{Dictionary size $P$ versus the support size returned by \isometrypursuit.
-Point area encodes target dimension $D$ and color encodes corrupting dimension $d_c$.
+We use the same $3{,}250$ fixed synthetic matrices as Figure~\ref{fig:synthetic-ground-truth-regret}, with $25$ replicates per condition and SCS scale $0.1$.
+Point area encodes manifold dimension $D$ and color encodes corrupting dimension $d_c$.
 The dashed diagonal denotes no trimming.
-Most runs lie below the diagonal, and the horizontal bands at $|\widehat S|=D$ show settings where \isometrypursuit~alone reduces the dictionary to the target cardinality.}
+At $D=64$, all $875$ replicates retain exactly $64$ columns.
+Stars show one fixed Lambda replicate each for Iris, Wine, and Ethanol, using SCS scale $0.1$.
+The open Ethanol star denotes a solve that reaches its $500{,}000$-iteration limit; the displayed support contains three columns.}
     \label{fig:synthetic-support-size}
 \end{figure}
 
-\begin{figure}[t]
+\clearpage
+
+
+\begin{figure}[!t]
     \centering
     \includegraphics[width=\textwidth]{../figures/synthetic_support_recovery_grid.pdf}
 \caption{Exact support recovery in the synthetic identity-block experiments.
 Columns give target dimension $D$, rows give the number $b$ of corrupting matrices, and the horizontal axis gives their dimension $d_c$.
-Each point is the percentage of 25 replicates for which the selected support equals the planted $D$-column identity block.
-Faint dashed curves toward an off-axis value of $-100$ mark settings omitted by the backward-search work budget; they are not recovery measurements.}
+We use the same $3{,}250$ Lambda matrices and four search pipelines as Figure~\ref{fig:synthetic-ground-truth-regret}.
+Each point is the percentage of completed replicates for which the final selected subset equals the planted $D$-column identity block.
+Full-dictionary backward initialization reaches its time limit on all $25$ replicates in three conditions, giving $75$ missing searches; annotations identify these conditions.
+All other condition--method combinations contain $25$ completed replicates.}
     \label{fig:synthetic-support-recovery}
 \end{figure}
 
-\begin{table}[t]
-\centering
-\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccc}
-\toprule
-Method & Wine ($P=89$) & Iris ($P=75$) & Ethanol ($P=756$) \\
-\midrule
-Greedy $\rightarrow$ swap
-    & $24.0\%\;/\;3.239$ & $60.0\%\;/\;0.179$
-    & $84.0\%\;/\;0.0188$ \\
-Backward $\rightarrow$ swap
-    & $72.0\%\;/\;0.605$ & $88.0\%\;/\;0.0170$
-    & $96.0\%\;/\;0.00330$ \\
-\isometrypursuit $\rightarrow$ greedy $\rightarrow$ swap
-    & \makecell{$40.0\%\;/\;2.446$\\$26.2/89\;(29.4\%)$}
-    & \makecell{$56.0\%\;/\;0.0814$\\$6.72/75\;(9.0\%)$}
-    & \makecell{$64.0\%\;/\;0.0180$\\$2.80/756\;(0.37\%)$} \\
-\isometrypursuit $\rightarrow$ backward $\rightarrow$ swap
-    & \makecell{$64.0\%\;/\;0.615$\\$26.2/89\;(29.4\%)$}
-    & \makecell{$64.0\%\;/\;0.0545$\\$6.72/75\;(9.0\%)$}
-    & \makecell{$64.0\%\;/\;0.0180$\\$2.80/756\;(0.37\%)$} \\
-\bottomrule
-\end{tabular}
-}
-\caption{Oracle attainment and regret for the four discrete-search pipelines.
-Each entry is $\widehat P(\mathcal R_{m,r}=0)\;/\;\overline{\mathcal R}_m$: the percentage of replicates on which the method wins or ties for the lowest loss among the four methods, followed by its mean oracle regret.
-For the two \isometrypursuit~pipelines, the second line reports $\overline{|\widehat S_{IP}|}/P$ and the corresponding retained percentage.
-Losses within $10^{-9}$ are treated as ties.
-Each dataset contains 25 replicates.
-Because loss scales differ across datasets, regret magnitudes should be compared within columns.}
-\label{tab:oracle-regret}
-\end{table}
-
 \clearpage
+\subsubsection{Support recovery explicit examples}
+\label{sec:support_recovery_examples}
+
 \begin{figure}[t]
     \centering
     \begin{subfigure}[t]{\textwidth}
@@ -1005,13 +925,14 @@ These are illustrative examples from the saved experiments.}
     \label{fig:selection-examples}
 \end{figure}
 
-\subsection{Sparsity versus iteration count}
+\clearpage
+\subsubsection{Sparsity versus iteration count}
 \label{sec:sparsity_iterations}
 
 We compare independently initialized SCS solves at iteration limits from $1$ to $25{,}000$ on the same $25$ replicates of each real dataset.
 We fix the SCS scale at $0.1$, disable adaptive scaling and acceleration, and set absolute and relative tolerances to $10^{-12}$.
 We zero coefficient entries below $10^{-6}$ in magnitude and retain rows with norm above $10^{-4}$.
-Figure~\ref{fig:sparsity_iterations} shows the retained fraction and exact agreement with the saved reference supports.
+Figure~\ref{fig:sparsity_iterations} shows the retained fraction $|\widehat S|/P$ and exact agreement with the saved reference supports.
 For all subsequent tested limits, every Wine replicate matches its reference support from $100$ iterations onward, every Iris replicate from $1{,}000$, and every Ethanol replicate from $2{,}500$.
 These observations concern thresholded numerical supports, rather than a guarantee of finite support identification.
 
@@ -1019,54 +940,42 @@ These observations concern thresholded numerical supports, rather than a guarant
 \centering
 \includegraphics[width=\textwidth]{../figures/scs_early_stop/sparsity_iterations.pdf}
 \caption{Sparsity as a function of the SCS iteration limit on Iris, Wine, and Ethanol.
-The left panel shows the median retained fraction across $25$ replicates per dataset; the right panel shows the fraction matching the saved reference support exactly.
+The left panel shows the median retained fraction $|\widehat S|/P$; the right panel shows the fraction matching the saved reference support exactly.
+Each real dataset contains $25$ replicates.
 Each point summarizes independent cold starts at the indicated limit; the solver may terminate before reaching that limit.}
 \label{fig:sparsity_iterations}
 \end{figure}
 
-\subsection{Sensitivity to optimizer settings}
+\clearpage
+\subsubsection{Sensitivity to optimizer settings}
 \label{sec:optimizer_sensitivity}
 
+We assess parameter sensitivity on a subset of the saved matrices, rather than repeating the full experiment at every optimizer setting.
+
 We fix the first replicate from each real dataset and compare SCS scales and direct ADMM parameters $\rho\in\{0.01,0.1,1,10,100\}$, initializing both optimizers at zero.
-Direct ADMM alternates projection onto $N\beta=I_D$, rowwise soft thresholding, and a scaled dual update.
+Direct ADMM alternates projection onto $n_q^{\times P}(X)\beta=I_D$, rowwise soft thresholding, and a scaled dual update.
 We set absolute and relative solver tolerances to $10^{-8}$ and allow $10^5$ iterations, with a 25-second solve limit.
 We zero coefficient entries with magnitude below $10^{-6}$ and retain rows with norm above $10^{-4}$.
 For the three Ethanol SCS settings that reach the iteration limit, we also run up to $5\times10^5$ iterations with a 240-second limit.
-These checks use the saved input matrices and do not rerun the main experiments.
+Within SCS, we detect little sensitivity of the retained supports to the scale parameter on these fixed real-data replicates (Figure~\ref{fig:optimizer_support_stability}).
 
-For the large synthetic cases, we freeze the first replicate of each of the $65$ conditions at $D=32,64$ and compare both solvers at the same five parameter values, giving $650$ solver runs.
-Both start at zero, with absolute and relative tolerances $10^{-8}$, at most $5\times10^5$ iterations, and a 240-second solve limit.
-We use SCS at scale $0.1$ in the main large-case comparison: it converges on all $65$ matrices and has the lowest total runtime among the tested SCS settings.
-Separate Lambda tasks then run the greedy searches on the saved matrices and supports.
-Full-dictionary searches are shared across optimizer settings; identical candidate supports also share a search.
-The search seed is the original simulation seed.
-These unit-column dictionaries are scored using $\|(X_{.S})^\dagger\|_{1,2}$, where $\dagger$ denotes the Moore--Penrose pseudoinverse, rather than solving basis pursuit at each deletion.
-The initial search batch uses a 240-second limit and a $10^9$ backward-initialization work budget.
-We rerun all 28 searches excluded by that work budget without an arithmetic cutoff, using a 245.37-second limit equal to the longest observed IP runtime.
-Of these, 23 complete and five reach the time limit: four during backward elimination and one during swap refinement.
-We rerun the last case with the cutoff applied only to initialization; elimination takes 208.9 seconds and swaps take 36.7 seconds, giving 24 completed replacements and four capped initializers.
-Figure~\ref{fig:synthetic-ground-truth-regret} includes completed replacements for SCS at scale $0.1$; Figure~\ref{fig:complexity-runtime-early-stop} also includes capped backward initializers.
-There is no additional column-count limit.
-All large-case solver and search timings use 3072 MB Lambda workers; the smaller-case and real-data timings are local.
-Figure~\ref{fig:optimizer_parameter_sweep} includes final searches from all ten settings, including settings whose solver reached a limit.
+For the synthetic parameter check, we compare both solvers on the same $65$ matrices at $D=32,64$, using one saved replicate per condition and the five parameter values above, giving $650$ solver runs.
+Both solvers start at zero, with absolute and relative tolerances $10^{-8}$, at most $5\times10^5$ iterations, and a 240-second solve limit.
+Figure~\ref{fig:optimizer_parameter_sweep} compares initialization work and runtime across these settings, including runs that reach a solver limit.
+The main comparison uses SCS scale $0.1$ on all $3{,}250$ synthetic matrices, covering $25$ replicates per condition at $D=2,4,8,16,32,64$.
 
 \begin{figure}[t]
 \centering
-\begin{subfigure}[t]{0.49\textwidth}
-\includegraphics[width=\linewidth]{../figures/optimizer_parameter_sweep/synthetic_regret_all_settings.pdf}
-\caption{Ground-truth regret across optimizer settings.}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.49\textwidth}
-\includegraphics[width=\linewidth]{../figures/complexity_runtime/complexity_vs_runtime_overlay_with_early_stopping.pdf}
-\caption{Arithmetic work versus runtime.}
-\end{subfigure}
-\caption{Full parameter comparison for the synthetic cloud experiments.
-At $D=32,64$, we compare SCS scales and ADMM parameters in $\{0.01,0.1,1,10,100\}$ on the same fixed matrices.
-Full-dictionary searches are shared across settings; smaller dimensions use the original replicates.
-The runtime panel shows pure initializers, with swaps omitted; large-case timings are from Lambda and other timings are local.
-Work for SCS and ADMM is the observed iteration count times $D^2P$, which does not distinguish their per-iteration constants.
+\includegraphics[width=\textwidth]{../figures/complexity_runtime/complexity_vs_runtime_settings.pdf}
+\caption{Arithmetic work versus runtime across optimizer settings.
+At $D=32,64$, we compare SCS scales and ADMM parameters $\rho\in\{0.01,0.1,1,10,100\}$ on the same $65$ fixed Lambda matrices.
+Orange shades distinguish SCS scales and purple shades distinguish ADMM parameters; darker shades denote larger values, as labeled below the plot.
+Blue and green show forward and backward initializers.
+Smaller synthetic dictionaries and real-data stars use the saved local benchmarks, with SCS scale $0.1$.
+Marker shape gives $D$; swaps are omitted.
+For SCS and ADMM, work is the observed iteration count times $D^2P$, which does not distinguish their per-iteration constants.
 Open markers denote capped runs; capped backward points show elapsed time against the work required for full elimination.
-The dashed line marks the longest observed cloud IP runtime.}
+The dashed line marks the backward-initialization time limit.}
 \label{fig:optimizer_parameter_sweep}
 \end{figure}
 
@@ -1083,122 +992,3 @@ The Ethanol SCS runs at scales 0.1, 10, and 100 reach their iteration limit even
 This is a stability check on the selected replicates, not a support-recovery guarantee.}
     \label{fig:optimizer_support_stability}
 \end{figure}
-
-\subsection{Support cardinalities}
-\label{sec:support_cardinalities}
-
-Figure~\ref{fig:support_cardinalities} reports the distribution of retained candidate-dictionary sizes $|\widehat{S}_{IP}|$ across the real-data replicates.
-While typically $|\widehat{S}_{IP}| << P$, there are cases for Ethanol where this is not the case that drive up the means.
-Further investigation into the extreme failure of isometry pursuit to sparsify in the the minor chunk of the bimodal Ethanol support cardinality distribution is warranted.
-
-\begin{figure}[t]
-    \centering
-    % Wine
-    \begin{subfigure}[b]{0.32\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{../figures/wine_cardinality_histogram.png}
-\caption{Wine }
-        \label{fig:wine_cardinalities}
-    \end{subfigure}
-    \hfill
-    % Iris
-    \begin{subfigure}[b]{0.32\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{../figures/iris_cardinality_histogram.png}
-\caption{Iris }
-        \label{fig:iris_cardinalities}
-    \end{subfigure}
-    \hfill
-    % Ethanol
-    \begin{subfigure}[b]{0.32\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{../figures/ethanol_cardinality_histogram.png}
-\caption{Ethanol }
-        \label{fig:ethanol_cardinalities}
-    \end{subfigure}
-
-\caption{Support cardinalities for each dataset after \isometrypursuit.}
-    \label{fig:support_cardinalities}
-\end{figure}
-
-\newpage
-
-\subsection{Timing}
-\label{sec:timing}
-
-While wall-time of algorithms is a non-theoretical quantity that depends on implementation details, it provides valuable context for practitioners.
-We therefore report the following runtimes on a 2021 Macbook Pro.
-The particularly high variance for brute force search in the second step of \tsip~ is likely due to the large cardinalities reported in Figure \ref{fig:support_cardinalities}.
-
-\begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|c}
-\toprule
-Name & IP & 2nd stage & Greedy \\
-\midrule
-Iris & 1.24 ± 0.02 & 0.00 ± 0.00 & 0.02 ± 0.00 \\
-Wine & 2.32 ± 0.17 & 0.13 ± 0.12 & 0.03 ± 0.00 \\
-Ethanol & 8.38 ± 0.57 & 0.55 ± 1.08 & 0.07 ± 0.01 \\
-\bottomrule
-\end{tabular}
-\caption{Algorithm runtimes in seconds across replicates.}
-\end{table}
-
-
-
-\begin{example}
-    \begin{align}
-        \label{prop:the_benzito}
-        X_{S} = \begin{bmatrix}
-        \frac{1}{2} & \frac{-1}{2} & \frac{1}{2} & \frac{-1}{2}  & \frac{1}{2} & \frac{-1}{2} \\
-        \frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} &0 & 0 \\
-        0 & 0 &\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2}  & 0& 0\\
-        0& 0 0 & 0 &\frac{\sqrt{3}}{2} & \frac{\sqrt{3}}{2} \\
-        \end{bmatrix}.
-        \end{align}
-\end{example}
-
-
-\begin{proof}
-Let
-    
-By Given the symmetry of the second and third columns around the y axis, the loss will not change regardless of whether we upweight one or downweight the other, these changes necessarily being in conjunction.
-We therefore assume that their loadings with respect to the second column of the target matrix (the $D$ dimensional identity) are the same.
-Clearly, they will both then have value of $\frac{1}{\sqrt{3}}$.
-The question then becomes, what should the values of the first column in the loading matrix $\beta$ be?
-    
-We can answer this question with a simple differential equation.
-Let $b$ denote the constraint violation $1 - X_{1.} \beta_{.1}$.
-    
-Then
-    \begin{align}
-        \frac{\partial b}{\partial \beta_{11}} = \frac{\partial b}{\partial\beta_{21}} \\
-        &= \frac{1}{2}
-    \end{align}
-On the other hand, due to the value of $\frac{1}{\sqrt{3}}$ already assumed for the second loading of the second and third features,
-    \begin{align}
-        \frac{\partial l}{\partial \beta_{11}} &= \frac{\partial l}{\partial\beta_{21}} \\
-        &= \frac{\partial }{\partial x}{\sqrt{\frac{1}{3} + x^2}} \\
-        &= \frac{1}{2}(\frac{1}{3} + x^2)^{-\frac{1}{2}}(2x) \\
-        &= \frac{x}{\sqrt{\frac{1}{3} + x^2}}.
-    \end{align}
-This means that the tradeoff
-    \begin{align}
-        \frac{\partial l}{\partial b} = \frac{1}{2x}\sqrt{\frac{1}{3} + x^2}.\
-    \end{align}
-In contrast, $\frac{\partial l}{\partial \beta_{11}} = 1$ and similarly for its constraint violation.
-Solving for the equilibrium, we get
-    \begin{align}
-        \frac{1}{2x}\sqrt{\frac{1}{3} + x^2} = 1 \\
-        \frac{1}{3} + x^2 = 4x^2 \\
-        \frac{1}{3} = 3x^2 \\
-        x = \frac{1}{\sqrt{3}}.
-    \end{align}
-This leads to a value for $l$ of
-    \begin{align}
-        \sqrt{\frac{1}{3} + \frac{1}{9}} + \sqrt{\frac{1}{3} + \frac{1}{9}} + \frac{2}{3} \\
-        &=\sqrt{\frac{4}{9}} + \sqrt{\frac{4}{9}} + \frac{2}{3} \\
-        &=\frac{2}{3} + \frac{2}{3} + \frac{2}{3} 
-    \end{align}
-    \end{proof}
-    

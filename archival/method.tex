@@ -196,7 +196,7 @@ For $X\in\mathbb R^{D\times P}$, evaluating $\|X^\dagger\|_{1,2}$ costs $C_\ell=
 The above proposition follows immediately from the computational complexity of singular value decomposition \citep{Liang2016-qb}.
 \begin{proposition}
 \label{prop:computational_complexity}
-The computational complexity of each step of Isometry Pursuit is $O(D^2P)$.
+For full-row-rank $X\in\mathbb R^{D\times P}$ with $P\geq D$ and nonzero columns, SCS for \isometrypursuit~admits an implementation costing $O(D^2P)$ per iteration after factorization.
 \end{proposition}
 
 For $\mathcal S$ iterations of \isometrypursuit, the arithmetic-work proxy is $\mathcal S D^2P$.

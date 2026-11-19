@@ -7,7 +7,6 @@ import tempfile
 
 os.environ.setdefault('MPLCONFIGDIR', os.path.join(tempfile.gettempdir(), 'matplotlib'))
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
 import numpy as np
 
 
@@ -23,13 +22,19 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         '--input', type=Path,
-        default=Path('results/identity_swap_comparison_25x_D64/identity_experiment_runs.json'))
+        default=Path('results/cloud/full-synthetic-20261116-001/figure3_main_search_runs.json'))
     parser.add_argument(
         '--output', type=Path,
         default=Path('figures/synthetic_support_recovery_grid'))
+    parser.add_argument('--optimizer-results', type=Path,
+                        default=Path('results/cloud/full-synthetic-20261116-001/records.json'))
     args = parser.parse_args()
 
     runs = json.loads(args.input.read_text())['runs']
+    true_supports = {r['data_sha256']: set(r['true_indices'])
+                     for r in json.loads(args.optimizer_results.read_text())['runs']}
+    if len(runs) != 3250 or len({r['data_sha256'] for r in runs}) != 3250:
+        raise ValueError('Expected the complete 3250-matrix cloud comparison')
     dimensions = sorted({run['D'] for run in runs})
     corrupting_by_dimension = {
         dimension: sorted({
@@ -63,13 +68,10 @@ def main():
                     ], dtype=float)
                     available = np.isfinite(method_losses)
                     exact_recovery = np.array([
-                        run[prefix + '_strict_success'] for run in subset
+                        set(run[prefix + '_indices'] or []) == true_supports[run['data_sha256']]
+                        for run in subset
                     ], dtype=bool)
-                    errors = [run.get(prefix + '_error') for run in subset]
-                    if any(
-                        isinstance(error, str) and error.startswith('Skipped:')
-                        for error in errors
-                    ):
+                    if not available.all():
                         omitted_dimensions.append(corrupting_dimension)
                     recovery_rates.append(
                         100 * exact_recovery[available].mean()
@@ -79,27 +81,9 @@ def main():
                         color=color, marker=marker,
                         linewidth=2, markersize=5, label=label)
                 if omitted_dimensions:
-                    first_omitted = min(
-                        corrupting_dimensions.index(value)
-                        for value in omitted_dimensions
-                    )
-                    anchors = [
-                        (value, regret)
-                        for value, regret in zip(
-                            corrupting_dimensions[:first_omitted],
-                            recovery_rates[:first_omitted],
-                        )
-                        if np.isfinite(regret)
-                    ]
-                    anchor_dimension, anchor_regret = (
-                        anchors[-1]
-                        if anchors else (corrupting_dimensions[0], 0.0)
-                    )
-                    ax.plot(
-                        [anchor_dimension, corrupting_dimensions[first_omitted]],
-                        [anchor_regret, -100],
-                        color=color, linewidth=1.5, linestyle='--', alpha=.25,
-                    )
+                    omitted = ', '.join(str(d) for d in omitted_dimensions)
+                    ax.text(.03, .06, f'Backward timed out: $d_c={omitted}$',
+                            transform=ax.transAxes, fontsize=6, color=color)
 
             if row == 0:
                 ax.set_title(rf'$D={dimension}$', fontsize=14, pad=20)
@@ -118,12 +102,7 @@ def main():
     axes[0, 0].set_ylim(-3, 103)
     axes[0, 0].set_yticks([0, 25, 50, 75, 100])
     handles, labels = axes[0, 0].get_legend_handles_labels()
-    handles.append(Line2D(
-        [], [], color='gray', linestyle='--', alpha=.5,
-        label='Not run (budget)',
-    ))
-    labels.append('Not run (budget)')
-    fig.legend(handles, labels, loc='outside upper center', ncol=5, frameon=False)
+    fig.legend(handles, labels, loc='outside upper center', ncol=4, frameon=False)
     fig.supxlabel(r'Corrupting dimension $d_c$')
     fig.supylabel('Exact support recovery (%)')
     args.output.parent.mkdir(parents=True, exist_ok=True)

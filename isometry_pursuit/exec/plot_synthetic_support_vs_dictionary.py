@@ -19,8 +19,7 @@ def main():
         "--input",
         type=Path,
         default=Path(
-            "results/identity_swap_comparison_25x_D64/"
-            "identity_experiment_runs.json"
+            "results/cloud/full-synthetic-20261116-001/records.json"
         ),
     )
     parser.add_argument(
@@ -76,6 +75,30 @@ def main():
         edgecolors="white",
     )
 
+    real_runs = []
+    for dataset in ("iris", "wine", "ethanol"):
+        source = Path("results/cloud/large-zero-smoke-001/records.json") if dataset == "ethanol" else Path("results/cloud/zero-start-smoke-001/records.json")
+        payload = json.loads(source.read_text())
+        saved = payload["runs"] if isinstance(payload, dict) else payload
+        selected = [r for r in saved if r.get("dataset") == dataset
+                    and r.get("settings", {}).get("solver") == "scs"
+                    and r["settings"].get("scale") == .1]
+        if len(selected) != 1:
+            raise ValueError(f"Expected one saved Lambda SCS scale-0.1 result for {dataset}")
+        run = selected[0]
+        capped = run["status"] != "solved"
+        width, support = run["shape"][1], run["support_cardinality"]
+        ax.scatter(width, support, marker="*", s=180, facecolors="white" if capped else "black",
+                   edgecolors="black", linewidths=1, zorder=6)
+        offset = (-5, 8) if dataset == "ethanol" else (5, -12)
+        ax.annotate(dataset.title(), (width, support), xytext=offset, textcoords="offset points",
+                    ha="right" if dataset == "ethanol" else "left", fontsize=9, zorder=7)
+        real_runs.append({"dataset": dataset, "D": run["shape"][0], "P": width,
+                          "support_cardinality": support, "status": run["status"],
+                          "data_sha256": run["data_sha256"], "job_id": run["job_id"],
+                          "source": str(source), "settings": run["settings"]})
+    Path("results/figure5_real_lambda_overlay.json").write_text(json.dumps(real_runs, indent=2) + "\n")
+
     upper = max(dictionary_sizes.max(), support_sizes.max())
     no_trimming_line, = ax.plot(
         [2, upper], [2, upper], linestyle="--", color="0.35", linewidth=1.3,
@@ -83,15 +106,17 @@ def main():
     )
     ax.set_xscale("log", base=2)
     ax.set_yscale("log", base=2)
-    ax.set_xlabel(r"Dictionary size $P=D+b d$")
+    ax.set_xlabel(r"Dictionary size $P$")
     ax.set_ylabel(r"Isometry Pursuit support size $|\hat S|$")
     ax.grid(alpha=0.22)
     line_legend = ax.legend(
-        handles=[no_trimming_line], frameon=False, loc="upper left"
+        handles=[no_trimming_line, Line2D([], [], marker="*", color="black", linestyle="none",
+                                         markersize=10, label="Real dataset")],
+        frameon=False, loc="upper left"
     )
 
     colorbar = fig.colorbar(scatter, ax=ax, pad=0.02)
-    colorbar.set_label(r"Corrupting dimension $d$")
+    colorbar.set_label(r"Corrupting dimension $d_c$")
     colorbar.set_ticks(np.arange(len(unique_corrupting_dimensions)))
     colorbar.set_ticklabels([str(value) for value in unique_corrupting_dimensions])
 
@@ -108,7 +133,7 @@ def main():
         handles=size_handles,
         title=r"Target dimension $D$",
         frameon=False,
-        loc="lower right",
+        loc="center left",
         ncol=2,
         columnspacing=0.8,
         handletextpad=0.3,

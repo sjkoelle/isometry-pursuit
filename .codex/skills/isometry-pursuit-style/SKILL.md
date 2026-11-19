@@ -93,3 +93,11 @@ Delete the clause beginning with “although.” The useful point is that sampli
 Delete the clause beginning with “while Zou et al.” in Experiments. It pulls the reader away from the just-defined swap algorithm into an unexplained problem and variant. Keep the optional sampling idea in Discussion, expressed using the already-established swap-search vocabulary.
 
 Before adding a comparison or caveat, check what each referenced concept means to a reader at that exact point in the manuscript. If the reader would need to ask “what criterion?” or “what rule?”, either explain the concept when it is essential to the argument or omit the reference to it. Do not add a detour merely to preserve a qualification.
+
+## Computational derivation style reference
+
+The user identified the old ADMM derivation as a useful style reference.
+Read `archival/admm_derivation_reference.tex` from the repository root when revising the computational-complexity proof.
+It shows the optimization step, derives its update, and then counts the operations.
+Use that progression to make each solver step understandable; do not skip directly from a solver name to an unexplained matrix system.
+The file is a historical reference, not part of the compiled paper; independently verify its equations and follow the current notation rules when writing the active proof.
